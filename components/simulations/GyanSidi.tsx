@@ -259,23 +259,23 @@ export default function GyanSidi() {
 
   const renderOverlays = () => {
     return (
-      <svg className="absolute inset-0 w-full h-full pointer-events-none z-10 drop-shadow-lg">
+      <svg className="absolute inset-0 w-full h-full pointer-events-none z-10 drop-shadow-lg" viewBox="0 0 100 100">
         {/* LADDERS */}
         {Object.entries(LADDERS).map(([start, end], i) => {
           const s = getCellCenter(Number(start));
           const e = getCellCenter(end);
           return (
             <g key={`ladder-${i}`}>
-              <line x1={`${s.x}%`} y1={`${s.y}%`} x2={`${e.x}%`} y2={`${e.y}%`} stroke="#8B4513" strokeWidth="12" strokeLinecap="round" opacity="0.8" />
-              <line x1={`${s.x - 2}%`} y1={`${s.y + 2}%`} x2={`${e.x - 2}%`} y2={`${e.y + 2}%`} stroke="#A0522D" strokeWidth="3" strokeLinecap="round" />
-              <line x1={`${s.x + 2}%`} y1={`${s.y - 2}%`} x2={`${e.x + 2}%`} y2={`${e.y - 2}%`} stroke="#A0522D" strokeWidth="3" strokeLinecap="round" />
+              <line x1={s.x} y1={s.y} x2={e.x} y2={e.y} stroke="#8B4513" strokeWidth="2.5" strokeLinecap="round" opacity="0.8" />
+              <line x1={s.x - 2} y1={s.y + 2} x2={e.x - 2} y2={e.y + 2} stroke="#A0522D" strokeWidth="0.6" strokeLinecap="round" />
+              <line x1={s.x + 2} y1={s.y - 2} x2={e.x + 2} y2={e.y - 2} stroke="#A0522D" strokeWidth="0.6" strokeLinecap="round" />
               {/* Rungs */}
-              {[0.2, 0.4, 0.6, 0.8].map(ratio => (
+              {[0.2, 0.4, 0.6, 0.8].map((ratio, idx) => (
                 <line 
-                  key={ratio}
-                  x1={`${s.x + (e.x - s.x)*ratio - 2}%`} y1={`${s.y + (e.y - s.y)*ratio + 2}%`}
-                  x2={`${s.x + (e.x - s.x)*ratio + 2}%`} y2={`${s.y + (e.y - s.y)*ratio - 2}%`}
-                  stroke="#DEB887" strokeWidth="4" 
+                  key={idx}
+                  x1={s.x + (e.x - s.x)*ratio - 2} y1={s.y + (e.y - s.y)*ratio + 2}
+                  x2={s.x + (e.x - s.x)*ratio + 2} y2={s.y + (e.y - s.y)*ratio - 2}
+                  stroke="#DEB887" strokeWidth="0.8" 
                 />
               ))}
             </g>
@@ -285,23 +285,23 @@ export default function GyanSidi() {
         {Object.entries(SNAKES).map(([start, end], i) => {
           const s = getCellCenter(Number(start)); // Head
           const e = getCellCenter(end); // Tail
-          // Create a curvy path using bezier curve
-          const midX = (s.x + e.x) / 2 + (Math.random() * 10 - 5);
-          const midY = (s.y + e.y) / 2 + (Math.random() * 10 - 5);
+          // Create a stable curvy path without Math.random()
+          const midX = (s.x + e.x) / 2 + (i % 2 === 0 ? 8 : -8);
+          const midY = (s.y + e.y) / 2 + (i % 3 === 0 ? 8 : -8);
           return (
             <g key={`snake-${i}`}>
               <path 
                 d={`M ${s.x} ${s.y} Q ${midX} ${midY} ${e.x} ${e.y}`} 
-                stroke="#22C55E" strokeWidth="8" fill="none" strokeLinecap="round" 
+                stroke="#22C55E" strokeWidth="1.5" fill="none" strokeLinecap="round" 
                 className="drop-shadow-md"
               />
               <path 
                 d={`M ${s.x} ${s.y} Q ${midX} ${midY} ${e.x} ${e.y}`} 
-                stroke="#166534" strokeWidth="2" strokeDasharray="4 4" fill="none" 
+                stroke="#166534" strokeWidth="0.4" strokeDasharray="1 1" fill="none" 
               />
               {/* Snake Head marker */}
-              <circle cx={`${s.x}%`} cy={`${s.y}%`} r="3" fill="#EF4444" />
-              <text x={`${s.x}%`} y={`${s.y + 1}%`} fontSize="4" textAnchor="middle" fill="#000">🐍</text>
+              <circle cx={s.x} cy={s.y} r="1.5" fill="#EF4444" />
+              <text x={s.x} y={s.y + 1} fontSize="3" textAnchor="middle" fill="#000">🐍</text>
             </g>
           );
         })}
