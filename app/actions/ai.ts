@@ -189,7 +189,11 @@ Fields:
     return JSON.parse(jsonMatch[0]);
 
   } catch (error: any) {
-    console.error("AI FALLBACK TRIGGERED:", error.message || error);
+    console.error("❌ AI FALLBACK TRIGGERED - analyzeDashboardQuery API Error Details:");
+    console.error("- Message:", error.message);
+    if (error.status) console.error("- Status Code:", error.status);
+    if (error.response) console.error("- Response:", JSON.stringify(error.response, null, 2));
+    
     return localPedagogyFallback(query, context);
   }
 }

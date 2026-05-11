@@ -177,7 +177,13 @@ export async function askPratham(
     return { content: text };
 
   } catch (error: any) {
-    console.error("askPratham error:", error.message);
-    return { content: "I'm having trouble connecting right now. Please try again in a moment." };
+    console.error("❌ askPratham API Error Details:");
+    console.error("- Message:", error.message);
+    if (error.status) console.error("- Status Code:", error.status);
+    if (error.response) console.error("- Response:", JSON.stringify(error.response, null, 2));
+    
+    return { 
+      content: "I'm having trouble connecting to the intelligence server right now. The administrator has been notified. Please try again in a moment." 
+    };
   }
 }
