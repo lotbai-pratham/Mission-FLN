@@ -1005,33 +1005,29 @@ export default function ResourcesPage() {
 
       {/* Tab Content: SIMULATIONS */}
       {activeTab === "simulations" && (
-        <div className="grid lg:grid-cols-3 gap-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
-           {SIMULATIONS.filter(sim => sim.title.toLowerCase().includes(searchTerm.toLowerCase())).map((sim, i) => (
-             <Link key={i} href={sim.link || "#"} className="group relative bg-white dark:bg-slate-900 rounded-[40px] p-8 border border-slate-100 dark:border-slate-800 shadow-xl shadow-blue-500/5 hover:bg-blue-600 transition-all duration-500 overflow-hidden">
-                <div className="relative z-10 space-y-6">
-                  <div className="flex items-center justify-between">
-                     <div className="p-3 bg-blue-50 dark:bg-blue-900/40 rounded-2xl group-hover:bg-white/20 transition-all">
-                        <Gamepad2 className="w-6 h-6 text-blue-600 dark:text-blue-400 group-hover:text-white" />
-                     </div>
-                     <span className="text-[10px] font-black uppercase tracking-widest px-3 py-1 bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 rounded-full group-hover:bg-white group-hover:text-blue-600 transition-all">
-                        Level: {sim.level}
-                     </span>
-                  </div>
-                  <div className="space-y-2">
-                     <h3 className="text-2xl font-black text-slate-900 dark:text-white group-hover:text-white transition-all leading-tight">
-                        {sim.title}
-                     </h3>
-                     <p className="text-sm text-slate-500 dark:text-slate-400 group-hover:text-blue-100 transition-all">
-                        {sim.description}
-                     </p>
-                  </div>
-                  <div className="pt-4 border-t border-slate-50 dark:border-slate-800 group-hover:border-white/20 flex items-center justify-between">
-                     <span className="text-xs font-black text-blue-600 group-hover:text-white transition-all uppercase tracking-widest">Launch Tool</span>
-                     <ChevronRight className="w-5 h-5 text-blue-600 group-hover:text-white transition-all" />
-                  </div>
-                </div>
-             </Link>
-           ))}
+        <div className="bg-gradient-to-br from-slate-900 to-indigo-950 rounded-[48px] p-10 sm:p-16 text-center shadow-2xl relative overflow-hidden animate-in fade-in zoom-in-95 duration-500">
+           <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'radial-gradient(circle, #fff 1px, transparent 1px)', backgroundSize: '28px 28px' }} />
+           
+           <div className="relative z-10 max-w-3xl mx-auto space-y-8">
+             <div className="w-24 h-24 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-3xl mx-auto flex items-center justify-center shadow-xl shadow-blue-500/20">
+               <Gamepad2 className="w-12 h-12 text-white" />
+             </div>
+             
+             <div className="space-y-4">
+               <h2 className="text-4xl sm:text-6xl font-black text-white leading-tight tracking-tight">
+                 Enter the <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-400">Simulation Arcade</span>
+               </h2>
+               <p className="text-lg sm:text-xl text-blue-100/70 max-w-2xl mx-auto leading-relaxed">
+                 We've upgraded our simulations! Browse all 35+ interactive games, 2v2 battle arenas, and level-wise pedagogical tools in our brand new, dedicated full-screen library.
+               </p>
+             </div>
+             
+             <div className="pt-6">
+               <Link href="/resources/simulations" className="inline-flex items-center gap-3 px-8 py-5 bg-white text-indigo-900 hover:bg-slate-100 hover:scale-105 active:scale-95 transition-all rounded-[24px] font-black text-lg shadow-xl shadow-white/10">
+                 OPEN LIBRARY <ChevronRight className="w-6 h-6" />
+               </Link>
+             </div>
+           </div>
         </div>
       )}
 
