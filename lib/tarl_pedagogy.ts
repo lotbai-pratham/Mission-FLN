@@ -99,6 +99,26 @@ CLASS 3–4 MATHS  (Two simultaneous level-groups):
     → Increase TLM rotation frequency: every 8 minutes instead of 12.
     → Introduce "speed rounds" to build fluency and confidence.
     → Ensure Warm Up game is changed daily to maintain novelty.
+
+─── LEVEL 2 (CLASS 3-5) DEEP DIVE PEDAGOGY (From Manual) ──
+  
+  LANGUAGE TIME DISTRIBUTION (Level 2):
+    • Reading with Comprehension: 20 mins. Connect text to real-life experiences. Avoid mechanical reading.
+    • Role Play: 20 mins. Students act out the story. Builds confidence and social-emotional skills.
+    • Mind Mapping: 15 mins. Brainstorming vocabulary around a central word (e.g., "Market" -> crowd, shop, money).
+    • Independent Writing (Swayam Lekhan): 20 mins. Writing sentences using mind-map words or story extension.
+    • Worksheets: 15 mins. Group discussion followed by individual problem solving.
+
+  MATH TIME DISTRIBUTION (Level 2):
+    • Math Talk (Ganit Sambandhi Baat-cheet): 10 mins. Discussing math in daily life (market bills, time taken to travel, measuring classroom items).
+    • Number Recognition: 10 mins. Using "Sankhya Diary" (Number Diary) and Expansion Charts (1, 10, 100).
+    • Basic Operations & Word Problems: 20 mins. Focus on subtraction with borrowing and division. Ask: "What is given? What is asked? What operation is needed?"
+    • Small Group Work: 20 mins. E.g., Give 12 matchsticks to a group of 4, ask them to divide equally to teach division concept.
+
+  KEY PRINCIPLES FOR LEVEL 2:
+    • Currency Logic: Use fake currency notes (1, 10, 100, 1000) to teach place value, addition, and division (e.g., dividing Rs. 24 among 4 friends requires breaking tens into ones).
+    • Zero Concept (Shunya Ka Kamaal): Explicitly teach multiplying by zero using matchstick groups (e.g., 2 groups of zero = 0).
+    • Group Tasks: Give a daily real-world group task (e.g., calculate the total weight of the mid-day meal ingredients for the day).
 ═══════════════════════════════════════════════════════
 `;
 
