@@ -64,6 +64,7 @@ import VachanPravas from "@/components/simulations/VachanPravas";
 import AksharCrush from "@/components/simulations/AksharCrush";
 import MatraChakra from "@/components/simulations/MatraChakra";
 import GyanSidi from "@/components/simulations/GyanSidi";
+import JungleFight from "@/components/games/JungleFight";
 
 type Item = {
   id: string;
@@ -138,6 +139,7 @@ const GAMES: Item[] = [
   { id: "g-clock",    title: "Clock Reader",       level: "Life Skills", battleLevel: 0, subject: "Bonus",    emoji: "🕐", component: (p) => <ClockReader {...p} /> },
   { id: "g-sorting",  title: "Sorting Hat",        level: "Cross-level", battleLevel: 0, subject: "Bonus",    emoji: "🎩", component: (p) => <SortingHat {...p} /> },
   { id: "g-matra",   title: "Matra Practice",     level: "Word",        battleLevel: 2, subject: "Literacy", emoji: "ि",  tag: "Marathi", component: (p) => <MatraPractice {...p} /> },
+  { id: "g-jungle",  title: "Jungle Fight",       level: "Operations",  battleLevel: 3, subject: "Mixed",    emoji: "🐅", tag: "Featured", component: (p) => <JungleFight {...p} /> },
 ];
 
 const ALL = [...SIMS, ...GAMES];
