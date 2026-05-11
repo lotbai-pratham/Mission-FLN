@@ -156,7 +156,7 @@ export default function SimulationsPage() {
   const userSchoolId = (session?.user as any)?.schoolId ?? undefined;
   const { xp, level } = usePoints();
 
-  const [activeId, setActiveId] = useState("gyansidi");
+  const [activeId, setActiveId] = useState<string | null>(null);
   const [showMatchmaker, setShowMatchmaker] = useState(false);
   const [battleContext, setBattleContext] = useState<any>(null);
   const [hiddenIds, setHiddenIds] = useState<string[]>([]);
@@ -182,9 +182,6 @@ export default function SimulationsPage() {
     localStorage.setItem('arcade_hidden_sims', JSON.stringify(next));
   };
 
-  const active = ALL.find(s => s.id === activeId)!;
-  const activeSection = SECTIONS.find(s => s.filter(active)) ?? SECTIONS[0];
-
   const handleSimSelect = (id: string) => {
     const item = ALL.find(i => i.id === id);
     if (item?.subject === 'Battle') {
@@ -192,6 +189,16 @@ export default function SimulationsPage() {
     }
     setActiveId(id);
     setBattleContext(null);
+    window.history.pushState({}, '', `?id=${id}`);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleBackToLibrary = () => {
+    setActiveId(null);
+    setBattleContext(null);
+    setShowMatchmaker(false);
+    window.history.pushState({}, '', window.location.pathname);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const closeArena = () => {
@@ -199,12 +206,14 @@ export default function SimulationsPage() {
     setShowMatchmaker(false);
   };
 
+  const active = activeId ? ALL.find(s => s.id === activeId) : null;
+  const activeSection = active ? (SECTIONS.find(s => s.filter(active)) ?? SECTIONS[0]) : null;
+
   return (
     <div className="max-w-7xl mx-auto px-4 py-8 space-y-8 animate-in fade-in duration-500">
 
       {/* Arcade Header */}
       <div className="relative rounded-3xl overflow-hidden bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-8 border border-slate-700">
-        {/* Decorative dots */}
         <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'radial-gradient(circle, #fff 1px, transparent 1px)', backgroundSize: '28px 28px' }} />
         <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div className="space-y-3">
@@ -229,83 +238,104 @@ export default function SimulationsPage() {
         </div>
       </div>
 
-      <div className="grid lg:grid-cols-4 gap-6 items-start">
-
-        {/* Sidebar */}
-        <div className="space-y-3 max-h-[80vh] overflow-y-auto pr-1">
+      {!active ? (
+        /* ================= LIBRARY VIEW ================= */
+        <div className="space-y-12 animate-in fade-in zoom-in-95 duration-300">
           {SECTIONS.map(section => {
             const items = ALL.filter(section.filter).filter(i => isAdmin || !hiddenIds.includes(i.id));
             if (items.length === 0) return null;
             
             return (
-              <div key={section.label} className="space-y-1.5">
-                <p className={`text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-lg bg-gradient-to-r ${section.accent} bg-clip-text text-transparent`}>
-                  {section.label}
-                </p>
-                {items.map(item => {
-                  const isActive = item.id === activeId;
-                  const isHidden = hiddenIds.includes(item.id);
-                  return (
-                    <div key={item.id} className="group relative">
-                      <button onClick={() => handleSimSelect(item.id)}
-                        className={cn(
-                          "w-full px-3 py-2.5 rounded-2xl text-left transition-all duration-200 flex items-center gap-3",
-                          isActive
-                            ? `${section.active} shadow-lg ${section.glow}`
-                            : "bg-slate-50 dark:bg-slate-800/60 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300",
-                          isHidden && "opacity-50 grayscale-[0.5]"
-                        )}>
-                        <span className="text-xl shrink-0">{item.emoji}</span>
-                        <div className="min-w-0 flex-1">
-                          <p className={cn("font-bold text-sm truncate leading-tight", isActive ? "text-white" : "")}>{item.title}</p>
-                          <p className={cn("text-[10px] font-semibold truncate", isActive ? "text-white/70" : "text-slate-400")}>Lvl: {item.level}</p>
-                        </div>
-                        {item.tag && !isHidden && (
-                          <span className={cn("text-[9px] font-black px-1.5 py-0.5 rounded-md shrink-0", isActive ? "bg-white/20 text-white" : "bg-orange-100 text-orange-600")}>
-                            {item.tag}
-                          </span>
-                        )}
-                        {isHidden && (
-                          <span className="text-[9px] font-black px-1.5 py-0.5 rounded-md shrink-0 bg-slate-200 text-slate-500">HIDDEN</span>
-                        )}
-                        <ChevronRight className={cn("w-3.5 h-3.5 shrink-0 transition-all", isActive ? "text-white translate-x-0.5" : "opacity-0 group-hover:opacity-40")} />
-                      </button>
-
-                      {/* Admin Toggle */}
-                      {isAdmin && (
+              <div key={section.label} className="space-y-4">
+                <div className="flex items-center gap-3 border-b-2 border-slate-100 dark:border-slate-800 pb-3">
+                  <h2 className={`text-2xl font-black bg-gradient-to-r ${section.accent} bg-clip-text text-transparent`}>
+                    {section.label}
+                  </h2>
+                  <span className="text-xs font-bold text-slate-400 bg-slate-100 dark:bg-slate-800 px-2.5 py-1 rounded-full">
+                    {items.length}
+                  </span>
+                </div>
+                
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+                  {items.map(item => {
+                    const isHidden = hiddenIds.includes(item.id);
+                    return (
+                      <div key={item.id} className="relative group h-full">
                         <button 
-                          onClick={(e) => { e.stopPropagation(); toggleVisibility(item.id); }}
-                          className="absolute -right-1 top-1/2 -translate-y-1/2 z-20 p-2 text-slate-400 hover:text-blue-500 bg-white/10 backdrop-blur-md rounded-full shadow-lg opacity-0 group-hover:opacity-100 transition-all"
+                          onClick={() => handleSimSelect(item.id)}
+                          className={cn(
+                            "w-full h-full flex flex-col p-4 rounded-2xl border-2 transition-all duration-300 text-left bg-white dark:bg-slate-800/80 hover:-translate-y-1 hover:shadow-xl",
+                            isHidden ? "opacity-50 grayscale border-slate-200" : `border-transparent hover:${section.ring} hover:border-transparent focus:ring-2 focus:${section.ring}`
+                          )}
                         >
-                          {isHidden ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                          <div className={`w-12 h-12 rounded-xl mb-3 flex items-center justify-center text-3xl shadow-inner bg-gradient-to-br ${section.accent} text-white`}>
+                            {item.emoji}
+                          </div>
+                          <div className="flex-1 space-y-1">
+                            <h3 className="font-bold text-slate-800 dark:text-white leading-tight">{item.title}</h3>
+                            <p className="text-[10px] font-semibold text-slate-500 uppercase tracking-wide">Lvl: {item.level}</p>
+                          </div>
+                          {item.tag && !isHidden && (
+                            <span className="inline-block mt-3 text-[10px] font-black px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 w-fit">
+                              {item.tag}
+                            </span>
+                          )}
+                          {isHidden && (
+                            <span className="inline-block mt-3 text-[10px] font-black px-2 py-0.5 rounded bg-red-100 text-red-600 w-fit">
+                              HIDDEN
+                            </span>
+                          )}
                         </button>
-                      )}
-                    </div>
-                  );
-                })}
+                        
+                        {/* Admin Toggle Overlay */}
+                        {isAdmin && (
+                          <button 
+                            onClick={(e) => { e.stopPropagation(); toggleVisibility(item.id); }}
+                            className="absolute top-2 right-2 z-20 p-2 text-slate-400 hover:text-blue-500 bg-white/80 backdrop-blur-md rounded-full shadow-lg opacity-0 group-hover:opacity-100 transition-all"
+                            title={isHidden ? "Show Game" : "Hide Game"}
+                          >
+                            {isHidden ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                          </button>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
               </div>
             );
           })}
         </div>
-
-        {/* Main Panel */}
-        <div className="lg:col-span-3 space-y-5">
-
-          {/* Active game label */}
-          <div className={`flex items-center gap-3 px-5 py-3 rounded-2xl bg-gradient-to-r ${activeSection.accent} shadow-lg ${activeSection.glow} text-white`}>
-            <span className="text-2xl">{active.emoji}</span>
-            <div className="flex-1">
-              <p className="font-black text-lg leading-tight">{active.title}</p>
-              <p className="text-white/70 text-xs font-semibold">Level: {active.level} · {active.subject}</p>
+      ) : (
+        /* ================= ACTIVE GAME VIEW ================= */
+        <div className="space-y-6 animate-in slide-in-from-right-8 duration-500">
+          
+          <button 
+            onClick={handleBackToLibrary}
+            className="flex items-center gap-2 text-slate-500 hover:text-slate-800 dark:hover:text-white text-sm font-bold bg-slate-100 dark:bg-slate-800 px-4 py-2 rounded-xl hover:shadow-md transition-all w-fit"
+          >
+            <ArrowLeft className="w-4 h-4" /> Back to Library
+          </button>
+          
+          {/* Active game header label */}
+          <div className={`flex items-center gap-4 px-6 py-4 rounded-3xl bg-gradient-to-r ${activeSection?.accent} shadow-xl ${activeSection?.glow} text-white`}>
+            <div className="w-16 h-16 rounded-2xl bg-white/20 flex items-center justify-center text-4xl drop-shadow-md">
+               {active.emoji}
             </div>
-            <div className="flex items-center gap-1.5 bg-white/20 rounded-xl px-3 py-1.5">
-              <Zap className="w-3.5 h-3.5" />
-              <span className="text-xs font-black">LIVE</span>
+            <div className="flex-1">
+              <p className="font-black text-2xl leading-tight drop-shadow-sm">{active.title}</p>
+              <div className="flex items-center gap-2 mt-1.5 flex-wrap">
+                <span className="bg-white/20 px-2 py-0.5 rounded text-[11px] font-black tracking-widest uppercase shadow-sm">Level: {active.level}</span>
+                <span className="bg-black/20 px-2 py-0.5 rounded text-[11px] font-black tracking-widest uppercase shadow-sm">{active.subject}</span>
+              </div>
+            </div>
+            <div className="hidden sm:flex items-center gap-2 bg-white/20 rounded-2xl px-4 py-2 backdrop-blur-sm shadow-inner">
+              <div className="w-2 h-2 rounded-full bg-green-400 animate-pulse shadow-[0_0_8px_rgba(74,222,128,1)]" />
+              <span className="text-sm font-black tracking-widest text-white/90">LIVE</span>
             </div>
           </div>
 
           {/* Game area */}
-          <div key={activeId} className="animate-in fade-in zoom-in-95 duration-300">
+          <div className="bg-white dark:bg-slate-900/40 rounded-[2rem] p-3 md:p-8 border border-slate-200 dark:border-slate-800 shadow-2xl relative overflow-hidden">
             {active.component({ 
               player1: battleContext?.p1, 
               player2: battleContext?.p2,
@@ -328,34 +358,19 @@ export default function SimulationsPage() {
               setShowMatchmaker(false);
             }}
           />
-
-          {/* Quick-pick related games */}
-          <div>
-            <p className="text-xs font-black text-slate-400 uppercase tracking-widest mb-3 flex items-center gap-2">
-              <Trophy className="w-3.5 h-3.5" /> More in this category
-            </p>
-            <div className="flex gap-2 flex-wrap">
-              {ALL.filter(i => i.subject === active.subject && i.id !== activeId).slice(0, 6).map(i => (
-                <button key={i.id} onClick={() => setActiveId(i.id)}
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 text-xs font-bold transition-all active:scale-95">
-                  {i.emoji} {i.title}
-                </button>
-              ))}
-            </div>
-          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }
 
 function StatBadge({ icon, label, value, color, shadow }: { icon: string; label: string; value: number | string; color: string; shadow?: string }) {
   return (
-    <div className={`flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-gradient-to-r ${color} ${shadow} shadow-lg text-white`}>
-      <span className="text-xl">{icon}</span>
+    <div className={`flex items-center gap-3 px-4 py-3 rounded-2xl bg-gradient-to-r ${color} ${shadow} shadow-lg text-white`}>
+      <span className="text-2xl drop-shadow-sm">{icon}</span>
       <div>
-        <p className="text-xs font-semibold text-white/70">{label}</p>
-        <p className="text-xl font-black leading-none">{value}</p>
+        <p className="text-[9px] font-black uppercase tracking-widest text-white/70">{label}</p>
+        <p className="text-xl font-black leading-none drop-shadow-sm">{value}</p>
       </div>
     </div>
   );
