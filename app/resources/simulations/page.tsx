@@ -165,6 +165,13 @@ export default function SimulationsPage() {
   useEffect(() => {
     const saved = localStorage.getItem('arcade_hidden_sims');
     if (saved) setHiddenIds(JSON.parse(saved));
+    
+    // Read active ID from URL
+    const params = new URLSearchParams(window.location.search);
+    const id = params.get('id');
+    if (id && ALL.some(i => i.id === id)) {
+      setActiveId(id);
+    }
   }, []);
 
   const toggleVisibility = (id: string) => {

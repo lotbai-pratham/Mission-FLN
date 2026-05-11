@@ -66,7 +66,7 @@ export const SIMULATIONS: Resource[] = [
     level: "1-9",
     description: "Match visual counts to number symbols. Perfect for students at the 'Beginner' level.",
     id: "NumberHunter",
-    link: "/resources/simulations"
+    link: "/resources/simulations?id=number-hunter"
   },
   {
     title: "Bundle Builder",
@@ -74,7 +74,7 @@ export const SIMULATIONS: Resource[] = [
     level: "10-99",
     description: "The classic sticks and bundles tool for place-value understanding.",
     id: "BundleBuilder",
-    link: "/resources/simulations"
+    link: "/resources/simulations?id=bundle-builder"
   },
   {
     title: "Addition Master",
@@ -82,7 +82,7 @@ export const SIMULATIONS: Resource[] = [
     level: "Operations",
     description: "Solve two-digit addition problems by physically re-bundling sticks.",
     id: "AdditionMaster",
-    link: "/resources/simulations"
+    link: "/resources/simulations?id=addition-master"
   },
   {
     title: "Sound Explorer",
@@ -90,7 +90,7 @@ export const SIMULATIONS: Resource[] = [
     level: "Letter",
     description: "Phonics matching game. Match the sound to the correct letter.",
     id: "SoundExplorer",
-    link: "/resources/simulations"
+    link: "/resources/simulations?id=sound-explorer"
   },
   {
     title: "Word Builder",
@@ -98,7 +98,7 @@ export const SIMULATIONS: Resource[] = [
     level: "Word",
     description: "Drag Letters to build words. Categorized by phonetic sounds.",
     id: "WordBuilder",
-    link: "/resources/simulations"
+    link: "/resources/simulations?id=word-builder"
   },
   {
     title: "Sentence Architect",
@@ -106,7 +106,7 @@ export const SIMULATIONS: Resource[] = [
     level: "Para/Story",
     description: "Sequence stories and paragraphs to build reading comprehension.",
     id: "SentenceArchitect",
-    link: "/resources/simulations"
+    link: "/resources/simulations?id=sentence-arch"
   },
   {
     title: "Flash Math Sprint",
@@ -114,7 +114,7 @@ export const SIMULATIONS: Resource[] = [
     tags: ["2v2", "Competitive", "Timer"],
     description: "2v2 Arithmetic Race: Solve addition and subtraction problems against the clock!",
     id: "MathSprint",
-    link: "/resources/simulations"
+    link: "/resources/simulations?id=math-sprint"
   },
   {
     title: "Phonics Sound Duel",
@@ -122,7 +122,7 @@ export const SIMULATIONS: Resource[] = [
     tags: ["2v2", "Competitive", "Timer"],
     description: "2v2 Literacy Battle: Match the sound to the correct letter faster than the other team.",
     id: "SoundDuel",
-    link: "/resources/simulations"
+    link: "/resources/simulations?id=sound-duel"
   },
   {
     title: "🛒 Math Mania Market",
@@ -131,7 +131,7 @@ export const SIMULATIONS: Resource[] = [
     tags: ["Ultimate", "Marketplace", "All Operations"],
     description: "Ultimate Math Mania — Earn rupees by solving math challenges, then spend them in a full Marathi marketplace across 6 unlockable stalls.",
     id: "math-mania-market",
-    link: "/resources/simulations"
+    link: "/resources/simulations?id=math-mania-market"
   },
   {
     title: "🍬 अक्षर कँडी",
@@ -140,7 +140,7 @@ export const SIMULATIONS: Resource[] = [
     tags: ["Marathi", "Match-3", "Matra"],
     description: "Candy Crush–style matra matching game. Swap Marathi syllables to line up 3+ of the same vowel sound and clear the board.",
     id: "akshar-crush",
-    link: "/resources/simulations"
+    link: "/resources/simulations?id=akshar-crush"
   },
   {
     title: "📖 Vachan Pravas",
@@ -149,7 +149,7 @@ export const SIMULATIONS: Resource[] = [
     tags: ["Ultimate", "Marathi", "4 Worlds"],
     description: "Ultimate Marathi Literacy Quest — Journey through 4 worlds (Letters → Words → Sentences → Stories) earning pearls across 24 challenges.",
     id: "vachan-pravas",
-    link: "/resources/simulations"
+    link: "/resources/simulations?id=vachan-pravas"
   },
   {
     title: "🎡 मात्रा चक्र (Matra Chakra)",
@@ -158,7 +158,7 @@ export const SIMULATIONS: Resource[] = [
     tags: ["Marathi", "Literacy", "Matra"],
     description: "Interactive spinning wheel game for Marathi matra pairing. Pair consonants with the correct matra sound.",
     id: "matra-chakra",
-    link: "/resources/simulations"
+    link: "/resources/simulations?id=matra-chakra"
   },
   {
     title: "🐍 ज्ञानशिडी (GyanSidi)",
@@ -167,6 +167,6 @@ export const SIMULATIONS: Resource[] = [
     tags: ["Featured", "Mixed", "Board Game"],
     description: "Indian Village themed Snakes & Ladders with a twist: answer challenges to avoid snakes and climb ladders!",
     id: "gyansidi",
-    link: "/resources/simulations"
+    link: "/resources/simulations?id=gyansidi"
   }
 ];

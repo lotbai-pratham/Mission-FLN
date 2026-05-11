@@ -45,3 +45,5 @@ dev.db
 dev.db-journal
 
 /app/generated/prisma
+TaRL Manuals and PDF/
+*.pdf
