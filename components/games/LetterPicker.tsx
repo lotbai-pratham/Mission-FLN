@@ -28,6 +28,7 @@ export default function LetterPicker() {
   const [shuffled] = useState(() => shuffle(ROUNDS));
   const [questionPool, setQuestionPool] = useState<any[]>([]);
   const [isAiLoading, setIsAiLoading] = useState(false);
+  const [sessionXP, setSessionXP] = useState(0);
   const { addXP } = usePoints();
 
   const fetchAiQuestions = async () => {
@@ -69,6 +70,7 @@ export default function LetterPicker() {
     if (correct) {
       setScore(s => s + 1);
       addXP(5);
+      setSessionXP(prev => prev + 5);
     }
     setTimeout(() => {
       nextRound();
@@ -80,9 +82,14 @@ export default function LetterPicker() {
   return (
     <div className="bg-white dark:bg-slate-900 rounded-3xl p-8 border border-green-100 shadow-sm space-y-8">
       <div className="flex justify-between items-center">
-        <div className="flex items-center gap-2">
-          <span className="text-sm font-bold text-green-600 bg-green-50 px-3 py-1 rounded-full">गुण: {score}/{idx}</span>
-          {isAiLoading && <Sparkles className="w-4 h-4 text-green-400 animate-pulse" />}
+        <div className="flex flex-col gap-1">
+          <div className="flex items-center gap-2">
+            <span className="text-sm font-bold text-green-600 bg-green-50 px-3 py-1 rounded-full">गुण: {score}/{idx}</span>
+            {isAiLoading && <Sparkles className="w-4 h-4 text-green-400 animate-pulse" />}
+          </div>
+          <div className="flex items-center gap-1.5 bg-yellow-100 text-yellow-700 px-2.5 py-0.5 rounded-full font-bold text-[10px] w-fit">
+             <Sparkles size={10} /> +{sessionXP} XP
+          </div>
         </div>
         <span className="text-2xl">🔤</span>
       </div>

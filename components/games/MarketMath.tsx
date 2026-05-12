@@ -52,6 +52,7 @@ export default function MarketMath() {
   const [feedback, setFeedback] = useState<'correct' | 'wrong' | null>(null);
   const [questionPool, setQuestionPool] = useState<any[]>([]);
   const [isAiLoading, setIsAiLoading] = useState(false);
+  const [sessionXP, setSessionXP] = useState(0);
   const { addXP } = usePoints();
 
   const fetchAiQuestions = async () => {
@@ -94,6 +95,7 @@ export default function MarketMath() {
     if (correct) {
       setScore(s => s + 1);
       addXP(10);
+      setSessionXP(prev => prev + 10);
     }
     setTimeout(() => {
       nextRound();
@@ -111,9 +113,14 @@ export default function MarketMath() {
 
       <div className="p-4 md:p-6 space-y-4 md:space-y-5">
         <div className="flex justify-between items-center">
-          <div className="flex items-center gap-2">
-            <span className="text-xs md:text-sm font-bold text-amber-600 bg-amber-50 px-2 md:px-3 py-1 rounded-full">गुण: {score}/{total}</span>
-            {isAiLoading && <Sparkles className="w-4 h-4 text-amber-400 animate-pulse" />}
+          <div className="flex flex-col gap-1">
+            <div className="flex items-center gap-2">
+              <span className="text-xs md:text-sm font-bold text-amber-600 bg-amber-50 px-2 md:px-3 py-1 rounded-full">गुण: {score}/{total}</span>
+              {isAiLoading && <Sparkles className="w-4 h-4 text-amber-400 animate-pulse" />}
+            </div>
+            <div className="flex items-center gap-1.5 bg-yellow-100 text-yellow-700 px-2.5 py-0.5 rounded-full font-bold text-[10px] w-fit">
+               <Sparkles size={10} /> +{sessionXP} XP
+            </div>
           </div>
           <div className="flex gap-1">
             {['₹', '₹', '₹'].map((r, i) => <span key={i} className="text-amber-400 text-base md:text-lg">{r}</span>)}

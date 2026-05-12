@@ -40,6 +40,7 @@ export default function JungleFight({ onClose }: { onClose?: () => void }) {
   const [animating, setAnimating] = useState<"player" | "creature" | "projectile" | "creature-projectile" | "block" | "impact" | "impact-player" | "defeat" | "creature-entry" | "creature-attack" | null>(null);
   const [feedback, setFeedback] = useState<"correct" | "wrong" | null>(null);
   const [projectileType, setProjectileType] = useState<"🥊" | "🦶">("🥊");
+  const [sessionXP, setSessionXP] = useState(0);
   const { addXP } = usePoints();
 
   const spawnCreature = useCallback((lvl: number) => {
@@ -174,7 +175,9 @@ export default function JungleFight({ onClose }: { onClose?: () => void }) {
 
     if (choice === activeQuestion.answer) {
       setFeedback("correct");
-      addXP(level * 5);
+      const earned = level * 5;
+      addXP(earned);
+      setSessionXP(prev => prev + earned);
       setGameState("fighting");
       
       setAnimating("block");
@@ -481,11 +484,16 @@ export default function JungleFight({ onClose }: { onClose?: () => void }) {
 
         {gameState === "gameover" && (
           <div className="h-full flex flex-col items-center justify-center space-y-5 animate-in fade-in zoom-in-95">
-            <div className="flex items-center gap-5 text-rose-500 drop-shadow-2xl scale-125">
-               <Trophy className="w-14 h-14" />
-               <h2 className="text-6xl font-black italic tracking-tighter">DEFEATED</h2>
+            <div className="flex flex-col items-center gap-2 text-rose-500 drop-shadow-2xl">
+               <div className="flex items-center gap-5">
+                 <Trophy className="w-14 h-14" />
+                 <h2 className="text-6xl font-black italic tracking-tighter uppercase">Defeated</h2>
+               </div>
+               <div className="flex items-center gap-2 bg-yellow-100 text-yellow-700 px-4 py-1 rounded-full font-bold text-sm shadow-inner">
+                 <Sparkles size={14} /> +{sessionXP} XP मिळाले
+               </div>
             </div>
-            <p className="text-slate-400 font-black tracking-[10px] uppercase text-sm">Best Score: {kills}</p>
+            <p className="text-slate-400 font-black tracking-[10px] uppercase text-[10px]">Best Score: {kills}</p>
             <button 
               onClick={startGame}
               className="px-12 py-5 bg-white text-slate-900 font-black rounded-2xl shadow-2xl hover:scale-110 transition-all flex items-center gap-3 border-b-8 border-slate-200"

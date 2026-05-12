@@ -29,6 +29,7 @@ export default function WasteSort({ onClose }: { onClose?: () => void }) {
   const [feedback, setFeedback] = useState<"correct" | "wrong" | null>(null);
   const [itemPool, setItemPool] = useState<TrashItem[]>(TRASH_ITEMS);
   const [isAiLoading, setIsAiLoading] = useState(false);
+  const [sessionXP, setSessionXP] = useState(0);
   const { addXP } = usePoints();
 
   const fetchAiItems = async () => {
@@ -52,6 +53,7 @@ export default function WasteSort({ onClose }: { onClose?: () => void }) {
       setScore(s => s + 10);
       setFeedback("correct");
       addXP(5);
+      setSessionXP(prev => prev + 5);
     } else {
       setFeedback("wrong");
     }
@@ -153,7 +155,12 @@ export default function WasteSort({ onClose }: { onClose?: () => void }) {
           <div className="text-center space-y-6 animate-in zoom-in duration-500">
             <CheckCircle2 className="w-24 h-24 text-emerald-500 mx-auto" />
             <h2 className="text-5xl font-black text-orange-950">मस्तच!</h2>
-            <p className="text-orange-700 text-2xl font-bold">तुमचा स्कोअर: {score}</p>
+            <div className="flex flex-col items-center gap-2">
+              <p className="text-orange-700 text-2xl font-bold">तुमचा स्कोअर: {score}</p>
+              <div className="flex items-center gap-2 bg-yellow-100 text-yellow-700 px-6 py-2 rounded-full font-black text-xl shadow-inner animate-bounce">
+                 <Sparkles className="animate-pulse" /> +{sessionXP} XP मिळाले
+              </div>
+            </div>
             <p className="text-slate-500 font-bold text-xl italic">कचरा वेगळा करा, पृथ्वीला मदत करा! 🌍</p>
             <div className="flex gap-4 justify-center">
               <button 

@@ -96,6 +96,7 @@ export default function BuddyBigDay({ onClose }: { onClose?: () => void }) {
   const [heartValue, setHeartValue] = useState(50); // 0 to 100
   const [selectedChoiceIdx, setSelectedChoiceIdx] = useState<number | null>(null);
   const [isAiMode, setIsAiMode] = useState(false);
+  const [sessionXP, setSessionXP] = useState(0);
   const { addXP } = usePoints();
 
   const chapter = chapters[currentChapterIdx];
@@ -128,7 +129,10 @@ export default function BuddyBigDay({ onClose }: { onClose?: () => void }) {
 
   const nextStep = () => {
     const choice = chapter.choices[selectedChoiceIdx!];
-    if (choice.impact > 0) addXP(choice.impact);
+    if (choice.impact > 0) {
+      addXP(choice.impact);
+      setSessionXP(prev => prev + choice.impact);
+    }
 
     setTimeout(() => {
       if (currentChapterIdx < chapters.length - 1) {
@@ -283,7 +287,12 @@ export default function BuddyBigDay({ onClose }: { onClose?: () => void }) {
              </div>
              <div className="space-y-2">
                <h2 className="text-3xl md:text-5xl font-black text-rose-950">तू खरा नायक आहेस!</h2>
-               <p className="text-slate-500 text-lg md:text-xl font-medium">तुमची दयाळूपणाची पातळी: {heartValue}%</p>
+               <div className="flex flex-col items-center gap-1">
+                 <p className="text-slate-500 text-lg md:text-xl font-medium">तुमची दयाळूपणाची पातळी: {heartValue}%</p>
+                 <div className="flex items-center gap-2 bg-yellow-100 text-yellow-700 px-4 py-1 rounded-full font-bold text-sm">
+                   <Sparkles size={14} /> +{sessionXP} XP मिळाले
+                 </div>
+               </div>
              </div>
              <div className="flex flex-col md:flex-row gap-4 justify-center">
                <button 
