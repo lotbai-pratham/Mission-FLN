@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { Heart, Flower, Sun, CloudRain, ArrowRight, RefreshCw, Star, Info, Users, Home, Smile } from "lucide-react";
+import { Heart, Flower, Sun, CloudRain, ArrowRight, RefreshCw, Star, Info, Users, Home, Smile, Trophy } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface Scenario {
