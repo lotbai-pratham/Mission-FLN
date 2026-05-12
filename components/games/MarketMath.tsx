@@ -52,7 +52,7 @@ export default function MarketMath() {
   const [feedback, setFeedback] = useState<'correct' | 'wrong' | null>(null);
   const [questionPool, setQuestionPool] = useState<any[]>([]);
   const [isAiLoading, setIsAiLoading] = useState(false);
-  const { addPoints } = usePoints();
+  const { addXP } = usePoints();
 
   const fetchAiQuestions = async () => {
     setIsAiLoading(true);
@@ -93,7 +93,7 @@ export default function MarketMath() {
     setTotal(t => t + 1);
     if (correct) {
       setScore(s => s + 1);
-      addPoints(10);
+      addXP(10);
     }
     setTimeout(() => {
       nextRound();

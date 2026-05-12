@@ -29,7 +29,7 @@ export default function WasteSort({ onClose }: { onClose?: () => void }) {
   const [feedback, setFeedback] = useState<"correct" | "wrong" | null>(null);
   const [itemPool, setItemPool] = useState<TrashItem[]>(TRASH_ITEMS);
   const [isAiLoading, setIsAiLoading] = useState(false);
-  const { addPoints } = usePoints();
+  const { addXP } = usePoints();
 
   const fetchAiItems = async () => {
     setIsAiLoading(true);
@@ -51,7 +51,7 @@ export default function WasteSort({ onClose }: { onClose?: () => void }) {
     if (item.type === type) {
       setScore(s => s + 10);
       setFeedback("correct");
-      addPoints(5);
+      addXP(5);
     } else {
       setFeedback("wrong");
     }

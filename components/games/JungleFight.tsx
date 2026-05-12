@@ -40,7 +40,7 @@ export default function JungleFight({ onClose }: { onClose?: () => void }) {
   const [animating, setAnimating] = useState<"player" | "creature" | "projectile" | "creature-projectile" | "block" | "impact" | "impact-player" | "defeat" | "creature-entry" | "creature-attack" | null>(null);
   const [feedback, setFeedback] = useState<"correct" | "wrong" | null>(null);
   const [projectileType, setProjectileType] = useState<"🥊" | "🦶">("🥊");
-  const { addPoints } = usePoints();
+  const { addXP } = usePoints();
 
   const spawnCreature = useCallback((lvl: number) => {
     const c = CREATURES[Math.floor(Math.random() * CREATURES.length)];
@@ -174,7 +174,7 @@ export default function JungleFight({ onClose }: { onClose?: () => void }) {
 
     if (choice === activeQuestion.answer) {
       setFeedback("correct");
-      addPoints(level * 5);
+      addXP(level * 5);
       setGameState("fighting");
       
       setAnimating("block");

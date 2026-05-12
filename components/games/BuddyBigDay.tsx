@@ -96,7 +96,7 @@ export default function BuddyBigDay({ onClose }: { onClose?: () => void }) {
   const [heartValue, setHeartValue] = useState(50); // 0 to 100
   const [selectedChoiceIdx, setSelectedChoiceIdx] = useState<number | null>(null);
   const [isAiMode, setIsAiMode] = useState(false);
-  const { addPoints } = usePoints();
+  const { addXP } = usePoints();
 
   const chapter = chapters[currentChapterIdx];
 
@@ -128,7 +128,7 @@ export default function BuddyBigDay({ onClose }: { onClose?: () => void }) {
 
   const nextStep = () => {
     const choice = chapter.choices[selectedChoiceIdx!];
-    if (choice.impact > 0) addPoints(choice.impact);
+    if (choice.impact > 0) addXP(choice.impact);
 
     setTimeout(() => {
       if (currentChapterIdx < chapters.length - 1) {

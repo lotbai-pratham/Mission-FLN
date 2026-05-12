@@ -28,7 +28,7 @@ export default function LetterPicker() {
   const [shuffled] = useState(() => shuffle(ROUNDS));
   const [questionPool, setQuestionPool] = useState<any[]>([]);
   const [isAiLoading, setIsAiLoading] = useState(false);
-  const { addPoints } = usePoints();
+  const { addXP } = usePoints();
 
   const fetchAiQuestions = async () => {
     setIsAiLoading(true);
@@ -68,7 +68,7 @@ export default function LetterPicker() {
     setFeedback(correct ? 'correct' : 'wrong');
     if (correct) {
       setScore(s => s + 1);
-      addPoints(5);
+      addXP(5);
     }
     setTimeout(() => {
       nextRound();
