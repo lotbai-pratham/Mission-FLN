@@ -189,23 +189,23 @@ export default function BuddyBigDay({ onClose }: { onClose?: () => void }) {
           <div className="w-full max-w-5xl grid lg:grid-cols-2 gap-16 items-center animate-in fade-in slide-in-from-right-12 duration-700">
              <div className="relative group">
                 <div className="absolute -inset-4 bg-gradient-to-tr from-rose-500 to-indigo-500 rounded-[60px] opacity-20 blur-2xl group-hover:opacity-30 transition-opacity" />
-                <div className="relative bg-white/60 backdrop-blur-md p-12 rounded-[56px] border border-white/40 shadow-2xl text-center">
-                   <div className="text-[160px] mb-8 select-none filter drop-shadow-2xl">{chapter.imageEmoji}</div>
-                   <h2 className="text-3xl font-black text-slate-800 leading-relaxed italic">"{chapter.situation}"</h2>
+                 <div className="relative bg-white/60 backdrop-blur-md p-6 md:p-12 rounded-[32px] md:rounded-[56px] border border-white/40 shadow-2xl text-center">
+                   <div className="text-7xl md:text-[160px] mb-4 md:mb-8 select-none filter drop-shadow-2xl">{chapter.imageEmoji}</div>
+                   <h2 className="text-xl md:text-3xl font-black text-slate-800 leading-relaxed italic">"{chapter.situation}"</h2>
                 </div>
              </div>
 
-             <div className="space-y-4">
-                <p className="text-center font-black text-slate-400 uppercase tracking-[6px] text-xs mb-8">आता तुमची पाळी आहे...</p>
+              <div className="space-y-2 md:space-y-4">
+                 <p className="text-center font-black text-slate-400 uppercase tracking-[4px] md:tracking-[6px] text-[10px] mb-4 md:mb-8">आता तुमची पाळी आहे...</p>
                 {chapter.choices.map((choice, i) => (
                   <button
                     key={i}
                     onClick={() => handleChoice(i)}
-                    className="w-full p-4 md:p-8 bg-white hover:bg-rose-50 border-2 border-transparent hover:border-rose-200 rounded-[24px] md:rounded-[32px] text-left transition-all shadow-xl hover:-translate-x-3 group flex items-center justify-between"
+                    className="w-full p-4 md:p-8 bg-white hover:bg-rose-50 border-2 border-transparent hover:border-rose-200 rounded-2xl md:rounded-[32px] text-left transition-all shadow-xl md:hover:-translate-x-3 group flex items-center justify-between"
                   >
-                    <span className="text-sm md:text-xl font-bold text-slate-700 leading-tight group-hover:text-rose-600 transition-colors">{choice.text}</span>
-                    <div className="w-8 h-8 md:w-12 md:h-12 bg-slate-50 rounded-xl md:rounded-2xl flex items-center justify-center text-slate-300 group-hover:bg-rose-500 group-hover:text-white transition-all">
-                       <ArrowRight size={24} />
+                    <span className="text-xs md:text-xl font-bold text-slate-700 leading-tight group-hover:text-rose-600 transition-colors">{choice.text}</span>
+                    <div className="w-6 h-6 md:w-12 md:h-12 bg-slate-50 rounded-lg md:rounded-2xl flex items-center justify-center text-slate-300 group-hover:bg-rose-500 group-hover:text-white transition-all">
+                       <ArrowRight className="w-4 h-4 md:w-6 md:h-6" />
                     </div>
                   </button>
                 ))}

@@ -443,7 +443,7 @@ export default function SimulationsPage() {
               ref={containerRef} 
               className={cn(
                 "bg-white dark:bg-slate-900/40 rounded-[2rem] p-1 md:p-8 border border-slate-200 dark:border-slate-800 shadow-2xl relative transition-all duration-500 min-h-[400px] md:min-h-[600px] flex items-center justify-center",
-                forceLandscape ? "fixed inset-0 z-[9999] bg-slate-950 rounded-none border-none p-0 flex items-center justify-center overflow-hidden" : "overflow-auto"
+                forceLandscape ? "fixed inset-0 z-[9999] bg-slate-950 rounded-none border-none p-0 flex items-center justify-center overflow-auto" : "overflow-auto"
               )}
               style={forceLandscape ? {
                 width: '100vh',

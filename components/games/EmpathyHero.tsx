@@ -183,15 +183,15 @@ export default function EmpathyHero({ onClose }: { onClose?: () => void }) {
           {(gameState === "feeling" || gameState === "action" || gameState === "result") && (
             <div className="w-full max-w-4xl grid lg:grid-cols-2 gap-12 items-center animate-in fade-in slide-in-from-bottom-8 duration-700">
               {/* Situation Card */}
-              <div className="bg-white rounded-[40px] p-8 shadow-2xl border-b-8 border-slate-100 relative group overflow-hidden">
+              <div className="bg-white rounded-[32px] md:rounded-[40px] p-6 md:p-8 shadow-2xl border-b-8 border-slate-100 relative group overflow-hidden">
                 <div className="absolute top-0 right-0 p-6 opacity-5 group-hover:opacity-10 transition-opacity"><Smile size={120} /></div>
-                <div className="relative z-10 space-y-6">
-                  <div className="w-16 h-16 md:w-20 md:h-20 bg-indigo-50 rounded-2xl flex items-center justify-center text-3xl md:text-5xl shadow-inner">
+                <div className="relative z-10 space-y-4 md:space-y-6">
+                  <div className="w-14 h-14 md:w-20 md:h-20 bg-indigo-50 rounded-2xl flex items-center justify-center text-3xl md:text-5xl shadow-inner">
                     {scenario.emoji}
                   </div>
-                  <div className="space-y-2">
-                    <p className="text-[10px] font-black uppercase tracking-[3px] text-indigo-400">परिस्थिती</p>
-                    <h2 className="text-2xl font-black text-slate-800 leading-snug">{scenario.situation}</h2>
+                  <div className="space-y-1 md:space-y-2">
+                    <p className="text-[9px] md:text-[10px] font-black uppercase tracking-[3px] text-indigo-400">परिस्थिती</p>
+                    <h2 className="text-lg md:text-2xl font-black text-slate-800 leading-tight md:leading-snug">{scenario.situation}</h2>
                   </div>
                 </div>
               </div>
@@ -201,13 +201,13 @@ export default function EmpathyHero({ onClose }: { onClose?: () => void }) {
                 {gameState === "feeling" && (
                   <>
                     <p className="text-center font-black text-slate-400 uppercase tracking-widest text-xs">{scenario.character} ला कसे वाटत असेल?</p>
-                    <div className="grid grid-cols-2 gap-4">
-                      {scenario.emotions.map((emo, i) => (
+                    <div className="grid grid-cols-2 gap-3 md:gap-4">
+                       {scenario.emotions.map((emo, i) => (
                         <button
                           key={i}
                           onClick={() => handleEmotionSelect(emo)}
                           className={cn(
-                            "p-3 md:p-5 bg-white hover:bg-rose-50 border-2 border-transparent hover:border-rose-200 rounded-2xl md:rounded-3xl font-black text-xs md:text-base text-slate-700 transition-all shadow-lg hover:-translate-y-1 active:translate-y-0",
+                            "p-3 md:p-5 bg-white hover:bg-rose-50 border-2 border-transparent hover:border-rose-200 rounded-xl md:rounded-3xl font-black text-[10px] md:text-base text-slate-700 transition-all shadow-lg hover:-translate-y-1 active:translate-y-0",
                             selectedEmotion === emo && emo === scenario.correctEmotion && "border-emerald-500 bg-emerald-50 text-emerald-700",
                             selectedEmotion === emo && emo !== scenario.correctEmotion && "border-rose-500 bg-rose-50 text-rose-700 opacity-50"
                           )}
@@ -222,13 +222,13 @@ export default function EmpathyHero({ onClose }: { onClose?: () => void }) {
                 {gameState === "action" && (
                   <>
                     <p className="text-center font-black text-slate-400 uppercase tracking-widest text-xs">तुम्ही मदत करण्यासाठी काय कराल?</p>
-                    <div className="space-y-3">
+                    <div className="space-y-2 md:space-y-3">
                       {scenario.actions.map((act, i) => (
                         <button
                           key={i}
                           onClick={() => handleActionSelect(act)}
                           className={cn(
-                            "w-full p-5 bg-white hover:bg-indigo-50 border-2 border-transparent hover:border-indigo-200 rounded-3xl font-bold text-slate-700 text-left transition-all shadow-lg hover:-translate-x-1",
+                            "w-full p-3 md:p-5 bg-white hover:bg-indigo-50 border-2 border-transparent hover:border-indigo-200 rounded-xl md:rounded-3xl font-bold text-slate-700 text-left transition-all shadow-lg text-xs md:text-base hover:-translate-x-1",
                             selectedAction === act && act === scenario.bestAction && "border-emerald-500 bg-emerald-50 text-emerald-700",
                             selectedAction === act && act !== scenario.bestAction && "border-amber-500 bg-amber-50 text-amber-700"
                           )}
