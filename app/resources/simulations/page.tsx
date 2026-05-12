@@ -65,6 +65,7 @@ import AksharCrush from "@/components/simulations/AksharCrush";
 import MatraChakra from "@/components/simulations/MatraChakra";
 import GyanSidi from "@/components/simulations/GyanSidi";
 import JungleFight from "@/components/games/JungleFight";
+import EmpathyHero from "@/components/games/EmpathyHero";
 
 type Item = {
   id: string;
@@ -140,6 +141,7 @@ const GAMES: Item[] = [
   { id: "g-sorting",  title: "Sorting Hat",        level: "Cross-level", battleLevel: 0, subject: "Bonus",    emoji: "🎩", component: (p) => <SortingHat {...p} /> },
   { id: "g-matra",   title: "Matra Practice",     level: "Word",        battleLevel: 2, subject: "Literacy", emoji: "ि",  tag: "Marathi", component: (p) => <MatraPractice {...p} /> },
   { id: "g-jungle",  title: "Jungle Fight",       level: "Operations",  battleLevel: 3, subject: "Mixed",    emoji: "🐅", tag: "Featured", component: (p) => <JungleFight {...p} /> },
+  { id: "g-empathy", title: "Empathy Hero",       level: "Social Skills", battleLevel: 0, subject: "SEL",      emoji: "❤️", tag: "Featured", component: (p) => <EmpathyHero {...p} /> },
 ];
 
 const ALL = [...SIMS, ...GAMES];
@@ -149,6 +151,7 @@ const SECTIONS = [
   { label: "⚡ Battle Arena",         filter: (i: Item) => i.subject === "Battle",   accent: "from-orange-500 to-red-500",   glow: "shadow-orange-500/40",  ring: "ring-orange-400",   active: "bg-gradient-to-r from-orange-500 to-red-500 text-white" },
   { label: "📦 Numeracy Simulations", filter: (i: Item) => i.subject === "Math" || i.subject === "Numeracy",     accent: "from-blue-500 to-indigo-600",  glow: "shadow-blue-500/40",    ring: "ring-blue-400",     active: "bg-gradient-to-r from-blue-500 to-indigo-600 text-white" },
   { label: "📜 Literacy Simulations", filter: (i: Item) => i.subject === "Literacy", accent: "from-violet-500 to-purple-600", glow: "shadow-violet-500/40", ring: "ring-violet-400", active: "bg-gradient-to-r from-violet-500 to-purple-600 text-white" },
+  { label: "❤️ Social Emotional",     filter: (i: Item) => i.subject === "SEL",      accent: "from-rose-400 to-pink-500",    glow: "shadow-rose-500/40",    ring: "ring-rose-400",     active: "bg-gradient-to-r from-rose-400 to-pink-500 text-white" },
   { label: "🎁 Bonus",                filter: (i: Item) => (i.subject === "Bonus" || i.subject === "Mixed"),    accent: "from-pink-500 to-rose-500",    glow: "shadow-pink-500/40",    ring: "ring-pink-400",     active: "bg-gradient-to-r from-pink-500 to-rose-500 text-white" },
 ];
 
