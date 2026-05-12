@@ -70,7 +70,7 @@ export default function JungleFight({ onClose }: { onClose?: () => void }) {
         } else {
           ans = n1 + n2;
         }
-      } else {
+      } else if (level === 3) {
         n1 = Math.floor(Math.random() * 50) + 20;
         n2 = Math.floor(Math.random() * 50) + 10;
         op = Math.random() > 0.5 ? "+" : "-";

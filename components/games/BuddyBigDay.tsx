@@ -127,7 +127,8 @@ export default function BuddyBigDay({ onClose }: { onClose?: () => void }) {
   };
 
   const nextStep = () => {
-    if (chapter.choices[selectedChoiceIdx!].impact > 0) addPoints(chapter.choices[selectedChoiceIdx!].impact);
+    const choice = chapter.choices[selectedChoiceIdx!];
+    if (choice.impact > 0) addPoints(choice.impact);
 
     setTimeout(() => {
       if (currentChapterIdx < chapters.length - 1) {
@@ -293,6 +294,17 @@ export default function BuddyBigDay({ onClose }: { onClose?: () => void }) {
                </button>
                <button 
                  onClick={restart}
+                 className="px-10 py-4 bg-white text-slate-900 font-black rounded-2xl shadow-xl hover:scale-105 transition-all border-b-4 border-slate-100 flex items-center gap-2 justify-center"
+               >
+                 <RefreshCw size={20} /> पुन्हा खेळा
+               </button>
+               {onClose && (
+                 <button 
+                  onClick={onClose}
+                  className="px-10 py-4 bg-rose-500 text-white font-black rounded-2xl shadow-xl hover:scale-105 transition-all flex items-center gap-2 justify-center"
+                >
+                  <Home size={20} /> आर्केडवर परत जा
+                </button>
                )}
              </div>
           </div>
