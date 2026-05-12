@@ -193,6 +193,8 @@ function SimulationsContent() {
       if (found) {
         setActiveId(gameId);
       }
+    } else {
+      setActiveId(null);
     }
   }, [searchParams]);
 
@@ -203,7 +205,7 @@ function SimulationsContent() {
     } else {
       params.delete('id');
     }
-    router.push(`?${params.toString()}`, { scroll: false });
+    router.replace(`?${params.toString()}`, { scroll: false });
   };
   useEffect(() => {
     const checkOrientation = () => {
@@ -218,13 +220,6 @@ function SimulationsContent() {
   useEffect(() => {
     const saved = localStorage.getItem('arcade_hidden_sims');
     if (saved) setHiddenIds(JSON.parse(saved));
-    
-    // Read active ID from URL
-    const params = new URLSearchParams(window.location.search);
-    const id = params.get('id');
-    if (id && ALL.some(i => i.id === id)) {
-      setActiveId(id);
-    }
 
     const observer = new ResizeObserver((entries) => {
       const entry = entries[0];
@@ -281,6 +276,7 @@ function SimulationsContent() {
   const closeArena = () => {
     setBattleContext(null);
     setShowMatchmaker(false);
+    handleBackToLibrary();
   };
 
   const active = activeId ? ALL.find(s => s.id === activeId) : null;
