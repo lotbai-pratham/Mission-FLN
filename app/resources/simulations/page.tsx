@@ -269,7 +269,7 @@ function SimulationsContent() {
     setActiveId(null);
     setBattleContext(null);
     setShowMatchmaker(false);
-    window.history.pushState({}, '', window.location.pathname);
+    updateUrl(null);
     window.scrollTo({ top: 0, behavior: 'smooth' });
     setDismissPortraitWarning(false);
     setForceLandscape(false);
@@ -538,5 +538,18 @@ function StatBadge({ icon, label, value, color, shadow }: { icon: string; label:
     </div>
   );
 }
-e x p o r t   d e f a u l t   f u n c t i o n   S i m u l a t i o n s P a g e ( )   {   r e t u r n   (   < S u s p e n s e   f a l l b a c k = {   < d i v   c l a s s N a m e = ' m i n - h - s c r e e n   f l e x   i t e m s - c e n t e r   j u s t i f y - c e n t e r   b g - s l a t e - 9 5 0 ' >   < d i v   c l a s s N a m e = ' f l e x   f l e x - c o l   i t e m s - c e n t e r   g a p - 4 ' >   < d i v   c l a s s N a m e = ' w - 1 2   h - 1 2   b o r d e r - 4   b o r d e r - o r a n g e - 5 0 0   b o r d e r - t - t r a n s p a r e n t   r o u n d e d - f u l l   a n i m a t e - s p i n '   / >   < p   c l a s s N a m e = ' t e x t - s l a t e - 4 0 0   f o n t - b o l d   a n i m a t e - p u l s e ' > L o a d i n g   A r c a d e . . . < / p >   < / d i v >   < / d i v >   } >   < S i m u l a t i o n s C o n t e n t   / >   < / S u s p e n s e >   ) ;   }  
- 
+
+export default function SimulationsPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center bg-slate-950">
+        <div className="flex flex-col items-center gap-4">
+          <div className="w-12 h-12 border-4 border-orange-500 border-t-transparent rounded-full animate-spin" />
+          <p className="text-slate-400 font-bold animate-pulse">Loading Arcade...</p>
+        </div>
+      </div>
+    }>
+      <SimulationsContent />
+    </Suspense>
+  );
+}
