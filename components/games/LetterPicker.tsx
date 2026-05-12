@@ -1,5 +1,7 @@
-"use client";
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { generateGameQuestions } from '@/app/actions/ai';
+import { usePoints } from '@/lib/points-store';
+import { Sparkles } from 'lucide-react';
 
 const ROUNDS = [
   { prompt: 'हे अक्षर शोधा:  क', target: 'क', options: ['क', 'ख', 'ग', 'घ', 'च', 'छ'] },
@@ -24,17 +26,52 @@ export default function LetterPicker() {
   const [feedback, setFeedback] = useState<'correct' | 'wrong' | null>(null);
   const [chosen, setChosen] = useState<string | null>(null);
   const [shuffled] = useState(() => shuffle(ROUNDS));
+  const [questionPool, setQuestionPool] = useState<any[]>([]);
+  const [isAiLoading, setIsAiLoading] = useState(false);
+  const { addPoints } = usePoints();
 
-  const round = shuffled[idx % shuffled.length];
+  const fetchAiQuestions = async () => {
+    setIsAiLoading(true);
+    const questions = await generateGameQuestions('letter-explorer', Math.floor(score/10) + 1, 5);
+    if (questions && questions.length > 0) {
+      setQuestionPool(prev => [...prev, ...questions]);
+    }
+    setIsAiLoading(false);
+  };
+
+  useEffect(() => {
+    fetchAiQuestions();
+  }, []);
+
+  const [round, setRound] = useState(shuffled[0]);
+
+  function nextRound() {
+    if (questionPool.length > 0) {
+      const q = questionPool[0];
+      setQuestionPool(prev => prev.slice(1));
+      setRound({
+        prompt: `हे अक्षर शोधा: ${q.a}`,
+        target: q.a,
+        options: q.options
+      });
+      if (questionPool.length < 2) fetchAiQuestions();
+    } else {
+      setRound(shuffled[(idx + 1) % shuffled.length]);
+    }
+    setIdx(i => i + 1);
+  }
 
   function pick(letter: string) {
     if (feedback) return;
     setChosen(letter);
     const correct = letter === round.target;
     setFeedback(correct ? 'correct' : 'wrong');
-    if (correct) setScore(s => s + 1);
+    if (correct) {
+      setScore(s => s + 1);
+      addPoints(5);
+    }
     setTimeout(() => {
-      setIdx(i => i + 1);
+      nextRound();
       setFeedback(null);
       setChosen(null);
     }, 1100);
@@ -43,7 +80,10 @@ export default function LetterPicker() {
   return (
     <div className="bg-white dark:bg-slate-900 rounded-3xl p-8 border border-green-100 shadow-sm space-y-8">
       <div className="flex justify-between items-center">
-        <span className="text-sm font-bold text-green-600 bg-green-50 px-3 py-1 rounded-full">गुण: {score}/{idx}</span>
+        <div className="flex items-center gap-2">
+          <span className="text-sm font-bold text-green-600 bg-green-50 px-3 py-1 rounded-full">गुण: {score}/{idx}</span>
+          {isAiLoading && <Sparkles className="w-4 h-4 text-green-400 animate-pulse" />}
+        </div>
         <span className="text-2xl">🔤</span>
       </div>
 

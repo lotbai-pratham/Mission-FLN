@@ -1,7 +1,8 @@
-"use client";
 import React, { useState, useEffect, useCallback } from "react";
-import { Timer, Trophy, RefreshCw, ArrowLeft, Zap, Trash2, CheckCircle2 } from "lucide-react";
+import { Timer, Trophy, RefreshCw, ArrowLeft, Zap, Trash2, CheckCircle2, Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { generateGameQuestions } from "@/app/actions/ai";
+import { usePoints } from "@/lib/points-store";
 
 interface TrashItem {
   id: number;
@@ -26,20 +27,40 @@ export default function WasteSort({ onClose }: { onClose?: () => void }) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [score, setScore] = useState(0);
   const [feedback, setFeedback] = useState<"correct" | "wrong" | null>(null);
+  const [itemPool, setItemPool] = useState<TrashItem[]>(TRASH_ITEMS);
+  const [isAiLoading, setIsAiLoading] = useState(false);
+  const { addPoints } = usePoints();
+
+  const fetchAiItems = async () => {
+    setIsAiLoading(true);
+    const questions = await generateGameQuestions('waste-sort', 1, 5);
+    if (questions && questions.length > 0) {
+      const newItems: TrashItem[] = questions.map((q: any, i: number) => ({
+        id: Date.now() + i,
+        emoji: q.options[0], // AI provides emoji in options
+        name: q.q,
+        type: q.a === 'wet' || q.a.includes('ओला') ? 'wet' : 'dry'
+      }));
+      setItemPool(prev => [...prev, ...newItems]);
+    }
+    setIsAiLoading(false);
+  };
 
   const handleSort = (type: "wet" | "dry") => {
-    const item = TRASH_ITEMS[currentIndex];
+    const item = itemPool[currentIndex];
     if (item.type === type) {
       setScore(s => s + 10);
       setFeedback("correct");
+      addPoints(5);
     } else {
       setFeedback("wrong");
     }
 
     setTimeout(() => {
       setFeedback(null);
-      if (currentIndex < TRASH_ITEMS.length - 1) {
+      if (currentIndex < itemPool.length - 1) {
         setCurrentIndex(c => c + 1);
+        if (itemPool.length - currentIndex < 3) fetchAiItems();
       } else {
         setGameState("complete");
       }
@@ -60,7 +81,8 @@ export default function WasteSort({ onClose }: { onClose?: () => void }) {
           <Trophy className="text-orange-500" />
           <span className="font-black text-orange-900 text-xl">{score}</span>
         </div>
-        <div className="flex gap-2">
+        <div className="flex gap-2 items-center">
+          {isAiLoading && <Sparkles className="w-4 h-4 text-orange-400 animate-pulse" />}
           <Trash2 className="text-orange-400" />
           <span className="font-black text-slate-400 uppercase tracking-widest text-xs">कचरा व्यवस्थापन</span>
         </div>
@@ -94,8 +116,8 @@ export default function WasteSort({ onClose }: { onClose?: () => void }) {
               feedback === "correct" ? "border-emerald-400 scale-110" : 
               feedback === "wrong" ? "border-rose-400 animate-shake" : "border-slate-50"
             )}>
-              <div className="text-6xl md:text-[100px] leading-none">{TRASH_ITEMS[currentIndex].emoji}</div>
-              <p className="font-black text-slate-600 uppercase tracking-widest text-[10px] md:text-sm">{TRASH_ITEMS[currentIndex].name}</p>
+              <div className="text-6xl md:text-[100px] leading-none">{itemPool[currentIndex].emoji}</div>
+              <p className="font-black text-slate-600 uppercase tracking-widest text-[10px] md:text-sm">{itemPool[currentIndex].name}</p>
               
               {feedback && (
                 <div className="absolute inset-0 flex items-center justify-center bg-white/80 rounded-[36px]">
