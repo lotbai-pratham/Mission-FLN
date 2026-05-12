@@ -471,8 +471,8 @@ export default function SimulationsPage() {
                     ? `scale(${Math.min(window.innerHeight / 1152, window.innerWidth / 648)})` 
                     : `scale(${isPortrait ? (containerRef.current?.clientWidth || 390) / 1152 : scale})`,
                   width: activeId ? '1152px' : '100%',
-                  height: activeId ? (isPortrait && !forceLandscape ? 'auto' : '648px') : '100%',
-                  minHeight: (isPortrait && !forceLandscape) ? '800px' : 'auto'
+                  height: activeId ? (isPortrait && !forceLandscape ? 'auto' : 'auto') : '100%',
+                  minHeight: activeId ? '648px' : 'auto'
                 }}
               >
                 {active.component({ 
