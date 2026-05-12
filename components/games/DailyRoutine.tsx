@@ -48,7 +48,7 @@ export default function DailyRoutine({ onClose }: { onClose?: () => void }) {
   };
 
   return (
-    <div className="relative w-full aspect-video min-h-[400px] bg-gradient-to-br from-indigo-50 to-purple-50 rounded-[40px] overflow-hidden border-8 border-white shadow-2xl flex flex-col font-sans">
+    <div className="relative w-full aspect-video md:min-h-[400px] min-h-[300px] bg-gradient-to-br from-indigo-50 to-purple-50 rounded-[40px] overflow-hidden border-4 md:border-8 border-white shadow-2xl flex flex-col font-sans">
       {/* Header */}
       <div className="relative z-10 p-6 flex justify-between items-center">
         <div className="bg-white/80 backdrop-blur-md px-6 py-2 rounded-2xl shadow-sm border border-indigo-100 flex items-center gap-3">
@@ -83,14 +83,14 @@ export default function DailyRoutine({ onClose }: { onClose?: () => void }) {
               {currentSteps.map((step, i) => (
                 <div 
                   key={step.id}
-                  className="flex items-center gap-4 bg-white p-4 rounded-2xl shadow-md border-b-4 border-slate-100 group hover:border-indigo-200 transition-all"
+                  className="flex items-center gap-2 md:gap-4 bg-white p-2 md:p-4 rounded-xl md:rounded-2xl shadow-md border-b-4 border-slate-100 group hover:border-indigo-200 transition-all"
                 >
-                  <div className="flex flex-col gap-1 items-center">
+                  <div className="flex flex-col gap-1 items-center scale-90">
                     <button onClick={() => i > 0 && moveStep(i, i - 1)} className="text-slate-300 hover:text-indigo-500 disabled:opacity-0" disabled={i === 0}>▲</button>
                     <button onClick={() => i < currentSteps.length - 1 && moveStep(i, i + 1)} className="text-slate-300 hover:text-indigo-500 disabled:opacity-0" disabled={i === currentSteps.length - 1}>▼</button>
                   </div>
-                  <div className="text-4xl">{step.emoji}</div>
-                  <div className="flex-1 font-bold text-slate-700 text-lg">{step.text}</div>
+                  <div className="text-2xl md:text-4xl">{step.emoji}</div>
+                  <div className="flex-1 font-bold text-slate-700 text-sm md:text-lg">{step.text}</div>
                   <div className="w-10 h-10 bg-slate-50 rounded-full flex items-center justify-center font-black text-slate-300">
                     {i + 1}
                   </div>

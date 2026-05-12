@@ -53,7 +53,7 @@ export default function WasteSort({ onClose }: { onClose?: () => void }) {
   };
 
   return (
-    <div className="relative w-full aspect-video min-h-[400px] bg-gradient-to-br from-orange-50 to-amber-50 rounded-[40px] overflow-hidden border-8 border-white shadow-2xl flex flex-col font-sans">
+    <div className="relative w-full aspect-video md:min-h-[400px] min-h-[300px] bg-gradient-to-br from-orange-50 to-amber-50 rounded-[40px] overflow-hidden border-4 md:border-8 border-white shadow-2xl flex flex-col font-sans">
       {/* Header */}
       <div className="relative z-10 p-6 flex justify-between items-center">
         <div className="bg-white/80 backdrop-blur-md px-6 py-2 rounded-2xl shadow-sm border border-orange-100 flex items-center gap-3">
@@ -90,12 +90,12 @@ export default function WasteSort({ onClose }: { onClose?: () => void }) {
           <div className="w-full flex flex-col items-center gap-12">
             {/* Current Item Card */}
             <div className={cn(
-              "relative bg-white p-8 rounded-[40px] shadow-2xl border-4 transition-all duration-300 w-64 h-64 flex flex-col items-center justify-center gap-4",
+              "relative bg-white p-4 md:p-8 rounded-[30px] md:rounded-[40px] shadow-2xl border-4 transition-all duration-300 w-40 h-40 md:w-64 md:h-64 flex flex-col items-center justify-center gap-2 md:gap-4",
               feedback === "correct" ? "border-emerald-400 scale-110" : 
               feedback === "wrong" ? "border-rose-400 animate-shake" : "border-slate-50"
             )}>
-              <div className="text-[100px] leading-none">{TRASH_ITEMS[currentIndex].emoji}</div>
-              <p className="font-black text-slate-600 uppercase tracking-widest text-sm">{TRASH_ITEMS[currentIndex].name}</p>
+              <div className="text-6xl md:text-[100px] leading-none">{TRASH_ITEMS[currentIndex].emoji}</div>
+              <p className="font-black text-slate-600 uppercase tracking-widest text-[10px] md:text-sm">{TRASH_ITEMS[currentIndex].name}</p>
               
               {feedback && (
                 <div className="absolute inset-0 flex items-center justify-center bg-white/80 rounded-[36px]">
@@ -105,23 +105,23 @@ export default function WasteSort({ onClose }: { onClose?: () => void }) {
             </div>
 
             {/* Bins */}
-            <div className="flex gap-12 w-full max-w-3xl justify-center">
+            <div className="flex gap-4 md:gap-12 w-full max-w-3xl justify-center">
                <button 
                 onClick={() => !feedback && handleSort("wet")}
-                className="group relative flex-1 max-w-[200px] h-48 bg-emerald-500 hover:bg-emerald-400 rounded-3xl p-6 transition-all shadow-xl hover:-translate-y-2 border-b-8 border-emerald-700 flex flex-col items-center justify-center gap-4"
+                className="group relative flex-1 max-w-[150px] md:max-w-[200px] h-32 md:h-48 bg-emerald-500 hover:bg-emerald-400 rounded-3xl p-4 md:p-6 transition-all shadow-xl hover:-translate-y-2 border-b-8 border-emerald-700 flex flex-col items-center justify-center gap-2 md:gap-4"
                >
-                 <div className="text-6xl group-hover:scale-110 transition-all">🥬</div>
-                 <p className="font-black text-white text-xl uppercase tracking-tighter">ओला कचरा</p>
-                 <div className="absolute -top-3 -right-3 w-10 h-10 bg-white rounded-full flex items-center justify-center text-xl shadow-lg">🟢</div>
+                 <div className="text-4xl md:text-6xl group-hover:scale-110 transition-all">🥬</div>
+                 <p className="font-black text-white text-sm md:text-xl uppercase tracking-tighter">ओला कचरा</p>
+                 <div className="absolute -top-2 -right-2 md:-top-3 md:-right-3 w-8 h-8 md:w-10 md:h-10 bg-white rounded-full flex items-center justify-center text-sm md:text-xl shadow-lg">🟢</div>
                </button>
 
                <button 
                 onClick={() => !feedback && handleSort("dry")}
-                className="group relative flex-1 max-w-[200px] h-48 bg-blue-500 hover:bg-blue-400 rounded-3xl p-6 transition-all shadow-xl hover:-translate-y-2 border-b-8 border-blue-700 flex flex-col items-center justify-center gap-4"
+                className="group relative flex-1 max-w-[150px] md:max-w-[200px] h-32 md:h-48 bg-blue-500 hover:bg-blue-400 rounded-3xl p-4 md:p-6 transition-all shadow-xl hover:-translate-y-2 border-b-8 border-blue-700 flex flex-col items-center justify-center gap-2 md:gap-4"
                >
-                 <div className="text-6xl group-hover:scale-110 transition-all">📄</div>
-                 <p className="font-black text-white text-xl uppercase tracking-tighter">सुका कचरा</p>
-                 <div className="absolute -top-3 -right-3 w-10 h-10 bg-white rounded-full flex items-center justify-center text-xl shadow-lg">🔵</div>
+                 <div className="text-4xl md:text-6xl group-hover:scale-110 transition-all">📄</div>
+                 <p className="font-black text-white text-sm md:text-xl uppercase tracking-tighter">सुका कचरा</p>
+                 <div className="absolute -top-2 -right-2 md:-top-3 md:-right-3 w-8 h-8 md:w-10 md:h-10 bg-white rounded-full flex items-center justify-center text-sm md:text-xl shadow-lg">🔵</div>
                </button>
             </div>
           </div>

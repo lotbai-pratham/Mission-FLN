@@ -123,7 +123,7 @@ export default function EmpathyHero({ onClose }: { onClose?: () => void }) {
   };
 
   return (
-    <div className="relative w-full aspect-video min-h-[500px] bg-gradient-to-br from-pink-50 via-rose-50 to-indigo-50 rounded-[40px] overflow-hidden border-8 border-white shadow-2xl flex flex-col font-sans">
+    <div className="relative w-full aspect-video md:min-h-[500px] min-h-[300px] bg-gradient-to-br from-pink-50 via-rose-50 to-indigo-50 rounded-[40px] overflow-hidden border-4 md:border-8 border-white shadow-2xl flex flex-col font-sans">
       {/* Kindness Garden (Background) */}
       <div className="absolute bottom-0 left-0 right-0 h-32 bg-emerald-100/50 flex items-end px-12 py-4 gap-2 overflow-hidden z-0">
         {garden.map((flower, i) => (
@@ -142,12 +142,12 @@ export default function EmpathyHero({ onClose }: { onClose?: () => void }) {
       <div className="absolute top-10 right-10 text-yellow-400/20 animate-pulse"><Sun size={120} /></div>
 
       {/* Content */}
-      <div className="relative z-10 flex-1 flex flex-col p-8">
+      <div className="relative z-10 flex-1 flex flex-col p-4 md:p-8">
         {/* Header */}
         <div className="flex justify-between items-center mb-8">
-          <div className="flex items-center gap-3 bg-white/80 backdrop-blur-md px-6 py-2.5 rounded-full shadow-sm border border-pink-100">
-            <Heart className="text-rose-500 fill-rose-500 animate-pulse" size={24} />
-            <span className="font-black text-rose-900 uppercase tracking-widest text-sm">सहानुभूती नायक</span>
+          <div className="flex items-center gap-3 bg-white/80 backdrop-blur-md px-4 md:px-6 py-2 md:py-2.5 rounded-full shadow-sm border border-pink-100">
+            <Heart className="text-rose-500 fill-rose-500 animate-pulse" size={18} />
+            <span className="font-black text-rose-900 uppercase tracking-widest text-[10px] md:text-sm">सहानुभूती नायक</span>
           </div>
           <div className="flex gap-4">
             <div className="bg-white/80 backdrop-blur-md px-6 py-2.5 rounded-full shadow-sm border border-emerald-100 flex items-center gap-2">
@@ -186,7 +186,7 @@ export default function EmpathyHero({ onClose }: { onClose?: () => void }) {
               <div className="bg-white rounded-[40px] p-8 shadow-2xl border-b-8 border-slate-100 relative group overflow-hidden">
                 <div className="absolute top-0 right-0 p-6 opacity-5 group-hover:opacity-10 transition-opacity"><Smile size={120} /></div>
                 <div className="relative z-10 space-y-6">
-                  <div className="w-20 h-20 bg-indigo-50 rounded-2xl flex items-center justify-center text-5xl shadow-inner">
+                  <div className="w-16 h-16 md:w-20 md:h-20 bg-indigo-50 rounded-2xl flex items-center justify-center text-3xl md:text-5xl shadow-inner">
                     {scenario.emoji}
                   </div>
                   <div className="space-y-2">
@@ -207,7 +207,7 @@ export default function EmpathyHero({ onClose }: { onClose?: () => void }) {
                           key={i}
                           onClick={() => handleEmotionSelect(emo)}
                           className={cn(
-                            "p-5 bg-white hover:bg-rose-50 border-2 border-transparent hover:border-rose-200 rounded-3xl font-black text-slate-700 transition-all shadow-lg hover:-translate-y-1 active:translate-y-0",
+                            "p-3 md:p-5 bg-white hover:bg-rose-50 border-2 border-transparent hover:border-rose-200 rounded-2xl md:rounded-3xl font-black text-xs md:text-base text-slate-700 transition-all shadow-lg hover:-translate-y-1 active:translate-y-0",
                             selectedEmotion === emo && emo === scenario.correctEmotion && "border-emerald-500 bg-emerald-50 text-emerald-700",
                             selectedEmotion === emo && emo !== scenario.correctEmotion && "border-rose-500 bg-rose-50 text-rose-700 opacity-50"
                           )}

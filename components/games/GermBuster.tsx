@@ -59,7 +59,7 @@ export default function GermBuster({ onClose }: { onClose?: () => void }) {
   };
 
   return (
-    <div className="relative w-full aspect-video min-h-[400px] bg-gradient-to-br from-blue-100 to-cyan-50 rounded-[40px] overflow-hidden border-8 border-white shadow-2xl flex flex-col font-sans">
+    <div className="relative w-full aspect-video md:min-h-[400px] min-h-[250px] bg-gradient-to-br from-blue-100 to-cyan-50 rounded-[40px] overflow-hidden border-4 md:border-8 border-white shadow-2xl flex flex-col font-sans">
       {/* Background Water Pattern */}
       <div className="absolute inset-0 opacity-10 pointer-events-none" style={{ backgroundImage: 'radial-gradient(circle, #0ea5e9 1px, transparent 1px)', backgroundSize: '30px 30px' }} />
 
@@ -102,7 +102,7 @@ export default function GermBuster({ onClose }: { onClose?: () => void }) {
           <>
             {/* Hands Illustration */}
             <div className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-20 select-none">
-               <div className="text-[25rem] flex gap-20">
+               <div className="md:text-[25rem] text-[15rem] flex gap-10 md:gap-20">
                  <span className="rotate-[-20deg]">✋</span>
                  <span className="rotate-[20deg] scale-x-[-1]">✋</span>
                </div>

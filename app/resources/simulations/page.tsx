@@ -176,6 +176,17 @@ export default function SimulationsPage() {
   const [showMatchmaker, setShowMatchmaker] = useState(false);
   const [battleContext, setBattleContext] = useState<any>(null);
   const [hiddenIds, setHiddenIds] = useState<string[]>([]);
+  const [isPortrait, setIsPortrait] = useState(false);
+
+  // Orientation check
+  useEffect(() => {
+    const checkOrientation = () => {
+      setIsPortrait(window.innerHeight > window.innerWidth && window.innerWidth < 768);
+    };
+    checkOrientation();
+    window.addEventListener('resize', checkOrientation);
+    return () => window.removeEventListener('resize', checkOrientation);
+  }, []);
 
   // Load hidden IDs from localStorage
   useEffect(() => {
@@ -351,14 +362,33 @@ export default function SimulationsPage() {
           </div>
 
           {/* Game area */}
-          <div className="bg-white dark:bg-slate-900/40 rounded-[2rem] p-3 md:p-8 border border-slate-200 dark:border-slate-800 shadow-2xl relative overflow-hidden">
-            {active.component({ 
-              player1: battleContext?.p1, 
-              player2: battleContext?.p2,
-              schoolId: battleContext?.schoolId,
-              classNum: battleContext?.classNum,
-              onClose: closeArena
-            })}
+          <div className="relative">
+            {/* Orientation Overlay */}
+            {isPortrait && (
+              <div className="md:hidden absolute inset-0 z-40 bg-slate-900/90 backdrop-blur-md rounded-[2rem] flex flex-col items-center justify-center text-center p-8 space-y-4">
+                <div className="w-20 h-20 bg-white/10 rounded-full flex items-center justify-center animate-bounce">
+                  <RefreshCw className="w-10 h-10 text-white rotate-90" />
+                </div>
+                <h3 className="text-xl font-black text-white">कृपया तुमचा फोन फिरवा!</h3>
+                <p className="text-slate-400 text-sm">खेळ अधिक चांगल्या प्रकारे पाहण्यासाठी फोन 'लँडस्केप' मोडमध्ये धरा.</p>
+                <button 
+                  onClick={() => setIsPortrait(false)}
+                  className="px-6 py-2 bg-white/10 text-white text-xs font-bold rounded-lg border border-white/20"
+                >
+                  तरीही खेळा
+                </button>
+              </div>
+            )}
+            
+            <div className="bg-white dark:bg-slate-900/40 rounded-[2rem] p-2 md:p-8 border border-slate-200 dark:border-slate-800 shadow-2xl relative overflow-hidden transition-all duration-500">
+              {active.component({ 
+                player1: battleContext?.p1, 
+                player2: battleContext?.p2,
+                schoolId: battleContext?.schoolId,
+                classNum: battleContext?.classNum,
+                onClose: closeArena
+              })}
+            </div>
           </div>
 
           <BattleMatchmaker

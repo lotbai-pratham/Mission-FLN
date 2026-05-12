@@ -125,7 +125,7 @@ export default function BuddyBigDay({ onClose }: { onClose?: () => void }) {
 
   return (
     <div 
-      className="relative w-full aspect-video min-h-[500px] rounded-[48px] overflow-hidden border-8 border-white shadow-2xl flex flex-col font-sans transition-colors duration-1000"
+      className="relative w-full aspect-video md:min-h-[500px] min-h-[320px] rounded-[48px] overflow-hidden border-4 md:border-8 border-white shadow-2xl flex flex-col font-sans transition-colors duration-1000"
       style={{ backgroundColor: heartValue < 30 ? "#f1f5f9" : bgColor }}
     >
       {/* Dynamic Background Saturation Filter */}
@@ -138,12 +138,12 @@ export default function BuddyBigDay({ onClose }: { onClose?: () => void }) {
       />
 
       {/* Header / Heart Meter */}
-      <div className="relative z-10 p-8 flex justify-between items-center">
+      <div className="relative z-10 p-4 md:p-8 flex justify-between items-center">
         <div className="flex items-center gap-4 bg-white/40 backdrop-blur-xl px-6 py-3 rounded-3xl border border-white/20 shadow-xl">
            <div className="relative">
              <Heart 
                className={cn(
-                 "w-10 h-10 transition-all duration-500", 
+                 "w-6 h-6 md:w-10 md:h-10 transition-all duration-500", 
                  heartValue > 70 ? "text-rose-500 fill-rose-500 scale-125" : 
                  heartValue < 30 ? "text-slate-400 scale-90" : "text-rose-400 fill-rose-200"
                )} 
@@ -168,12 +168,12 @@ export default function BuddyBigDay({ onClose }: { onClose?: () => void }) {
       </div>
 
       {/* Content Area */}
-      <div className="relative z-10 flex-1 flex items-center justify-center p-8">
+      <div className="relative z-10 flex-1 flex items-center justify-center p-4 md:p-8">
         {gameState === "intro" && (
           <div className="text-center space-y-8 animate-in fade-in zoom-in-95 duration-700 max-w-2xl">
-            <div className="text-[120px] filter drop-shadow-2xl animate-bounce-slow">🦸‍♂️</div>
+            <div className="text-[60px] md:text-[120px] filter drop-shadow-2xl animate-bounce-slow">🦸‍♂️</div>
             <div className="space-y-4">
-              <h1 className="text-6xl font-black text-slate-900 leading-tight">बडीचा <br/><span className="text-rose-500 italic">मोठा दिवस</span></h1>
+              <h1 className="text-3xl md:text-6xl font-black text-slate-900 leading-tight">बडीचा <br/><span className="text-rose-500 italic">मोठा दिवस</span></h1>
               <p className="text-xl text-slate-600 font-medium">बडीला त्याच्या शाळेच्या प्रवासात मदत करा. तुमच्या निवडीमुळे जगाचे रंग बदलतील!</p>
             </div>
             <button 
@@ -201,10 +201,10 @@ export default function BuddyBigDay({ onClose }: { onClose?: () => void }) {
                   <button
                     key={i}
                     onClick={() => handleChoice(i)}
-                    className="w-full p-8 bg-white hover:bg-rose-50 border-2 border-transparent hover:border-rose-200 rounded-[32px] text-left transition-all shadow-xl hover:-translate-x-3 group flex items-center justify-between"
+                    className="w-full p-4 md:p-8 bg-white hover:bg-rose-50 border-2 border-transparent hover:border-rose-200 rounded-[24px] md:rounded-[32px] text-left transition-all shadow-xl hover:-translate-x-3 group flex items-center justify-between"
                   >
-                    <span className="text-xl font-bold text-slate-700 leading-tight group-hover:text-rose-600 transition-colors">{choice.text}</span>
-                    <div className="w-12 h-12 bg-slate-50 rounded-2xl flex items-center justify-center text-slate-300 group-hover:bg-rose-500 group-hover:text-white transition-all">
+                    <span className="text-sm md:text-xl font-bold text-slate-700 leading-tight group-hover:text-rose-600 transition-colors">{choice.text}</span>
+                    <div className="w-8 h-8 md:w-12 md:h-12 bg-slate-50 rounded-xl md:rounded-2xl flex items-center justify-center text-slate-300 group-hover:bg-rose-500 group-hover:text-white transition-all">
                        <ArrowRight size={24} />
                     </div>
                   </button>

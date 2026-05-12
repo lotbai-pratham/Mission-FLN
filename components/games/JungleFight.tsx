@@ -190,7 +190,7 @@ export default function JungleFight({ onClose }: { onClose?: () => void }) {
 
   return (
     <div className={cn(
-      "relative w-full aspect-video min-h-[400px] bg-gradient-to-br from-emerald-950 via-green-900 to-emerald-950 rounded-3xl overflow-hidden border-4 border-emerald-800 shadow-2xl flex flex-col font-sans transition-all duration-300",
+      "relative w-full aspect-video md:min-h-[400px] min-h-[280px] bg-gradient-to-br from-emerald-950 via-green-900 to-emerald-950 rounded-3xl overflow-hidden border-4 border-emerald-800 shadow-2xl flex flex-col font-sans transition-all duration-300",
       animating === "impact-player" ? "animate-shake bg-red-900/40" : ""
     )}>
       <style jsx>{`
@@ -279,7 +279,7 @@ export default function JungleFight({ onClose }: { onClose?: () => void }) {
           "relative z-20 transition-all duration-300",
           animating === "impact-player" ? "scale-75" : "scale-100"
         )}>
-          <div className="text-9xl filter drop-shadow-[0_0_40px_rgba(59,130,246,0.6)]">🦸</div>
+          <div className="md:text-9xl text-7xl filter drop-shadow-[0_0_40px_rgba(59,130,246,0.6)]">🦸</div>
           <div className="absolute -top-6 left-1/2 -translate-x-1/2 px-5 py-1.5 bg-blue-600 rounded-full text-[11px] font-black text-white whitespace-nowrap shadow-2xl border border-white/30 uppercase tracking-widest">
             WARRIOR
           </div>
@@ -309,7 +309,7 @@ export default function JungleFight({ onClose }: { onClose?: () => void }) {
             animating === "impact" && "animate-shake scale-110",
             animating === "creature-attack" && "animate-lunge"
           )}>
-            <div className="text-9xl filter drop-shadow-[0_0_40px_rgba(244,63,94,0.6)]">{creature.emoji}</div>
+            <div className="md:text-9xl text-7xl filter drop-shadow-[0_0_40px_rgba(244,63,94,0.6)]">{creature.emoji}</div>
             <div className="absolute -top-6 left-1/2 -translate-x-1/2 px-5 py-1.5 bg-rose-700 rounded-full text-[11px] font-black text-white whitespace-nowrap shadow-2xl border border-white/30 uppercase tracking-[2px]">
               {creature.name}
             </div>
@@ -340,7 +340,7 @@ export default function JungleFight({ onClose }: { onClose?: () => void }) {
       </div>
 
       {/* Control UI */}
-      <div className="relative z-10 p-6 h-52 bg-gradient-to-t from-black/90 to-black/30 backdrop-blur-2xl border-t border-white/10 shadow-[0_-20px_50px_rgba(0,0,0,0.5)]">
+      <div className="relative z-10 p-4 md:p-6 md:h-52 h-44 bg-gradient-to-t from-black/90 to-black/30 backdrop-blur-2xl border-t border-white/10 shadow-[0_-20px_50px_rgba(0,0,0,0.5)]">
         {gameState === "intro" && (
           <div className="h-full flex flex-col items-center justify-center space-y-5">
             <div className="flex items-center gap-4">
@@ -360,13 +360,13 @@ export default function JungleFight({ onClose }: { onClose?: () => void }) {
           <div className="h-full flex items-center justify-center gap-8">
             <button 
               onClick={() => handleAttack("lang")}
-              className="group relative flex-1 max-w-[320px] h-32 bg-gradient-to-br from-blue-600 to-indigo-800 rounded-[40px] p-6 flex items-center gap-6 hover:scale-110 active:scale-95 transition-all shadow-2xl border-t-2 border-white/20"
+              className="group relative flex-1 max-w-[320px] h-24 md:h-32 bg-gradient-to-br from-blue-600 to-indigo-800 rounded-3xl md:rounded-[40px] p-3 md:p-6 flex items-center gap-3 md:gap-6 hover:scale-110 active:scale-95 transition-all shadow-2xl border-t-2 border-white/20"
             >
-              <div className="w-16 h-16 bg-white/20 rounded-3xl flex items-center justify-center group-hover:rotate-12 transition-all shadow-inner border border-white/10">
-                <BookOpen className="w-9 h-9 text-white" />
+              <div className="w-12 h-12 md:w-16 md:h-16 bg-white/20 rounded-2xl md:rounded-3xl flex items-center justify-center group-hover:rotate-12 transition-all shadow-inner border border-white/10">
+                <BookOpen className="w-6 h-6 md:w-9 md:h-9 text-white" />
               </div>
               <div className="text-left">
-                <p className="text-3xl font-black text-white italic tracking-tight mb-0.5">PUNCH</p>
+                <p className="text-xl md:text-3xl font-black text-white italic tracking-tight mb-0.5">PUNCH</p>
                 <p className="text-[10px] font-black text-blue-100/60 uppercase tracking-[4px]">Language Skill</p>
               </div>
               <div className="absolute -top-3 -right-3 w-12 h-12 bg-blue-500 rounded-2xl flex items-center justify-center text-2xl shadow-2xl border-4 border-white rotate-12">🥊</div>
@@ -374,13 +374,13 @@ export default function JungleFight({ onClose }: { onClose?: () => void }) {
 
             <button 
               onClick={() => handleAttack("math")}
-              className="group relative flex-1 max-w-[320px] h-32 bg-gradient-to-br from-amber-500 to-orange-700 rounded-[40px] p-6 flex items-center gap-6 hover:scale-110 active:scale-95 transition-all shadow-2xl border-t-2 border-white/20"
+              className="group relative flex-1 max-w-[320px] h-24 md:h-32 bg-gradient-to-br from-amber-500 to-orange-700 rounded-3xl md:rounded-[40px] p-3 md:p-6 flex items-center gap-3 md:gap-6 hover:scale-110 active:scale-95 transition-all shadow-2xl border-t-2 border-white/20"
             >
-              <div className="w-16 h-16 bg-white/20 rounded-3xl flex items-center justify-center group-hover:-rotate-12 transition-all shadow-inner border border-white/10">
-                <Calculator className="w-9 h-9 text-white" />
+              <div className="w-12 h-12 md:w-16 md:h-16 bg-white/20 rounded-2xl md:rounded-3xl flex items-center justify-center group-hover:-rotate-12 transition-all shadow-inner border border-white/10">
+                <Calculator className="w-6 h-6 md:w-9 md:h-9 text-white" />
               </div>
               <div className="text-left">
-                <p className="text-3xl font-black text-white italic tracking-tight mb-0.5">KICK</p>
+                <p className="text-xl md:text-3xl font-black text-white italic tracking-tight mb-0.5">KICK</p>
                 <p className="text-[10px] font-black text-amber-100/60 uppercase tracking-[4px]">Maths Skill</p>
               </div>
               <div className="absolute -top-3 -right-3 w-12 h-12 bg-amber-500 rounded-2xl flex items-center justify-center text-2xl shadow-2xl border-4 border-white -rotate-12">🦶</div>

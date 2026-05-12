@@ -89,7 +89,7 @@ export default function HealthyPlate({ onClose }: { onClose?: () => void }) {
       ref={gameRef}
       onMouseMove={handleMouseMove}
       onTouchMove={handleTouchMove}
-      className="relative w-full aspect-video min-h-[400px] bg-gradient-to-br from-emerald-50 to-teal-50 rounded-[40px] overflow-hidden border-8 border-white shadow-2xl flex flex-col font-sans cursor-none"
+      className="relative w-full aspect-video md:min-h-[400px] min-h-[280px] bg-gradient-to-br from-emerald-50 to-teal-50 rounded-[40px] overflow-hidden border-4 md:border-8 border-white shadow-2xl flex flex-col font-sans md:cursor-none"
     >
       {/* Background Decor */}
       <div className="absolute top-10 left-10 text-9xl opacity-5 pointer-events-none font-black italic">EAT CLEAN</div>
@@ -145,7 +145,7 @@ export default function HealthyPlate({ onClose }: { onClose?: () => void }) {
               className="absolute bottom-4 -translate-x-1/2 transition-all duration-75 flex flex-col items-center pointer-events-none"
               style={{ left: `${plateX}%` }}
             >
-               <div className="w-32 h-6 bg-slate-200 rounded-full border-b-4 border-slate-300 shadow-xl" />
+               <div className="md:w-32 md:h-6 w-24 h-4 bg-slate-200 rounded-full border-b-4 border-slate-300 shadow-xl" />
                <div className="mt-1 px-3 py-0.5 bg-emerald-500 text-white text-[10px] font-black rounded-full uppercase tracking-tighter shadow-lg">Plate</div>
             </div>
 
