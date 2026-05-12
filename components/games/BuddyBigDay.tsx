@@ -125,7 +125,7 @@ export default function BuddyBigDay({ onClose }: { onClose?: () => void }) {
 
   return (
     <div 
-      className="relative w-full md:aspect-video md:min-h-[500px] min-h-[480px] rounded-[48px] overflow-hidden border-4 md:border-8 border-white shadow-2xl flex flex-col font-sans transition-colors duration-1000"
+      className="relative w-full md:min-h-[648px] min-h-[480px] bg-gradient-to-br from-rose-50 via-pink-50 to-indigo-50 rounded-[40px] overflow-visible border-4 md:border-8 border-white shadow-2xl flex flex-col font-sans transition-colors duration-1000"
       style={{ backgroundColor: heartValue < 30 ? "#f1f5f9" : bgColor }}
     >
       {/* Dynamic Background Saturation Filter */}

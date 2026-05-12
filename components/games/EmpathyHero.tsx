@@ -123,7 +123,7 @@ export default function EmpathyHero({ onClose }: { onClose?: () => void }) {
   };
 
   return (
-    <div className="relative w-full md:aspect-video md:min-h-[500px] min-h-[450px] bg-gradient-to-br from-pink-50 via-rose-50 to-indigo-50 rounded-[40px] overflow-hidden border-4 md:border-8 border-white shadow-2xl flex flex-col font-sans">
+    <div className="relative w-full md:min-h-[648px] min-h-[450px] bg-gradient-to-br from-pink-50 via-rose-50 to-indigo-50 rounded-[40px] overflow-visible border-4 md:border-8 border-white shadow-2xl flex flex-col font-sans">
       {/* Kindness Garden (Background) */}
       <div className="absolute bottom-0 left-0 right-0 h-32 bg-emerald-100/50 flex items-end px-12 py-4 gap-2 overflow-hidden z-0">
         {garden.map((flower, i) => (

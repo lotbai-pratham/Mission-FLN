@@ -53,7 +53,7 @@ export default function WasteSort({ onClose }: { onClose?: () => void }) {
   };
 
   return (
-    <div className="relative w-full md:aspect-video md:min-h-[400px] min-h-[450px] bg-gradient-to-br from-orange-50 to-amber-50 rounded-[40px] overflow-hidden border-4 md:border-8 border-white shadow-2xl flex flex-col font-sans">
+    <div className="relative w-full md:min-h-[648px] min-h-[450px] bg-gradient-to-br from-orange-50 to-amber-50 rounded-[40px] overflow-visible border-4 md:border-8 border-white shadow-2xl flex flex-col font-sans">
       {/* Header */}
       <div className="relative z-10 p-6 flex justify-between items-center">
         <div className="bg-white/80 backdrop-blur-md px-6 py-2 rounded-2xl shadow-sm border border-orange-100 flex items-center gap-3">
