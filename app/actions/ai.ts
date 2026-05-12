@@ -197,3 +197,59 @@ Fields:
     return localPedagogyFallback(query, context);
   }
 }
+
+// ─── Game Content Generation ──────────────────────────────────────────────
+
+export async function generateGameScenario(gameId: string, level: number = 1) {
+  const apiKey = process.env.GOOGLE_GENERATIVE_AI_API_KEY;
+  if (!apiKey) return null;
+
+  try {
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+    
+    let prompt = "";
+    if (gameId === 'buddy-big-day') {
+      prompt = `
+        Generate ONE new social-emotional learning scenario for a game called "Buddy's Big Day".
+        The character "Buddy" is a young school student.
+        The scenario should involve an interpersonal situation (helping a friend, sharing, empathy, honesty).
+        Return JSON ONLY.
+        Format:
+        {
+          "situation": "Marathi text describing the situation",
+          "imageEmoji": "Relevant emoji",
+          "choices": [
+            { "text": "Choice 1 (Marathi)", "impact": number (-10 to 20), "feedback": "Marathi feedback" },
+            { "text": "Choice 2 (Marathi)", "impact": number, "feedback": "Marathi feedback" },
+            { "text": "Choice 3 (Marathi)", "impact": number, "feedback": "Marathi feedback" }
+          ]
+        }
+      `;
+    } else if (gameId === 'jungle-fight') {
+      prompt = `
+        Generate 5 math problems for a "Jungle Fight" game.
+        Difficulty level: ${level} (1 is easy 1-digit, 5 is hard multi-digit multiplication/division).
+        The player is in a jungle fighting tigers.
+        Return JSON ONLY.
+        Format:
+        {
+          "problems": [
+            { "q": "Marathi math question (e.g. 5 + 3 = ?)", "a": number },
+            ...
+          ]
+        }
+      `;
+    } else {
+      return null;
+    }
+
+    const result = await model.generateContent(prompt);
+    const text = result.response.text();
+    const jsonMatch = text.match(/\{[\s\S]*\}/);
+    if (!jsonMatch) return null;
+    return JSON.parse(jsonMatch[0]);
+  } catch (error) {
+    console.error("Game generation error:", error);
+    return null;
+  }
+}

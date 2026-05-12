@@ -2,6 +2,8 @@
 import React, { useState, useEffect, useCallback, useRef } from "react";
 import { Heart, Shield, Swords, Zap, RefreshCw, Trophy, ArrowLeft, Target, BookOpen, Calculator, Sparkles, ShieldCheck } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { generateGameScenario } from "@/app/actions/ai";
+import { usePoints } from "@/lib/points-store";
 
 interface Question {
   type: "math" | "lang";
@@ -34,9 +36,11 @@ export default function JungleFight({ onClose }: { onClose?: () => void }) {
   const [playerHealth, setPlayerHealth] = useState(3);
   const [creature, setCreature] = useState<Creature | null>(null);
   const [activeQuestion, setActiveQuestion] = useState<Question | null>(null);
+  const [isAiLoading, setIsAiLoading] = useState(false);
   const [animating, setAnimating] = useState<"player" | "creature" | "projectile" | "creature-projectile" | "block" | "impact" | "impact-player" | "defeat" | "creature-entry" | "creature-attack" | null>(null);
   const [feedback, setFeedback] = useState<"correct" | "wrong" | null>(null);
   const [projectileType, setProjectileType] = useState<"🥊" | "🦶">("🥊");
+  const { addPoints } = usePoints();
 
   const spawnCreature = useCallback((lvl: number) => {
     const c = CREATURES[Math.floor(Math.random() * CREATURES.length)];
@@ -67,10 +71,26 @@ export default function JungleFight({ onClose }: { onClose?: () => void }) {
           ans = n1 + n2;
         }
       } else {
-        n1 = Math.floor(Math.random() * 12) + 2;
-        n2 = Math.floor(Math.random() * 9) + 2;
+        n1 = Math.floor(Math.random() * 50) + 20;
+        n2 = Math.floor(Math.random() * 50) + 10;
+        op = Math.random() > 0.5 ? "+" : "-";
+        if (op === "-") {
+          if (n1 < n2) [n1, n2] = [n2, n1];
+          ans = n1 - n2;
+        } else {
+          ans = n1 + n2;
+        }
+      } else if (level === 4) {
+        n1 = Math.floor(Math.random() * 15) + 2;
+        n2 = Math.floor(Math.random() * 12) + 2;
         op = "×";
         ans = n1 * n2;
+      } else {
+        n1 = Math.floor(Math.random() * 100) + 10;
+        n2 = Math.floor(Math.random() * 9) + 2;
+        op = "÷";
+        ans = Math.floor(n1 / n2);
+        n1 = ans * n2; // Ensure clean division
       }
 
       const options = [ans];
@@ -116,10 +136,37 @@ export default function JungleFight({ onClose }: { onClose?: () => void }) {
     setLevel(1);
   };
 
+  const startQuestion = async () => {
+    if (level >= 3) {
+      setIsAiLoading(true);
+      const aiData = await generateGameScenario('jungle-fight', level);
+      setIsAiLoading(false);
+      
+      if (aiData && aiData.problems && aiData.problems.length > 0) {
+        const prob = aiData.problems[Math.floor(Math.random() * aiData.problems.length)];
+        const options = [prob.a];
+        while (options.length < 4) {
+          const fake = prob.a + (Math.floor(Math.random() * 20) - 10);
+          if (fake >= 0 && !options.includes(fake)) options.push(fake);
+        }
+        setActiveQuestion({
+          type: "math",
+          text: prob.q,
+          options: options.sort(() => Math.random() - 0.5).map(String),
+          answer: String(prob.a)
+        });
+        setGameState("question");
+        return;
+      }
+    }
+    
+    setActiveQuestion(generateQuestion(Math.random() > 0.5 ? "math" : "lang"));
+    setGameState("question");
+  };
+
   const handleAttack = (type: "math" | "lang") => {
     setProjectileType(type === "math" ? "🦶" : "🥊");
-    setActiveQuestion(generateQuestion(type));
-    setGameState("question");
+    startQuestion();
   };
 
   const submitAnswer = (choice: string) => {
@@ -127,9 +174,9 @@ export default function JungleFight({ onClose }: { onClose?: () => void }) {
 
     if (choice === activeQuestion.answer) {
       setFeedback("correct");
+      addPoints(level * 5);
       setGameState("fighting");
       
-      // Step 1: Block Incoming Attack
       setAnimating("block");
       
       setTimeout(() => {

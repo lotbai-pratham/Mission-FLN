@@ -2,6 +2,8 @@
 import React, { useState, useEffect } from "react";
 import { Heart, Sparkles, ArrowRight, RefreshCw, Trophy, Home, Book, Map, Stars } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { generateGameScenario } from "@/app/actions/ai";
+import { usePoints } from "@/lib/points-store";
 
 interface Chapter {
   id: number;
@@ -88,12 +90,34 @@ const CHAPTERS: Chapter[] = [
 ];
 
 export default function BuddyBigDay({ onClose }: { onClose?: () => void }) {
+  const [chapters, setChapters] = useState<Chapter[]>(CHAPTERS);
   const [currentChapterIdx, setCurrentChapterIdx] = useState(0);
-  const [gameState, setGameState] = useState<"intro" | "story" | "choice-feedback" | "complete">("intro");
+  const [gameState, setGameState] = useState<"intro" | "story" | "choice-feedback" | "complete" | "generating">("intro");
   const [heartValue, setHeartValue] = useState(50); // 0 to 100
   const [selectedChoiceIdx, setSelectedChoiceIdx] = useState<number | null>(null);
+  const [isAiMode, setIsAiMode] = useState(false);
+  const { addPoints } = usePoints();
 
-  const chapter = CHAPTERS[currentChapterIdx];
+  const chapter = chapters[currentChapterIdx];
+
+  const fetchNextAiChapter = async () => {
+    setGameState("generating");
+    const newScenario = await generateGameScenario('buddy-big-day');
+    if (newScenario) {
+      const newChapter: Chapter = {
+        id: chapters.length + 1,
+        title: "एआय व्युत्पन्न प्रसंग",
+        ...newScenario
+      };
+      setChapters(prev => [...prev, newChapter]);
+      setCurrentChapterIdx(prev => prev + 1);
+      setSelectedChoiceIdx(null);
+      setGameState("story");
+      setIsAiMode(true);
+    } else {
+      setGameState("complete");
+    }
+  };
 
   const handleChoice = (idx: number) => {
     const choice = chapter.choices[idx];
@@ -103,13 +127,17 @@ export default function BuddyBigDay({ onClose }: { onClose?: () => void }) {
   };
 
   const nextStep = () => {
-    if (currentChapterIdx < CHAPTERS.length - 1) {
-      setCurrentChapterIdx(prev => prev + 1);
-      setSelectedChoiceIdx(null);
-      setGameState("story");
-    } else {
-      setGameState("complete");
-    }
+    if (chapter.choices[selectedChoiceIdx!].impact > 0) addPoints(chapter.choices[selectedChoiceIdx!].impact);
+
+    setTimeout(() => {
+      if (currentChapterIdx < chapters.length - 1) {
+        setCurrentChapterIdx(prev => prev + 1);
+        setSelectedChoiceIdx(null);
+        setGameState("story");
+      } else {
+        setGameState("complete");
+      }
+    }, 2000);
   };
 
   const restart = () => {
@@ -163,12 +191,20 @@ export default function BuddyBigDay({ onClose }: { onClose?: () => void }) {
 
         <div className="bg-white/40 backdrop-blur-xl px-6 py-3 rounded-3xl border border-white/20 shadow-xl flex items-center gap-3">
            <Map className="text-indigo-500" size={24} />
-           <span className="font-black text-slate-700 uppercase tracking-widest text-sm">प्रकरण {currentChapterIdx + 1} / {CHAPTERS.length}</span>
+           <span className="font-black text-slate-700 uppercase tracking-widest text-sm">प्रकरण {currentChapterIdx + 1} / {chapters.length}</span>
         </div>
       </div>
 
       {/* Content Area */}
       <div className="relative z-10 flex-1 flex items-center justify-center p-4 md:p-8">
+          {gameState === "generating" && (
+            <div className="text-center space-y-6 animate-pulse">
+              <div className="w-24 h-24 bg-rose-100 rounded-full flex items-center justify-center mx-auto shadow-inner">
+                <Sparkles className="w-12 h-12 text-rose-400 animate-spin" />
+              </div>
+              <p className="text-rose-900 font-black tracking-widest uppercase text-xs">तुमच्यासाठी नवीन प्रसंग तयार करत आहे...</p>
+            </div>
+          )}
           {gameState === "intro" && (
             <div className="text-center space-y-4 md:space-y-6 max-w-xl animate-in fade-in zoom-in-95 duration-500">
               <div className="w-20 h-20 md:w-24 md:h-24 bg-rose-100 rounded-3xl flex items-center justify-center mx-auto mb-4 md:mb-6 shadow-inner">
@@ -244,24 +280,19 @@ export default function BuddyBigDay({ onClose }: { onClose?: () => void }) {
                    <Stars className="w-64 h-64 text-yellow-300 animate-spin-slow" />
                 </div>
              </div>
-             <div className="space-y-3">
-               <h2 className="text-6xl font-black text-slate-900">प्रवास पूर्ण झाला!</h2>
-               <p className="text-2xl text-slate-600 font-medium">तुम्ही बडीच्या आयुष्यात <span className="text-rose-500 font-black">{heartValue}% दयाळूपणा</span> भरलात.</p>
+             <div className="space-y-2">
+               <h2 className="text-3xl md:text-5xl font-black text-rose-950">तू खरा नायक आहेस!</h2>
+               <p className="text-slate-500 text-lg md:text-xl font-medium">तुमची दयाळूपणाची पातळी: {heartValue}%</p>
              </div>
-             <div className="flex gap-6 justify-center pt-4">
+             <div className="flex flex-col md:flex-row gap-4 justify-center">
+               <button 
+                 onClick={fetchNextAiChapter}
+                 className="px-10 py-4 bg-rose-500 text-white font-black rounded-2xl shadow-xl hover:scale-105 transition-all flex items-center gap-2 justify-center"
+               >
+                 <Sparkles size={20} /> एआय सह खेळा (Next AI Level)
+               </button>
                <button 
                  onClick={restart}
-                 className="px-10 py-5 bg-white text-slate-900 font-black rounded-3xl shadow-xl hover:scale-105 transition-all border-b-4 border-slate-200 flex items-center gap-3"
-               >
-                 <RefreshCw size={24} /> पुन्हा खेळा
-               </button>
-               {onClose && (
-                 <button 
-                  onClick={onClose}
-                  className="px-10 py-5 bg-rose-500 text-white font-black rounded-3xl shadow-xl hover:scale-105 transition-all flex items-center gap-3"
-                >
-                  <Home size={24} /> आर्केडवर परत जा
-                </button>
                )}
              </div>
           </div>
