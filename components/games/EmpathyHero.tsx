@@ -18,47 +18,47 @@ interface Scenario {
 const SCENARIOS: Scenario[] = [
   {
     id: 1,
-    situation: "Rahul dropped his favorite ice cream cone on the ground.",
+    situation: "राहुलचा आवडता आईस्क्रीम खाली पडला.",
     emoji: "🍦",
-    character: "Rahul",
-    correctEmotion: "Sad 😢",
-    emotions: ["Sad 😢", "Angry 😠", "Happy 😄", "Scared 😨"],
-    bestAction: "Offer to share yours or comfort him.",
-    actions: ["Offer to share yours or comfort him.", "Laugh at him.", "Walk away.", "Tell him it's just ice cream."],
-    outcome: "Rahul feels better because he knows you care about his feelings!"
+    character: "राहुल",
+    correctEmotion: "दुःखी 😢",
+    emotions: ["दुःखी 😢", "रागीट 😠", "आनंदी 😄", "घाबरलेला 😨"],
+    bestAction: "तुझा आईस्क्रीम त्याला दे किंवा त्याला समजाव.",
+    actions: ["तुझा आईस्क्रीम त्याला दे किंवा त्याला समजाव.", "त्याच्यावर हस.", "तिथून निघून जा.", "त्याला सांग की हे फक्त आईस्क्रीम आहे."],
+    outcome: "राहुलला बरे वाटले कारण त्याला समजले की तुला त्याच्या भावनांची काळजी आहे!"
   },
   {
     id: 2,
-    situation: "A new student is sitting all alone during the school lunch break.",
+    situation: "शाळेच्या जेवणाच्या सुट्टीत एक नवीन विद्यार्थी एकटाच बसला आहे.",
     emoji: "🏫",
-    character: "The New Student",
-    correctEmotion: "Lonely 😔",
-    emotions: ["Lonely 😔", "Excited 🤩", "Bored 😑", "Sleepy 😴"],
-    bestAction: "Go sit with them and say hello.",
-    actions: ["Go sit with them and say hello.", "Keep playing with your friends.", "Stare at them from far away.", "Tell them they are in your spot."],
-    outcome: "You just made a new friend! They feel welcomed and happy now."
+    character: "नवीन विद्यार्थी",
+    correctEmotion: "एकटेपणा 😔",
+    emotions: ["एकटेपणा 😔", "उत्साही 🤩", "कंटाळलेला 😑", "झोपलेला 😴"],
+    bestAction: "त्याच्याजवळ जा आणि त्याला 'नमस्कार' म्हणा.",
+    actions: ["त्याच्याजवळ जा आणि त्याला 'नमस्कार' म्हणा.", "तुझ्या मित्रांसोबत खेळत राहा.", "लांबूनच त्याच्याकडे बघत राहा.", "त्याला सांग की ही तुझी जागा आहे."],
+    outcome: "तुम्ही एक नवीन मित्र बनवला! आता त्याला स्वागतार्ह आणि आनंदी वाटत आहे."
   },
   {
     id: 3,
-    situation: "Sita worked hard on a drawing, but someone accidentally spilled water on it.",
+    situation: "सिताने एका चित्रावर खूप मेहनत केली होती, पण चुकून कोणाकडून तरी त्यावर पाणी सांडले.",
     emoji: "🎨",
-    character: "Sita",
-    correctEmotion: "Upset 😠",
-    emotions: ["Upset 😠", "Happy 😄", "Funny 🤣", "Proud 😎"],
-    bestAction: "Help her dry it or offer to draw a new one together.",
-    actions: ["Help her dry it or offer to draw a new one together.", "Tell her to stop crying.", "Say it's not a big deal.", "Ignore her."],
-    outcome: "Sita appreciates your help. It's much easier to fix things with a friend!"
+    character: "सिता",
+    correctEmotion: "रागीट 😠",
+    emotions: ["रागीट 😠", "आनंदी 😄", "मजेदार 🤣", "गर्विष्ठ 😎"],
+    bestAction: "तिला चित्र सुकवण्यासाठी मदत कर किंवा नवीन चित्र काढायला सांग.",
+    actions: ["तिला चित्र सुकवण्यासाठी मदत कर किंवा नवीन चित्र काढायला सांग.", "तिला रडू नकोस असे सांग.", "काही हरकत नाही असे म्हण.", "तिच्याकडे दुर्लक्ष कर."],
+    outcome: "सिताला तुझ्या मदतीबद्दल आनंद झाला. मित्रासोबत गोष्टी सुधारणे खूप सोपे असते!"
   },
   {
     id: 4,
-    situation: "Your friend is nervous because they have to speak in front of the whole class.",
+    situation: "तुझ्या मित्राला संपूर्ण वर्गासमोर बोलायचे आहे आणि तो खूप घाबरला आहे.",
     emoji: "🎤",
-    character: "Your Friend",
-    correctEmotion: "Nervous 😰",
-    emotions: ["Nervous 😰", "Angry 😠", "Brave 🦁", "Hungry 🍎"],
-    bestAction: "Give them a thumbs up and tell them 'You can do it!'",
-    actions: ["Give them a thumbs up and tell them 'You can do it!'", "Tell them everyone is watching.", "Make funny faces to distract them.", "Leave the room."],
-    outcome: "Your encouragement gave them the confidence to speak clearly!"
+    character: "तुझा मित्र",
+    correctEmotion: "घाबरलेला 😰",
+    emotions: ["घाबरलेला 😰", "रागीट 😠", "शूर 🦁", "भुकेलेला 🍎"],
+    bestAction: "त्याला प्रोत्साहन दे आणि म्हण 'तू हे करू शकतोस!'",
+    actions: ["त्याला प्रोत्साहन दे आणि म्हण 'तू हे करू शकतोस!'", "त्याला सांग की सगळे तुला बघत आहेत.", "त्याचे लक्ष विचलित करण्यासाठी मजेशीर चेहरे कर.", "वर्गाबाहेर जा."],
+    outcome: "तुझ्या प्रोत्साहनामुळे त्याला स्पष्टपणे बोलण्याचा आत्मविश्वास मिळाला!"
   }
 ];
 
@@ -77,13 +77,13 @@ export default function EmpathyHero({ onClose }: { onClose?: () => void }) {
   const handleEmotionSelect = (emotion: string) => {
     setSelectedEmotion(emotion);
     if (emotion === scenario.correctEmotion) {
-      setFeedback({ type: "success", text: "That's right! You recognized how they feel." });
+      setFeedback({ type: "success", text: "बरोबर! तू ओळखलेस की त्यांना कसे वाटते." });
       setTimeout(() => {
         setGameState("action");
         setFeedback(null);
       }, 1500);
     } else {
-      setFeedback({ type: "neutral", text: "Not quite. Look closely at the situation again." });
+      setFeedback({ type: "neutral", text: "नाही, परिस्थिती पुन्हा एकदा नीट बघ." });
       setTimeout(() => setFeedback(null), 1500);
     }
   };
@@ -91,10 +91,10 @@ export default function EmpathyHero({ onClose }: { onClose?: () => void }) {
   const handleActionSelect = (action: string) => {
     setSelectedAction(action);
     if (action === scenario.bestAction) {
-      setFeedback({ type: "success", text: "Amazing! That was a very kind and empathetic choice." });
+      setFeedback({ type: "success", text: "खूपच छान! तू खूप दयाळू निवड केलीस." });
       setGarden(prev => [...prev, GARDEN_FLOWERS[Math.floor(Math.random() * GARDEN_FLOWERS.length)]]);
     } else {
-      setFeedback({ type: "neutral", text: "There might be a kinder way to respond. Think about their feelings." });
+      setFeedback({ type: "neutral", text: "दुसरा मार्ग अधिक चांगला असू शकतो. त्यांच्या भावनांचा विचार कर." });
     }
     
     setTimeout(() => {
@@ -133,7 +133,7 @@ export default function EmpathyHero({ onClose }: { onClose?: () => void }) {
         ))}
         {garden.length === 0 && (
           <p className="text-emerald-800/30 font-black italic uppercase tracking-widest text-sm w-full text-center pb-4">
-            Your Kindness Garden will grow here...
+            तुमची दयाळूपणाची बाग इथे वाढेल...
           </p>
         )}
       </div>
@@ -147,12 +147,12 @@ export default function EmpathyHero({ onClose }: { onClose?: () => void }) {
         <div className="flex justify-between items-center mb-8">
           <div className="flex items-center gap-3 bg-white/80 backdrop-blur-md px-6 py-2.5 rounded-full shadow-sm border border-pink-100">
             <Heart className="text-rose-500 fill-rose-500 animate-pulse" size={24} />
-            <span className="font-black text-rose-900 uppercase tracking-widest text-sm">Empathy Hero</span>
+            <span className="font-black text-rose-900 uppercase tracking-widest text-sm">सहानुभूती नायक</span>
           </div>
           <div className="flex gap-4">
             <div className="bg-white/80 backdrop-blur-md px-6 py-2.5 rounded-full shadow-sm border border-emerald-100 flex items-center gap-2">
                <Flower className="text-emerald-500" size={20} />
-               <span className="font-black text-emerald-900">{garden.length} Blooms</span>
+               <span className="font-black text-emerald-900">{garden.length} फुले</span>
             </div>
             {onClose && (
               <button onClick={onClose} className="w-11 h-11 flex items-center justify-center bg-white/80 hover:bg-white rounded-full shadow-sm transition-all text-slate-400">
@@ -169,13 +169,13 @@ export default function EmpathyHero({ onClose }: { onClose?: () => void }) {
               <div className="w-24 h-24 bg-rose-100 rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-inner">
                 <Users size={48} className="text-rose-500" />
               </div>
-              <h1 className="text-5xl font-black text-rose-950 leading-tight">Welcome to the<br/><span className="text-rose-500">Kindness Quest!</span></h1>
-              <p className="text-slate-600 text-lg">Understand feelings, help your friends, and watch your Kindness Garden grow.</p>
+              <h1 className="text-5xl font-black text-rose-950 leading-tight">तुमच्या दयाळूपणाच्या<br/><span className="text-rose-500">शोधात स्वागत आहे!</span></h1>
+              <p className="text-slate-600 text-lg">भावना समजून घ्या, तुमच्या मित्रांना मदत करा आणि तुमची बाग बहरताना पहा.</p>
               <button 
                 onClick={() => setGameState("feeling")}
                 className="px-12 py-5 bg-rose-500 hover:bg-rose-600 text-white font-black rounded-3xl shadow-xl shadow-rose-500/20 hover:scale-105 transition-all flex items-center gap-3 mx-auto text-xl"
               >
-                START QUEST <ArrowRight />
+                सुरुवात करा <ArrowRight />
               </button>
             </div>
           )}
@@ -190,7 +190,7 @@ export default function EmpathyHero({ onClose }: { onClose?: () => void }) {
                     {scenario.emoji}
                   </div>
                   <div className="space-y-2">
-                    <p className="text-[10px] font-black uppercase tracking-[3px] text-indigo-400">The Situation</p>
+                    <p className="text-[10px] font-black uppercase tracking-[3px] text-indigo-400">परिस्थिती</p>
                     <h2 className="text-2xl font-black text-slate-800 leading-snug">{scenario.situation}</h2>
                   </div>
                 </div>
@@ -200,7 +200,7 @@ export default function EmpathyHero({ onClose }: { onClose?: () => void }) {
               <div className="space-y-6">
                 {gameState === "feeling" && (
                   <>
-                    <p className="text-center font-black text-slate-400 uppercase tracking-widest text-xs">How is {scenario.character} feeling?</p>
+                    <p className="text-center font-black text-slate-400 uppercase tracking-widest text-xs">{scenario.character} ला कसे वाटत असेल?</p>
                     <div className="grid grid-cols-2 gap-4">
                       {scenario.emotions.map((emo, i) => (
                         <button
@@ -221,7 +221,7 @@ export default function EmpathyHero({ onClose }: { onClose?: () => void }) {
 
                 {gameState === "action" && (
                   <>
-                    <p className="text-center font-black text-slate-400 uppercase tracking-widest text-xs">What should you do to help?</p>
+                    <p className="text-center font-black text-slate-400 uppercase tracking-widest text-xs">तुम्ही मदत करण्यासाठी काय कराल?</p>
                     <div className="space-y-3">
                       {scenario.actions.map((act, i) => (
                         <button
@@ -243,14 +243,14 @@ export default function EmpathyHero({ onClose }: { onClose?: () => void }) {
                 {gameState === "result" && (
                   <div className="text-center space-y-6 animate-in zoom-in duration-500">
                     <div className="inline-flex items-center gap-2 bg-emerald-100 text-emerald-700 px-6 py-2 rounded-full font-black uppercase tracking-widest text-xs mb-4">
-                      <Star size={16} fill="currentColor" /> Result
+                      <Star size={16} fill="currentColor" /> निकाल
                     </div>
                     <p className="text-2xl font-bold text-slate-700 leading-relaxed italic">"{scenario.outcome}"</p>
                     <button 
                       onClick={nextScenario}
                       className="px-10 py-4 bg-emerald-500 hover:bg-emerald-600 text-white font-black rounded-2xl shadow-xl shadow-emerald-500/20 hover:scale-105 transition-all flex items-center gap-3 mx-auto"
                     >
-                      CONTINUE QUEST <ArrowRight />
+                      पुढील प्रसंग <ArrowRight />
                     </button>
                   </div>
                 )}
@@ -265,22 +265,22 @@ export default function EmpathyHero({ onClose }: { onClose?: () => void }) {
                   <Trophy className="w-32 h-32 text-yellow-500 mx-auto drop-shadow-2xl" />
                </div>
                <div className="space-y-2">
-                 <h2 className="text-5xl font-black text-rose-950">You are a True Hero!</h2>
-                 <p className="text-slate-500 text-xl font-medium">You completed the quest and bloomed {garden.length} flowers.</p>
+                 <h2 className="text-5xl font-black text-rose-950">तू खरा नायक आहेस!</h2>
+                 <p className="text-slate-500 text-xl font-medium">तू यशस्वीरीत्या शोध पूर्ण केला आणि {garden.length} फुले फुलवली.</p>
                </div>
                <div className="flex gap-4 justify-center">
                  <button 
                    onClick={restart}
                    className="px-10 py-4 bg-white text-slate-900 font-black rounded-2xl shadow-xl hover:scale-105 transition-all border-b-4 border-slate-100 flex items-center gap-2"
                  >
-                   <RefreshCw size={20} /> PLAY AGAIN
+                   <RefreshCw size={20} /> पुन्हा खेळा
                  </button>
                  {onClose && (
                    <button 
                     onClick={onClose}
                     className="px-10 py-4 bg-slate-900 text-white font-black rounded-2xl shadow-xl hover:scale-105 transition-all"
                   >
-                    RETURN TO ARCADE
+                    आर्केडवर परत जा
                   </button>
                  )}
                </div>
