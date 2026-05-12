@@ -169,21 +169,21 @@ export default function BuddyBigDay({ onClose }: { onClose?: () => void }) {
 
       {/* Content Area */}
       <div className="relative z-10 flex-1 flex items-center justify-center p-4 md:p-8">
-        {gameState === "intro" && (
-          <div className="text-center space-y-8 animate-in fade-in zoom-in-95 duration-700 max-w-2xl">
-            <div className="text-[60px] md:text-[120px] filter drop-shadow-2xl animate-bounce-slow">🦸‍♂️</div>
-            <div className="space-y-4">
-              <h1 className="text-3xl md:text-6xl font-black text-slate-900 leading-tight">बडीचा <br/><span className="text-rose-500 italic">मोठा दिवस</span></h1>
-              <p className="text-xl text-slate-600 font-medium">बडीला त्याच्या शाळेच्या प्रवासात मदत करा. तुमच्या निवडीमुळे जगाचे रंग बदलतील!</p>
+          {gameState === "intro" && (
+            <div className="text-center space-y-4 md:space-y-6 max-w-xl animate-in fade-in zoom-in-95 duration-500">
+              <div className="w-20 h-20 md:w-24 md:h-24 bg-rose-100 rounded-3xl flex items-center justify-center mx-auto mb-4 md:mb-6 shadow-inner">
+                <span className="text-5xl md:text-7xl">🦸‍♂️</span>
+              </div>
+              <h1 className="text-3xl md:text-5xl font-black text-rose-950 leading-tight">बडीचा<br/><span className="text-rose-500">मोठा दिवस</span></h1>
+              <p className="text-slate-600 text-sm md:text-lg px-4">बडीला त्याच्या शाळेच्या प्रवासात मदत करा. तुमच्या निवडीमुळे जगाचे रंग बदलतील!</p>
+              <button 
+                onClick={() => setGameState("story")}
+                className="px-8 py-4 md:px-12 md:py-5 bg-rose-500 hover:bg-rose-600 text-white font-black rounded-3xl shadow-xl shadow-rose-500/20 hover:scale-105 transition-all flex items-center gap-3 mx-auto text-lg md:text-xl"
+              >
+                सुरुवात करा <ArrowRight />
+              </button>
             </div>
-            <button 
-              onClick={() => setGameState("story")}
-              className="px-14 py-6 bg-rose-500 hover:bg-rose-600 text-white font-black rounded-3xl shadow-[0_20px_50px_rgba(244,63,94,0.3)] hover:scale-110 active:scale-95 transition-all text-2xl flex items-center gap-4 mx-auto"
-            >
-              प्रवास सुरू करा <ArrowRight size={32} />
-            </button>
-          </div>
-        )}
+          )}
 
         {gameState === "story" && (
           <div className="w-full max-w-5xl grid lg:grid-cols-2 gap-16 items-center animate-in fade-in slide-in-from-right-12 duration-700">
