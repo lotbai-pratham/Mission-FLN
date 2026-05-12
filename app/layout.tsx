@@ -15,6 +15,8 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Mission FLN – Pratham ASER",
   description: "Field assessment tool for Foundational Literacy & Numeracy",
+  manifest: "/manifest.webmanifest",
+  themeColor: "#10b981",
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
@@ -29,6 +31,7 @@ import Navbar from "@/components/Navbar";
 import OfflineSync from "@/components/OfflineSync";
 import SessionWrapper from "@/components/SessionWrapper";
 import PrathamChat from "@/components/PrathamChat";
+import MobileNav from "@/components/MobileNav";
 
 export default function RootLayout({
   children,
@@ -46,9 +49,10 @@ export default function RootLayout({
           <div className="fixed bottom-4 right-4 z-50">
             <OfflineSync />
           </div>
-          <main className="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <main className="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pb-24 md:pb-8">
             {children}
           </main>
+          <MobileNav />
           <PrathamChat />
         </SessionWrapper>
       </body>
