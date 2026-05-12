@@ -6,6 +6,7 @@ import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { usePoints } from "@/lib/points-store";
 import { useEffect } from "react";
+import { useSearchParams, useRouter } from "next/navigation";
 
 // Simulations
 import BundleBuilder from "@/components/simulations/BundleBuilder";
@@ -181,8 +182,29 @@ export default function SimulationsPage() {
   const [dismissPortraitWarning, setDismissPortraitWarning] = useState(false);
   const [forceLandscape, setForceLandscape] = useState(false);
   const containerRef = React.useRef<HTMLDivElement>(null);
+  const searchParams = useSearchParams();
+  const router = useRouter();
 
-  // Orientation check
+  // Load from URL
+  useEffect(() => {
+    const gameId = searchParams.get('id');
+    if (gameId) {
+      const found = ALL.find(s => s.id === gameId);
+      if (found) {
+        setActiveId(gameId);
+      }
+    }
+  }, [searchParams]);
+
+  const updateUrl = (id: string | null) => {
+    const params = new URLSearchParams(searchParams.toString());
+    if (id) {
+      params.set('id', id);
+    } else {
+      params.delete('id');
+    }
+    router.push(`?${params.toString()}`, { scroll: false });
+  };
   useEffect(() => {
     const checkOrientation = () => {
       setIsPortrait(window.innerHeight > window.innerWidth && window.innerWidth < 768);
@@ -239,7 +261,7 @@ export default function SimulationsPage() {
     }
     setActiveId(id);
     setBattleContext(null);
-    window.history.pushState({}, '', `?id=${id}`);
+    updateUrl(id);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
