@@ -64,10 +64,10 @@ export default function CompetitiveArena({
   const winner = scores.a > scores.b ? p1Name : scores.b > scores.a ? p2Name : 'Draw';
 
   return (
-    <div className="bg-slate-950 rounded-3xl md:rounded-[48px] border border-slate-800 shadow-2xl p-4 md:p-8 max-w-6xl mx-auto overflow-hidden relative md:min-h-[750px] flex flex-col text-white">
+    <div className="bg-slate-950 rounded-3xl md:rounded-[48px] border border-slate-800 shadow-2xl p-4 md:p-8 max-w-6xl mx-auto overflow-y-auto md:overflow-hidden relative md:min-h-[750px] flex flex-col text-white">
       
       {/* HUD: Timer & Title */}
-      <div className="flex flex-col md:flex-row items-center justify-between gap-4 md:gap-8 mb-6 md:mb-12 relative z-10">
+      <div className="flex flex-col md:flex-row items-center justify-between gap-4 md:gap-8 mb-4 md:mb-12 relative z-10">
         <div className="flex items-center gap-4 md:gap-6">
            <div className="p-3 md:p-4 bg-blue-600 rounded-2xl md:rounded-[28px] shadow-lg shadow-blue-600/20">
               {icon}

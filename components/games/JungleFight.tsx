@@ -190,7 +190,7 @@ export default function JungleFight({ onClose }: { onClose?: () => void }) {
 
   return (
     <div className={cn(
-      "relative w-full aspect-video md:min-h-[400px] min-h-[280px] bg-gradient-to-br from-emerald-950 via-green-900 to-emerald-950 rounded-3xl overflow-hidden border-4 border-emerald-800 shadow-2xl flex flex-col font-sans transition-all duration-300",
+      "relative w-full md:aspect-video md:min-h-[400px] min-h-[480px] bg-gradient-to-br from-emerald-950 via-green-900 to-emerald-950 rounded-3xl overflow-hidden border-4 border-emerald-800 shadow-2xl flex flex-col font-sans transition-all duration-300",
       animating === "impact-player" ? "animate-shake bg-red-900/40" : ""
     )}>
       <style jsx>{`

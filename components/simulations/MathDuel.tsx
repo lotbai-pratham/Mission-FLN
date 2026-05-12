@@ -64,8 +64,8 @@ export default function MathDuel({ player1, player2, schoolId, classNum, onClose
       {({ addPoint, gameState }) => (
         <div className="flex flex-col h-full gap-8">
           {/* Problem Display */}
-          <div className="flex-1 flex flex-col items-center justify-center p-4 md:p-8 bg-white/5 rounded-[32px] md:rounded-[48px] border-2 border-white/10 shadow-2xl relative">
-            <div className="absolute top-2 md:top-4 left-1/2 -translate-x-1/2 text-[8px] md:text-[10px] font-black uppercase tracking-widest text-slate-500">Solve this:</div>
+          <div className="flex-1 flex flex-col items-center justify-center p-3 md:p-8 bg-white/5 rounded-[24px] md:rounded-[48px] border-2 border-white/10 shadow-2xl relative">
+            <div className="absolute top-1 md:top-4 left-1/2 -translate-x-1/2 text-[8px] md:text-[10px] font-black uppercase tracking-widest text-slate-500">Solve this:</div>
             <div className="flex items-center gap-4 md:gap-8 text-4xl md:text-7xl font-black text-white">
               <span>{problem?.a}</span>
               <span className="text-blue-500">{problem?.op}</span>
@@ -76,7 +76,7 @@ export default function MathDuel({ player1, player2, schoolId, classNum, onClose
           </div>
 
           {/* Split Screen */}
-          <div className="grid grid-cols-2 gap-4 md:gap-8 h-64 md:h-96">
+          <div className="grid grid-cols-2 gap-2 md:gap-8 min-h-[200px] md:h-96">
             <MathSide 
               player={player1} 
               color="blue" 

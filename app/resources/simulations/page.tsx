@@ -177,6 +177,10 @@ export default function SimulationsPage() {
   const [battleContext, setBattleContext] = useState<any>(null);
   const [hiddenIds, setHiddenIds] = useState<string[]>([]);
   const [isPortrait, setIsPortrait] = useState(false);
+  const [scale, setScale] = useState(1);
+  const [dismissPortraitWarning, setDismissPortraitWarning] = useState(false);
+  const [forceLandscape, setForceLandscape] = useState(false);
+  const containerRef = React.useRef<HTMLDivElement>(null);
 
   // Orientation check
   useEffect(() => {
@@ -199,7 +203,26 @@ export default function SimulationsPage() {
     if (id && ALL.some(i => i.id === id)) {
       setActiveId(id);
     }
-  }, []);
+
+    const observer = new ResizeObserver((entries) => {
+      const entry = entries[0];
+      if (!entry) return;
+      const { width, height } = entry.contentRect;
+      // Ideal size is 1152x648 (16:9 large)
+      const targetW = 1152;
+      const targetH = 648;
+      const sW = width / targetW;
+      const sH = height / targetH;
+      const finalScale = Math.min(sW, sH, 1);
+      setScale(finalScale);
+    });
+
+    if (containerRef.current) {
+      observer.observe(containerRef.current);
+    }
+
+    return () => observer.disconnect();
+  }, [activeId]);
 
   const toggleVisibility = (id: string) => {
     const next = hiddenIds.includes(id) 
@@ -226,6 +249,11 @@ export default function SimulationsPage() {
     setShowMatchmaker(false);
     window.history.pushState({}, '', window.location.pathname);
     window.scrollTo({ top: 0, behavior: 'smooth' });
+    setDismissPortraitWarning(false);
+    setForceLandscape(false);
+    if (screen.orientation && (screen.orientation as any).unlock) {
+      (screen.orientation as any).unlock();
+    }
   };
 
   const closeArena = () => {
@@ -283,7 +311,7 @@ export default function SimulationsPage() {
                   </span>
                 </div>
                 
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-4">
                   {items.map(item => {
                     const isHidden = hiddenIds.includes(item.id);
                     return (
@@ -355,39 +383,106 @@ export default function SimulationsPage() {
                 <span className="bg-black/20 px-2 py-0.5 rounded text-[11px] font-black tracking-widest uppercase shadow-sm">{active.subject}</span>
               </div>
             </div>
-            <div className="hidden sm:flex items-center gap-2 bg-white/20 rounded-2xl px-4 py-2 backdrop-blur-sm shadow-inner">
-              <div className="w-2 h-2 rounded-full bg-green-400 animate-pulse shadow-[0_0_8px_rgba(74,222,128,1)]" />
-              <span className="text-sm font-black tracking-widest text-white/90">LIVE</span>
+            <div className="hidden sm:flex items-center gap-2 bg-white/20 rounded-2xl px-4 py-2 backdrop-blur-sm shadow-inner shrink-0">
+               <div className="w-2 h-2 rounded-full bg-green-400 animate-pulse shadow-[0_0_8px_rgba(74,222,128,1)]" />
+               <span className="text-sm font-black tracking-widest text-white/90">LIVE</span>
             </div>
           </div>
 
           {/* Game area */}
-          <div className="relative">
-            {/* Orientation Overlay */}
-            {isPortrait && (
-              <div className="md:hidden absolute inset-0 z-40 bg-slate-900/90 backdrop-blur-md rounded-[2rem] flex flex-col items-center justify-center text-center p-8 space-y-4">
-                <div className="w-20 h-20 bg-white/10 rounded-full flex items-center justify-center animate-bounce">
-                  <RefreshCw className="w-10 h-10 text-white rotate-90" />
+          <div className="relative @container">
+            {/* Orientation Tip (Dismissible) */}
+            {isPortrait && !dismissPortraitWarning && !forceLandscape && (
+              <div className="md:hidden absolute top-4 left-4 right-4 z-50 bg-slate-900/95 backdrop-blur-xl rounded-3xl p-5 border border-white/20 shadow-2xl space-y-4 animate-in slide-in-from-top-4 duration-500">
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 rounded-2xl bg-orange-500 flex items-center justify-center shrink-0 shadow-lg shadow-orange-500/20">
+                    <RefreshCw className="w-6 h-6 text-white animate-spin-slow" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-white text-sm font-black leading-tight">बाजार आणि गेम्ससाठी फोन फिरवा!</p>
+                    <p className="text-slate-400 text-[11px] leading-snug">Rotate your phone to Landscape for the best experience.</p>
+                  </div>
+                  <button 
+                    onClick={() => setDismissPortraitWarning(true)}
+                    className="p-2 text-slate-500 hover:text-white transition-colors"
+                  >
+                    <X className="w-5 h-5" />
+                  </button>
                 </div>
-                <h3 className="text-xl font-black text-white">कृपया तुमचा फोन फिरवा!</h3>
-                <p className="text-slate-400 text-sm">खेळ अधिक चांगल्या प्रकारे पाहण्यासाठी फोन 'लँडस्केप' मोडमध्ये धरा.</p>
+                
                 <button 
-                  onClick={() => setIsPortrait(false)}
-                  className="px-6 py-2 bg-white/10 text-white text-xs font-bold rounded-lg border border-white/20"
+                  onClick={async () => {
+                    try {
+                      // Attempt real rotation lock
+                      if (document.documentElement.requestFullscreen) {
+                        await document.documentElement.requestFullscreen().catch(() => {});
+                      }
+                      if (screen.orientation && (screen.orientation as any).lock) {
+                        await (screen.orientation as any).lock('landscape').catch(() => {
+                           // Fallback to virtual rotation
+                           setForceLandscape(true);
+                        });
+                      } else {
+                        // Fallback for iOS
+                        setForceLandscape(true);
+                      }
+                    } catch (e) {
+                      console.log("Rotation lock failed", e);
+                      setForceLandscape(true);
+                    }
+                    setDismissPortraitWarning(true);
+                  }}
+                  className="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-black rounded-2xl shadow-lg shadow-blue-600/20 flex items-center justify-center gap-2 transition-all active:scale-95"
                 >
-                  तरीही खेळा
+                  आडवा करा आणि खेळा (Rotate & Play)
                 </button>
               </div>
             )}
             
-            <div className="bg-white dark:bg-slate-900/40 rounded-[2rem] p-2 md:p-8 border border-slate-200 dark:border-slate-800 shadow-2xl relative overflow-hidden transition-all duration-500">
-              {active.component({ 
-                player1: battleContext?.p1, 
-                player2: battleContext?.p2,
-                schoolId: battleContext?.schoolId,
-                classNum: battleContext?.classNum,
-                onClose: closeArena
-              })}
+            <div 
+              ref={containerRef} 
+              className={cn(
+                "bg-white dark:bg-slate-900/40 rounded-[2rem] p-1 md:p-8 border border-slate-200 dark:border-slate-800 shadow-2xl relative transition-all duration-500 min-h-[400px] md:min-h-[600px] flex items-center justify-center",
+                forceLandscape ? "fixed inset-0 z-[9999] bg-slate-950 rounded-none border-none p-0 flex items-center justify-center overflow-hidden" : "overflow-auto"
+              )}
+              style={forceLandscape ? {
+                width: '100vh',
+                height: '100vw',
+                top: '50%',
+                left: '50%',
+                transform: 'translate(-50%, -50%) rotate(90deg)',
+              } : {}}
+            >
+              {forceLandscape && (
+                <button 
+                  onClick={() => setForceLandscape(false)}
+                  className="absolute top-4 right-4 z-[10000] p-4 bg-white/10 hover:bg-white/20 rounded-full text-white backdrop-blur-md border border-white/20"
+                >
+                  <X className="w-6 h-6" />
+                </button>
+              )}
+              <div 
+                className={cn(
+                  "w-full h-full transform-gpu transition-transform duration-300 origin-top flex items-center justify-center shrink-0",
+                  forceLandscape ? "origin-center" : "origin-top"
+                )}
+                style={{ 
+                  transform: forceLandscape 
+                    ? `scale(${Math.min(window.innerHeight / 1152, window.innerWidth / 648)})` 
+                    : `scale(${isPortrait ? (containerRef.current?.clientWidth || 390) / 1152 : scale})`,
+                  width: activeId ? '1152px' : '100%',
+                  height: activeId ? (isPortrait && !forceLandscape ? 'auto' : '648px') : '100%',
+                  minHeight: (isPortrait && !forceLandscape) ? '800px' : 'auto'
+                }}
+              >
+                {active.component({ 
+                  player1: battleContext?.p1, 
+                  player2: battleContext?.p2,
+                  schoolId: battleContext?.schoolId,
+                  classNum: battleContext?.classNum,
+                  onClose: closeArena
+                })}
+              </div>
             </div>
           </div>
 

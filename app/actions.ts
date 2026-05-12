@@ -709,6 +709,12 @@ export async function recordBattleResult(data: {
   player2Id: string;
   winnerId: string | null;
 }): Promise<void> {
+  // Skip recording for guest sessions
+  if (data.schoolId === 'guest-school' || data.player1Id.startsWith('guest-')) {
+    console.log("Skipping recordBattleResult for guest session");
+    return;
+  }
+
   // @ts-ignore - Prisma client needs local generation
   await prisma.battleRecord.create({ data });
   

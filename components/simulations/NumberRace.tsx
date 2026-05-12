@@ -55,8 +55,8 @@ export default function NumberRace({ player1, player2, schoolId, classNum, onClo
       {({ addPoint, gameState }) => (
         <div className="flex flex-col h-full gap-8">
           {/* Instructions */}
-          <div className="flex-1 flex flex-col items-center justify-center p-4 md:p-8 bg-white/5 rounded-[32px] md:rounded-[48px] border-2 border-white/10 shadow-2xl relative">
-            <div className="absolute top-2 md:top-4 left-1/2 -translate-x-1/2 text-[8px] md:text-[10px] font-black uppercase tracking-widest text-slate-500 italic">Largest Number:</div>
+          <div className="flex-1 flex flex-col items-center justify-center p-3 md:p-8 bg-white/5 rounded-[24px] md:rounded-[48px] border-2 border-white/10 shadow-2xl relative">
+            <div className="absolute top-1 md:top-4 left-1/2 -translate-x-1/2 text-[8px] md:text-[10px] font-black uppercase tracking-widest text-slate-500 italic">Largest Number:</div>
             <div className="flex items-center gap-4 md:gap-6">
                <div className="w-16 h-16 md:w-24 md:h-24 rounded-2xl md:rounded-[32px] bg-gradient-to-br from-orange-400 to-red-500 shadow-xl shadow-orange-500/20 flex items-center justify-center text-2xl md:text-4xl font-black text-white italic">BIG</div>
                <div className="text-2xl md:text-4xl text-slate-600 font-bold mb-2">?</div>
@@ -64,7 +64,7 @@ export default function NumberRace({ player1, player2, schoolId, classNum, onClo
           </div>
 
           {/* Player Sides */}
-          <div className="grid grid-cols-2 gap-4 md:gap-8 h-64 md:h-96">
+          <div className="grid grid-cols-2 gap-2 md:gap-8 min-h-[200px] md:h-96">
             <NumberSide 
               player={player1} 
               color="blue" 

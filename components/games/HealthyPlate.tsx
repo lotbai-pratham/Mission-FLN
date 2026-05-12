@@ -89,7 +89,7 @@ export default function HealthyPlate({ onClose }: { onClose?: () => void }) {
       ref={gameRef}
       onMouseMove={handleMouseMove}
       onTouchMove={handleTouchMove}
-      className="relative w-full aspect-video md:min-h-[400px] min-h-[280px] bg-gradient-to-br from-emerald-50 to-teal-50 rounded-[40px] overflow-hidden border-4 md:border-8 border-white shadow-2xl flex flex-col font-sans md:cursor-none"
+      className="relative w-full md:aspect-video md:min-h-[400px] min-h-[450px] bg-gradient-to-br from-emerald-50 to-teal-50 rounded-[40px] overflow-hidden border-4 md:border-8 border-white shadow-2xl flex flex-col font-sans md:cursor-none"
     >
       {/* Background Decor */}
       <div className="absolute top-10 left-10 text-9xl opacity-5 pointer-events-none font-black italic">EAT CLEAN</div>

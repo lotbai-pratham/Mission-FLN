@@ -33,6 +33,8 @@ export default function BattleMatchmaker({
   const [player1, setPlayer1] = useState<any>(null);
   const [player2, setPlayer2] = useState<any>(null);
   const [searchQuery, setSearchQuery] = useState('');
+  const [isManual, setIsManual] = useState(!userSchoolId && !isAdmin);
+  const [manualNames, setManualNames] = useState({ p1: '', p2: '' });
 
   // Fetch schools if admin
   useEffect(() => {
@@ -67,7 +69,16 @@ export default function BattleMatchmaker({
   );
 
   const handleStart = () => {
-    if (player1 && player2 && selectedSchoolId) {
+    if (isManual) {
+      if (manualNames.p1 && manualNames.p2) {
+        onMatchComplete(
+          { id: 'guest-1', name: manualNames.p1, gender: '?' },
+          { id: 'guest-2', name: manualNames.p2, gender: '?' },
+          'guest-school',
+          classNum
+        );
+      }
+    } else if (player1 && player2 && selectedSchoolId) {
       onMatchComplete(player1, player2, selectedSchoolId, classNum);
     }
   };
@@ -115,18 +126,30 @@ export default function BattleMatchmaker({
                 </div>
               )}
             </div>
-            <div className="space-y-2">
-              <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest flex items-center gap-1.5">
-                <GraduationCap className="w-3 h-3" /> Class
-              </label>
-              <select 
-                value={classNum} 
-                onChange={(e) => setClassNum(Number(e.target.value))}
-                className="w-full bg-slate-800 border-none rounded-xl px-4 py-2.5 text-sm text-white focus:ring-2 focus:ring-orange-500 transition-all font-bold"
-              >
-                {[1,2,3,4,5,6,7,8].map(n => <option key={n} value={n}>Class {n}</option>)}
-              </select>
             </div>
+          </div>
+
+          <div className="mt-6 flex items-center justify-between p-1 bg-slate-800/50 rounded-2xl border border-slate-700/30">
+            <button 
+              onClick={() => setIsManual(false)}
+              disabled={!userSchoolId && !isAdmin}
+              className={cn(
+                "flex-1 py-2 px-4 rounded-xl text-xs font-black transition-all flex items-center justify-center gap-2",
+                !isManual ? "bg-orange-500 text-white shadow-lg" : "text-slate-500 hover:text-slate-300",
+                (!userSchoolId && !isAdmin) && "opacity-50 cursor-not-allowed"
+              )}
+            >
+              <Users className="w-3.5 h-3.5" /> SELECT STUDENTS
+            </button>
+            <button 
+              onClick={() => setIsManual(true)}
+              className={cn(
+                "flex-1 py-2 px-4 rounded-xl text-xs font-black transition-all flex items-center justify-center gap-2",
+                isManual ? "bg-orange-500 text-white shadow-lg" : "text-slate-500 hover:text-slate-300"
+              )}
+            >
+              <UserCircle2 className="w-3.5 h-3.5" /> GUEST MODE
+            </button>
           </div>
         </div>
 
@@ -137,22 +160,52 @@ export default function BattleMatchmaker({
           <div className="flex items-center justify-center gap-8 py-6 bg-slate-800/30 rounded-3xl border border-slate-800 relative overflow-hidden">
             <div className="absolute inset-0 bg-orange-500/5 animate-pulse" />
             <PlayerCard 
-              player={player1} 
+              player={isManual ? { name: manualNames.p1 || 'Player 1' } : player1} 
               label="PLAYER 1" 
-              active={!!player1} 
+              active={isManual ? !!manualNames.p1 : !!player1} 
               color="blue" 
-              onChange={() => setPlayer1(null)}
+              onChange={() => isManual ? setManualNames(prev => ({ ...prev, p1: '' })) : setPlayer1(null)}
             />
             <div className="text-xl font-black text-slate-600 italic z-10 px-4 py-1 bg-slate-900 rounded-full border border-slate-800">VS</div>
             <PlayerCard 
-              player={player2} 
+              player={isManual ? { name: manualNames.p2 || 'Player 2' } : player2} 
               label="PLAYER 2" 
-              active={!!player2} 
+              active={isManual ? !!manualNames.p2 : !!player2} 
               color="red" 
-              onChange={() => setPlayer2(null)}
+              onChange={() => isManual ? setManualNames(prev => ({ ...prev, p2: '' })) : setPlayer2(null)}
             />
           </div>
 
+          {isManual ? (
+            <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+               <div className="text-center space-y-1">
+                  <h4 className="text-sm font-black text-white uppercase tracking-wider">Enter Player Names</h4>
+                  <p className="text-[10px] text-slate-500 font-bold">Play as guests without saving data</p>
+               </div>
+               <div className="grid grid-cols-1 gap-4">
+                  <div className="space-y-2">
+                    <label className="text-[9px] font-black text-blue-400 uppercase tracking-widest ml-1">Player 1 Name</label>
+                    <input 
+                      type="text"
+                      placeholder="Type name..."
+                      value={manualNames.p1}
+                      onChange={(e) => setManualNames(prev => ({ ...prev, p1: e.target.value }))}
+                      className="w-full bg-slate-800 border-2 border-slate-700/50 rounded-2xl px-5 py-4 text-white font-bold focus:border-blue-500 outline-none transition-all"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-[9px] font-black text-red-400 uppercase tracking-widest ml-1">Player 2 Name</label>
+                    <input 
+                      type="text"
+                      placeholder="Type name..."
+                      value={manualNames.p2}
+                      onChange={(e) => setManualNames(prev => ({ ...prev, p2: e.target.value }))}
+                      className="w-full bg-slate-800 border-2 border-slate-700/50 rounded-2xl px-5 py-4 text-white font-bold focus:border-red-500 outline-none transition-all"
+                    />
+                  </div>
+               </div>
+            </div>
+          ) : (
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <h3 className="text-sm font-black text-slate-300 flex items-center gap-2">
@@ -231,14 +284,17 @@ export default function BattleMatchmaker({
               </div>
             )}
           </div>
+          )}
         </div>
 
         {/* Footer */}
-        <div className="p-8 border-t border-slate-800 bg-slate-900/50 backdrop-blur-md space-y-4">
-          {!player1 || !player2 ? (
+        <div className="p-6 md:p-8 border-t border-slate-800 bg-slate-900/50 backdrop-blur-md space-y-4 pb-28 md:pb-8">
+          {(isManual ? (!manualNames.p1 || !manualNames.p2) : (!player1 || !player2)) ? (
             <div className="flex items-center gap-3 p-4 bg-orange-500/5 rounded-2xl border border-orange-500/20 text-orange-400 text-sm">
               <Users className="w-5 h-5 shrink-0" />
-              <p className="font-bold">Select two students at level {level} to begin the battle.</p>
+              <p className="font-bold">
+                {isManual ? "Enter both names to begin the battle." : `Select two students at level ${level} to begin the battle.`}
+              </p>
             </div>
           ) : (
             <button 
@@ -248,7 +304,9 @@ export default function BattleMatchmaker({
               <div className="flex items-center justify-center gap-3 text-xl">
                 START 2V2 BATTLE <Swords className="w-6 h-6 group-hover:rotate-12 transition-transform" />
               </div>
-              <p className="text-[10px] text-white/60 font-black tracking-[4px] uppercase">{player1.name} VS {player2.name}</p>
+              <p className="text-[10px] text-white/60 font-black tracking-[4px] uppercase">
+                {isManual ? `${manualNames.p1} VS ${manualNames.p2}` : `${player1.name} VS ${player2.name}`}
+              </p>
             </button>
           )}
         </div>

@@ -64,7 +64,7 @@ export default function BundleBuilder() {
          
          {/* LEFT: The Workspace */}
          <div className="space-y-8">
-            <div className="bg-slate-50 dark:bg-slate-800/50 rounded-[32px] p-8 aspect-video relative flex items-center justify-center border-2 border-dashed border-slate-200 dark:border-slate-700">
+            <div className="bg-slate-50 dark:bg-slate-800/50 rounded-[32px] p-8 md:aspect-video min-h-[300px] relative flex items-center justify-center border-2 border-dashed border-slate-200 dark:border-slate-700">
                
                {/* Sticks Grid */}
                <div className="flex flex-wrap gap-3 justify-center max-w-[280px]">

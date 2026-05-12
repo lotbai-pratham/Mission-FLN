@@ -59,7 +59,7 @@ export default function GermBuster({ onClose }: { onClose?: () => void }) {
   };
 
   return (
-    <div className="relative w-full aspect-video md:min-h-[400px] min-h-[250px] bg-gradient-to-br from-blue-100 to-cyan-50 rounded-[40px] overflow-hidden border-4 md:border-8 border-white shadow-2xl flex flex-col font-sans">
+    <div className="relative w-full md:aspect-video md:min-h-[400px] min-h-[450px] bg-gradient-to-br from-blue-100 to-cyan-50 rounded-[40px] overflow-hidden border-4 md:border-8 border-white shadow-2xl flex flex-col font-sans">
       {/* Background Water Pattern */}
       <div className="absolute inset-0 opacity-10 pointer-events-none" style={{ backgroundImage: 'radial-gradient(circle, #0ea5e9 1px, transparent 1px)', backgroundSize: '30px 30px' }} />
 
