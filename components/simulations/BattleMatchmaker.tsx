@@ -126,7 +126,6 @@ export default function BattleMatchmaker({
                 </div>
               )}
             </div>
-            </div>
           </div>
 
           <div className="mt-6 flex items-center justify-between p-1 bg-slate-800/50 rounded-2xl border border-slate-700/30">
