@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect, useCallback, useRef } from "react";
-import { Heart, Shield, Swords, Zap, RefreshCw, Trophy, ArrowLeft, Target, BookOpen, Calculator, Sparkles } from "lucide-react";
+import { Heart, Shield, Swords, Zap, RefreshCw, Trophy, ArrowLeft, Target, BookOpen, Calculator, Sparkles, ShieldCheck } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface Question {
@@ -15,25 +15,26 @@ interface Creature {
   emoji: string;
   hp: number;
   maxHp: number;
+  attackSymbol: string;
 }
 
 const CREATURES = [
-  { name: "Wild Tiger", emoji: "🐅" },
-  { name: "Jungle Snake", emoji: "🐍" },
-  { name: "Croc Guardian", emoji: "🐊" },
-  { name: "Silverback Gorilla", emoji: "🦍" },
-  { name: "Desert Scorpion", emoji: "🦂" },
-  { name: "Shadow Jaguar", emoji: "🐆" },
+  { name: "Wild Tiger", emoji: "🐅", attackSymbol: "🐾" },
+  { name: "Jungle Snake", emoji: "🐍", attackSymbol: "💨" },
+  { name: "Croc Guardian", emoji: "🐊", attackSymbol: "🐊" },
+  { name: "Silverback Gorilla", emoji: "🦍", attackSymbol: "🪨" },
+  { name: "Desert Scorpion", emoji: "🦂", attackSymbol: "🦂" },
+  { name: "Shadow Jaguar", emoji: "🐆", attackSymbol: "🐾" },
 ];
 
 export default function JungleFight({ onClose }: { onClose?: () => void }) {
-  const [gameState, setGameState] = useState<"intro" | "fighting" | "question" | "victory" | "gameover">("intro");
+  const [gameState, setGameState] = useState<"intro" | "fighting" | "question" | "levelup" | "gameover">("intro");
   const [level, setLevel] = useState(1);
   const [kills, setKills] = useState(0);
   const [playerHealth, setPlayerHealth] = useState(3);
   const [creature, setCreature] = useState<Creature | null>(null);
   const [activeQuestion, setActiveQuestion] = useState<Question | null>(null);
-  const [animating, setAnimating] = useState<"player" | "creature" | "projectile" | "impact" | "defeat" | "creature-entry" | "creature-attack" | "impact-player" | null>(null);
+  const [animating, setAnimating] = useState<"player" | "creature" | "projectile" | "creature-projectile" | "block" | "impact" | "impact-player" | "defeat" | "creature-entry" | "creature-attack" | null>(null);
   const [feedback, setFeedback] = useState<"correct" | "wrong" | null>(null);
   const [projectileType, setProjectileType] = useState<"🥊" | "🦶">("🥊");
 
@@ -42,7 +43,10 @@ export default function JungleFight({ onClose }: { onClose?: () => void }) {
     const hp = 1; 
     setCreature({ ...c, hp, maxHp: hp });
     setAnimating("creature-entry");
-    setTimeout(() => setAnimating(null), 500);
+    
+    setTimeout(() => {
+      setAnimating("creature-projectile");
+    }, 600);
   }, []);
 
   const generateQuestion = (type: "math" | "lang"): Question => {
@@ -53,7 +57,7 @@ export default function JungleFight({ onClose }: { onClose?: () => void }) {
         n2 = Math.floor(Math.random() * 10) + 1;
         ans = n1 + n2;
       } else if (level === 2) {
-        n1 = Math.floor(Math.random() * 20) + 5;
+        n1 = Math.floor(Math.random() * 30) + 10;
         n2 = Math.floor(Math.random() * 20) + 5;
         op = Math.random() > 0.5 ? "+" : "-";
         if (op === "-") {
@@ -63,8 +67,8 @@ export default function JungleFight({ onClose }: { onClose?: () => void }) {
           ans = n1 + n2;
         }
       } else {
-        n1 = Math.floor(Math.random() * 10) + 2;
-        n2 = Math.floor(Math.random() * 5) + 2;
+        n1 = Math.floor(Math.random() * 12) + 2;
+        n2 = Math.floor(Math.random() * 9) + 2;
         op = "×";
         ans = n1 * n2;
       }
@@ -88,16 +92,16 @@ export default function JungleFight({ onClose }: { onClose?: () => void }) {
         { q: "S N _ K E", a: "A" },
         { q: "J U N _ L E", a: "G" },
         { q: "F I _ H T", a: "G" },
-        { q: "M _ T H", a: "A" },
-        { q: "B _ T T L E", a: "A" },
+        { q: "P U _ C H", a: "N" },
+        { q: "K I _ K", a: "C" },
       ];
       const selected = words[Math.floor(Math.random() * words.length)];
-      const options = [selected.a, "B", "O", "E", "I", "U"].filter((v, i, a) => a.indexOf(v) === i).slice(0, 4);
+      const options = [selected.a, "B", "O", "E", "M", "S"].filter((v, i, a) => a.indexOf(v) === i).slice(0, 4);
       if (!options.includes(selected.a)) options[0] = selected.a;
       
       return {
         type,
-        text: `Missing letter: ${selected.q}`,
+        text: `Complete the word: ${selected.q}`,
         options: options.sort(() => Math.random() - 0.5),
         answer: selected.a,
       };
@@ -125,37 +129,45 @@ export default function JungleFight({ onClose }: { onClose?: () => void }) {
       setFeedback("correct");
       setGameState("fighting");
       
-      // Step 1: Throw Projectile
-      setAnimating("projectile");
+      // Step 1: Block Incoming Attack
+      setAnimating("block");
       
       setTimeout(() => {
-        // Step 2: Impact
-        setAnimating("impact");
+        // Step 2: Counter Attack (Projectile)
+        setAnimating("projectile");
         
         setTimeout(() => {
-          // Step 3: Defeat
-          setAnimating("defeat");
+          // Step 3: Impact & Defeat
+          setAnimating("impact");
           setCreature(prev => prev ? { ...prev, hp: prev.hp - 1 } : null);
           
           setTimeout(() => {
-            setAnimating(null);
-            setFeedback(null);
+            setAnimating("defeat");
             
-            setKills(k => {
-              const newKills = k + 1;
-              if (newKills % 5 === 0) setLevel(l => l + 1);
-              spawnCreature(level);
-              return newKills;
-            });
-          }, 600);
-        }, 400);
-      }, 600);
+            setTimeout(() => {
+              setAnimating(null);
+              setFeedback(null);
+              
+              setKills(k => {
+                const newKills = k + 1;
+                if (newKills > 0 && newKills % 10 === 0) {
+                  setGameState("levelup");
+                  setLevel(l => l + 1);
+                  return newKills;
+                }
+                spawnCreature(level);
+                return newKills;
+              });
+            }, 500);
+          }, 300);
+        }, 500);
+      }, 500);
 
     } else {
       setFeedback("wrong");
       setGameState("fighting");
       
-      // Creature attacks
+      // Step 1: Creature Attack Projectile Hits Player
       setAnimating("creature-attack");
       
       setTimeout(() => {
@@ -169,9 +181,9 @@ export default function JungleFight({ onClose }: { onClose?: () => void }) {
         });
         
         setTimeout(() => {
-          setAnimating(null);
+          setAnimating("creature-projectile"); // Reset creature to ready state
           setFeedback(null);
-        }, 500);
+        }, 600);
       }, 500);
     }
   };
@@ -179,7 +191,7 @@ export default function JungleFight({ onClose }: { onClose?: () => void }) {
   return (
     <div className={cn(
       "relative w-full aspect-video min-h-[400px] bg-gradient-to-br from-emerald-950 via-green-900 to-emerald-950 rounded-3xl overflow-hidden border-4 border-emerald-800 shadow-2xl flex flex-col font-sans transition-all duration-300",
-      animating === "impact-player" ? "animate-shake bg-red-900/20" : ""
+      animating === "impact-player" ? "animate-shake bg-red-900/40" : ""
     )}>
       <style jsx>{`
         @keyframes slideIn {
@@ -187,63 +199,75 @@ export default function JungleFight({ onClose }: { onClose?: () => void }) {
           to { transform: translateX(0); opacity: 1; }
         }
         @keyframes flyOut {
-          to { transform: translate(200px, -200px) rotate(360deg); opacity: 0; }
+          to { transform: translate(300px, -300px) rotate(720deg) scale(0); opacity: 0; }
         }
         @keyframes projectileMove {
           from { transform: translateX(0); opacity: 1; }
-          to { transform: translateX(300px) rotate(360deg); opacity: 0; }
+          to { transform: translateX(400px) rotate(360deg); }
+        }
+        @keyframes creatureProjectileMove {
+          from { transform: translateX(0); opacity: 1; }
+          to { transform: translateX(-400px) rotate(-360deg); }
         }
         @keyframes shake {
           0%, 100% { transform: translateX(0); }
-          25% { transform: translateX(-10px); }
-          75% { transform: translateX(10px); }
+          25% { transform: translateX(-15px); }
+          75% { transform: translateX(15px); }
         }
         @keyframes float {
           0%, 100% { transform: translateY(0) rotate(0deg); }
-          50% { transform: translateY(-20px) rotate(10deg); }
+          50% { transform: translateY(-30px) rotate(5deg); }
         }
-        @keyframes creatureLunge {
+        @keyframes lunge {
           0% { transform: translateX(0); }
-          50% { transform: translateX(-100px) scale(1.2); }
+          50% { transform: translateX(-200px) scale(1.3); }
           100% { transform: translateX(0); }
         }
-        .animate-slide-in { animation: slideIn 0.5s ease-out forwards; }
-        .animate-fly-out { animation: flyOut 0.6s ease-in forwards; }
-        .animate-projectile { animation: projectileMove 0.6s linear forwards; }
+        @keyframes blockPulse {
+          0% { transform: scale(0.8); opacity: 0; }
+          50% { transform: scale(1.5); opacity: 1; border-width: 10px; }
+          100% { transform: scale(2); opacity: 0; }
+        }
+        .animate-slide-in { animation: slideIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
+        .animate-fly-out { animation: flyOut 0.8s ease-in forwards; }
+        .animate-projectile { animation: projectileMove 0.5s linear forwards; }
+        .animate-creature-projectile { animation: creatureProjectileMove 2.5s linear infinite; }
         .animate-shake { animation: shake 0.1s linear infinite; }
-        .animate-float { animation: float 3s ease-in-out infinite; }
-        .animate-lunge { animation: creatureLunge 0.5s ease-in-out; }
+        .animate-float { animation: float 4s ease-in-out infinite; }
+        .animate-lunge { animation: lunge 0.5s ease-in-out forwards; }
+        .animate-block { animation: blockPulse 0.5s ease-out forwards; }
       `}</style>
 
       {/* Jungle Background Elements */}
-      <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-10 left-10 text-4xl animate-float opacity-30">🌿</div>
-        <div className="absolute top-40 left-40 text-2xl animate-float opacity-20" style={{ animationDelay: '1s' }}>🍃</div>
-        <div className="absolute bottom-20 left-20 text-5xl animate-float opacity-40" style={{ animationDelay: '0.5s' }}>🌴</div>
-        <div className="absolute top-20 right-40 text-3xl animate-float opacity-20" style={{ animationDelay: '1.5s' }}>🌿</div>
-        <div className="absolute bottom-10 right-80 text-4xl animate-float opacity-30" style={{ animationDelay: '2s' }}>🍃</div>
+      <div className="absolute inset-0 pointer-events-none overflow-hidden">
+        <div className="absolute top-10 left-10 text-5xl animate-float opacity-30">🌿</div>
+        <div className="absolute top-40 left-40 text-3xl animate-float opacity-10" style={{ animationDelay: '1s' }}>🍃</div>
+        <div className="absolute bottom-20 left-10 text-7xl animate-float opacity-20" style={{ animationDelay: '0.5s' }}>🌴</div>
+        <div className="absolute top-20 right-40 text-4xl animate-float opacity-10" style={{ animationDelay: '1.5s' }}>🌿</div>
+        <div className="absolute bottom-10 right-20 text-6xl animate-float opacity-20" style={{ animationDelay: '2s' }}>🍃</div>
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-[20rem] font-black text-black/10 select-none">JUNGLE</div>
       </div>
 
       {/* Header */}
-      <div className="relative z-10 p-6 flex justify-between items-center text-white bg-gradient-to-b from-black/40 to-transparent">
-        <div className="flex gap-2 bg-black/20 px-4 py-2 rounded-2xl backdrop-blur-sm">
+      <div className="relative z-10 p-6 flex justify-between items-center text-white">
+        <div className="flex gap-2 bg-black/40 px-5 py-2.5 rounded-2xl backdrop-blur-md border border-white/10 shadow-2xl">
           {Array.from({ length: 3 }).map((_, i) => (
-            <Heart key={i} className={cn("w-6 h-6 drop-shadow-lg", i < playerHealth ? "text-rose-500 fill-rose-500" : "text-slate-700")} />
+            <Heart key={i} className={cn("w-7 h-7 drop-shadow-lg transition-all", i < playerHealth ? "text-rose-500 fill-rose-500 scale-110" : "text-slate-800 scale-90")} />
           ))}
         </div>
         <div className="flex items-center gap-6">
-          <div className="bg-black/20 px-4 py-1 rounded-xl backdrop-blur-sm border border-white/5">
-            <p className="text-[10px] font-black uppercase tracking-widest text-emerald-400">Trophies</p>
-            <p className="text-xl font-black text-center">{kills}</p>
+          <div className="bg-black/40 px-6 py-1.5 rounded-2xl backdrop-blur-md border border-white/10 text-center">
+            <p className="text-[10px] font-black uppercase tracking-[3px] text-emerald-400 mb-0.5">Defeated</p>
+            <p className="text-2xl font-black">{kills}</p>
           </div>
-          <div className="bg-emerald-500/20 px-4 py-1 rounded-xl backdrop-blur-sm border border-emerald-500/20">
-            <p className="text-[10px] font-black uppercase tracking-widest text-emerald-400">Level</p>
-            <p className="text-xl font-black text-center">{level}</p>
+          <div className="bg-emerald-500/30 px-6 py-1.5 rounded-2xl backdrop-blur-md border border-emerald-500/30 text-center">
+            <p className="text-[10px] font-black uppercase tracking-[3px] text-emerald-400 mb-0.5">Stage</p>
+            <p className="text-2xl font-black">{level}</p>
           </div>
         </div>
         {onClose && (
-          <button onClick={onClose} className="p-2 hover:bg-white/10 rounded-full transition-colors">
-            <ArrowLeft className="w-6 h-6" />
+          <button onClick={onClose} className="p-2.5 hover:bg-white/10 rounded-full transition-all hover:rotate-90">
+            <ArrowLeft className="w-7 h-7" />
           </button>
         )}
       </div>
@@ -252,17 +276,25 @@ export default function JungleFight({ onClose }: { onClose?: () => void }) {
       <div className="flex-1 relative flex items-center justify-around px-12 overflow-hidden">
         {/* Player */}
         <div className={cn(
-          "relative transition-all duration-300 z-20",
-          animating === "impact-player" ? "scale-90" : "scale-100"
+          "relative z-20 transition-all duration-300",
+          animating === "impact-player" ? "scale-75" : "scale-100"
         )}>
-          <div className="text-9xl filter drop-shadow-[0_0_30px_rgba(59,130,246,0.5)]">🦸</div>
-          <div className="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1 bg-blue-500 rounded-full text-[10px] font-black text-white whitespace-nowrap shadow-xl border border-white/20">
+          <div className="text-9xl filter drop-shadow-[0_0_40px_rgba(59,130,246,0.6)]">🦸</div>
+          <div className="absolute -top-6 left-1/2 -translate-x-1/2 px-5 py-1.5 bg-blue-600 rounded-full text-[11px] font-black text-white whitespace-nowrap shadow-2xl border border-white/30 uppercase tracking-widest">
             WARRIOR
           </div>
           
-          {/* Attack Projectile */}
+          {/* Block Shield Animation */}
+          {animating === "block" && (
+            <div className="absolute inset-0 z-40 flex items-center justify-center">
+              <div className="w-full h-full rounded-full border-4 border-blue-400 animate-block bg-blue-400/20" />
+              <ShieldCheck className="w-24 h-24 text-blue-400 absolute" />
+            </div>
+          )}
+
+          {/* Player Attack Projectile */}
           {animating === "projectile" && (
-            <div className="absolute top-1/2 left-full -translate-y-1/2 text-7xl animate-projectile z-30">
+            <div className="absolute top-1/2 left-full -translate-y-1/2 text-8xl animate-projectile z-50">
               {projectileType}
             </div>
           )}
@@ -271,28 +303,35 @@ export default function JungleFight({ onClose }: { onClose?: () => void }) {
         {/* Creature */}
         {creature && (
           <div className={cn(
-            "relative z-20",
+            "relative z-20 transition-all",
             animating === "creature-entry" && "animate-slide-in",
             animating === "defeat" && "animate-fly-out",
-            animating === "impact" && "animate-shake",
+            animating === "impact" && "animate-shake scale-110",
             animating === "creature-attack" && "animate-lunge"
           )}>
-            <div className="text-9xl filter drop-shadow-[0_0_30px_rgba(244,63,94,0.5)]">{creature.emoji}</div>
-            <div className="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1 bg-rose-600 rounded-full text-[10px] font-black text-white whitespace-nowrap shadow-xl border border-white/20 uppercase tracking-wider">
+            <div className="text-9xl filter drop-shadow-[0_0_40px_rgba(244,63,94,0.6)]">{creature.emoji}</div>
+            <div className="absolute -top-6 left-1/2 -translate-x-1/2 px-5 py-1.5 bg-rose-700 rounded-full text-[11px] font-black text-white whitespace-nowrap shadow-2xl border border-white/30 uppercase tracking-[2px]">
               {creature.name}
             </div>
             
-            {/* Impact Sparkle */}
+            {/* Creature Projectile (Incoming Attack) */}
+            {animating === "creature-projectile" && (
+              <div className="absolute top-1/2 right-full -translate-y-1/2 text-6xl animate-creature-projectile z-40 opacity-80">
+                {creature.attackSymbol}
+              </div>
+            )}
+
+            {/* Impact FX */}
             {animating === "impact" && (
-              <div className="absolute inset-0 flex items-center justify-center text-8xl animate-ping text-yellow-400">
+              <div className="absolute inset-0 flex items-center justify-center text-9xl animate-ping text-yellow-400 z-50">
                 💥
               </div>
             )}
 
             {/* HP Bar */}
-            <div className="absolute -bottom-10 left-1/2 -translate-x-1/2 w-32 h-3 bg-black/40 rounded-full overflow-hidden border-2 border-white/10 shadow-lg">
+            <div className="absolute -bottom-12 left-1/2 -translate-x-1/2 w-40 h-4 bg-black/60 rounded-full overflow-hidden border-2 border-white/20 shadow-2xl">
               <div 
-                className="h-full bg-gradient-to-r from-rose-600 to-rose-400 transition-all duration-500" 
+                className="h-full bg-gradient-to-r from-rose-600 via-rose-500 to-rose-400 transition-all duration-500" 
                 style={{ width: `${(creature.hp / creature.maxHp) * 100}%` }}
               />
             </div>
@@ -301,73 +340,73 @@ export default function JungleFight({ onClose }: { onClose?: () => void }) {
       </div>
 
       {/* Control UI */}
-      <div className="relative z-10 p-6 h-48 bg-gradient-to-t from-black/80 to-black/20 backdrop-blur-xl border-t border-white/10">
+      <div className="relative z-10 p-6 h-52 bg-gradient-to-t from-black/90 to-black/30 backdrop-blur-2xl border-t border-white/10 shadow-[0_-20px_50px_rgba(0,0,0,0.5)]">
         {gameState === "intro" && (
-          <div className="h-full flex flex-col items-center justify-center space-y-4">
-            <div className="flex items-center gap-3">
-              <Swords className="w-8 h-8 text-emerald-400 animate-pulse" />
-              <h2 className="text-4xl font-black text-white italic tracking-tighter drop-shadow-lg">JUNGLE SURVIVAL</h2>
+          <div className="h-full flex flex-col items-center justify-center space-y-5">
+            <div className="flex items-center gap-4">
+              <Swords className="w-10 h-10 text-emerald-400 animate-bounce" />
+              <h2 className="text-5xl font-black text-white italic tracking-tighter drop-shadow-2xl">JUNGLE FIGHT</h2>
             </div>
             <button 
               onClick={startGame}
-              className="group px-12 py-5 bg-gradient-to-r from-emerald-600 to-green-500 hover:from-emerald-500 hover:to-green-400 text-white font-black rounded-3xl shadow-[0_0_30px_rgba(16,185,129,0.4)] hover:scale-105 transition-all flex items-center gap-3 border-t border-white/20"
+              className="group px-14 py-5 bg-gradient-to-r from-emerald-600 to-green-500 hover:from-emerald-500 hover:to-green-400 text-white font-black rounded-[30px] shadow-[0_0_40px_rgba(16,185,129,0.5)] hover:scale-110 active:scale-95 transition-all flex items-center gap-4 border-t-2 border-white/30"
             >
-              <Zap className="w-6 h-6 fill-white" /> START MISSION
+              <Zap className="w-7 h-7 fill-white" /> ENTER THE WILD
             </button>
           </div>
         )}
 
-        {gameState === "fighting" && !animating && (
+        {gameState === "fighting" && (
           <div className="h-full flex items-center justify-center gap-8">
             <button 
               onClick={() => handleAttack("lang")}
-              className="group relative flex-1 max-w-[280px] h-28 bg-gradient-to-br from-blue-600 to-indigo-700 rounded-[32px] p-6 flex items-center gap-5 hover:scale-110 active:scale-95 transition-all shadow-2xl border-t border-white/20"
+              className="group relative flex-1 max-w-[320px] h-32 bg-gradient-to-br from-blue-600 to-indigo-800 rounded-[40px] p-6 flex items-center gap-6 hover:scale-110 active:scale-95 transition-all shadow-2xl border-t-2 border-white/20"
             >
-              <div className="w-14 h-14 bg-white/20 rounded-2xl flex items-center justify-center group-hover:rotate-12 transition-all shadow-inner">
-                <BookOpen className="w-8 h-8 text-white" />
+              <div className="w-16 h-16 bg-white/20 rounded-3xl flex items-center justify-center group-hover:rotate-12 transition-all shadow-inner border border-white/10">
+                <BookOpen className="w-9 h-9 text-white" />
               </div>
               <div className="text-left">
-                <p className="text-[10px] font-black text-blue-100/60 uppercase tracking-[2px]">Punch Skill</p>
-                <p className="text-2xl font-black text-white italic tracking-tight">LANGUAGE</p>
+                <p className="text-3xl font-black text-white italic tracking-tight mb-0.5">PUNCH</p>
+                <p className="text-[10px] font-black text-blue-100/60 uppercase tracking-[4px]">Language Skill</p>
               </div>
-              <div className="absolute -top-2 -right-2 w-8 h-8 bg-blue-400 rounded-full flex items-center justify-center text-lg shadow-lg border-2 border-white">🥊</div>
+              <div className="absolute -top-3 -right-3 w-12 h-12 bg-blue-500 rounded-2xl flex items-center justify-center text-2xl shadow-2xl border-4 border-white rotate-12">🥊</div>
             </button>
 
             <button 
               onClick={() => handleAttack("math")}
-              className="group relative flex-1 max-w-[280px] h-28 bg-gradient-to-br from-amber-500 to-orange-700 rounded-[32px] p-6 flex items-center gap-5 hover:scale-110 active:scale-95 transition-all shadow-2xl border-t border-white/20"
+              className="group relative flex-1 max-w-[320px] h-32 bg-gradient-to-br from-amber-500 to-orange-700 rounded-[40px] p-6 flex items-center gap-6 hover:scale-110 active:scale-95 transition-all shadow-2xl border-t-2 border-white/20"
             >
-              <div className="w-14 h-14 bg-white/20 rounded-2xl flex items-center justify-center group-hover:-rotate-12 transition-all shadow-inner">
-                <Calculator className="w-8 h-8 text-white" />
+              <div className="w-16 h-16 bg-white/20 rounded-3xl flex items-center justify-center group-hover:-rotate-12 transition-all shadow-inner border border-white/10">
+                <Calculator className="w-9 h-9 text-white" />
               </div>
               <div className="text-left">
-                <p className="text-[10px] font-black text-amber-100/60 uppercase tracking-[2px]">Kick Skill</p>
-                <p className="text-2xl font-black text-white italic tracking-tight">MATHS</p>
+                <p className="text-3xl font-black text-white italic tracking-tight mb-0.5">KICK</p>
+                <p className="text-[10px] font-black text-amber-100/60 uppercase tracking-[4px]">Maths Skill</p>
               </div>
-              <div className="absolute -top-2 -right-2 w-8 h-8 bg-amber-400 rounded-full flex items-center justify-center text-lg shadow-lg border-2 border-white">🦶</div>
+              <div className="absolute -top-3 -right-3 w-12 h-12 bg-amber-500 rounded-2xl flex items-center justify-center text-2xl shadow-2xl border-4 border-white -rotate-12">🦶</div>
             </button>
           </div>
         )}
 
         {gameState === "question" && activeQuestion && (
-          <div className="h-full flex flex-col items-center justify-center space-y-5 animate-in fade-in slide-in-from-bottom-4">
+          <div className="h-full flex flex-col items-center justify-center space-y-6 animate-in fade-in slide-in-from-bottom-6">
             <div className={cn(
-              "text-3xl font-black px-10 py-4 rounded-3xl shadow-2xl border-2 border-white/10 flex items-center gap-4",
-              activeQuestion.type === "math" ? "bg-amber-500 text-white" : "bg-blue-600 text-white"
+              "text-4xl font-black px-12 py-5 rounded-[30px] shadow-2xl border-2 border-white/20 flex items-center gap-5 scale-105",
+              activeQuestion.type === "math" ? "bg-amber-500 text-white shadow-amber-500/20" : "bg-blue-600 text-white shadow-blue-500/20"
             )}>
-              <Sparkles className="w-6 h-6 animate-spin-slow" />
+              <Shield className="w-8 h-8 animate-pulse" />
               {activeQuestion.text}
             </div>
-            <div className="flex gap-4">
+            <div className="flex gap-5">
               {activeQuestion.options.map((opt, i) => (
                 <button
                   key={i}
                   disabled={!!feedback}
                   onClick={() => submitAnswer(opt)}
                   className={cn(
-                    "min-w-[100px] px-8 py-4 bg-white/10 hover:bg-white/20 text-white font-black rounded-2xl border-2 border-white/10 transition-all text-xl shadow-xl hover:-translate-y-1 active:translate-y-0",
-                    feedback === "correct" && opt === activeQuestion.answer ? "bg-emerald-500 border-emerald-400 shadow-emerald-500/40" : "",
-                    feedback === "wrong" && opt !== activeQuestion.answer ? "opacity-30" : ""
+                    "min-w-[120px] px-10 py-5 bg-white/10 hover:bg-white/20 text-white font-black rounded-2xl border-2 border-white/10 transition-all text-2xl shadow-2xl hover:-translate-y-2 active:translate-y-0",
+                    feedback === "correct" && opt === activeQuestion.answer ? "bg-emerald-500 border-emerald-400 scale-110 shadow-emerald-500/50" : "",
+                    feedback === "wrong" && opt !== activeQuestion.answer ? "opacity-30 blur-[2px]" : ""
                   )}
                 >
                   {opt}
@@ -377,29 +416,45 @@ export default function JungleFight({ onClose }: { onClose?: () => void }) {
           </div>
         )}
 
+        {gameState === "levelup" && (
+          <div className="h-full flex flex-col items-center justify-center space-y-4 animate-in zoom-in duration-500">
+             <div className="flex items-center gap-4 text-emerald-400">
+                <Sparkles className="w-12 h-12 animate-spin-slow" />
+                <h2 className="text-6xl font-black italic tracking-tighter drop-shadow-[0_0_30px_rgba(52,211,153,0.6)]">LEVEL UP!</h2>
+             </div>
+             <p className="text-white font-bold text-xl uppercase tracking-[10px]">Prepare for Stage {level}</p>
+             <button 
+               onClick={() => { setGameState("fighting"); spawnCreature(level); }}
+               className="mt-4 px-12 py-4 bg-white text-slate-900 font-black rounded-2xl shadow-2xl hover:scale-105 transition-all"
+             >
+               CONTINUE HUNT
+             </button>
+          </div>
+        )}
+
         {gameState === "gameover" && (
-          <div className="h-full flex flex-col items-center justify-center space-y-4 animate-in fade-in zoom-in-95">
-            <div className="flex items-center gap-4 text-rose-500 drop-shadow-lg">
-               <Trophy className="w-12 h-12" />
-               <h2 className="text-5xl font-black italic tracking-tighter">DEFEATED</h2>
+          <div className="h-full flex flex-col items-center justify-center space-y-5 animate-in fade-in zoom-in-95">
+            <div className="flex items-center gap-5 text-rose-500 drop-shadow-2xl scale-125">
+               <Trophy className="w-14 h-14" />
+               <h2 className="text-6xl font-black italic tracking-tighter">DEFEATED</h2>
             </div>
-            <p className="text-slate-400 font-bold tracking-widest uppercase text-xs">Final Score: {kills} Trophies</p>
+            <p className="text-slate-400 font-black tracking-[10px] uppercase text-sm">Best Score: {kills}</p>
             <button 
               onClick={startGame}
-              className="px-10 py-4 bg-white text-slate-900 font-black rounded-2xl shadow-2xl hover:scale-105 transition-all flex items-center gap-2 border-b-4 border-slate-200"
+              className="px-12 py-5 bg-white text-slate-900 font-black rounded-2xl shadow-2xl hover:scale-110 transition-all flex items-center gap-3 border-b-8 border-slate-200"
             >
-              <RefreshCw className="w-5 h-5" /> REAWAKEN
+              <RefreshCw className="w-6 h-6" /> TRY AGAIN
             </button>
           </div>
         )}
       </div>
 
-      {/* Large Feedback Symbols */}
+      {/* Large Feedback HUD */}
       {feedback && (
         <div className="absolute inset-0 z-50 flex items-center justify-center animate-in zoom-in duration-300 pointer-events-none">
           <div className={cn(
-            "text-[12rem] font-black transition-all duration-500 drop-shadow-2xl",
-            feedback === "correct" ? "text-emerald-400 opacity-60" : "text-rose-500 opacity-60"
+            "text-[15rem] font-black transition-all duration-500 drop-shadow-[0_0_60px_rgba(255,255,255,0.4)]",
+            feedback === "correct" ? "text-emerald-400 opacity-80" : "text-rose-500 opacity-80"
           )}>
             {feedback === "correct" ? "🎯" : "💥"}
           </div>
