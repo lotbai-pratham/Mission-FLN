@@ -1,5 +1,7 @@
-"use client";
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { generateGameQuestions } from '@/app/actions/ai';
+import { usePoints } from '@/lib/points-store';
+import { Sparkles, ShoppingCart } from 'lucide-react';
 
 const ITEMS = [
   { name: 'सफरचंद', emoji: '🍎', price: 5 },
@@ -48,6 +50,40 @@ export default function MarketMath() {
   const [total, setTotal] = useState(0);
   const [chosen, setChosen] = useState<number | null>(null);
   const [feedback, setFeedback] = useState<'correct' | 'wrong' | null>(null);
+  const [questionPool, setQuestionPool] = useState<any[]>([]);
+  const [isAiLoading, setIsAiLoading] = useState(false);
+  const { addPoints } = usePoints();
+
+  const fetchAiQuestions = async () => {
+    setIsAiLoading(true);
+    const questions = await generateGameQuestions('market-math', Math.floor(score/5) + 1, 5);
+    if (questions && questions.length > 0) {
+      setQuestionPool(prev => [...prev, ...questions]);
+    }
+    setIsAiLoading(false);
+  };
+
+  useEffect(() => {
+    fetchAiQuestions();
+  }, []);
+
+  function nextRound() {
+    if (questionPool.length > 0) {
+      const q = questionPool[0];
+      setQuestionPool(prev => prev.slice(1));
+      setRound({
+        mode: 'total', // Generic mapping
+        item: ITEMS[Math.floor(Math.random() * ITEMS.length)],
+        question: q.q,
+        answer: q.a,
+        options: q.options
+      });
+      // Fetch more if running low
+      if (questionPool.length < 2) fetchAiQuestions();
+    } else {
+      setRound(makeRound());
+    }
+  }
 
   function pick(n: number) {
     if (feedback) return;
@@ -55,9 +91,12 @@ export default function MarketMath() {
     const correct = n === round.answer;
     setFeedback(correct ? 'correct' : 'wrong');
     setTotal(t => t + 1);
-    if (correct) setScore(s => s + 1);
+    if (correct) {
+      setScore(s => s + 1);
+      addPoints(10);
+    }
     setTimeout(() => {
-      setRound(makeRound());
+      nextRound();
       setFeedback(null);
       setChosen(null);
     }, 1400);
@@ -72,7 +111,10 @@ export default function MarketMath() {
 
       <div className="p-4 md:p-6 space-y-4 md:space-y-5">
         <div className="flex justify-between items-center">
-          <span className="text-xs md:text-sm font-bold text-amber-600 bg-amber-50 px-2 md:px-3 py-1 rounded-full">गुण: {score}/{total}</span>
+          <div className="flex items-center gap-2">
+            <span className="text-xs md:text-sm font-bold text-amber-600 bg-amber-50 px-2 md:px-3 py-1 rounded-full">गुण: {score}/{total}</span>
+            {isAiLoading && <Sparkles className="w-4 h-4 text-amber-400 animate-pulse" />}
+          </div>
           <div className="flex gap-1">
             {['₹', '₹', '₹'].map((r, i) => <span key={i} className="text-amber-400 text-base md:text-lg">{r}</span>)}
           </div>

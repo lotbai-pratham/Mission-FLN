@@ -200,7 +200,7 @@ Fields:
 
 // ─── Game Content Generation ──────────────────────────────────────────────
 
-export async function generateGameScenario(gameId: string, level: number = 1) {
+export async function generateGameQuestions(gameId: string, level: number = 1, count: number = 5) {
   const apiKey = process.env.GOOGLE_GENERATIVE_AI_API_KEY;
   if (!apiKey) return null;
 
@@ -208,48 +208,75 @@ export async function generateGameScenario(gameId: string, level: number = 1) {
     const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
     
     let prompt = "";
-    if (gameId === 'buddy-big-day') {
+    
+    // Categorize gameId to prompt templates
+    if (gameId === 'buddy-big-day' || gameId === 'empathy-hero') {
       prompt = `
-        Generate ONE new social-emotional learning scenario for a game called "Buddy's Big Day".
-        The character "Buddy" is a young school student.
-        The scenario should involve an interpersonal situation (helping a friend, sharing, empathy, honesty).
-        Return JSON ONLY.
+        Generate ${count} social-emotional learning scenarios for a Marathi educational game.
+        Subject: Empathy, Interpersonal skills, or Daily decisions.
+        Return JSON ONLY as an array of objects.
         Format:
-        {
-          "situation": "Marathi text describing the situation",
-          "imageEmoji": "Relevant emoji",
-          "choices": [
-            { "text": "Choice 1 (Marathi)", "impact": number (-10 to 20), "feedback": "Marathi feedback" },
-            { "text": "Choice 2 (Marathi)", "impact": number, "feedback": "Marathi feedback" },
-            { "text": "Choice 3 (Marathi)", "impact": number, "feedback": "Marathi feedback" }
-          ]
-        }
+        [
+          {
+            "situation": "Marathi text",
+            "imageEmoji": "emoji",
+            "choices": [
+              { "text": "Choice 1", "impact": number, "feedback": "feedback" },
+              ...
+            ]
+          }
+        ]
       `;
-    } else if (gameId === 'jungle-fight') {
+    } else if (gameId.includes('math') || gameId.includes('number') || gameId === 'jungle-fight') {
       prompt = `
-        Generate 5 math problems for a "Jungle Fight" game.
-        Difficulty level: ${level} (1 is easy 1-digit, 5 is hard multi-digit multiplication/division).
-        The player is in a jungle fighting tigers.
-        Return JSON ONLY.
+        Generate ${count} math problems for an Indian school student (Class 1-5).
+        Difficulty Level: ${level} (1: 1-digit, 2: 2-digit, 3: carry/borrow, 4: multiplication/division, 5: complex word problems).
+        Return JSON ONLY as an array of objects.
         Format:
-        {
-          "problems": [
-            { "q": "Marathi math question (e.g. 5 + 3 = ?)", "a": number },
-            ...
-          ]
-        }
+        [
+          { "q": "Marathi math question", "a": number, "options": [number, number, number, number] }
+        ]
+      `;
+    } else if (gameId.includes('letter') || gameId.includes('word') || gameId.includes('sentence')) {
+      prompt = `
+        Generate ${count} Marathi language (Literacy) questions.
+        Type: ${gameId.includes('letter') ? 'Letter recognition' : gameId.includes('word') ? 'Word meaning/spelling' : 'Sentence structure'}.
+        Difficulty: Level ${level}.
+        Return JSON ONLY as an array of objects.
+        Format:
+        [
+          { "q": "Marathi question/word", "a": "correct answer", "options": ["option1", "option2", "option3", "option4"] }
+        ]
+      `;
+    } else if (gameId === 'germ-buster' || gameId === 'waste-sort' || gameId === 'healthy-plate') {
+      prompt = `
+        Generate ${count} educational questions about ${gameId === 'germ-buster' ? 'Hygiene' : gameId === 'waste-sort' ? 'Environment/Recycling' : 'Nutrition'}.
+        Target: Primary school students.
+        Language: Marathi.
+        Return JSON ONLY as an array of objects.
+        Format:
+        [
+          { "q": "Marathi question", "a": "correct answer", "options": ["option1", "option2", "option3", "option4"] }
+        ]
       `;
     } else {
-      return null;
+      // Generic fallback
+      prompt = `Generate ${count} random educational questions for Class 3 student in Marathi. Return JSON array: [{q, a, options:[]}]`;
     }
 
     const result = await model.generateContent(prompt);
     const text = result.response.text();
-    const jsonMatch = text.match(/\{[\s\S]*\}/);
+    const jsonMatch = text.match(/\[[\s\S]*\]/);
     if (!jsonMatch) return null;
     return JSON.parse(jsonMatch[0]);
   } catch (error) {
     console.error("Game generation error:", error);
     return null;
   }
+}
+
+// Keep the old one for compatibility but link it
+export async function generateGameScenario(gameId: string, level: number = 1) {
+  const res = await generateGameQuestions(gameId, level, 1);
+  return res ? res[0] : null;
 }
