@@ -67,15 +67,15 @@ export default function WordRace({ player1, player2, schoolId, classNum, onClose
       {({ addPoint, gameState }) => (
         <div className="flex flex-col h-full gap-8">
           {/* Target Word */}
-          <div className="flex-1 flex flex-col items-center justify-center gap-2">
-            <p className="text-xs font-black text-slate-500 uppercase tracking-widest italic">या शब्दाची श्रेणी सांगा:</p>
-            <div className="px-12 py-8 bg-white/5 rounded-[48px] border-2 border-white/10 flex items-center justify-center shadow-2xl">
-              <span className="text-7xl font-black text-white">{currentWord?.word}</span>
+          <div className="flex-1 flex flex-col items-center justify-center gap-1 md:gap-2">
+            <p className="text-[8px] md:text-xs font-black text-slate-500 uppercase tracking-widest italic">या शब्दाची श्रेणी सांगा:</p>
+            <div className="px-6 md:px-12 py-4 md:py-8 bg-white/5 rounded-[32px] md:rounded-[48px] border-2 border-white/10 flex items-center justify-center shadow-2xl">
+              <span className="text-4xl md:text-7xl font-black text-white">{currentWord?.word}</span>
             </div>
           </div>
 
           {/* Split Screen */}
-          <div className="grid grid-cols-2 gap-8 h-96">
+          <div className="grid grid-cols-2 gap-4 md:gap-8 h-64 md:h-96">
             
             <CategorySide 
               player={player1} 
@@ -111,8 +111,8 @@ export default function WordRace({ player1, player2, schoolId, classNum, onClose
 
 function CategorySide({ player, color, options, target, onCorrect, disabled }: any) {
   return (
-    <div className={`p-6 rounded-[40px] border-2 flex flex-col gap-4 ${color === 'blue' ? 'bg-blue-600/10 border-blue-500/40' : 'bg-red-600/10 border-red-500/40'}`}>
-      <div className="grid grid-cols-2 gap-4 flex-1">
+    <div className={`p-3 md:p-6 rounded-[30px] md:rounded-[40px] border-2 flex flex-col gap-2 md:gap-4 ${color === 'blue' ? 'bg-blue-600/10 border-blue-500/40' : 'bg-red-600/10 border-red-500/40'}`}>
+      <div className="grid grid-cols-2 gap-2 md:gap-4 flex-1">
         {options.map((opt: string, i: number) => (
           <button
             key={`${opt}-${i}`}
@@ -120,11 +120,11 @@ function CategorySide({ player, color, options, target, onCorrect, disabled }: a
             onClick={() => {
               if (opt === target) onCorrect();
             }}
-            className={`h-full flex items-center justify-center text-2xl font-black rounded-3xl transition-all active:scale-90 ${
+            className={`h-full flex items-center justify-center text-sm md:text-2xl font-black rounded-2xl md:rounded-3xl transition-all active:scale-90 ${
               color === 'blue' 
                 ? 'bg-blue-600 hover:bg-blue-500 shadow-xl' 
                 : 'bg-red-600 hover:bg-red-500 shadow-xl'
-            }`}
+            } text-white`}
           >
             {opt}
           </button>

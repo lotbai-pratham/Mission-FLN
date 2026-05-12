@@ -60,18 +60,18 @@ export default function PlaceValueBattle({ player1, player2, schoolId, classNum,
       {({ addPoint, gameState }) => (
         <div className="flex flex-col h-full gap-8">
           {/* HTO Display */}
-          <div className="flex-1 flex flex-col items-center justify-center p-8 bg-white/5 rounded-[48px] border-2 border-white/10 shadow-2xl relative overflow-hidden">
+          <div className="flex-1 flex flex-col items-center justify-center p-4 md:p-8 bg-white/5 rounded-[32px] md:rounded-[48px] border-2 border-white/10 shadow-2xl relative overflow-hidden">
              <div className="absolute inset-0 bg-blue-500/5 backdrop-blur-sm shadow-inner" />
-             <div className="flex items-center gap-12 relative z-10">
+             <div className="flex items-center gap-4 md:gap-12 relative z-10">
                 <PlaceBox value={targetNumber.h} label="H" color="orange" />
                 <PlaceBox value={targetNumber.t} label="T" color="blue" />
                 <PlaceBox value={targetNumber.o} label="O" color="emerald" />
              </div>
-             <p className="mt-8 text-xs font-black text-slate-500 uppercase tracking-widest italic">याचे एकूण मूल्य किती?</p>
+             <p className="mt-4 md:mt-8 text-[8px] md:text-xs font-black text-slate-500 uppercase tracking-widest italic">याचे एकूण मूल्य किती?</p>
           </div>
 
           {/* Player Sides */}
-          <div className="grid grid-cols-2 gap-8 h-96">
+          <div className="grid grid-cols-2 gap-4 md:gap-8 h-64 md:h-96">
             <PlaceSide 
               player={player1} 
               color="blue" 
@@ -106,19 +106,19 @@ export default function PlaceValueBattle({ player1, player2, schoolId, classNum,
 function PlaceBox({ value, label, color }: { value: number, label: string, color: 'orange' | 'blue' | 'emerald' }) {
   const bg = color === 'orange' ? 'from-orange-500 to-amber-600' : color === 'blue' ? 'from-blue-500 to-indigo-600' : 'from-emerald-500 to-teal-600';
   return (
-    <div className="flex flex-col items-center gap-4">
-      <div className={`w-28 h-28 rounded-[32px] bg-gradient-to-br ${bg} shadow-2xl flex flex-col items-center justify-center border-2 border-white/20 transition-all hover:scale-105 active:scale-95`}>
-         <span className="text-5xl font-black text-white">{value}</span>
+    <div className="flex flex-col items-center gap-2 md:gap-4">
+      <div className={`w-16 h-16 md:w-28 md:h-28 rounded-2xl md:rounded-[32px] bg-gradient-to-br ${bg} shadow-2xl flex flex-col items-center justify-center border-2 border-white/20 transition-all hover:scale-105 active:scale-95`}>
+         <span className="text-2xl md:text-5xl font-black text-white">{value}</span>
       </div>
-      <span className="text-xs font-black bg-white/10 px-3 py-1 rounded-full text-slate-400 border border-white/5">{label}</span>
+      <span className="text-[10px] md:text-xs font-black bg-white/10 px-2 md:px-3 py-0.5 md:py-1 rounded-full text-slate-400 border border-white/5">{label}</span>
     </div>
   );
 }
 
 function PlaceSide({ player, color, options, target, onCorrect, disabled }: any) {
   return (
-    <div className={`p-6 rounded-[40px] border-2 flex flex-col gap-4 ${color === 'blue' ? 'bg-blue-600/10 border-blue-500/40' : 'bg-red-600/10 border-red-500/40'}`}>
-      <div className="grid grid-cols-2 gap-4 flex-1">
+    <div className={`p-3 md:p-6 rounded-[30px] md:rounded-[40px] border-2 flex flex-col gap-2 md:gap-4 ${color === 'blue' ? 'bg-blue-600/10 border-blue-500/40' : 'bg-red-600/10 border-red-500/40'}`}>
+      <div className="grid grid-cols-2 gap-2 md:gap-4 flex-1">
         {options.map((opt: number, i: number) => (
           <button
             key={`${opt}-${i}`}
@@ -126,7 +126,7 @@ function PlaceSide({ player, color, options, target, onCorrect, disabled }: any)
             onClick={() => {
               if (opt === target) onCorrect();
             }}
-            className={`h-full flex items-center justify-center text-4xl font-black rounded-3xl transition-all active:scale-90 ${
+            className={`h-full flex items-center justify-center text-xl md:text-4xl font-black rounded-2xl md:rounded-3xl transition-all active:scale-90 ${
               color === 'blue' 
                 ? 'bg-blue-600 hover:bg-blue-500 shadow-xl shadow-blue-500/20' 
                 : 'bg-red-600 hover:bg-red-500 shadow-xl shadow-red-500/20'

@@ -65,36 +65,36 @@ export default function MarketMath() {
 
   return (
     <div className="bg-white dark:bg-slate-900 rounded-3xl overflow-hidden border border-amber-100 shadow-sm">
-      <div className="bg-gradient-to-r from-amber-400 to-orange-400 p-6 text-center">
-        <div className="text-5xl">{round.item.emoji}</div>
-        <p className="text-white font-bold mt-1">🛒 बाजार गणित</p>
+      <div className="bg-gradient-to-r from-amber-400 to-orange-400 p-4 md:p-6 text-center">
+        <div className="text-3xl md:text-5xl">{round.item.emoji}</div>
+        <p className="text-white font-bold mt-1 text-sm md:text-base">🛒 बाजार गणित</p>
       </div>
 
-      <div className="p-6 space-y-5">
+      <div className="p-4 md:p-6 space-y-4 md:space-y-5">
         <div className="flex justify-between items-center">
-          <span className="text-sm font-bold text-amber-600 bg-amber-50 px-3 py-1 rounded-full">गुण: {score}/{total}</span>
+          <span className="text-xs md:text-sm font-bold text-amber-600 bg-amber-50 px-2 md:px-3 py-1 rounded-full">गुण: {score}/{total}</span>
           <div className="flex gap-1">
-            {['₹', '₹', '₹'].map((r, i) => <span key={i} className="text-amber-400 text-lg">{r}</span>)}
+            {['₹', '₹', '₹'].map((r, i) => <span key={i} className="text-amber-400 text-base md:text-lg">{r}</span>)}
           </div>
         </div>
 
-        <div className="bg-amber-50 border border-amber-200 rounded-2xl p-4">
-          <p className="font-bold text-slate-700 text-center leading-snug">{round.question}</p>
+        <div className="bg-amber-50 border border-amber-200 rounded-xl md:rounded-2xl p-3 md:p-4">
+          <p className="font-bold text-slate-700 text-center leading-snug text-sm md:text-base">{round.question}</p>
         </div>
 
-        <div className="grid grid-cols-3 gap-3">
+        <div className="grid grid-cols-3 gap-2 md:gap-3">
           {round.options.map(n => {
-            let cls = 'border-2 border-amber-200 bg-amber-50 text-amber-800 hover:bg-amber-100 text-xl font-extrabold';
+            let cls = 'border-2 border-amber-200 bg-amber-50 text-amber-800 hover:bg-amber-100 text-lg md:text-xl font-extrabold';
             if (chosen === n) {
               cls = feedback === 'correct'
-                ? 'border-2 border-green-400 bg-green-100 text-green-700 scale-105 text-xl font-extrabold'
-                : 'border-2 border-red-400 bg-red-100 text-red-700 text-xl font-extrabold';
+                ? 'border-2 border-green-400 bg-green-100 text-green-700 scale-105 text-lg md:text-xl font-extrabold'
+                : 'border-2 border-red-400 bg-red-100 text-red-700 text-lg md:text-xl font-extrabold';
             } else if (feedback === 'wrong' && n === round.answer) {
-              cls = 'border-2 border-green-400 bg-green-100 text-green-700 text-xl font-extrabold';
+              cls = 'border-2 border-green-400 bg-green-100 text-green-700 text-lg md:text-xl font-extrabold';
             }
             return (
               <button key={n} onClick={() => pick(n)}
-                className={`rounded-2xl py-5 transition-all duration-200 ${cls}`}>
+                className={`rounded-xl md:rounded-2xl py-3 md:py-5 transition-all duration-200 ${cls}`}>
                 ₹{n}
               </button>
             );

@@ -47,7 +47,7 @@ export default function FishGame() {
       </div>
 
       {/* River scene */}
-      <div className="relative bg-gradient-to-b from-sky-300 to-blue-500 h-48 flex items-center justify-center overflow-hidden">
+      <div className="relative bg-gradient-to-b from-sky-300 to-blue-500 h-32 md:h-48 flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0 opacity-20">
           {[...Array(5)].map((_, i) => (
             <div key={i} className="absolute rounded-full border-2 border-white" style={{
@@ -58,13 +58,13 @@ export default function FishGame() {
         </div>
 
         <div className="relative z-10 text-center">
-          <div className="text-8xl select-none drop-shadow-lg">{round.image}</div>
-          <p className="text-white font-bold text-sm mt-2 drop-shadow">हे काय आहे? बरोबर शब्द पकडा!</p>
+          <div className="text-6xl md:text-8xl select-none drop-shadow-lg">{round.image}</div>
+          <p className="text-white font-bold text-xs md:text-sm mt-1 md:mt-2 drop-shadow">पकडा!</p>
         </div>
 
         {options.map((word, i) => (
-          <div key={word} className="absolute bottom-3 text-xs font-bold bg-white/90 rounded-full px-2 py-0.5 text-blue-700 animate-pulse"
-            style={{ left: `${10 + i * 22}%` }}>
+          <div key={word} className="absolute bottom-2 md:bottom-3 text-[10px] md:text-xs font-bold bg-white/90 rounded-full px-2 py-0.5 text-blue-700 animate-pulse"
+            style={{ left: `${5 + i * 24}%` }}>
             🐟 {word}
           </div>
         ))}
@@ -72,7 +72,7 @@ export default function FishGame() {
 
       <div className="p-6 space-y-4">
         <p className="text-center font-semibold text-slate-600">बरोबर शब्दावर टॅप करा!</p>
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-2 gap-2 md:gap-3">
           {options.map(word => {
             let cls = 'border-2 border-blue-200 text-blue-800 bg-blue-50 hover:bg-blue-100';
             if (chosen === word) {
@@ -84,7 +84,7 @@ export default function FishGame() {
             }
             return (
               <button key={word} onClick={() => catch_(word)}
-                className={`rounded-2xl py-4 text-lg font-bold transition-all duration-200 ${cls}`}>
+                className={`rounded-xl md:rounded-2xl py-3 md:py-4 text-base md:text-lg font-bold transition-all duration-200 ${cls}`}>
                 🎣 {word}
               </button>
             );

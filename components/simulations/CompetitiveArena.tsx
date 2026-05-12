@@ -64,29 +64,29 @@ export default function CompetitiveArena({
   const winner = scores.a > scores.b ? p1Name : scores.b > scores.a ? p2Name : 'Draw';
 
   return (
-    <div className="bg-slate-950 rounded-[48px] border border-slate-800 shadow-2xl p-8 max-w-6xl mx-auto overflow-hidden relative min-h-[750px] flex flex-col text-white">
+    <div className="bg-slate-950 rounded-3xl md:rounded-[48px] border border-slate-800 shadow-2xl p-4 md:p-8 max-w-6xl mx-auto overflow-hidden relative md:min-h-[750px] flex flex-col text-white">
       
       {/* HUD: Timer & Title */}
-      <div className="flex flex-col md:flex-row items-center justify-between gap-8 mb-12 relative z-10">
-        <div className="flex items-center gap-6">
-           <div className="p-4 bg-blue-600 rounded-[28px] shadow-lg shadow-blue-600/20">
+      <div className="flex flex-col md:flex-row items-center justify-between gap-4 md:gap-8 mb-6 md:mb-12 relative z-10">
+        <div className="flex items-center gap-4 md:gap-6">
+           <div className="p-3 md:p-4 bg-blue-600 rounded-2xl md:rounded-[28px] shadow-lg shadow-blue-600/20">
               {icon}
            </div>
            <div>
-              <div className="inline-flex items-center gap-2 px-3 py-1 bg-blue-500/10 text-blue-400 rounded-full text-[10px] font-black uppercase tracking-widest mb-1">
+              <div className="inline-flex items-center gap-2 px-3 py-1 bg-blue-500/10 text-blue-400 rounded-full text-[8px] md:text-[10px] font-black uppercase tracking-widest mb-1">
                  <Swords className="w-3 h-3" /> 2v2 Competitive Battle
               </div>
-              <h2 className="text-3xl font-black tracking-tight">{title}</h2>
+              <h2 className="text-xl md:text-3xl font-black tracking-tight">{title}</h2>
            </div>
         </div>
 
-        <div className="flex items-center gap-6">
+        <div className="flex items-center gap-4 md:gap-6 w-full md:w-auto justify-between md:justify-end">
            <div className={cn(
-             "px-8 py-4 rounded-[32px] border-2 flex items-center gap-4 transition-all",
+             "px-6 md:px-8 py-2 md:py-4 rounded-2xl md:rounded-[32px] border-2 flex items-center gap-3 md:gap-4 transition-all",
              timeLeft <= 10 ? "bg-red-500/10 border-red-500 text-red-500 animate-pulse" : "bg-white/5 border-white/10 text-white"
            )}>
-              <Timer className="w-8 h-8" />
-              <span className="text-4xl font-black font-mono tracking-tighter w-12">{timeLeft}s</span>
+              <Timer className="w-6 h-6 md:w-8 md:h-8" />
+              <span className="text-2xl md:text-4xl font-black font-mono tracking-tighter w-8 md:w-12">{timeLeft}s</span>
            </div>
            <div className="flex gap-2">
               <button 
@@ -114,14 +114,14 @@ export default function CompetitiveArena({
          {gameState === 'waiting' && (
            <div className="absolute inset-0 z-20 flex flex-col items-center justify-center space-y-8 animate-in fade-in zoom-in-95 duration-500">
               <div className="text-center space-y-2">
-                 <h3 className="text-5xl font-black">Ready for Battle?</h3>
-                 <p className="text-slate-400 font-medium">{description}</p>
+                 <h3 className="text-3xl md:text-5xl font-black">Ready for Battle?</h3>
+                 <p className="text-slate-400 font-medium text-sm md:text-base">{description}</p>
               </div>
               <button 
                  onClick={startGame}
-                 className="group px-12 py-6 bg-blue-600 hover:bg-blue-700 text-white font-black rounded-[32px] shadow-2xl shadow-blue-600/40 active:scale-95 transition-all text-2xl flex items-center gap-4"
+                 className="group px-8 md:px-12 py-4 md:py-6 bg-blue-600 hover:bg-blue-700 text-white font-black rounded-2xl md:rounded-[32px] shadow-2xl shadow-blue-600/40 active:scale-95 transition-all text-lg md:text-2xl flex items-center gap-4"
               >
-                 START COMPETITION <Play className="w-8 h-8 fill-current" />
+                 START COMPETITION <Play className="w-6 h-6 md:w-8 md:h-8 fill-current" />
               </button>
               <div className="flex items-center gap-12 pt-8 opacity-40">
                  <div className="flex flex-col items-center gap-2"><Users className="w-8 h-8" /><span className="text-[10px] font-black uppercase">2 Students</span></div>
@@ -149,14 +149,14 @@ export default function CompetitiveArena({
               <p className="text-slate-500 text-sm font-bold mb-2">{p1Name} vs {p2Name}</p>
               <p className="text-slate-400 text-xl font-medium mb-12">Congratulations to all participants!</p>
               
-              <div className="flex items-center gap-12 mb-12">
-                 <div className="text-center p-8 bg-white/5 rounded-[40px] border border-white/10 min-w-[180px]">
-                    <div className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-2">{p1Name}</div>
-                    <div className="text-6xl font-black text-blue-500">{scores.a}</div>
+              <div className="flex flex-col md:flex-row items-center gap-4 md:gap-12 mb-8 md:mb-12">
+                 <div className="text-center p-4 md:p-8 bg-white/5 rounded-3xl md:rounded-[40px] border border-white/10 min-w-[150px] md:min-w-[180px]">
+                    <div className="text-[8px] md:text-[10px] font-black uppercase tracking-widest text-slate-500 mb-1 md:mb-2">{p1Name}</div>
+                    <div className="text-4xl md:text-6xl font-black text-blue-500">{scores.a}</div>
                  </div>
-                 <div className="text-center p-8 bg-white/5 rounded-[40px] border border-white/10 min-w-[180px]">
-                    <div className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-2">{p2Name}</div>
-                    <div className="text-6xl font-black text-emerald-500">{scores.b}</div>
+                 <div className="text-center p-4 md:p-8 bg-white/5 rounded-3xl md:rounded-[40px] border border-white/10 min-w-[150px] md:min-w-[180px]">
+                    <div className="text-[8px] md:text-[10px] font-black uppercase tracking-widest text-slate-500 mb-1 md:mb-2">{p2Name}</div>
+                    <div className="text-4xl md:text-6xl font-black text-emerald-500">{scores.b}</div>
                  </div>
               </div>
 
@@ -171,14 +171,14 @@ export default function CompetitiveArena({
       </div>
 
       {/* TEAM HUD (Bottom) */}
-      <div className="mt-8 flex items-center justify-between pointer-events-none">
-         <div className={cn("px-8 py-4 rounded-3xl border-2 transition-all flex items-center gap-4", scores.a >= scores.b ? "bg-blue-600/20 border-blue-600 text-blue-400" : "bg-white/5 border-white/10 text-white")}>
-            <div className="w-3 h-3 rounded-full bg-blue-600"></div>
-            <span className="text-xs font-black uppercase tracking-widest">{p1Name}: <span className="text-2xl ml-2">{scores.a}</span></span>
+      <div className="mt-4 md:mt-8 flex items-center justify-between pointer-events-none">
+         <div className={cn("px-4 md:px-8 py-2 md:py-4 rounded-2xl md:rounded-3xl border-2 transition-all flex items-center gap-2 md:gap-4", scores.a >= scores.b ? "bg-blue-600/20 border-blue-600 text-blue-400" : "bg-white/5 border-white/10 text-white")}>
+            <div className="w-2 h-2 md:w-3 md:h-3 rounded-full bg-blue-600"></div>
+            <span className="text-[8px] md:text-xs font-black uppercase tracking-widest">{p1Name}: <span className="text-lg md:text-2xl ml-1 md:ml-2">{scores.a}</span></span>
          </div>
-         <div className={cn("px-8 py-4 rounded-3xl border-2 transition-all flex items-center gap-4", scores.b >= scores.a ? "bg-emerald-600/20 border-emerald-600 text-emerald-400" : "bg-white/5 border-white/10 text-white")}>
-            <span className="text-xs font-black uppercase tracking-widest">{p2Name}: <span className="text-2xl mr-2">{scores.b}</span></span>
-            <div className="w-3 h-3 rounded-full bg-emerald-600"></div>
+         <div className={cn("px-4 md:px-8 py-2 md:py-4 rounded-2xl md:rounded-3xl border-2 transition-all flex items-center gap-2 md:gap-4", scores.b >= scores.a ? "bg-emerald-600/20 border-emerald-600 text-emerald-400" : "bg-white/5 border-white/10 text-white")}>
+            <span className="text-[8px] md:text-xs font-black uppercase tracking-widest">{p2Name}: <span className="text-lg md:text-2xl mr-1 md:ml-2">{scores.b}</span></span>
+            <div className="w-2 h-2 md:w-3 md:h-3 rounded-full bg-emerald-600"></div>
          </div>
       </div>
     </div>

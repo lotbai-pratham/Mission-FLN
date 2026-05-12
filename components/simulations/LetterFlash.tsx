@@ -54,14 +54,14 @@ export default function LetterFlash({ player1, player2, schoolId, classNum, onCl
       {({ addPoint, gameState }) => (
         <div className="flex flex-col h-full gap-8">
           {/* Target Display */}
-          <div className="flex-1 flex items-center justify-center">
-            <div className="w-48 h-48 bg-white/10 rounded-[40px] border-4 border-blue-500 flex items-center justify-center shadow-2xl animate-bounce">
-              <span className="text-8xl font-black text-white">{currentLetter}</span>
+          <div className="flex-1 flex items-center justify-center p-4">
+            <div className="w-24 h-24 md:w-48 md:h-48 bg-white/10 rounded-2xl md:rounded-[40px] border-2 md:border-4 border-blue-500 flex items-center justify-center shadow-2xl animate-bounce">
+              <span className="text-4xl md:text-8xl font-black text-white">{currentLetter}</span>
             </div>
           </div>
 
           {/* Split Screen for 2 Players */}
-          <div className="grid grid-cols-2 gap-8 h-96">
+          <div className="grid grid-cols-2 gap-4 md:gap-8 h-64 md:h-96">
             
             {/* Player 1 Area (Blue) */}
             <PlayerSide 
@@ -99,15 +99,15 @@ export default function LetterFlash({ player1, player2, schoolId, classNum, onCl
 
 function PlayerSide({ player, color, options, target, onCorrect, disabled }: any) {
   return (
-    <div className={`p-6 rounded-[40px] border-2 flex flex-col gap-4 ${color === 'blue' ? 'bg-blue-600/10 border-blue-500/40' : 'bg-red-600/10 border-red-500/40'}`}>
-      <div className="flex items-center gap-3 mb-2">
-        <div className={`w-10 h-10 rounded-full flex items-center justify-center font-black ${color === 'blue' ? 'bg-blue-600' : 'bg-red-600'}`}>
+    <div className={`p-3 md:p-6 rounded-[30px] md:rounded-[40px] border-2 flex flex-col gap-2 md:gap-4 ${color === 'blue' ? 'bg-blue-600/10 border-blue-500/40' : 'bg-red-600/10 border-red-500/40'}`}>
+      <div className="flex items-center gap-2 md:gap-3 mb-1 md:mb-2">
+        <div className={`w-6 h-6 md:w-10 md:h-10 rounded-full flex items-center justify-center text-[10px] md:text-base font-black ${color === 'blue' ? 'bg-blue-600' : 'bg-red-600'}`}>
           {player?.name?.[0] || '?'}
         </div>
-        <p className="font-black text-sm uppercase tracking-tighter">{player?.name || 'Player'}</p>
+        <p className="font-black text-[10px] md:text-sm uppercase tracking-tighter truncate max-w-[60px] md:max-w-none">{player?.name || 'Player'}</p>
       </div>
 
-      <div className="grid grid-cols-2 gap-4 flex-1">
+      <div className="grid grid-cols-2 gap-2 md:gap-4 flex-1">
         {options.map((opt: string, i: number) => (
           <button
             key={`${opt}-${i}`}
@@ -126,9 +126,9 @@ function PlayerSide({ player, color, options, target, onCorrect, disabled }: any
 }
 
 function classNameForPlayerButton(color: 'blue' | 'red') {
-  return `h-full flex items-center justify-center text-4xl font-black rounded-3xl transition-all active:scale-90 ${
+  return `h-full flex items-center justify-center text-xl md:text-4xl font-black rounded-2xl md:rounded-3xl transition-all active:scale-90 ${
     color === 'blue' 
       ? 'bg-blue-600 hover:bg-blue-500 shadow-xl shadow-blue-900/20' 
       : 'bg-red-600 hover:bg-red-500 shadow-xl shadow-red-900/20'
-  }`;
+  } text-white`;
 }
