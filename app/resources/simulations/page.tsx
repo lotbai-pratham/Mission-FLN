@@ -1,7 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import { useSession } from "next-auth/react";
-import { ArrowLeft, Zap, Trophy, Gamepad2, ChevronRight, Eye, EyeOff, X } from "lucide-react";
+import { ArrowLeft, Zap, Trophy, Gamepad2, ChevronRight, Eye, EyeOff, X, RefreshCw } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { usePoints } from "@/lib/points-store";
