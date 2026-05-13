@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect, useCallback, useRef } from "react";
-import { Trophy, RefreshCw, ArrowLeft, Zap, Star, Heart, Activity, ShieldAlert, Sparkles, User, UserCheck } from "lucide-react";
+import { Trophy, RefreshCw, ArrowLeft, Zap, Star, Activity, ShieldAlert, Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { usePoints } from "@/lib/points-store";
 
@@ -20,11 +20,15 @@ export default function HealthyPlate({ onClose }: { onClose?: () => void }) {
   const [gameState, setGameState] = useState<"intro" | "playing" | "complete" | "gameover">("intro");
   const [score, setScore] = useState(0);
   const [health, setHealth] = useState(50); // 0-100
-  const [plateX, setPlateX] = useState(50); // 0-100%
+  const [plateX, setPlateX] = useState(50); // 0-100% for rendering
   const [foods, setFoods] = useState<Food[]>([]);
   const [sessionXP, setSessionXP] = useState(0);
   const { addXP } = usePoints();
+  
   const gameRef = useRef<HTMLDivElement>(null);
+  const plateXRef = useRef(50); // For the game loop to read the latest value without re-running
+  const scoreRef = useRef(0);
+  const healthRef = useRef(50);
 
   const spawnFood = useCallback(() => {
     const isHealthy = Math.random() > 0.4;
@@ -34,20 +38,30 @@ export default function HealthyPlate({ onClose }: { onClose?: () => void }) {
       y: -5,
       emoji: isHealthy ? HEALTHY[Math.floor(Math.random() * HEALTHY.length)] : UNHEALTHY[Math.floor(Math.random() * UNHEALTHY.length)],
       isHealthy,
-      speed: 4 + Math.random() * 3 // FASTER
+      speed: 4 + Math.random() * 3
     };
     setFoods(prev => [...prev, newFood]);
   }, []);
 
+  // Update refs when state changes (so the game loop can read them)
+  useEffect(() => { scoreRef.current = score; }, [score]);
+  useEffect(() => { healthRef.current = health; }, [health]);
+
   useEffect(() => {
     if (gameState === "playing") {
-      const spawner = setInterval(spawnFood, 800); // MORE FREQUENT
+      console.log("Game started, intervals initializing...");
+      
+      const spawner = setInterval(() => {
+        spawnFood();
+      }, 800);
+
       const gameLoop = setInterval(() => {
         setFoods(prev => {
-          const next = prev.map(f => ({ ...f, y: f.y + (f.speed / 10) }));
+          const next = prev.map(f => ({ ...f, y: f.y + (f.speed / 15) })); // Smooth falling
           
           // Collision detection
-          const caught = next.filter(f => f.y > 82 && f.y < 88 && Math.abs(f.x - plateX) < 12);
+          const caught = next.filter(f => f.y > 80 && f.y < 88 && Math.abs(f.x - plateXRef.current) < 12);
+          
           if (caught.length > 0) {
             caught.forEach(f => {
               if (f.isHealthy) {
@@ -70,11 +84,10 @@ export default function HealthyPlate({ onClose }: { onClose?: () => void }) {
             return next.filter(f => f.y < 110 && !caught.includes(f));
           }
 
-          // Check Win Condition
-          setScore(currentScore => {
-            if (currentScore >= 300) setGameState("complete");
-            return currentScore;
-          });
+          // Check win condition
+          if (scoreRef.current >= 300) {
+             setGameState("complete");
+          }
 
           return next.filter(f => f.y < 110);
         });
@@ -85,13 +98,15 @@ export default function HealthyPlate({ onClose }: { onClose?: () => void }) {
         clearInterval(gameLoop);
       };
     }
-  }, [gameState, plateX, spawnFood, addXP]);
+  }, [gameState, spawnFood, addXP]); // plateX removed from dependencies!
 
   const handleMouseMove = (e: React.MouseEvent) => {
     if (gameRef.current) {
       const rect = gameRef.current.getBoundingClientRect();
       const x = ((e.clientX - rect.left) / rect.width) * 100;
-      setPlateX(Math.min(85, Math.max(15, x)));
+      const clampedX = Math.min(85, Math.max(15, x));
+      setPlateX(clampedX);
+      plateXRef.current = clampedX;
     }
   };
 
@@ -99,7 +114,9 @@ export default function HealthyPlate({ onClose }: { onClose?: () => void }) {
     if (gameRef.current) {
       const rect = gameRef.current.getBoundingClientRect();
       const x = ((e.touches[0].clientX - rect.left) / rect.width) * 100;
-      setPlateX(Math.min(85, Math.max(15, x)));
+      const clampedX = Math.min(85, Math.max(15, x));
+      setPlateX(clampedX);
+      plateXRef.current = clampedX;
     }
   };
 
@@ -108,6 +125,7 @@ export default function HealthyPlate({ onClose }: { onClose?: () => void }) {
     setHealth(50);
     setFoods([]);
     setSessionXP(0);
+    plateXRef.current = 50;
     setGameState("playing");
   };
 
@@ -126,7 +144,7 @@ export default function HealthyPlate({ onClose }: { onClose?: () => void }) {
       className="relative w-full md:min-h-[648px] min-h-[500px] bg-gradient-to-br from-emerald-50 via-white to-sky-50 rounded-[40px] overflow-hidden border-4 md:border-8 border-white shadow-2xl flex flex-col font-sans md:cursor-none"
     >
       {/* HUD Header */}
-      <div className="relative z-50 p-4 md:p-6 flex justify-between items-center bg-white/80 backdrop-blur-md border-b border-emerald-100">
+      <div className="relative z-[100] p-4 md:p-6 flex justify-between items-center bg-white/80 backdrop-blur-md border-b border-emerald-100">
         <div className="flex gap-4">
           <div className="bg-white px-4 md:px-6 py-2 rounded-2xl shadow-sm border border-emerald-100 flex items-center gap-3">
             <Trophy className="text-emerald-500 w-5 h-5" />
@@ -166,18 +184,18 @@ export default function HealthyPlate({ onClose }: { onClose?: () => void }) {
       <div className="flex-1 relative overflow-hidden">
         {/* SMALL PEOPLE ON SIDES */}
         <div className="absolute inset-x-0 bottom-12 flex justify-between px-6 md:px-16 pointer-events-none z-10">
-           <div className="flex flex-col items-center gap-2 animate-in slide-in-from-left duration-700">
+           <div className="flex flex-col items-center gap-2">
               <div className="text-6xl md:text-8xl filter drop-shadow-xl">{getCharacter('left')}</div>
               <div className="px-3 py-1 bg-white/80 backdrop-blur rounded-full text-[10px] font-black border border-slate-100 shadow-sm uppercase tracking-widest">Sohan</div>
            </div>
-           <div className="flex flex-col items-center gap-2 animate-in slide-in-from-right duration-700">
+           <div className="flex flex-col items-center gap-2">
               <div className="text-6xl md:text-8xl filter drop-shadow-xl">{getCharacter('right')}</div>
               <div className="px-3 py-1 bg-white/80 backdrop-blur rounded-full text-[10px] font-black border border-slate-100 shadow-sm uppercase tracking-widest">Rohan</div>
            </div>
         </div>
 
         {gameState === "intro" && (
-          <div className="absolute inset-0 z-[100] flex flex-col items-center justify-center text-center p-8 bg-white/90 backdrop-blur-xl">
+          <div className="absolute inset-0 z-[200] flex flex-col items-center justify-center text-center p-8 bg-white/90 backdrop-blur-xl">
             <div className="flex gap-4 text-7xl md:text-8xl mb-8 animate-bounce">🍎 🥦 🍓</div>
             <h1 className="text-5xl md:text-6xl font-black text-emerald-950 tracking-tighter">आरोग्यदायी आव्हान!</h1>
             <p className="text-emerald-800 text-xl md:text-2xl font-medium max-w-xl leading-relaxed">
@@ -200,7 +218,7 @@ export default function HealthyPlate({ onClose }: { onClose?: () => void }) {
               <div
                 key={food.id}
                 className={cn(
-                  "absolute text-5xl md:text-6xl select-none transition-transform duration-100",
+                  "absolute text-5xl md:text-6xl select-none",
                   food.isHealthy ? "filter drop-shadow-[0_0_10px_rgba(52,211,153,0.4)]" : "filter drop-shadow-[0_0_10px_rgba(244,63,94,0.4)]"
                 )}
                 style={{ left: `${food.x}%`, top: `${food.y}%`, transform: `rotate(${food.y * 3}deg)` }}
@@ -224,7 +242,7 @@ export default function HealthyPlate({ onClose }: { onClose?: () => void }) {
         )}
 
         {gameState === "gameover" && (
-          <div className="absolute inset-0 z-[200] flex flex-col items-center justify-center text-center p-8 bg-rose-50/95 backdrop-blur-2xl">
+          <div className="absolute inset-0 z-[300] flex flex-col items-center justify-center text-center p-8 bg-rose-50/95 backdrop-blur-2xl">
             <ShieldAlert className="w-32 h-32 text-rose-500 mb-6 animate-shake" />
             <h2 className="text-5xl md:text-6xl font-black text-rose-950 tracking-tighter">प्रकृती बिघडली!</h2>
             <p className="text-rose-800 text-xl md:text-2xl font-bold">खूप जास्त जंक फूड खाल्ल्यामुळे मुले आजारी पडली आहेत.</p>
@@ -238,7 +256,7 @@ export default function HealthyPlate({ onClose }: { onClose?: () => void }) {
         )}
 
         {gameState === "complete" && (
-          <div className="absolute inset-0 z-[200] flex flex-col items-center justify-center text-center p-8 bg-emerald-50/95 backdrop-blur-2xl animate-in zoom-in duration-500">
+          <div className="absolute inset-0 z-[300] flex flex-col items-center justify-center text-center p-8 bg-emerald-50/95 backdrop-blur-2xl animate-in zoom-in duration-500">
             <Trophy className="w-32 h-32 text-yellow-500 fill-yellow-500 mb-6 drop-shadow-2xl animate-bounce" />
             <h2 className="text-6xl font-black text-emerald-950 tracking-tighter">उत्तम पोषण!</h2>
             <div className="bg-white p-6 rounded-[30px] shadow-2xl border-4 border-emerald-100 space-y-2 min-w-[280px]">
