@@ -119,7 +119,7 @@ export default function EmpathyHero({ onClose }: { onClose?: () => void }) {
     setGarden([]);
     setSelectedEmotion(null);
     setSelectedAction(null);
-    setGameState("intro");
+    setGameState("feeling");
   };
 
   return (

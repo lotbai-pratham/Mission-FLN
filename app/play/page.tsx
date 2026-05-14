@@ -20,6 +20,7 @@ import BiggerSmaller from '@/components/games/BiggerSmaller';
 import PlaceValue from '@/components/games/PlaceValue';
 import MarketMath from '@/components/games/MarketMath';
 import NumberBonds from '@/components/games/NumberBonds';
+import ClockReader from '@/components/games/ClockReader';
 import SortingHat from '@/components/games/SortingHat';
 import GameWrapper from '@/components/games/GameWrapper';
 import { ALL } from '@/lib/sim-data';
