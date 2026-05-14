@@ -2,7 +2,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { Timer, Trophy, RefreshCw, ArrowLeft, Zap, Hand, Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
-import GameIntro from "./GameIntro";
 
 interface Germ {
   id: number;
@@ -13,7 +12,7 @@ interface Germ {
 }
 
 export default function GermBuster({ onClose }: { onClose?: () => void }) {
-  const [gameState, setGameState] = useState<"intro" | "playing" | "complete">("intro");
+  const [gameState, setGameState] = useState<"playing" | "complete">("playing");
   const [score, setScore] = useState(0);
   const [timeLeft, setTimeLeft] = useState(30);
   const [germs, setGerms] = useState<Germ[]>([]);
@@ -85,22 +84,6 @@ export default function GermBuster({ onClose }: { onClose?: () => void }) {
 
       {/* Game Stage */}
       <div className="flex-1 relative">
-        {gameState === "intro" && (
-          <GameIntro
-            title="स्वच्छता रक्षक (Germ Buster)"
-            emoji="🧼"
-            accentColor="blue"
-            instructions={[
-              "तुमच्या हातावरील जंतू (Germs) नष्ट करा आणि हात स्वच्छ ठेवा.",
-              "स्क्रीनवर दिसणाऱ्या जंतूंवर (👾) क्लिक करा.",
-              "३० सेकंदात जास्तीत जास्त जंतू नष्ट करण्याचा प्रयत्न करा.",
-              "प्रत्येक जंतू मारल्यावर तुम्हाला गुण मिळतील.",
-              "नेहमी हात स्वच्छ धुवा आणि निरोगी राहा!"
-            ]}
-            onStart={start}
-          />
-        )}
-
         {gameState === "playing" && (
           <>
             {/* Hands Illustration */}

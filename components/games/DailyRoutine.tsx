@@ -2,7 +2,6 @@
 import React, { useState, useEffect } from "react";
 import { Timer, Trophy, RefreshCw, ArrowLeft, Zap, CheckCircle2, GripVertical } from "lucide-react";
 import { cn } from "@/lib/utils";
-import GameIntro from "./GameIntro";
 
 interface RoutineStep {
   id: string;
@@ -21,7 +20,7 @@ const STEPS: RoutineStep[] = [
 ];
 
 export default function DailyRoutine({ onClose }: { onClose?: () => void }) {
-  const [gameState, setGameState] = useState<"intro" | "playing" | "complete">("intro");
+  const [gameState, setGameState] = useState<"playing" | "complete">("playing");
   const [currentSteps, setCurrentSteps] = useState<RoutineStep[]>([]);
   const [isCorrect, setIsCorrect] = useState(false);
 
@@ -64,21 +63,6 @@ export default function DailyRoutine({ onClose }: { onClose?: () => void }) {
       </div>
 
       <div className="flex-1 relative flex flex-col items-center justify-center p-8">
-        {gameState === "intro" && (
-          <GameIntro
-            title="माझी दिनचर्या (Daily Routine)"
-            emoji="⏰"
-            accentColor="violet"
-            instructions={[
-              "तुमच्या दिवसाची कामे योग्य क्रमाने लावा.",
-              "प्रत्येक कामाचा कार्ड (Card) वर-खाली हलवा.",
-              "सकाळपासून रात्रीपर्यंतचा योग्य क्रम लावा.",
-              "क्रम लावल्यावर 'Check' बटण दाबा.",
-              "चांगल्या सवयी लावा आणि शिस्तप्रिय बना!"
-            ]}
-            onStart={() => setGameState("playing")}
-          />
-        )}
 
         {gameState === "playing" && (
           <div className="w-full max-w-2xl space-y-4">

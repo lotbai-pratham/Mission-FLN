@@ -2,7 +2,6 @@
 import React, { useState, useEffect } from "react";
 import { Heart, Flower, Sun, CloudRain, ArrowRight, RefreshCw, Star, Info, Users, Home, Smile, Trophy } from "lucide-react";
 import { cn } from "@/lib/utils";
-import GameIntro from "./GameIntro";
 
 interface Scenario {
   id: number;
@@ -67,7 +66,7 @@ const GARDEN_FLOWERS = ["🌸", "🌻", "🌷", "🌹", "🌼", "🌺", "🌿", 
 
 export default function EmpathyHero({ onClose }: { onClose?: () => void }) {
   const [currentScenarioIdx, setCurrentScenarioIdx] = useState(0);
-  const [gameState, setGameState] = useState<"intro" | "feeling" | "action" | "result" | "complete">("intro");
+  const [gameState, setGameState] = useState<"feeling" | "action" | "result" | "complete">("feeling");
   const [selectedEmotion, setSelectedEmotion] = useState<string | null>(null);
   const [selectedAction, setSelectedAction] = useState<string | null>(null);
   const [garden, setGarden] = useState<string[]>([]);
@@ -165,21 +164,6 @@ export default function EmpathyHero({ onClose }: { onClose?: () => void }) {
 
         {/* Game Area */}
         <div className="flex-1 flex flex-col items-center justify-center">
-          {gameState === "intro" && (
-          <GameIntro
-            title="सहानुभूती नायक (Empathy Hero)"
-            emoji="❤️"
-            accentColor="rose"
-            instructions={[
-              "इतरांच्या भावना ओळखा आणि त्यांना मदत करा.",
-              "दिलेली परिस्थिती काळजीपूर्वक वाचा.",
-              "त्या व्यक्तीला कसे वाटत असेल, ते ओळखा.",
-              "योग्य कृती (Action) निवडून त्यांना मदत करा.",
-              "सहानुभूती दाखवून सर्वांचे 'सुपरहिरो' बना!"
-            ]}
-            onStart={() => setGameState("feeling")}
-          />
-        )}
 
           {(gameState === "feeling" || gameState === "action" || gameState === "result") && (
             <div className="w-full max-w-4xl grid lg:grid-cols-2 gap-12 items-center animate-in fade-in slide-in-from-bottom-8 duration-700">

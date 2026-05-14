@@ -4,7 +4,6 @@ import { Heart, Shield, Swords, Zap, RefreshCw, Trophy, ArrowLeft, Target, BookO
 import { cn } from "@/lib/utils";
 import { generateGameScenario } from "@/app/actions/ai";
 import { usePoints } from "@/lib/points-store";
-import GameIntro from "./GameIntro";
 
 interface Question {
   type: "math" | "lang";
@@ -31,7 +30,7 @@ const CREATURES = [
 ];
 
 export default function JungleFight({ onClose }: { onClose?: () => void }) {
-  const [gameState, setGameState] = useState<"intro" | "fighting" | "question" | "levelup" | "gameover">("intro");
+  const [gameState, setGameState] = useState<"fighting" | "question" | "levelup" | "gameover">("fighting");
   const [level, setLevel] = useState(1);
   const [kills, setKills] = useState(0);
   const [playerHealth, setPlayerHealth] = useState(3);
@@ -43,6 +42,7 @@ export default function JungleFight({ onClose }: { onClose?: () => void }) {
   const [projectileType, setProjectileType] = useState<"🥊" | "🦶">("🥊");
   const [sessionXP, setSessionXP] = useState(0);
   const { addXP } = usePoints();
+  const spawnRef = useRef(false);
 
   const spawnCreature = useCallback((lvl: number) => {
     const c = CREATURES[Math.floor(Math.random() * CREATURES.length)];
@@ -54,6 +54,13 @@ export default function JungleFight({ onClose }: { onClose?: () => void }) {
       setAnimating("creature-projectile");
     }, 600);
   }, []);
+
+  useEffect(() => {
+    if (!spawnRef.current) {
+      spawnCreature(1);
+      spawnRef.current = true;
+    }
+  }, [spawnCreature]);
 
   const generateQuestion = (type: "math" | "lang"): Question => {
     if (type === "math") {
@@ -392,27 +399,6 @@ export default function JungleFight({ onClose }: { onClose?: () => void }) {
 
       {/* Control UI */}
       <div className="relative z-10 p-4 md:p-6 md:h-52 h-44 bg-gradient-to-t from-black/90 to-black/30 backdrop-blur-2xl border-t border-white/10 shadow-[0_-20px_50px_rgba(0,0,0,0.5)]">
-        {gameState === "intro" && (
-          <GameIntro
-            title="Jungle Fight"
-            emoji="🐅"
-            accentColor="rose"
-            instructions={[
-              "जंगलातील प्राण्यांशी लढा आणि तुमची शक्ती दाखवा!",
-              "प्रत्येक प्राणी तुमच्यावर हल्ला करेल, त्याला रोखण्यासाठी प्रश्नाचे उत्तर द्या.",
-              "गणिताचे किंवा भाषेचे प्रश्न अचूक सोडवा.",
-              "प्राण्यांना हरवून नवनवीन स्तरांवर (Levels) जा.",
-              "तुमचे आरोग्य (Life) वाचवा आणि खऱ्या योद्ध्यासारखे लढा!"
-            ]}
-            onStart={() => {
-              setPlayerHealth(3);
-              setKills(0);
-              setLevel(1);
-              spawnCreature(1);
-              setGameState("fighting");
-            }}
-          />
-        )}
 
         {gameState === "fighting" && (
           <div className="h-full flex items-center justify-center gap-8">

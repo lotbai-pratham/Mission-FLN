@@ -20,8 +20,9 @@ import BiggerSmaller from '@/components/games/BiggerSmaller';
 import PlaceValue from '@/components/games/PlaceValue';
 import MarketMath from '@/components/games/MarketMath';
 import NumberBonds from '@/components/games/NumberBonds';
-import ClockReader from '@/components/games/ClockReader';
 import SortingHat from '@/components/games/SortingHat';
+import GameWrapper from '@/components/games/GameWrapper';
+import { ALL } from '@/lib/sim-data';
 
 const GAMES = [
   // --- LITERACY ---
@@ -157,7 +158,19 @@ export default function PlayPage() {
   const [filter, setFilter] = useState<'All' | 'Literacy' | 'Numeracy' | 'Bonus'>('All');
 
   if (activeGame) {
+    const rawGame = ALL.find(g => g.id === activeGame || g.id === `g-${activeGame}`);
     const game = GAMES.find(g => g.id === activeGame)!;
+    
+    // Merge instructions and accent color from ALL
+    const instructions = rawGame?.instructions || [
+      "Follow the instructions on the screen.",
+      "Complete the activity to earn points.",
+      "Try your best to be accurate.",
+      "Have fun while learning!",
+      "Click start to begin."
+    ];
+    const accentColor = rawGame?.accentColor || "blue";
+
     return (
       <div className="max-w-2xl mx-auto pb-32 md:pb-16">
         <div className="flex items-center gap-3 mb-6 pt-2">
@@ -169,7 +182,14 @@ export default function PlayPage() {
           <h2 className="text-xl font-extrabold text-slate-800 dark:text-white">{game.title}</h2>
           <span className={`ml-auto text-xs font-bold px-2 py-0.5 rounded-full ${TAG_COLORS[game.tag]}`}>{game.level}</span>
         </div>
-        {GAME_MAP[activeGame]}
+        <GameWrapper
+          title={game.title}
+          emoji={game.emoji}
+          instructions={instructions}
+          accentColor={accentColor as any}
+        >
+          {GAME_MAP[activeGame]}
+        </GameWrapper>
       </div>
     );
   }

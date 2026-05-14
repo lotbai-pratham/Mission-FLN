@@ -5,6 +5,7 @@ import { usePoints } from "@/lib/points-store";
 import { useRouter } from "next/navigation";
 import { ArrowLeft, Gamepad2, Info } from "lucide-react";
 import Link from "next/link";
+import GameWrapper from "@/components/games/GameWrapper";
 
 export default function DirectPlayPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
@@ -60,10 +61,17 @@ export default function DirectPlayPage({ params }: { params: Promise<{ id: strin
                 <div className="h-4 w-32 bg-slate-200 rounded-full" />
               </div>
             }>
-              {game.component({ 
-                isDirect: true, 
-                onClose: () => router.push('/resources/simulations') 
-              })}
+              <GameWrapper
+                title={game.title}
+                emoji={game.emoji}
+                instructions={game.instructions}
+                accentColor={game.accentColor as any}
+              >
+                {game.component({ 
+                  isDirect: true, 
+                  onClose: () => router.push('/resources/simulations') 
+                })}
+              </GameWrapper>
             </Suspense>
          </div>
       </div>

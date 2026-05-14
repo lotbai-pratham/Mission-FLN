@@ -3,7 +3,6 @@ import { Trophy, RefreshCw, Zap, Trash2, CheckCircle2, Sparkles, Home, Star, Gif
 import { cn } from "@/lib/utils";
 import { generateGameQuestions } from "@/app/actions/ai";
 import { usePoints } from "@/lib/points-store";
-import GameIntro from "./GameIntro";
 
 interface TrashItem {
   id: string;
@@ -37,7 +36,7 @@ const TRASH_ITEMS_BASE = [
 const PRIZES = ["🏆", "🥇", "💎", "🎁", "⭐", "🦄", "🌈", "🍦"];
 
 export default function WasteSort({ onClose }: { onClose?: () => void }) {
-  const [gameState, setGameState] = useState<"intro" | "playing" | "prizereveal" | "complete">("intro");
+  const [gameState, setGameState] = useState<"playing" | "prizereveal" | "complete">("playing");
   const [level, setLevel] = useState(1);
   const [score, setScore] = useState(0);
   const [sessionXP, setSessionXP] = useState(0);
@@ -48,6 +47,7 @@ export default function WasteSort({ onClose }: { onClose?: () => void }) {
   const [currentPrize, setCurrentPrize] = useState("🏆");
   const [dragOverBin, setDragOverBin] = useState<"wet" | "dry" | null>(null);
   const { addXP } = usePoints();
+  const startRef = useRef(false);
   const pileAreaRef = useRef<HTMLDivElement>(null);
   const wetBinRef = useRef<HTMLDivElement>(null);
   const dryBinRef = useRef<HTMLDivElement>(null);
@@ -95,13 +95,20 @@ export default function WasteSort({ onClose }: { onClose?: () => void }) {
     setIsAiLoading(false);
   }, []);
 
-  const start = async () => {
+  const start = useCallback(async () => {
     setScore(0);
     setLevel(1);
     setSessionXP(0);
     await generatePile(1);
     setGameState("playing");
-  };
+  }, [generatePile]);
+
+  useEffect(() => {
+    if (!startRef.current) {
+      start();
+      startRef.current = true;
+    }
+  }, [start]);
 
   const onDragStart = (id: string, e: React.MouseEvent | React.TouchEvent) => {
     if (gameState !== "playing") return;
@@ -240,21 +247,6 @@ export default function WasteSort({ onClose }: { onClose?: () => void }) {
       </div>
 
       <div className="flex-1 relative overflow-hidden bg-[url('https://www.transparenttextures.com/patterns/sandpaper.png')]">
-        {gameState === "intro" && (
-          <GameIntro
-            title="कचरा व्यवस्थापन"
-            emoji="♻️"
-            accentColor="orange"
-            instructions={[
-              "कचरा निवडून ओल्या किंवा सुक्या कचरापेटीत टाका.",
-              "कचरा उचलण्यासाठी त्यावर दाबा (Drag) आणि पेटीवर सोडा.",
-              "कचरा साफ केल्यावर तुम्हाला खाली खजिना सापडेल.",
-              "पुढच्या स्तरावर जाण्यासाठी पूर्ण कचरा साफ करा.",
-              "पर्यावरण वाचवण्यासाठी मदत करा!"
-            ]}
-            onStart={start}
-          />
-        )}
 
         {gameState === "playing" && (
           <>

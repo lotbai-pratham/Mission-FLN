@@ -3,7 +3,6 @@ import React, { useState, useEffect } from 'react';
 import { generateGameQuestions } from '@/app/actions/ai';
 import { usePoints } from '@/lib/points-store';
 import { Sparkles, ShoppingCart, Zap, Trophy } from 'lucide-react';
-import GameIntro from './GameIntro';
 
 const ITEMS = [
   { name: 'सफरचंद', emoji: '🍎', price: 5 },
@@ -47,7 +46,6 @@ function makeRound() {
 }
 
 export default function MarketMath() {
-  const [gameState, setGameState] = useState<'intro' | 'playing'>('intro');
   const [round, setRound] = useState(makeRound);
   const [score, setScore] = useState(0);
   const [chosen, setChosen] = useState<number | null>(null);
@@ -108,25 +106,6 @@ export default function MarketMath() {
     }, 1500);
   }
 
-  if (gameState === 'intro') {
-    return (
-      <div className="w-full h-full min-h-[600px] relative bg-slate-50 rounded-[40px] overflow-hidden border-8 border-white shadow-2xl flex items-center justify-center">
-        <GameIntro 
-          title="Market Math"
-          emoji="🛒"
-          accentColor="amber"
-          instructions={[
-            "बाजारात वस्तूंची खरेदी करा आणि पैशांचे हिशोब करा.",
-            "तुम्हाला एकूण किंमत किंवा उरलेले पैसे काढायचे आहेत.",
-            "प्रश्नाचे नीट वाचन करा आणि योग्य उत्तरावर क्लिक करा.",
-            "प्रत्येक अचूक उत्तरासाठी तुम्हाला १० XP मिळतील.",
-            "हिशोबात मास्टर व्हा!"
-          ]}
-          onStart={() => setGameState('playing')}
-        />
-      </div>
-    );
-  }
 
   return (
     <div className="w-full h-full min-h-[600px] bg-slate-50 p-4 md:p-8 rounded-[40px] border-8 border-white shadow-2xl font-sans flex flex-col">

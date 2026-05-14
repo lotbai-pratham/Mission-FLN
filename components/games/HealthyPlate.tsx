@@ -16,10 +16,9 @@ interface Food {
 const HEALTHY = ["🍎", "🥦", "🍌", "🥕", "🥚", "🥗", "🥛", "🌽", "🍍", "🥑", "🍓", "🍊"];
 const UNHEALTHY = ["🍩", "🍟", "🍭", "🍕", "🍔", "🍦", "🥤", "🍫", "🍪"];
 
-import GameIntro from "./GameIntro";
 
 export default function HealthyPlate({ onClose }: { onClose?: () => void }) {
-  const [gameState, setGameState] = useState<"intro" | "playing" | "complete" | "gameover">("intro");
+  const [gameState, setGameState] = useState<"playing" | "complete" | "gameover">("playing");
   const [score, setScore] = useState(0);
   const [health, setHealth] = useState(50);
   const [plateX, setPlateX] = useState(50);
@@ -29,7 +28,8 @@ export default function HealthyPlate({ onClose }: { onClose?: () => void }) {
   
   const gameRef = useRef<HTMLDivElement>(null);
   const plateXRef = useRef(50);
-  const gameStateRef = useRef<string>("intro");
+  const gameStateRef = useRef<string>("playing");
+  const startRef = useRef(false);
 
   // Keep ref in sync
   useEffect(() => {
@@ -125,14 +125,21 @@ export default function HealthyPlate({ onClose }: { onClose?: () => void }) {
     plateXRef.current = clampedX;
   };
 
-  const start = () => {
+  const start = useCallback(() => {
     setScore(0);
     setHealth(50);
     setFoods([]);
     setSessionXP(0);
     plateXRef.current = 50;
     setGameState("playing");
-  };
+  }, []);
+
+  useEffect(() => {
+    if (!startRef.current) {
+      start();
+      startRef.current = true;
+    }
+  }, [start]);
 
   const getCharacter = (side: 'left' | 'right') => {
     if (health >= 80) return side === 'left' ? "💪🏃" : "🏃‍♀️🔥";
@@ -196,21 +203,6 @@ export default function HealthyPlate({ onClose }: { onClose?: () => void }) {
            </div>
         </div>
 
-        {gameState === "intro" && (
-          <GameIntro
-            title="Healthy Plate"
-            emoji="🍏"
-            accentColor="emerald"
-            instructions={[
-              "Catch falling fruits to increase your health meter.",
-              "Avoid junk food (Pizza, Burgers) or you will lose health.",
-              "Keep Sohan and Rohan fit and energetic!",
-              "Reach 300 points to win the challenge.",
-              "Use your mouse or finger to slide the plate."
-            ]}
-            onStart={start}
-          />
-        )}
 
         {gameState === "playing" && (
           <>
