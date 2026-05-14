@@ -2,6 +2,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { Timer, Trophy, RefreshCw, ArrowLeft, Zap, Hand, Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
+import GameIntro from "./GameIntro";
 
 interface Germ {
   id: number;
@@ -85,17 +86,19 @@ export default function GermBuster({ onClose }: { onClose?: () => void }) {
       {/* Game Stage */}
       <div className="flex-1 relative">
         {gameState === "intro" && (
-          <div className="absolute inset-0 flex flex-col items-center justify-center text-center p-8 space-y-6 z-20">
-            <div className="text-8xl animate-bounce">🧼</div>
-            <h1 className="text-5xl font-black text-blue-950">स्वच्छता रक्षक</h1>
-            <p className="text-blue-700 text-xl font-medium max-w-md">तुमचे हात स्वच्छ करा! साबणाचा वापर करून सर्व जंतूंचा नाश करा.</p>
-            <button 
-              onClick={start}
-              className="px-12 py-5 bg-blue-500 hover:bg-blue-600 text-white font-black rounded-3xl shadow-xl shadow-blue-500/20 hover:scale-105 transition-all text-2xl flex items-center gap-3"
-            >
-              खेळ सुरू करा <Zap fill="white" />
-            </button>
-          </div>
+          <GameIntro
+            title="स्वच्छता रक्षक (Germ Buster)"
+            emoji="🧼"
+            accentColor="blue"
+            instructions={[
+              "तुमच्या हातावरील जंतू (Germs) नष्ट करा आणि हात स्वच्छ ठेवा.",
+              "स्क्रीनवर दिसणाऱ्या जंतूंवर (👾) क्लिक करा.",
+              "३० सेकंदात जास्तीत जास्त जंतू नष्ट करण्याचा प्रयत्न करा.",
+              "प्रत्येक जंतू मारल्यावर तुम्हाला गुण मिळतील.",
+              "नेहमी हात स्वच्छ धुवा आणि निरोगी राहा!"
+            ]}
+            onStart={start}
+          />
         )}
 
         {gameState === "playing" && (

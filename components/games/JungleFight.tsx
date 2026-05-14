@@ -4,6 +4,7 @@ import { Heart, Shield, Swords, Zap, RefreshCw, Trophy, ArrowLeft, Target, BookO
 import { cn } from "@/lib/utils";
 import { generateGameScenario } from "@/app/actions/ai";
 import { usePoints } from "@/lib/points-store";
+import GameIntro from "./GameIntro";
 
 interface Question {
   type: "math" | "lang";
@@ -392,18 +393,25 @@ export default function JungleFight({ onClose }: { onClose?: () => void }) {
       {/* Control UI */}
       <div className="relative z-10 p-4 md:p-6 md:h-52 h-44 bg-gradient-to-t from-black/90 to-black/30 backdrop-blur-2xl border-t border-white/10 shadow-[0_-20px_50px_rgba(0,0,0,0.5)]">
         {gameState === "intro" && (
-          <div className="h-full flex flex-col items-center justify-center space-y-5">
-            <div className="flex items-center gap-4">
-              <Swords className="w-10 h-10 text-emerald-400 animate-bounce" />
-              <h2 className="text-5xl font-black text-white italic tracking-tighter drop-shadow-2xl">JUNGLE FIGHT</h2>
-            </div>
-            <button 
-              onClick={startGame}
-              className="group px-14 py-5 bg-gradient-to-r from-emerald-600 to-green-500 hover:from-emerald-500 hover:to-green-400 text-white font-black rounded-[30px] shadow-[0_0_40px_rgba(16,185,129,0.5)] hover:scale-110 active:scale-95 transition-all flex items-center gap-4 border-t-2 border-white/30"
-            >
-              <Zap className="w-7 h-7 fill-white" /> ENTER THE WILD
-            </button>
-          </div>
+          <GameIntro
+            title="Jungle Fight"
+            emoji="🐅"
+            accentColor="rose"
+            instructions={[
+              "जंगलातील प्राण्यांशी लढा आणि तुमची शक्ती दाखवा!",
+              "प्रत्येक प्राणी तुमच्यावर हल्ला करेल, त्याला रोखण्यासाठी प्रश्नाचे उत्तर द्या.",
+              "गणिताचे किंवा भाषेचे प्रश्न अचूक सोडवा.",
+              "प्राण्यांना हरवून नवनवीन स्तरांवर (Levels) जा.",
+              "तुमचे आरोग्य (Life) वाचवा आणि खऱ्या योद्ध्यासारखे लढा!"
+            ]}
+            onStart={() => {
+              setPlayerHealth(3);
+              setKills(0);
+              setLevel(1);
+              spawnCreature(1);
+              setGameState("fighting");
+            }}
+          />
         )}
 
         {gameState === "fighting" && (

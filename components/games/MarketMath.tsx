@@ -1,7 +1,9 @@
-import { useState, useEffect } from 'react';
+"use client";
+import React, { useState, useEffect } from 'react';
 import { generateGameQuestions } from '@/app/actions/ai';
 import { usePoints } from '@/lib/points-store';
-import { Sparkles, ShoppingCart } from 'lucide-react';
+import { Sparkles, ShoppingCart, Zap, Trophy } from 'lucide-react';
+import GameIntro from './GameIntro';
 
 const ITEMS = [
   { name: 'सफरचंद', emoji: '🍎', price: 5 },
@@ -45,9 +47,9 @@ function makeRound() {
 }
 
 export default function MarketMath() {
+  const [gameState, setGameState] = useState<'intro' | 'playing'>('intro');
   const [round, setRound] = useState(makeRound);
   const [score, setScore] = useState(0);
-  const [total, setTotal] = useState(0);
   const [chosen, setChosen] = useState<number | null>(null);
   const [feedback, setFeedback] = useState<'correct' | 'wrong' | null>(null);
   const [questionPool, setQuestionPool] = useState<any[]>([]);
@@ -57,9 +59,13 @@ export default function MarketMath() {
 
   const fetchAiQuestions = async () => {
     setIsAiLoading(true);
-    const questions = await generateGameQuestions('market-math', Math.floor(score/5) + 1, 5);
-    if (questions && questions.length > 0) {
-      setQuestionPool(prev => [...prev, ...questions]);
+    try {
+      const questions = await generateGameQuestions('market-math', Math.floor(score/5) + 1, 5);
+      if (questions && questions.length > 0) {
+        setQuestionPool(prev => [...prev, ...questions]);
+      }
+    } catch (e) {
+      console.log("AI fetch failed");
     }
     setIsAiLoading(false);
   };
@@ -73,13 +79,12 @@ export default function MarketMath() {
       const q = questionPool[0];
       setQuestionPool(prev => prev.slice(1));
       setRound({
-        mode: 'total', // Generic mapping
+        mode: 'total',
         item: ITEMS[Math.floor(Math.random() * ITEMS.length)],
         question: q.q,
         answer: q.a,
         options: q.options
       });
-      // Fetch more if running low
       if (questionPool.length < 2) fetchAiQuestions();
     } else {
       setRound(makeRound());
@@ -91,7 +96,6 @@ export default function MarketMath() {
     setChosen(n);
     const correct = n === round.answer;
     setFeedback(correct ? 'correct' : 'wrong');
-    setTotal(t => t + 1);
     if (correct) {
       setScore(s => s + 1);
       addXP(10);
@@ -101,60 +105,94 @@ export default function MarketMath() {
       nextRound();
       setFeedback(null);
       setChosen(null);
-    }, 1400);
+    }, 1500);
+  }
+
+  if (gameState === 'intro') {
+    return (
+      <div className="w-full h-full min-h-[600px] relative bg-slate-50 rounded-[40px] overflow-hidden border-8 border-white shadow-2xl flex items-center justify-center">
+        <GameIntro 
+          title="Market Math"
+          emoji="🛒"
+          accentColor="amber"
+          instructions={[
+            "बाजारात वस्तूंची खरेदी करा आणि पैशांचे हिशोब करा.",
+            "तुम्हाला एकूण किंमत किंवा उरलेले पैसे काढायचे आहेत.",
+            "प्रश्नाचे नीट वाचन करा आणि योग्य उत्तरावर क्लिक करा.",
+            "प्रत्येक अचूक उत्तरासाठी तुम्हाला १० XP मिळतील.",
+            "हिशोबात मास्टर व्हा!"
+          ]}
+          onStart={() => setGameState('playing')}
+        />
+      </div>
+    );
   }
 
   return (
-    <div className="bg-white dark:bg-slate-900 rounded-3xl overflow-hidden border border-amber-100 shadow-sm">
-      <div className="bg-gradient-to-r from-amber-400 to-orange-400 p-4 md:p-6 text-center">
-        <div className="text-3xl md:text-5xl">{round.item.emoji}</div>
-        <p className="text-white font-bold mt-1 text-sm md:text-base">🛒 बाजार गणित</p>
-      </div>
-
-      <div className="p-4 md:p-6 space-y-4 md:space-y-5">
-        <div className="flex justify-between items-center">
-          <div className="flex flex-col gap-1">
-            <div className="flex items-center gap-2">
-              <span className="text-xs md:text-sm font-bold text-amber-600 bg-amber-50 px-2 md:px-3 py-1 rounded-full">गुण: {score}/{total}</span>
-              {isAiLoading && <Sparkles className="w-4 h-4 text-amber-400 animate-pulse" />}
-            </div>
-            <div className="flex items-center gap-1.5 bg-yellow-100 text-yellow-700 px-2.5 py-0.5 rounded-full font-bold text-[10px] w-fit">
-               <Sparkles size={10} /> +{sessionXP} XP
-            </div>
-          </div>
-          <div className="flex gap-1">
-            {['₹', '₹', '₹'].map((r, i) => <span key={i} className="text-amber-400 text-base md:text-lg">{r}</span>)}
-          </div>
+    <div className="w-full h-full min-h-[600px] bg-slate-50 p-4 md:p-8 rounded-[40px] border-8 border-white shadow-2xl font-sans flex flex-col">
+      <div className="max-w-4xl mx-auto w-full space-y-8 flex-1 flex flex-col justify-center">
+        
+        {/* HUD */}
+        <div className="flex justify-between items-center bg-white p-6 rounded-3xl shadow-sm border border-slate-100 shrink-0">
+           <div className="flex items-center gap-4">
+             <div className="w-12 h-12 bg-amber-100 rounded-2xl flex items-center justify-center text-2xl shadow-inner">🛒</div>
+             <div>
+               <h2 className="text-xl font-black text-slate-900 tracking-tight">Market Math</h2>
+               <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">Shopping Challenge</p>
+             </div>
+           </div>
+           
+           <div className="flex gap-3">
+             <div className="bg-amber-50 px-6 py-3 rounded-2xl border border-amber-100 flex items-center gap-3">
+               <Trophy className="text-amber-500 w-5 h-5" />
+               <span className="text-xl font-black text-amber-900">{score}</span>
+             </div>
+             <div className="bg-yellow-100 text-yellow-700 px-4 py-3 rounded-2xl font-black flex items-center gap-2">
+               <Sparkles size={16} /> +{sessionXP} XP
+             </div>
+           </div>
         </div>
 
-        <div className="bg-amber-50 border border-amber-200 rounded-xl md:rounded-2xl p-3 md:p-4">
-          <p className="font-bold text-slate-700 text-center leading-snug text-sm md:text-base">{round.question}</p>
-        </div>
+        {/* Question Card */}
+        <div className="bg-white p-8 md:p-12 rounded-[40px] shadow-xl border-b-8 border-slate-200 relative overflow-hidden flex-1 flex flex-col justify-center min-h-[400px]">
+          <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-amber-400 to-orange-500" />
+          
+          <div className="flex flex-col items-center gap-8 text-center mb-12">
+            <div className="text-9xl animate-bounce-slow filter drop-shadow-2xl">
+              {round.item.emoji}
+            </div>
+            <h3 className="text-3xl md:text-4xl font-black text-slate-800 leading-tight max-w-3xl tracking-tight">
+              {round.question}
+            </h3>
+          </div>
 
-        <div className="grid grid-cols-3 gap-2 md:gap-3">
-          {round.options.map(n => {
-            let cls = 'border-2 border-amber-200 bg-amber-50 text-amber-800 hover:bg-amber-100 text-lg md:text-xl font-extrabold';
-            if (chosen === n) {
-              cls = feedback === 'correct'
-                ? 'border-2 border-green-400 bg-green-100 text-green-700 scale-105 text-lg md:text-xl font-extrabold'
-                : 'border-2 border-red-400 bg-red-100 text-red-700 text-lg md:text-xl font-extrabold';
-            } else if (feedback === 'wrong' && n === round.answer) {
-              cls = 'border-2 border-green-400 bg-green-100 text-green-700 text-lg md:text-xl font-extrabold';
-            }
-            return (
-              <button key={n} onClick={() => pick(n)}
-                className={`rounded-xl md:rounded-2xl py-3 md:py-5 transition-all duration-200 ${cls}`}>
-                ₹{n}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {round.options.map((opt, i) => (
+              <button
+                key={i}
+                onClick={() => pick(opt)}
+                disabled={!!feedback}
+                className={`
+                  p-8 text-3xl font-black rounded-[30px] transition-all border-b-8 active:border-b-0 active:translate-y-2
+                  ${chosen === opt 
+                    ? (feedback === 'correct' ? 'bg-emerald-500 border-emerald-700 text-white scale-105' : 'bg-rose-500 border-rose-700 text-white animate-shake')
+                    : 'bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-50 hover:-translate-y-1'
+                  }
+                `}
+              >
+                ₹{opt}
               </button>
-            );
-          })}
-        </div>
-
-        {feedback && (
-          <div className={`text-center text-xl font-extrabold animate-bounce ${feedback === 'correct' ? 'text-green-500' : 'text-red-400'}`}>
-            {feedback === 'correct' ? '🛒 शाब्बास!' : `❌ उत्तर होते ₹${round.answer}`}
+            ))}
           </div>
-        )}
+
+          {feedback && (
+            <div className={`mt-10 p-6 rounded-3xl text-center font-black text-2xl animate-in fade-in slide-in-from-bottom-4 duration-300 ${
+              feedback === 'correct' ? 'bg-emerald-50 text-emerald-600' : 'bg-rose-50 text-rose-600'
+            }`}>
+              {feedback === 'correct' ? '🎯 शाब्बास! बरोबर उत्तर!' : `❌ ओहो! बरोबर उत्तर ₹${round.answer} होते.`}
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

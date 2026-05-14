@@ -3,6 +3,7 @@ import { Trophy, RefreshCw, Zap, Trash2, CheckCircle2, Sparkles, Home, Star, Gif
 import { cn } from "@/lib/utils";
 import { generateGameQuestions } from "@/app/actions/ai";
 import { usePoints } from "@/lib/points-store";
+import GameIntro from "./GameIntro";
 
 interface TrashItem {
   id: string;
@@ -240,22 +241,19 @@ export default function WasteSort({ onClose }: { onClose?: () => void }) {
 
       <div className="flex-1 relative overflow-hidden bg-[url('https://www.transparenttextures.com/patterns/sandpaper.png')]">
         {gameState === "intro" && (
-          <div className="absolute inset-0 z-[200] flex items-center justify-center bg-orange-50/90 backdrop-blur-md p-8">
-            <div className="text-center space-y-6 max-w-xl animate-in fade-in zoom-in-95 duration-500">
-              <div className="text-9xl mb-6">♻️</div>
-              <h1 className="text-5xl font-black text-orange-950 tracking-tighter">कचरा शोध (Waste Search)</h1>
-              <p className="text-orange-700 text-xl font-medium leading-relaxed">
-                कचरा उचलून (Drag) योग्य कचरापेटीत टाका! <br/>
-                सर्व कचरा साफ करा आणि खजिना शोधा.
-              </p>
-              <button 
-                onClick={start}
-                className="px-12 py-5 bg-orange-500 hover:bg-orange-600 text-white font-black rounded-[30px] shadow-2xl shadow-orange-500/30 hover:scale-105 transition-all text-2xl flex items-center gap-3 mx-auto border-b-8 border-orange-700"
-              >
-                खेळ सुरू करा <Zap fill="white" />
-              </button>
-            </div>
-          </div>
+          <GameIntro
+            title="कचरा व्यवस्थापन"
+            emoji="♻️"
+            accentColor="orange"
+            instructions={[
+              "कचरा निवडून ओल्या किंवा सुक्या कचरापेटीत टाका.",
+              "कचरा उचलण्यासाठी त्यावर दाबा (Drag) आणि पेटीवर सोडा.",
+              "कचरा साफ केल्यावर तुम्हाला खाली खजिना सापडेल.",
+              "पुढच्या स्तरावर जाण्यासाठी पूर्ण कचरा साफ करा.",
+              "पर्यावरण वाचवण्यासाठी मदत करा!"
+            ]}
+            onStart={start}
+          />
         )}
 
         {gameState === "playing" && (

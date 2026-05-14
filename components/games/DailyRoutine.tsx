@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { Timer, Trophy, RefreshCw, ArrowLeft, Zap, CheckCircle2, GripVertical } from "lucide-react";
 import { cn } from "@/lib/utils";
+import GameIntro from "./GameIntro";
 
 interface RoutineStep {
   id: string;
@@ -64,17 +65,19 @@ export default function DailyRoutine({ onClose }: { onClose?: () => void }) {
 
       <div className="flex-1 relative flex flex-col items-center justify-center p-8">
         {gameState === "intro" && (
-          <div className="text-center space-y-6 max-w-xl animate-in fade-in zoom-in-95 duration-500">
-            <div className="text-7xl mb-6">⏰</div>
-            <h1 className="text-5xl font-black text-indigo-950">माझी दिनचर्या</h1>
-            <p className="text-indigo-700 text-xl font-medium">सकाळची योग्य वेळ लावा. कार्ड्सला योग्य क्रमाने लावा.</p>
-            <button 
-              onClick={() => setGameState("playing")}
-              className="px-12 py-5 bg-indigo-600 hover:bg-indigo-500 text-white font-black rounded-3xl shadow-xl shadow-indigo-500/20 hover:scale-105 transition-all text-2xl flex items-center gap-3 mx-auto"
-            >
-              सुरुवात करा <Zap fill="white" />
-            </button>
-          </div>
+          <GameIntro
+            title="माझी दिनचर्या (Daily Routine)"
+            emoji="⏰"
+            accentColor="violet"
+            instructions={[
+              "तुमच्या दिवसाची कामे योग्य क्रमाने लावा.",
+              "प्रत्येक कामाचा कार्ड (Card) वर-खाली हलवा.",
+              "सकाळपासून रात्रीपर्यंतचा योग्य क्रम लावा.",
+              "क्रम लावल्यावर 'Check' बटण दाबा.",
+              "चांगल्या सवयी लावा आणि शिस्तप्रिय बना!"
+            ]}
+            onStart={() => setGameState("playing")}
+          />
         )}
 
         {gameState === "playing" && (

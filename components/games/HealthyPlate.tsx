@@ -16,6 +16,8 @@ interface Food {
 const HEALTHY = ["🍎", "🥦", "🍌", "🥕", "🥚", "🥗", "🥛", "🌽", "🍍", "🥑", "🍓", "🍊"];
 const UNHEALTHY = ["🍩", "🍟", "🍭", "🍕", "🍔", "🍦", "🥤", "🍫", "🍪"];
 
+import GameIntro from "./GameIntro";
+
 export default function HealthyPlate({ onClose }: { onClose?: () => void }) {
   const [gameState, setGameState] = useState<"intro" | "playing" | "complete" | "gameover">("intro");
   const [score, setScore] = useState(0);
@@ -195,20 +197,19 @@ export default function HealthyPlate({ onClose }: { onClose?: () => void }) {
         </div>
 
         {gameState === "intro" && (
-          <div className="absolute inset-0 z-[200] flex flex-col items-center justify-center text-center p-8 bg-white/95">
-            <div className="flex gap-4 text-7xl md:text-9xl mb-8 animate-bounce">🍎 🥦 🍓</div>
-            <h1 className="text-5xl md:text-7xl font-black text-emerald-950 tracking-tighter">Healthy Plate</h1>
-            <p className="text-emerald-800 text-xl md:text-2xl font-medium max-w-xl leading-relaxed mt-4">
-              Eat healthy to keep Sohan and Rohan fit! <br/>
-              Catch fruits, avoid junk food.
-            </p>
-            <button 
-              onClick={start}
-              className="mt-10 px-16 py-6 bg-emerald-600 hover:bg-emerald-500 text-white font-black rounded-[40px] shadow-2xl hover:scale-105 transition-all text-3xl flex items-center gap-4 border-b-8 border-emerald-800"
-            >
-              START GAME <Zap fill="white" className="w-8 h-8" />
-            </button>
-          </div>
+          <GameIntro
+            title="Healthy Plate"
+            emoji="🍏"
+            accentColor="emerald"
+            instructions={[
+              "Catch falling fruits to increase your health meter.",
+              "Avoid junk food (Pizza, Burgers) or you will lose health.",
+              "Keep Sohan and Rohan fit and energetic!",
+              "Reach 300 points to win the challenge.",
+              "Use your mouse or finger to slide the plate."
+            ]}
+            onStart={start}
+          />
         )}
 
         {gameState === "playing" && (

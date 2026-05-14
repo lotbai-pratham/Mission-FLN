@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { Heart, Flower, Sun, CloudRain, ArrowRight, RefreshCw, Star, Info, Users, Home, Smile, Trophy } from "lucide-react";
 import { cn } from "@/lib/utils";
+import GameIntro from "./GameIntro";
 
 interface Scenario {
   id: number;
@@ -165,20 +166,20 @@ export default function EmpathyHero({ onClose }: { onClose?: () => void }) {
         {/* Game Area */}
         <div className="flex-1 flex flex-col items-center justify-center">
           {gameState === "intro" && (
-            <div className="text-center space-y-6 max-w-xl animate-in fade-in zoom-in-95 duration-500">
-              <div className="w-24 h-24 bg-rose-100 rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-inner">
-                <Users size={48} className="text-rose-500" />
-              </div>
-              <h1 className="text-5xl font-black text-rose-950 leading-tight">तुमच्या दयाळूपणाच्या<br/><span className="text-rose-500">शोधात स्वागत आहे!</span></h1>
-              <p className="text-slate-600 text-lg">भावना समजून घ्या, तुमच्या मित्रांना मदत करा आणि तुमची बाग बहरताना पहा.</p>
-              <button 
-                onClick={() => setGameState("feeling")}
-                className="px-12 py-5 bg-rose-500 hover:bg-rose-600 text-white font-black rounded-3xl shadow-xl shadow-rose-500/20 hover:scale-105 transition-all flex items-center gap-3 mx-auto text-xl"
-              >
-                सुरुवात करा <ArrowRight />
-              </button>
-            </div>
-          )}
+          <GameIntro
+            title="सहानुभूती नायक (Empathy Hero)"
+            emoji="❤️"
+            accentColor="rose"
+            instructions={[
+              "इतरांच्या भावना ओळखा आणि त्यांना मदत करा.",
+              "दिलेली परिस्थिती काळजीपूर्वक वाचा.",
+              "त्या व्यक्तीला कसे वाटत असेल, ते ओळखा.",
+              "योग्य कृती (Action) निवडून त्यांना मदत करा.",
+              "सहानुभूती दाखवून सर्वांचे 'सुपरहिरो' बना!"
+            ]}
+            onStart={() => setGameState("feeling")}
+          />
+        )}
 
           {(gameState === "feeling" || gameState === "action" || gameState === "result") && (
             <div className="w-full max-w-4xl grid lg:grid-cols-2 gap-12 items-center animate-in fade-in slide-in-from-bottom-8 duration-700">
