@@ -31,14 +31,14 @@ const BUTTON_COLORS = {
 
 export default function GameIntro({ title, emoji, instructions, onStart, accentColor = "blue" }: GameIntroProps) {
   return (
-    <div className="absolute inset-0 z-[500] flex items-center justify-center p-4 md:p-8 overflow-hidden">
+    <div className="absolute inset-0 z-[500] flex flex-col items-center p-4 md:p-8 overflow-y-auto">
       {/* Animated Background Orbs */}
       <div className="absolute inset-0 pointer-events-none">
         <div className={cn("absolute -top-20 -left-20 w-64 h-64 rounded-full blur-[100px] opacity-20 animate-pulse", COLORS[accentColor].split(' ')[0])} />
         <div className={cn("absolute -bottom-20 -right-20 w-64 h-64 rounded-full blur-[100px] opacity-20 animate-pulse delay-700", COLORS[accentColor].split(' ')[1])} />
       </div>
 
-      <div className="relative bg-white/90 backdrop-blur-2xl p-8 md:p-12 rounded-[40px] shadow-[0_32px_64px_-12px_rgba(0,0,0,0.1)] border-4 border-white max-w-2xl w-full text-center space-y-8 animate-in fade-in zoom-in-95 duration-700">
+      <div className="relative my-auto bg-white/90 backdrop-blur-2xl p-8 md:p-12 rounded-[40px] shadow-[0_32px_64px_-12px_rgba(0,0,0,0.1)] border-4 border-white max-w-2xl w-full text-center space-y-8 animate-in fade-in zoom-in-95 duration-700">
         
         {/* Emoji Icon */}
         <div className="flex justify-center">

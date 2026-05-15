@@ -21,7 +21,7 @@ export default function GameWrapper({
 
   if (!hasStarted) {
     return (
-      <div className="w-full h-full min-h-[600px] relative bg-slate-50 rounded-[40px] overflow-hidden border-8 border-white shadow-2xl flex items-center justify-center">
+      <div className="w-full h-full min-h-[600px] relative bg-slate-50 rounded-[40px] overflow-auto border-8 border-white shadow-2xl flex items-center justify-center">
         <GameIntro
           title={title}
           emoji={emoji}
