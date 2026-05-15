@@ -265,7 +265,7 @@ export const GAMES: Item[] = [
     accentColor: "blue", component: (p) => <StorySequence {...p} /> 
   },
   { 
-    id: "g-true", title: "True or False", level: "Story", battleLevel: 4, subject: "Literacy", emoji: "✅", 
+    id: "g-truefalse", title: "True or False", level: "Story", battleLevel: 4, subject: "Literacy", emoji: "✅", 
     instructions: ["दिलेले वाक्य बरोबर की चूक ते ओळखा.", "गोष्टीतील माहितीवर आधारित उत्तरे द्या.", "वाचनाची समज तपासा.", "वेगाने विचार करून उत्तर द्या.", "तुमचा स्कोअर तपासा!"], 
     accentColor: "emerald", component: (p) => <TrueFalse {...p} /> 
   },
@@ -280,7 +280,7 @@ export const GAMES: Item[] = [
     accentColor: "amber", component: (p) => <CountingStones {...p} /> 
   },
   { 
-    id: "g-train", title: "Number Train", level: "1–9", battleLevel: 1, subject: "Numeracy", emoji: "🚂", 
+    id: "g-numbertrain", title: "Number Train", level: "1–9", battleLevel: 1, subject: "Numeracy", emoji: "🚂", 
     instructions: ["रेल्वेच्या डब्यांवरील संख्यांचा क्रम लावा.", "गाळलेली संख्या शोधून डबा पूर्ण करा.", "संख्यांचा चढता आणि उतरता क्रम शिका.", "रेल्वेला वेळेवर मार्गस्थ करा.", "संख्यांची ओळख पक्की करा."], 
     accentColor: "rose", component: (p) => <NumberTrain {...p} /> 
   },
@@ -290,7 +290,7 @@ export const GAMES: Item[] = [
     accentColor: "violet", component: (p) => <WeightMatcher {...p} /> 
   },
   { 
-    id: "g-place", title: "Place Value Builder", level: "10–99", battleLevel: 2, subject: "Numeracy", emoji: "🏗️", 
+    id: "g-placevalue", title: "Place Value Builder", level: "10–99", battleLevel: 2, subject: "Numeracy", emoji: "🏗️", 
     instructions: ["दशक आणि एकक वापरून संख्या बनवा.", "स्थानिक किमतीनुसार ठोकळे रचा.", "संख्यांची रचना समजून घ्या.", "दिलेली संख्या अचूक तयार करा.", "गणितात बिल्डर बना!"], 
     accentColor: "emerald", component: (p) => <PlaceValue {...p} /> 
   },

@@ -92,7 +92,7 @@ const CHAPTERS: Chapter[] = [
 export default function BuddyBigDay({ onClose }: { onClose?: () => void }) {
   const [chapters, setChapters] = useState<Chapter[]>(CHAPTERS);
   const [currentChapterIdx, setCurrentChapterIdx] = useState(0);
-  const [gameState, setGameState] = useState<"intro" | "story" | "choice-feedback" | "complete" | "generating">("intro");
+  const [gameState, setGameState] = useState<"story" | "choice-feedback" | "complete" | "generating">("story");
   const [heartValue, setHeartValue] = useState(50); // 0 to 100
   const [selectedChoiceIdx, setSelectedChoiceIdx] = useState<number | null>(null);
   const [isAiMode, setIsAiMode] = useState(false);
@@ -149,7 +149,7 @@ export default function BuddyBigDay({ onClose }: { onClose?: () => void }) {
     setCurrentChapterIdx(0);
     setHeartValue(50);
     setSelectedChoiceIdx(null);
-    setGameState("intro");
+    setGameState("story");
   };
 
   // Environment saturation based on heart value
@@ -208,21 +208,6 @@ export default function BuddyBigDay({ onClose }: { onClose?: () => void }) {
                 <Sparkles className="w-12 h-12 text-rose-400 animate-spin" />
               </div>
               <p className="text-rose-900 font-black tracking-widest uppercase text-xs">तुमच्यासाठी नवीन प्रसंग तयार करत आहे...</p>
-            </div>
-          )}
-          {gameState === "intro" && (
-            <div className="text-center space-y-4 md:space-y-6 max-w-xl animate-in fade-in zoom-in-95 duration-500">
-              <div className="w-20 h-20 md:w-24 md:h-24 bg-rose-100 rounded-3xl flex items-center justify-center mx-auto mb-4 md:mb-6 shadow-inner">
-                <span className="text-5xl md:text-7xl">🦸‍♂️</span>
-              </div>
-              <h1 className="text-3xl md:text-5xl font-black text-rose-950 leading-tight">बडीचा<br/><span className="text-rose-500">मोठा दिवस</span></h1>
-              <p className="text-slate-600 text-sm md:text-lg px-4">बडीला त्याच्या शाळेच्या प्रवासात मदत करा. तुमच्या निवडीमुळे जगाचे रंग बदलतील!</p>
-              <button 
-                onClick={() => setGameState("story")}
-                className="px-8 py-4 md:px-12 md:py-5 bg-rose-500 hover:bg-rose-600 text-white font-black rounded-3xl shadow-xl shadow-rose-500/20 hover:scale-105 transition-all flex items-center gap-3 mx-auto text-lg md:text-xl"
-              >
-                सुरुवात करा <ArrowRight />
-              </button>
             </div>
           )}
 

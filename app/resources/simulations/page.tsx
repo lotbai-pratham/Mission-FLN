@@ -10,6 +10,7 @@ import { useSearchParams, useRouter } from "next/navigation";
 
 import { SIMS, GAMES, ALL, Item } from "@/lib/sim-data";
 import BattleMatchmaker from "@/components/simulations/BattleMatchmaker";
+import GameWrapper from "@/components/games/GameWrapper";
 
 const SECTIONS = [
   { label: "🎡 New & Featured",      filter: (i: Item) => i.tag === "Featured" || i.tag === "Marathi", accent: "from-amber-400 to-orange-500", glow: "shadow-orange-500/40", ring: "ring-amber-400", active: "bg-gradient-to-r from-amber-400 to-orange-500 text-white" },
@@ -369,6 +370,12 @@ function SimulationsContent() {
                   minHeight: activeId ? '648px' : 'auto'
                 }}
               >
+              <GameWrapper
+                title={active.title}
+                emoji={active.emoji}
+                instructions={active.instructions}
+                accentColor={active.accentColor as any}
+              >
                 {active.component({ 
                   player1: battleContext?.p1, 
                   player2: battleContext?.p2,
@@ -376,6 +383,7 @@ function SimulationsContent() {
                   classNum: battleContext?.classNum,
                   onClose: closeArena
                 })}
+              </GameWrapper>
               </div>
             </div>
           </div>
