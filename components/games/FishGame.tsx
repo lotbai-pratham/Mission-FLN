@@ -1,5 +1,6 @@
 "use client";
 import { useState } from 'react';
+import { sfx } from '@/lib/sounds';
 
 const ROUNDS = [
   { image: '🌳', word: 'झाड', distractors: ['फूल', 'पान', 'फांदी'] },
@@ -31,7 +32,12 @@ export default function FishGame() {
     setChosen(word);
     const correct = word === round.word;
     setFeedback(correct ? 'correct' : 'wrong');
-    if (correct) setScore(s => s + 1);
+    if (correct) {
+      setScore(s => s + 1);
+      sfx.playSuccess();
+    } else {
+      sfx.playError();
+    }
     setTimeout(() => {
       setRoundIdx(i => i + 1);
       setFeedback(null);

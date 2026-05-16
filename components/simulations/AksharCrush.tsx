@@ -4,6 +4,7 @@ import { useState, useCallback, useRef } from "react";
 import { usePoints } from "@/lib/points-store";
 import GameHeader from "@/components/games/GameHeader";
 import { cn } from "@/lib/utils";
+import { sfx } from "@/lib/sounds";
 
 // ─── Matra Categories ─────────────────────────────────────────────────────────
 const CATS = [
@@ -148,6 +149,7 @@ export default function AksharCrush({ onExit }: { onExit?: () => void }) {
       setScore(s => s + points);
       addXP(Math.ceil(points / 10)); // 1 XP per 10 points
       setFlash(matched);
+      sfx.playPop();
       await sleep(400);
       g = dropAndFill(g, matched);
       setFlash(new Set());

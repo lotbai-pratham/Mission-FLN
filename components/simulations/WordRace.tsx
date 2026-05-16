@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import CompetitiveArena from './CompetitiveArena';
 import { recordBattleResult } from '@/app/actions';
+import { sfx } from '@/lib/sounds';
 
 const MARATHI_WORDS = [
   { word: 'साखर', cat: 'खाद्यपदार्थ' },
@@ -85,6 +86,7 @@ export default function WordRace({ player1, player2, schoolId, classNum, onClose
               onCorrect={() => {
                 addPoint('A');
                 setLastWinner('A');
+                sfx.playSuccess();
                 setTimeout(generateRound, 300);
               }}
               disabled={gameState !== 'running' || !!lastWinner}
@@ -98,6 +100,7 @@ export default function WordRace({ player1, player2, schoolId, classNum, onClose
               onCorrect={() => {
                 addPoint('B');
                 setLastWinner('B');
+                sfx.playSuccess();
                 setTimeout(generateRound, 300);
               }}
               disabled={gameState !== 'running' || !!lastWinner}

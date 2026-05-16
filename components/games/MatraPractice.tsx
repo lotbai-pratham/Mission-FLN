@@ -1,5 +1,6 @@
 "use client";
 import { useState, useMemo } from 'react';
+import { sfx } from '@/lib/sounds';
 
 const MATRA_META = [
   { symbol: 'ा', name: 'आ-मात्रा', vowel: 'आ', color: 'rose' },
@@ -123,7 +124,12 @@ export default function MatraPractice() {
     const correct = matra === round.matra;
     setFeedback(correct ? 'correct' : 'wrong');
     setTotal(t => t + 1);
-    if (correct) setScore(s => s + 1);
+    if (correct) {
+      setScore(s => s + 1);
+      sfx.playSuccess();
+    } else {
+      sfx.playError();
+    }
     setTimeout(() => {
       setIdx(i => i + 1);
       setFeedback(null);

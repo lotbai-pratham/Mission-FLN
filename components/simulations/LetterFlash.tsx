@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import CompetitiveArena from './CompetitiveArena';
 import { recordBattleResult } from '@/app/actions';
+import { sfx } from '@/lib/sounds';
 
 const MARATHI_LETTERS = [
   'अ', 'आ', 'इ', 'ई', 'उ', 'ऊ', 'ए', 'ऐ', 'ओ', 'औ', 'अं', 'अः',
@@ -72,6 +73,7 @@ export default function LetterFlash({ player1, player2, schoolId, classNum, onCl
               onCorrect={() => {
                 addPoint('A');
                 setLastWinner('A');
+                sfx.playSuccess();
                 setTimeout(generateRound, 200);
               }}
               disabled={gameState !== 'running' || !!lastWinner}
@@ -86,6 +88,7 @@ export default function LetterFlash({ player1, player2, schoolId, classNum, onCl
               onCorrect={() => {
                 addPoint('B');
                 setLastWinner('B');
+                sfx.playSuccess();
                 setTimeout(generateRound, 200);
               }}
               disabled={gameState !== 'running' || !!lastWinner}

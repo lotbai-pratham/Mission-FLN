@@ -5,6 +5,7 @@ import { usePoints } from '@/lib/points-store';
 import GameHeader from '@/components/games/GameHeader';
 import { RotateCcw, Zap, CheckCircle2, XCircle } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { sfx } from '@/lib/sounds';
 
 const CONSONANTS = ['क', 'ख', 'ग', 'घ', 'च', 'छ', 'ज', 'ट', 'ठ', 'ड', 'त', 'थ', 'द', 'न', 'प', 'फ', 'ब', 'म', 'य', 'र', 'ल', 'व', 'श', 'स', 'ह'];
 const MATRAS = [
@@ -76,6 +77,9 @@ export default function MatraChakra() {
     if (isCorrect) {
       setScore(s => s + 1);
       addXP(15);
+      sfx.playSuccess();
+    } else {
+      sfx.playError();
     }
 
     setTimeout(() => {

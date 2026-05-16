@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { generateGameQuestions } from '@/app/actions/ai';
 import { usePoints } from '@/lib/points-store';
 import { Sparkles } from 'lucide-react';
+import { sfx } from '@/lib/sounds';
 
 const ROUNDS = [
   { prompt: 'हे अक्षर शोधा:  क', target: 'क', options: ['क', 'ख', 'ग', 'घ', 'च', 'छ'] },
@@ -71,6 +72,9 @@ export default function LetterPicker() {
       setScore(s => s + 1);
       addXP(5);
       setSessionXP(prev => prev + 5);
+      sfx.playSuccess();
+    } else {
+      sfx.playError();
     }
     setTimeout(() => {
       nextRound();
