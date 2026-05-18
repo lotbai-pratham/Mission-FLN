@@ -1,6 +1,7 @@
 "use client";
 import { useState, useMemo } from 'react';
 import { sfx } from '@/lib/sounds';
+import { usePoints } from '@/lib/points-store';
 
 const MATRA_META = [
   { symbol: 'ा', name: 'आ-मात्रा', vowel: 'आ', color: 'rose' },
@@ -101,6 +102,7 @@ function buildOptions(correct: string): string[] {
 }
 
 export default function MatraPractice() {
+  const { addXP } = usePoints();
   const [filter, setFilter] = useState<string>('all');
   const [score, setScore] = useState(0);
   const [total, setTotal] = useState(0);
@@ -126,6 +128,7 @@ export default function MatraPractice() {
     setTotal(t => t + 1);
     if (correct) {
       setScore(s => s + 1);
+      addXP(10);
       sfx.playSuccess();
     } else {
       sfx.playError();

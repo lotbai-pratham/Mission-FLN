@@ -1,5 +1,6 @@
 "use client";
 import { useState } from 'react';
+import { usePoints } from '@/lib/points-store';
 
 const EMOJIS = ['🪨', '🍎', '⭐', '🐸', '🌸', '🎈', '🍌', '🐟'];
 const MAX = 9;
@@ -18,6 +19,7 @@ function makeRound() {
 }
 
 export default function CountingStones() {
+  const { addXP } = usePoints();
   const [round, setRound] = useState(makeRound);
   const [score, setScore] = useState(0);
   const [total, setTotal] = useState(0);
@@ -29,7 +31,10 @@ export default function CountingStones() {
     setChosen(n);
     const correct = n === round.count;
     setFeedback(correct ? 'correct' : 'wrong');
-    if (correct) setScore(s => s + 1);
+    if (correct) {
+      setScore(s => s + 1);
+      addXP(10);
+    }
     setTotal(t => t + 1);
     setTimeout(() => {
       setRound(makeRound());

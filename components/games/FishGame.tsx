@@ -1,6 +1,7 @@
 "use client";
 import { useState } from 'react';
 import { sfx } from '@/lib/sounds';
+import { usePoints } from '@/lib/points-store';
 
 const ROUNDS = [
   { image: '🌳', word: 'झाड', distractors: ['फूल', 'पान', 'फांदी'] },
@@ -18,6 +19,7 @@ function shuffle<T>(arr: T[]): T[] {
 }
 
 export default function FishGame() {
+  const { addXP } = usePoints();
   const [roundIdx, setRoundIdx] = useState(0);
   const [score, setScore] = useState(0);
   const [feedback, setFeedback] = useState<'correct' | 'wrong' | null>(null);
@@ -34,6 +36,7 @@ export default function FishGame() {
     setFeedback(correct ? 'correct' : 'wrong');
     if (correct) {
       setScore(s => s + 1);
+      addXP(15);
       sfx.playSuccess();
     } else {
       sfx.playError();

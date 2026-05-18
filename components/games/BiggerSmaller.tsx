@@ -1,5 +1,6 @@
 "use client";
 import { useState } from 'react';
+import { usePoints } from '@/lib/points-store';
 
 const EMOJIS = ['🍎', '⭐', '🐟', '🟡', '🌸'];
 
@@ -12,6 +13,7 @@ function makeRound() {
 }
 
 export default function BiggerSmaller() {
+  const { addXP } = usePoints();
   const [round, setRound] = useState(makeRound);
   const [score, setScore] = useState(0);
   const [total, setTotal] = useState(0);
@@ -24,7 +26,10 @@ export default function BiggerSmaller() {
     const correct = side === round.answer;
     setFeedback(correct ? 'correct' : 'wrong');
     setTotal(t => t + 1);
-    if (correct) setScore(s => s + 1);
+    if (correct) {
+      setScore(s => s + 1);
+      addXP(10);
+    }
     setTimeout(() => {
       setRound(makeRound());
       setFeedback(null);

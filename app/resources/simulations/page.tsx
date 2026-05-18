@@ -11,6 +11,7 @@ import { useSearchParams, useRouter } from "next/navigation";
 import { SIMS, GAMES, ALL, Item } from "@/lib/sim-data";
 import BattleMatchmaker from "@/components/simulations/BattleMatchmaker";
 import GameWrapper from "@/components/games/GameWrapper";
+import LevelUpModal from "@/components/games/LevelUpModal";
 
 const SECTIONS = [
   { label: "🎡 New & Featured",      filter: (i: Item) => i.tag === "Featured" || i.tag === "Marathi", accent: "from-amber-400 to-orange-500", glow: "shadow-orange-500/40", ring: "ring-amber-400", active: "bg-gradient-to-r from-amber-400 to-orange-500 text-white" },
@@ -26,7 +27,7 @@ function SimulationsContent() {
   const { data: session } = useSession();
   const isAdmin = session?.user?.role === 'admin';
   const userSchoolId = (session?.user as any)?.schoolId ?? undefined;
-  const { xp, level } = usePoints();
+  const { xp, level, badge, showLevelUp, newLevelReached, dismissLevelUp } = usePoints();
 
   const [activeId, setActiveId] = useState<string | null>(null);
   const [showMatchmaker, setShowMatchmaker] = useState(false);
@@ -170,6 +171,7 @@ function SimulationsContent() {
           <div className="flex gap-3 flex-wrap">
             <StatBadge icon="⚡" label="Your XP" value={xp} color="from-amber-400 to-orange-500" shadow="shadow-orange-500/40" />
             <StatBadge icon="🆙" label="Level" value={level} color="from-indigo-500 to-blue-600" shadow="shadow-indigo-500/40" />
+            <StatBadge icon={badge.emoji} label="Badge" value={badge.name} color={badge.color} shadow="shadow-indigo-500/40" />
             <StatBadge icon="🎮" label="Tools" value={ALL.length} color="from-slate-700 to-slate-800" />
           </div>
         </div>
@@ -403,6 +405,11 @@ function SimulationsContent() {
           />
         </div>
       )}
+      <LevelUpModal
+        isOpen={showLevelUp}
+        level={newLevelReached}
+        onClose={dismissLevelUp}
+      />
     </div>
   );
 }

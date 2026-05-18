@@ -6,11 +6,13 @@ import { useRouter } from "next/navigation";
 import { ArrowLeft, Gamepad2, Info } from "lucide-react";
 import Link from "next/link";
 import GameWrapper from "@/components/games/GameWrapper";
+import LevelUpModal from "@/components/games/LevelUpModal";
 
 export default function DirectPlayPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
   const router = useRouter();
   const game = ALL.find(g => g.id === id);
+  const { showLevelUp, newLevelReached, dismissLevelUp } = usePoints();
 
   if (!game) {
     return (
@@ -80,6 +82,12 @@ export default function DirectPlayPage({ params }: { params: Promise<{ id: strin
       <div className="bg-white border-t border-slate-100 px-4 py-2 flex justify-center items-center shrink-0">
          <p className="text-[9px] font-black text-slate-300 uppercase tracking-[4px]">Powered by FLN Hub Arcade</p>
       </div>
+
+      <LevelUpModal
+        isOpen={showLevelUp}
+        level={newLevelReached}
+        onClose={dismissLevelUp}
+      />
     </div>
   );
 }

@@ -13,7 +13,7 @@ interface GameHeaderProps {
 }
 
 export default function GameHeader({ title, score, total, levelLabel }: GameHeaderProps) {
-  const { xp, streak, level, progress } = usePoints();
+  const { xp, streak, level, progress, badge } = usePoints();
 
   return (
     <div className="w-full bg-slate-900 border border-slate-800 rounded-3xl p-5 mb-6 shadow-xl relative overflow-hidden">
@@ -82,7 +82,19 @@ export default function GameHeader({ title, score, total, levelLabel }: GameHead
             </div>
           </div>
 
-          {/* XP & Level Badge */}
+          {/* Premium LinkedIn-style Badge Pill */}
+          <div className={cn(
+            "flex items-center gap-2 px-4 py-2 rounded-2xl bg-gradient-to-r text-white text-xs font-black shadow-lg border border-white/10 shrink-0 transform hover:scale-105 transition-all duration-300",
+            badge.color
+          )} title={badge.description}>
+            <span className="text-lg drop-shadow-sm">{badge.emoji}</span>
+            <div className="text-left">
+              <p className="text-[8px] font-bold text-white/70 uppercase tracking-widest leading-none">Rank Badge</p>
+              <p className="font-black tracking-tight leading-tight mt-0.5">{badge.name}</p>
+            </div>
+          </div>
+
+          {/* XP & Level Badge Progress */}
           <div className="space-y-1">
             <div className="flex items-baseline gap-2">
               <span className="text-sm font-black text-blue-400 uppercase tracking-tighter">Total XP</span>
