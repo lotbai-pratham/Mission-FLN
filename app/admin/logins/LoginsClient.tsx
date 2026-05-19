@@ -140,7 +140,7 @@ export default function LoginsClient({ initialCredentials, hierarchy }: { initia
     
     // Determine the exact role based on customLevel
     let dbRole = "user";
-    if (customLevel === "state") dbRole = "admin";
+    if (customLevel === "state") dbRole = "state";
     else if (customLevel === "division") dbRole = "division";
     else if (customLevel === "project_office") dbRole = "project_office";
     else dbRole = "user";

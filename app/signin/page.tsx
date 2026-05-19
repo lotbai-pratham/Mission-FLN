@@ -38,6 +38,7 @@ function SignInForm() {
       setError("Invalid email or password.");
     } else {
       router.push(callbackUrl);
+      router.refresh();
     }
   }
 
