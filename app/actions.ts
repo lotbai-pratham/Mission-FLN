@@ -868,10 +868,11 @@ export async function getGrowthVelocity(schoolId?: string) {
   const where = schoolId ? { schoolId } : {};
   const students = await prisma.student.findMany({
     where,
-    include: { assessments: { orderBy: { date: 'desc' } } },
+    include: { assessments: { where: { term: 'Endline' }, orderBy: { date: 'desc' } } },
   });
 
-  let masters = 0;
+  let storyCount = 0;
+  let subtractionCount = 0;
   let totalAssessed = 0;
 
   students.forEach(s => {
@@ -880,17 +881,19 @@ export async function getGrowthVelocity(schoolId?: string) {
       const latest = s.assessments[0];
       const canReadStory = latest.literacyLevel === 4;
       const canDoSubtraction = latest.subtraction === true || latest.numeracyLevel >= 4;
-      if (canReadStory && canDoSubtraction) {
-        masters++;
+      if (canReadStory) {
+        storyCount++;
+      }
+      if (canDoSubtraction) {
+        subtractionCount++;
       }
     }
   });
 
   return {
-    velocity: totalAssessed > 0 ? Math.round((masters / totalAssessed) * 100) : 0,
-    score: totalAssessed > 0 ? Math.round((masters / totalAssessed) * 100) : 0,
     totalMeasured: totalAssessed,
-    mastersCount: masters
+    literacyScore: totalAssessed > 0 ? Math.round((storyCount / totalAssessed) * 100) : 0,
+    numeracyScore: totalAssessed > 0 ? Math.round((subtractionCount / totalAssessed) * 100) : 0,
   };
 }
 export async function getInterventionPlan(students: any[]) {
@@ -923,6 +926,7 @@ export async function getPORankings(divisionId?: string) {
           students: {
             include: {
               assessments: {
+                where: { term: 'Endline' },
                 orderBy: { date: 'desc' },
                 take: 1
               }

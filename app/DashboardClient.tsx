@@ -194,10 +194,11 @@ export default function DashboardClient({ initialStats, hierarchy }: { initialSt
       </div>
 
       {/* KPIs */}
-      <div className={`grid grid-cols-2 lg:grid-cols-4 gap-4 transition-opacity ${isPending ? 'opacity-50' : ''}`}>
+      <div className={`grid grid-cols-2 lg:grid-cols-5 gap-4 transition-opacity ${isPending ? 'opacity-50' : ''}`}>
         <KPI label="Total Students" value={stats.totalStudents} icon={<Users className="w-5 h-5" />} color="blue" />
         <KPI label="Total Assessments" value={stats.totalAssessments} icon={<BookOpen className="w-5 h-5" />} color="indigo" />
-        <KPI label="FLN Score" value={velocity?.score ?? 0} icon={<Trophy className="w-5 h-5" />} color="emerald" suffix="%" />
+        <KPI label="Literacy Score (Endline)" value={velocity?.literacyScore ?? 0} icon={<BookOpen className="w-5 h-5" />} color="emerald" suffix="%" />
+        <KPI label="Numeracy Score (Endline)" value={velocity?.numeracyScore ?? 0} icon={<Calculator className="w-5 h-5" />} color="emerald" suffix="%" />
         <KPI label="Arena Engagement" value={stats.totalArenaBattles ?? 0} icon={<Sparkles className="w-5 h-5" />} color="blue" suffix=" Battles" />
       </div>
 
@@ -398,9 +399,9 @@ export default function DashboardClient({ initialStats, hierarchy }: { initialSt
               <div className="flex items-center justify-between mb-10">
                  <div>
                     <h2 className="text-3xl font-black text-slate-900 dark:text-white tracking-tight flex items-center gap-3">
-                       <Trophy className="w-8 h-8 text-yellow-500" /> Project Office Leaderboard
+                       <Trophy className="w-8 h-8 text-yellow-500" /> Project Office Leaderboard (Endline Only)
                     </h2>
-                    <p className="text-slate-500 font-medium mt-1">Ranking based on student story reading and subtraction mastery rates.</p>
+                    <p className="text-slate-500 font-medium mt-1">Ranking based on student story reading and subtraction mastery rates in Endline assessments.</p>
                  </div>
                  <div className="hidden md:flex gap-2">
                     <div className="px-4 py-2 bg-blue-50 dark:bg-blue-900/30 rounded-xl text-[10px] font-black text-blue-600 uppercase tracking-widest border border-blue-100 dark:border-blue-800">
