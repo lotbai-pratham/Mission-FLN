@@ -9,9 +9,9 @@ import { BookOpen, Calculator, Users, School, Filter, TrendingUp, LayoutDashboar
 import { getDashboardStats, getStrugglingStudents, getGrowthVelocity, getInterventionPlan, getPORankings } from "@/app/actions";
 
 const LIT_LABELS = ['Beginner', 'Letter', 'Word', 'Paragraph', 'Story'];
-const NUM_LABELS = ['Beginner', '1-9', '10-99', '100-999'];
+const NUM_LABELS = ['Beginner', '1-9', '10-99', 'Addition', 'Subtraction', 'Multiplication', 'Division'];
 const LIT_COLORS = ['#ef4444', '#f97316', '#eab308', '#22c55e', '#3b82f6'];
-const NUM_COLORS = ['#ef4444', '#f97316', '#22c55e', '#3b82f6'];
+const NUM_COLORS = ['#ef4444', '#f97316', '#eab308', '#22c55e', '#3b82f6', '#8b5cf6', '#ec4899'];
 const TERM_COLORS: Record<string, string> = { Baseline: '#6366f1', Midline: '#f59e0b', Endline: '#22c55e' };
 const TERMS = ['Baseline', 'Midline', 'Endline'];
 
@@ -104,15 +104,30 @@ export default function DashboardClient({ initialStats, hierarchy }: { initialSt
 
   const formatOpsData = (ops: any, asPct: boolean) => {
     const termTotals: Record<string, number> = {};
+    const opCounts: Record<string, Record<string, number>> = {};
+
     TERMS.forEach(t => {
-      termTotals[t] = (stats.literacies ?? [])
+      termTotals[t] = 0;
+      opCounts[t] = { addition: 0, subtraction: 0, multiplication: 0, division: 0 };
+
+      (stats.numeracies ?? [])
         .filter((item: any) => item.term === t)
-        .reduce((sum: number, item: any) => sum + item._count.studentId, 0);
+        .forEach((item: any) => {
+          const count = item._count.studentId;
+          const lvl = item.numeracyLevel;
+          termTotals[t] += count;
+
+          if (lvl >= 3) opCounts[t].addition += count;
+          if (lvl >= 4) opCounts[t].subtraction += count;
+          if (lvl >= 5) opCounts[t].multiplication += count;
+          if (lvl >= 6) opCounts[t].division += count;
+        });
     });
+
     return ['addition', 'subtraction', 'multiplication', 'division'].map(op => {
       const entry: any = { name: op[0].toUpperCase() + op.slice(1) };
       TERMS.forEach(t => {
-        const count = ops?.[t]?.[op] ?? 0;
+        const count = opCounts[t]?.[op] ?? 0;
         entry[t] = asPct ? (termTotals[t] > 0 ? Math.round((count / termTotals[t]) * 100) : 0) : count;
       });
       return entry;

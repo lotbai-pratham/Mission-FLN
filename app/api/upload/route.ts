@@ -48,13 +48,11 @@ function parseNumeracyLevel(val: string) {
   const str = String(val).toLowerCase();
   if (str.includes('beginner') || str.includes('प्रारंभिक')) return 0;
   if (str.includes('1-9') || str.includes('1 ते 9')) return 1;
-  if (str.includes('10-99') || str.includes('10 ते 99')) return 2;
-  // Extended 8-tier logic
-  if (str.includes('100') || str.includes('999')) return 3;
-  if (str.includes('addition') || str.includes('बेरीज')) return 4;
-  if (str.includes('subtraction') || str.includes('वजाबाकी')) return 5;
-  if (str.includes('multiplication') || str.includes('गुणाकार')) return 6;
-  if (str.includes('division') || str.includes('भागाकार')) return 7;
+  if (str.includes('10-99') || str.includes('10 ते 99') || str.includes('100') || str.includes('999')) return 2;
+  if (str.includes('addition') || str.includes('बेरीज')) return 3;
+  if (str.includes('subtraction') || str.includes('वजाबाकी')) return 4;
+  if (str.includes('multiplication') || str.includes('गुणाकार')) return 5;
+  if (str.includes('division') || str.includes('भागाकार')) return 6;
   return 0;
 }
 
