@@ -14,13 +14,20 @@ import GameWrapper from "@/components/games/GameWrapper";
 import LevelUpModal from "@/components/games/LevelUpModal";
 
 const SECTIONS = [
-  { label: "🎡 New & Featured",      filter: (i: Item) => i.tag === "Featured" || i.tag === "Marathi", accent: "from-amber-400 to-orange-500", glow: "shadow-orange-500/40", ring: "ring-amber-400", active: "bg-gradient-to-r from-amber-400 to-orange-500 text-white" },
-  { label: "⚡ Battle Arena",         filter: (i: Item) => i.subject === "Battle",   accent: "from-orange-500 to-red-500",   glow: "shadow-orange-500/40",  ring: "ring-orange-400",   active: "bg-gradient-to-r from-orange-500 to-red-500 text-white" },
-  { label: "📦 Numeracy Simulations", filter: (i: Item) => i.subject === "Math" || i.subject === "Numeracy",     accent: "from-blue-500 to-indigo-600",  glow: "shadow-blue-500/40",    ring: "ring-blue-400",     active: "bg-gradient-to-r from-blue-500 to-indigo-600 text-white" },
-  { label: "📜 Literacy Simulations", filter: (i: Item) => i.subject === "Literacy", accent: "from-violet-500 to-purple-600", glow: "shadow-violet-500/40", ring: "ring-violet-400", active: "bg-gradient-to-r from-violet-500 to-purple-600 text-white" },
-  { label: "❤️ सामाजिक-भावनिक (SEL)", filter: (i: Item) => i.subject === "SEL",      accent: "from-rose-400 to-pink-500",    glow: "shadow-rose-500/40",    ring: "ring-rose-400",     active: "bg-gradient-to-r from-rose-400 to-pink-500 text-white" },
-  { label: "🍏 आरोग्य आणि स्वच्छता",  filter: (i: Item) => i.subject === "Health",   accent: "from-emerald-400 to-cyan-500", glow: "shadow-emerald-500/40", ring: "ring-emerald-400",  active: "bg-gradient-to-r from-emerald-400 to-cyan-500 text-white" },
-  { label: "🎁 Bonus",                filter: (i: Item) => (i.subject === "Bonus" || i.subject === "Mixed"),    accent: "from-pink-500 to-rose-500",    glow: "shadow-pink-500/40",    ring: "ring-pink-400",     active: "bg-gradient-to-r from-pink-500 to-rose-500 text-white" },
+  // Language Pathways
+  { label: "🔤 Akshargandh (Beginner)", filter: (i: Item) => i.pathway === "akshargandh", accent: "from-emerald-400 to-teal-500", glow: "shadow-emerald-500/40", ring: "ring-emerald-400", active: "bg-gradient-to-r from-emerald-400 to-teal-500 text-white" },
+  { label: "🌸 Pushpgandh (Intermediate)", filter: (i: Item) => i.pathway === "pushpgandh", accent: "from-pink-400 to-rose-500", glow: "shadow-pink-500/40", ring: "ring-pink-400", active: "bg-gradient-to-r from-pink-400 to-rose-500 text-white" },
+  { label: "📖 Shabdgandh (Advanced)", filter: (i: Item) => i.pathway === "shabdgandh", accent: "from-violet-500 to-purple-600", glow: "shadow-violet-500/40", ring: "ring-violet-400", active: "bg-gradient-to-r from-violet-500 to-purple-600 text-white" },
+  
+  // Math Pathways
+  { label: "🔢 Pankti (Beginner Math)", filter: (i: Item) => i.pathway === "pankti", accent: "from-blue-400 to-cyan-500", glow: "shadow-blue-500/40", ring: "ring-blue-400", active: "bg-gradient-to-r from-blue-400 to-cyan-500 text-white" },
+  { label: "⏳ Samay (Intermediate Math)", filter: (i: Item) => i.pathway === "samay", accent: "from-amber-400 to-orange-500", glow: "shadow-orange-500/40", ring: "ring-amber-400", active: "bg-gradient-to-r from-amber-400 to-orange-500 text-white" },
+  { label: "🔥 Mashaal (Advanced Math)", filter: (i: Item) => i.pathway === "mashaal", accent: "from-red-500 to-rose-600", glow: "shadow-red-500/40", ring: "ring-red-400", active: "bg-gradient-to-r from-red-500 to-rose-600 text-white" },
+
+  // Holistic & Extras
+  { label: "⚡ Battle Arena", filter: (i: Item) => i.pathway === "arena", accent: "from-orange-500 to-red-500", glow: "shadow-orange-500/40", ring: "ring-orange-400", active: "bg-gradient-to-r from-orange-500 to-red-500 text-white" },
+  { label: "❤️ सामाजिक-भावनिक (SEL) & Health", filter: (i: Item) => i.pathway === "sel_health", accent: "from-rose-400 to-pink-500", glow: "shadow-rose-500/40", ring: "ring-rose-400", active: "bg-gradient-to-r from-rose-400 to-pink-500 text-white" },
+  { label: "🎈 Early Graders & Fun", filter: (i: Item) => i.pathway === "early_graders", accent: "from-fuchsia-400 to-purple-500", glow: "shadow-fuchsia-500/40", ring: "ring-fuchsia-400", active: "bg-gradient-to-r from-fuchsia-400 to-purple-500 text-white" },
 ];
 
 function SimulationsContent() {
