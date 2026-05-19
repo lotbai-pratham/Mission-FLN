@@ -480,7 +480,7 @@ export default function DashboardClient({ initialStats, hierarchy }: { initialSt
 }
 
 function SummaryTable({ type, selectedClass, overallBreakdown, classBreakdown }: any) {
-  const labels = type === 'literacy' ? ['Beginner', 'Letter', 'Word', 'Paragraph', 'Story'] : ['Beginner', '1-9', '10-99', '100-999'];
+  const labels = type === 'literacy' ? LIT_LABELS : NUM_LABELS;
   const breakdown = selectedClass === 'all' ? overallBreakdown?.[type] : classBreakdown?.[type]?.[selectedClass];
   if (!breakdown) return null;
   const termsPresent = TERMS.filter(t => breakdown[t]);

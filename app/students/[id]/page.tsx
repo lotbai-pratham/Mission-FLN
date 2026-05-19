@@ -6,7 +6,7 @@ import { LITERACY_ACTIVITIES, NUMERACY_ACTIVITIES, TaRLActivity } from "@/lib/ta
 import ProgressChart from "@/components/ProgressChart";
 
 const LEVEL_LABELS_LIT = ['Beginner', 'Letter', 'Word', 'Paragraph', 'Story'];
-const LEVEL_LABELS_NUM = ['Beginner', 'Num 1-9', 'Num 10-99', 'Num 100-999', 'Addition', 'Subtraction', 'Multiplication', 'Division'];
+const LEVEL_LABELS_NUM = ['Beginner', 'Num 1-9', 'Num 10-99', 'Addition', 'Subtraction', 'Multiplication', 'Division'];
 
 // Data now comes from lib/tarl_data.ts
 
