@@ -27,19 +27,27 @@ export async function getStudentsList(query: string = "", page: number = 1, divI
   // Scope to the logged-in user's school if they have one (teacher login)
   const session = await auth();
   const userSchoolId = (session?.user as any)?.schoolId;
+  const userPOId = (session?.user as any)?.projectOfficeId;
+  const userDivId = (session?.user as any)?.divisionId;
 
   const whereFilter: any = {};
   if (query) whereFilter.name = { contains: query, mode: 'insensitive' };
 
   if (userSchoolId) {
-    // Teacher: always locked to their school, ignore other filters
     whereFilter.schoolId = userSchoolId;
-  } else if (schoolId) {
-    whereFilter.schoolId = schoolId;
-  } else if (poId) {
-    whereFilter.school = { projectOfficeId: poId };
-  } else if (divId) {
-    whereFilter.school = { projectOffice: { divisionId: divId } };
+  } else if (userPOId) {
+    whereFilter.school = { projectOfficeId: userPOId };
+  } else if (userDivId) {
+    whereFilter.school = { projectOffice: { divisionId: userDivId } };
+  } else {
+    // State/Admin: apply requested filters
+    if (schoolId) {
+      whereFilter.schoolId = schoolId;
+    } else if (poId) {
+      whereFilter.school = { projectOfficeId: poId };
+    } else if (divId) {
+      whereFilter.school = { projectOffice: { divisionId: divId } };
+    }
   }
 
   const students = await prisma.student.findMany({
@@ -57,6 +65,8 @@ export async function getStudentsList(query: string = "", page: number = 1, divI
 export async function getStudentProfile(studentId: string) {
   const session = await auth();
   const userSchoolId = (session?.user as any)?.schoolId;
+  const userPOId = (session?.user as any)?.projectOfficeId;
+  const userDivId = (session?.user as any)?.divisionId;
 
   const student = await prisma.student.findUnique({
     where: { id: studentId },
@@ -66,9 +76,10 @@ export async function getStudentProfile(studentId: string) {
     }
   });
 
-  // Non-admin users scoped to a school can only view their own students
-  if (student && userSchoolId && student.schoolId !== userSchoolId) {
-    throw new Error("Access denied");
+  if (student) {
+    if (userSchoolId && student.schoolId !== userSchoolId) throw new Error("Access denied");
+    if (userPOId && student.school.projectOfficeId !== userPOId) throw new Error("Access denied");
+    if (userDivId && student.school.projectOffice.divisionId !== userDivId) throw new Error("Access denied");
   }
 
   return student;
@@ -91,22 +102,41 @@ export async function getHierarchy() {
 }
 
 export async function getDashboardStats(filters: { divisionId?: string, projectOfficeId?: string, schoolId?: string, term?: string } = {}) {
+  const session = await auth();
+  const userSchoolId = (session?.user as any)?.schoolId;
+  const userPOId = (session?.user as any)?.projectOfficeId;
+  const userDivId = (session?.user as any)?.divisionId;
+
   const whereFilter: any = {};
-  if (filters.schoolId) {
-    whereFilter.schoolId = filters.schoolId;
-  } else if (filters.projectOfficeId) {
-    whereFilter.school = { projectOfficeId: filters.projectOfficeId };
-  } else if (filters.divisionId) {
-    whereFilter.school = { projectOffice: { divisionId: filters.divisionId } };
+  if (userSchoolId) {
+    whereFilter.schoolId = userSchoolId;
+  } else if (userPOId) {
+    whereFilter.school = { projectOfficeId: userPOId };
+  } else if (userDivId) {
+    whereFilter.school = { projectOffice: { divisionId: userDivId } };
+  } else {
+    // Admin filters
+    if (filters.schoolId) {
+      whereFilter.schoolId = filters.schoolId;
+    } else if (filters.projectOfficeId) {
+      whereFilter.school = { projectOfficeId: filters.projectOfficeId };
+    } else if (filters.divisionId) {
+      whereFilter.school = { projectOffice: { divisionId: filters.divisionId } };
+    }
   }
 
   const assessmentWhere: any = { student: whereFilter };
   if (filters.term) assessmentWhere.term = filters.term;
 
   const schoolWhere: any = {};
-  if (filters.schoolId) schoolWhere.id = filters.schoolId;
-  else if (filters.projectOfficeId) schoolWhere.projectOfficeId = filters.projectOfficeId;
-  else if (filters.divisionId) schoolWhere.projectOffice = { divisionId: filters.divisionId };
+  if (userSchoolId) schoolWhere.id = userSchoolId;
+  else if (userPOId) schoolWhere.projectOfficeId = userPOId;
+  else if (userDivId) schoolWhere.projectOffice = { divisionId: userDivId };
+  else {
+    if (filters.schoolId) schoolWhere.id = filters.schoolId;
+    else if (filters.projectOfficeId) schoolWhere.projectOfficeId = filters.projectOfficeId;
+    else if (filters.divisionId) schoolWhere.projectOffice = { divisionId: filters.divisionId };
+  }
 
   const [totalStudents, totalAssessments, totalSchools, totalArenaBattles, literacies, numeracies, allAssessments] = await Promise.all([
     prisma.student.count({ where: whereFilter }),
@@ -241,13 +271,27 @@ export async function getDashboardStats(filters: { divisionId?: string, projectO
 }
 
 export async function getCohortStats(filters: { divisionId?: string, projectOfficeId?: string, schoolId?: string, startTerm: string, endTerm: string }) {
+  const session = await auth();
+  const userSchoolId = (session?.user as any)?.schoolId;
+  const userPOId = (session?.user as any)?.projectOfficeId;
+  const userDivId = (session?.user as any)?.divisionId;
+
   const whereFilter: any = {};
-  if (filters.schoolId) {
-    whereFilter.schoolId = filters.schoolId;
-  } else if (filters.projectOfficeId) {
-    whereFilter.school = { projectOfficeId: filters.projectOfficeId };
-  } else if (filters.divisionId) {
-    whereFilter.school = { projectOffice: { divisionId: filters.divisionId } };
+  if (userSchoolId) {
+    whereFilter.schoolId = userSchoolId;
+  } else if (userPOId) {
+    whereFilter.school = { projectOfficeId: userPOId };
+  } else if (userDivId) {
+    whereFilter.school = { projectOffice: { divisionId: userDivId } };
+  } else {
+    // Admin filters
+    if (filters.schoolId) {
+      whereFilter.schoolId = filters.schoolId;
+    } else if (filters.projectOfficeId) {
+      whereFilter.school = { projectOfficeId: filters.projectOfficeId };
+    } else if (filters.divisionId) {
+      whereFilter.school = { projectOffice: { divisionId: filters.divisionId } };
+    }
   }
 
   // Get all students matching the filters
@@ -402,12 +446,28 @@ export async function assignUserSchool(userId: string, schoolId: string | null) 
 }
 
 export async function getAssessmentsAdmin(page: number = 1, schoolId?: string, term?: string) {
-  await requireAdmin();
+  // We still require admin/some role to access this route, let's keep it open to any logged in user, and scope it.
+  const session = await auth();
+  if (!session?.user) throw new Error("Unauthorized");
+  
+  const userSchoolId = (session.user as any)?.schoolId;
+  const userPOId = (session.user as any)?.projectOfficeId;
+  const userDivId = (session.user as any)?.divisionId;
+
   const take = 50;
   const skip = (page - 1) * take;
   const where: any = {};
   if (term) where.term = term;
-  if (schoolId) where.student = { schoolId };
+
+  if (userSchoolId) {
+    where.student = { schoolId: userSchoolId };
+  } else if (userPOId) {
+    where.student = { school: { projectOfficeId: userPOId } };
+  } else if (userDivId) {
+    where.student = { school: { projectOffice: { divisionId: userDivId } } };
+  } else if (schoolId) {
+    where.student = { schoolId };
+  }
 
   const [assessments, total] = await Promise.all([
     prisma.assessment.findMany({
@@ -644,22 +704,67 @@ export async function deleteSchoolLogins(ids: string[]): Promise<{ deleted: numb
   return { deleted: result.count };
 }
 
-export async function getSchoolCredentials(): Promise<{ id: string; school: string; po: string; email: string; password: string }[]> {
+export async function getSchoolCredentials(): Promise<{ id: string; school: string; po: string; email: string; password: string; role: string; locationLevel: string }[]> {
   await requireAdmin();
 
   const users = await (prisma as any).user.findMany({
-    where: { email: { endsWith: "@flnhub.in" }, schoolId: { not: null } },
-    include: { school: { include: { projectOffice: true } } },
+    where: { passwordHash: { not: null } },
+    include: { 
+      school: { include: { projectOffice: true } },
+      projectOffice: true,
+      division: true
+    },
     orderBy: { email: 'asc' },
   });
 
-  return users.map((u: any) => ({
-    id: u.id,
-    po: u.school?.projectOffice?.name ?? '',
-    school: u.school?.name ?? '',
-    email: u.email,
-    password: 'Pratham@2025',
-  }));
+  return users.map((u: any) => {
+    let locationLevel = "State";
+    if (u.school) locationLevel = `School: ${u.school.name}`;
+    else if (u.projectOffice) locationLevel = `PO: ${u.projectOffice.name}`;
+    else if (u.division) locationLevel = `Div: ${u.division.name}`;
+
+    return {
+      id: u.id,
+      po: u.school?.projectOffice?.name ?? u.projectOffice?.name ?? u.division?.name ?? 'State',
+      school: u.school?.name ?? 'N/A',
+      email: u.email,
+      password: 'Pratham@2025',
+      role: u.role,
+      locationLevel
+    };
+  });
+}
+
+export async function createCustomLogin(data: {
+  email: string;
+  password: string;
+  role: string;
+  level: "state" | "division" | "project_office" | "school";
+  targetId?: string;
+}): Promise<{ error?: string }> {
+  await requireAdmin();
+  const trimmedEmail = data.email.trim().toLowerCase();
+  
+  if (!trimmedEmail) return { error: "Email cannot be empty" };
+  const existing = await (prisma as any).user.findUnique({ where: { email: trimmedEmail } });
+  if (existing) return { error: "Email already in use" };
+
+  const passwordHash = await bcrypt.hash(data.password, 10);
+
+  const userData: any = {
+    email: trimmedEmail,
+    name: "Custom Login",
+    role: data.role,
+    passwordHash,
+  };
+
+  if (data.level === "school" && data.targetId) userData.schoolId = data.targetId;
+  else if (data.level === "project_office" && data.targetId) userData.projectOfficeId = data.targetId;
+  else if (data.level === "division" && data.targetId) userData.divisionId = data.targetId;
+
+  await (prisma as any).user.create({ data: userData });
+  revalidatePath('/admin/logins');
+  return {};
 }
 
 export async function updateLoginEmail(userId: string, newEmail: string): Promise<{ error?: string }> {

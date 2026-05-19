@@ -1,11 +1,11 @@
 "use client";
 import { useState, useTransition } from 'react';
-import { generateSchoolLogins, updateLoginEmail, deleteSchoolLogins } from '@/app/actions';
-import { Download, Loader2, Users, Zap, School, CheckCircle, Pencil, X, Check, Trash2 } from 'lucide-react';
+import { generateSchoolLogins, updateLoginEmail, deleteSchoolLogins, createCustomLogin } from '@/app/actions';
+import { Download, Loader2, Users, Zap, School, CheckCircle, Pencil, X, Check, Trash2, Plus, Building, UserPlus, MapPin } from 'lucide-react';
 
-type Credential = { id: string; po: string; school: string; email: string; password: string };
+type Credential = { id: string; po: string; school: string; email: string; password: string; role: string; locationLevel: string };
 
-export default function LoginsClient({ initialCredentials }: { initialCredentials: Credential[] }) {
+export default function LoginsClient({ initialCredentials, hierarchy }: { initialCredentials: Credential[], hierarchy: any[] }) {
   const [credentials, setCredentials] = useState(initialCredentials);
   const [isPending, startTransition] = useTransition();
   const [result, setResult] = useState<{ created: number; skipped: number } | null>(null);
@@ -20,6 +20,18 @@ export default function LoginsClient({ initialCredentials }: { initialCredential
   // Selection state
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [deleting, setDeleting] = useState(false);
+
+  // Custom Login Modal State
+  const [showModal, setShowModal] = useState(false);
+  const [customPrefix, setCustomPrefix] = useState('');
+  const [customPassword, setCustomPassword] = useState('Pratham@2025');
+  const [customRole, setCustomRole] = useState<'admin' | 'user' | 'division' | 'project_office'>('user');
+  const [customLevel, setCustomLevel] = useState<'state' | 'division' | 'project_office' | 'school'>('state');
+  const [customDivId, setCustomDivId] = useState('');
+  const [customPOId, setCustomPOId] = useState('');
+  const [customSchoolId, setCustomSchoolId] = useState('');
+  const [customError, setCustomError] = useState('');
+  const [creatingCustom, setCreatingCustom] = useState(false);
 
   const filtered = credentials.filter(c =>
     c.school.toLowerCase().includes(search.toLowerCase()) ||
@@ -73,13 +85,13 @@ export default function LoginsClient({ initialCredentials }: { initialCredential
   }
 
   function downloadCSV() {
-    const header = 'Project Office,School Name,Login Email,Password\n';
-    const rows = credentials.map(c => `"${c.po}","${c.school}","${c.email}","${c.password}"`).join('\n');
+    const header = 'Level,Project Office,School Name,Login Email,Password,Role\n';
+    const rows = credentials.map(c => `"${c.locationLevel}","${c.po}","${c.school}","${c.email}","${c.password}","${c.role}"`).join('\n');
     const blob = new Blob([header + rows], { type: 'text/csv' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `school-logins-${new Date().toISOString().slice(0, 10)}.csv`;
+    a.download = `logins-${new Date().toISOString().slice(0, 10)}.csv`;
     a.click();
     URL.revokeObjectURL(url);
   }
@@ -106,29 +118,86 @@ export default function LoginsClient({ initialCredentials }: { initialCredential
     setSavingId(null);
   }
 
+  async function submitCustomLogin(e: React.FormEvent) {
+    e.preventDefault();
+    setCustomError('');
+    if (!customPrefix) return setCustomError("Prefix required");
+
+    let targetId = '';
+    if (customLevel === 'division') {
+      if (!customDivId) return setCustomError("Select a division");
+      targetId = customDivId;
+    } else if (customLevel === 'project_office') {
+      if (!customPOId) return setCustomError("Select a Project Office");
+      targetId = customPOId;
+    } else if (customLevel === 'school') {
+      if (!customSchoolId) return setCustomError("Select a School");
+      targetId = customSchoolId;
+    }
+
+    setCreatingCustom(true);
+    const email = `${customPrefix.toLowerCase()}@flnhub.in`;
+    
+    // Determine the exact role based on customLevel
+    let dbRole = "user";
+    if (customLevel === "state") dbRole = "admin";
+    else if (customLevel === "division") dbRole = "division";
+    else if (customLevel === "project_office") dbRole = "project_office";
+    else dbRole = "user";
+
+    const res = await createCustomLogin({
+      email,
+      password: customPassword,
+      role: dbRole,
+      level: customLevel,
+      targetId
+    });
+
+    setCreatingCustom(false);
+    if (res.error) {
+      setCustomError(res.error);
+    } else {
+      setShowModal(false);
+      setCustomPrefix('');
+      // refresh UI
+      const r = await fetch('/api/admin/credentials');
+      if (r.ok) setCredentials(await r.json());
+    }
+  }
+
+  // Dependent dropdown options
+  const selectedDiv = hierarchy?.find(d => d.id === customDivId);
+  const selectedPO = selectedDiv?.projectOffices.find((p: any) => p.id === customPOId);
+
   return (
-    <div className="max-w-6xl mx-auto space-y-6 pb-12 animate-in fade-in duration-500">
+    <div className="max-w-6xl mx-auto space-y-6 pb-12 animate-in fade-in duration-500 relative">
 
       {/* Header */}
-      <div className="bg-white dark:bg-slate-900 rounded-3xl p-8 border border-slate-100 dark:border-slate-800 shadow-sm">
-        <h1 className="text-3xl font-extrabold text-slate-900 dark:text-white">School Login Generator</h1>
-        <p className="text-slate-500 mt-1">Generate one login account per school. Format: <code className="bg-slate-100 px-1.5 py-0.5 rounded text-sm">po.school@flnhub.in</code> / <code className="bg-slate-100 px-1.5 py-0.5 rounded text-sm">Pratham@2025</code></p>
+      <div className="bg-white dark:bg-slate-900 rounded-3xl p-8 border border-slate-100 dark:border-slate-800 shadow-sm flex flex-col md:flex-row gap-6 justify-between items-start md:items-center">
+        <div>
+          <h1 className="text-3xl font-extrabold text-slate-900 dark:text-white">Access Management</h1>
+          <p className="text-slate-500 mt-1">Manage bulk school credentials and custom hierarchical accounts.</p>
+        </div>
+        <button onClick={() => setShowModal(true)}
+          className="flex items-center gap-2 px-5 py-3 rounded-2xl bg-indigo-600 text-white font-bold text-sm hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-600/20">
+          <UserPlus className="w-4 h-4" /> Create Custom Login
+        </button>
       </div>
 
       {/* Action cards */}
-      <div className="grid sm:grid-cols-3 gap-4">
+      <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
         <div className="bg-white dark:bg-slate-900 rounded-2xl p-6 border border-slate-100 dark:border-slate-800 shadow-sm flex flex-col gap-4">
           <div className="w-12 h-12 rounded-2xl bg-blue-100 dark:bg-blue-900/40 flex items-center justify-center">
             <Zap className="w-6 h-6 text-blue-600" />
           </div>
           <div>
-            <p className="font-bold text-slate-800 dark:text-white">Generate Logins</p>
-            <p className="text-sm text-slate-400 mt-0.5">Bulk-creates all missing school accounts in one shot. Safe to re-run.</p>
+            <p className="font-bold text-slate-800 dark:text-white">Auto-Generate School Logins</p>
+            <p className="text-sm text-slate-400 mt-0.5">Creates one account for every missing school automatically.</p>
           </div>
           <button onClick={generate} disabled={isPending}
             className="mt-auto flex items-center justify-center gap-2 px-4 py-3 rounded-2xl bg-blue-600 text-white font-bold text-sm hover:bg-blue-700 transition-all disabled:opacity-60">
             {isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Zap className="w-4 h-4" />}
-            {isPending ? 'Generating...' : 'Generate Now'}
+            {isPending ? 'Generating...' : 'Run Generator'}
           </button>
         </div>
 
@@ -137,24 +206,13 @@ export default function LoginsClient({ initialCredentials }: { initialCredential
             <Download className="w-6 h-6 text-green-600" />
           </div>
           <div>
-            <p className="font-bold text-slate-800 dark:text-white">Download CSV</p>
-            <p className="text-sm text-slate-400 mt-0.5">Export all school credentials as a spreadsheet to distribute to coordinators.</p>
+            <p className="font-bold text-slate-800 dark:text-white">Export to CSV</p>
+            <p className="text-sm text-slate-400 mt-0.5">Download all {credentials.length} accounts to share with your team.</p>
           </div>
           <button onClick={downloadCSV} disabled={credentials.length === 0}
             className="mt-auto flex items-center justify-center gap-2 px-4 py-3 rounded-2xl bg-green-600 text-white font-bold text-sm hover:bg-green-700 transition-all disabled:opacity-40">
-            <Download className="w-4 h-4" /> Download CSV ({credentials.length})
+            <Download className="w-4 h-4" /> Download Records
           </button>
-        </div>
-
-        <div className="bg-white dark:bg-slate-900 rounded-2xl p-6 border border-slate-100 dark:border-slate-800 shadow-sm flex flex-col gap-4">
-          <div className="w-12 h-12 rounded-2xl bg-violet-100 dark:bg-violet-900/40 flex items-center justify-center">
-            <Users className="w-6 h-6 text-violet-600" />
-          </div>
-          <div>
-            <p className="font-bold text-slate-800 dark:text-white">Total School Logins</p>
-            <p className="text-sm text-slate-400 mt-0.5">School accounts currently active in the system.</p>
-          </div>
-          <div className="mt-auto text-4xl font-extrabold text-violet-600">{credentials.length}</div>
         </div>
       </div>
 
@@ -171,14 +229,13 @@ export default function LoginsClient({ initialCredentials }: { initialCredential
       {/* Credentials table */}
       {credentials.length > 0 && (
         <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-100 dark:border-slate-800 shadow-sm overflow-hidden">
-
           {/* Search + bulk delete bar */}
           <div className="px-6 py-4 border-b border-slate-100 dark:border-slate-800 flex items-center gap-4">
             <School className="w-4 h-4 text-slate-400 shrink-0" />
-            <input type="text" placeholder="Search school or PO..." value={search}
+            <input type="text" placeholder="Search accounts..." value={search}
               onChange={e => setSearch(e.target.value)}
               className="flex-1 text-sm bg-transparent outline-none text-slate-700 dark:text-slate-200 placeholder:text-slate-400" />
-            <span className="text-xs text-slate-400 font-semibold shrink-0">{filtered.length} schools</span>
+            <span className="text-xs text-slate-400 font-semibold shrink-0">{filtered.length} matching</span>
 
             {selected.size > 0 && (
               <button onClick={deleteSelected} disabled={deleting}
@@ -190,12 +247,12 @@ export default function LoginsClient({ initialCredentials }: { initialCredential
           </div>
 
           {/* Column headers */}
-          <div className="grid grid-cols-[auto_1fr_1fr_1.5fr_auto] bg-slate-50 dark:bg-slate-800/50 text-slate-500 text-xs font-semibold uppercase tracking-wider px-6 py-3 border-b border-slate-100 dark:border-slate-800 gap-3">
+          <div className="grid grid-cols-[auto_1.5fr_1.5fr_1fr_auto] bg-slate-50 dark:bg-slate-800/50 text-slate-500 text-xs font-semibold uppercase tracking-wider px-6 py-3 border-b border-slate-100 dark:border-slate-800 gap-3">
             <input type="checkbox" checked={allFilteredSelected} onChange={toggleAll}
               className="w-4 h-4 rounded accent-blue-600 cursor-pointer" />
-            <span>Project Office</span>
-            <span>School Name</span>
+            <span>Scope</span>
             <span>Login Email</span>
+            <span>Role</span>
             <span />
           </div>
 
@@ -203,11 +260,14 @@ export default function LoginsClient({ initialCredentials }: { initialCredential
           <div className="divide-y divide-slate-100 dark:divide-slate-800 max-h-[480px] overflow-y-auto">
             {filtered.map((c) => (
               <div key={c.id}
-                className={`grid grid-cols-[auto_1fr_1fr_1.5fr_auto] items-center px-6 py-3 transition-colors text-sm gap-3 ${selected.has(c.id) ? 'bg-blue-50 dark:bg-blue-900/10' : 'hover:bg-slate-50 dark:hover:bg-slate-800/30'}`}>
+                className={`grid grid-cols-[auto_1.5fr_1.5fr_1fr_auto] items-center px-6 py-3 transition-colors text-sm gap-3 ${selected.has(c.id) ? 'bg-blue-50 dark:bg-blue-900/10' : 'hover:bg-slate-50 dark:hover:bg-slate-800/30'}`}>
                 <input type="checkbox" checked={selected.has(c.id)} onChange={() => toggleOne(c.id)}
                   className="w-4 h-4 rounded accent-blue-600 cursor-pointer" />
-                <span className="text-slate-500 truncate">{c.po}</span>
-                <span className="font-medium text-slate-800 dark:text-slate-100 truncate">{c.school}</span>
+                
+                <div className="flex flex-col min-w-0">
+                  <span className="font-medium text-slate-800 dark:text-slate-100 truncate">{c.locationLevel}</span>
+                  <span className="text-xs text-slate-500 truncate">{c.po}</span>
+                </div>
 
                 {editingId === c.id ? (
                   <div className="flex flex-col gap-1">
@@ -220,6 +280,8 @@ export default function LoginsClient({ initialCredentials }: { initialCredential
                 ) : (
                   <span className="text-blue-600 font-mono text-xs truncate">{c.email}</span>
                 )}
+
+                <span className="text-xs uppercase font-bold text-slate-400">{c.role}</span>
 
                 <div className="flex items-center gap-1.5 justify-end">
                   {editingId === c.id ? (
@@ -243,11 +305,105 @@ export default function LoginsClient({ initialCredentials }: { initialCredential
               </div>
             ))}
             {filtered.length === 0 && (
-              <div className="px-6 py-10 text-center text-slate-400">No results for "{search}"</div>
+              <div className="px-6 py-10 text-center text-slate-400">No results found</div>
             )}
           </div>
         </div>
       )}
+
+      {/* Custom Login Modal */}
+      {showModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm animate-in fade-in duration-200">
+          <div className="bg-white dark:bg-slate-900 rounded-3xl p-8 max-w-lg w-full shadow-2xl border border-slate-100 dark:border-slate-800 relative">
+            <button onClick={() => setShowModal(false)} className="absolute top-6 right-6 text-slate-400 hover:text-slate-600">
+              <X className="w-6 h-6" />
+            </button>
+            <h2 className="text-2xl font-bold text-slate-800 dark:text-white mb-6">Create Custom Login</h2>
+            
+            <form onSubmit={submitCustomLogin} className="space-y-5">
+              
+              {/* Email & Password */}
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-1">
+                  <label className="text-xs font-bold text-slate-500 uppercase">Username Prefix</label>
+                  <div className="flex rounded-xl border border-slate-200 dark:border-slate-700 overflow-hidden bg-slate-50 dark:bg-slate-800 focus-within:ring-2 ring-blue-400 transition-all">
+                    <input type="text" autoFocus value={customPrefix} onChange={e => setCustomPrefix(e.target.value.replace(/[^a-zA-Z0-9.\-_]/g, ''))}
+                      className="w-full px-3 py-2 bg-transparent text-sm text-slate-800 dark:text-white outline-none" placeholder="e.g. josh.admin" />
+                    <span className="px-3 py-2 bg-slate-100 dark:bg-slate-800 border-l border-slate-200 dark:border-slate-700 text-slate-500 text-sm">@flnhub.in</span>
+                  </div>
+                </div>
+                <div className="space-y-1">
+                  <label className="text-xs font-bold text-slate-500 uppercase">Password</label>
+                  <input type="text" value={customPassword} onChange={e => setCustomPassword(e.target.value)}
+                    className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm text-slate-800 dark:text-white outline-none focus:ring-2 focus:ring-blue-400 transition-all" />
+                </div>
+              </div>
+
+              {/* Hierarchy Scope */}
+              <div className="space-y-1">
+                <label className="text-xs font-bold text-slate-500 uppercase">Data Access Scope (Role)</label>
+                <div className="grid grid-cols-4 gap-2">
+                  {(['state', 'division', 'project_office', 'school'] as const).map(lvl => (
+                    <button key={lvl} type="button" onClick={() => { setCustomLevel(lvl); setCustomDivId(''); setCustomPOId(''); setCustomSchoolId(''); }}
+                      className={`py-2 rounded-lg text-xs font-bold border transition-all ${customLevel === lvl ? 'bg-indigo-50 border-indigo-200 text-indigo-700 dark:bg-indigo-900/40 dark:border-indigo-800 dark:text-indigo-300' : 'bg-white border-slate-200 text-slate-500 hover:bg-slate-50 dark:bg-slate-800 dark:border-slate-700 dark:text-slate-400'}`}>
+                      {lvl === 'project_office' ? 'Project Office' : lvl.charAt(0).toUpperCase() + lvl.slice(1)}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Dependent Selects */}
+              {customLevel !== 'state' && (
+                <div className="space-y-4 p-4 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-700/50">
+                  
+                  {['division', 'project_office', 'school'].includes(customLevel) && (
+                    <div className="space-y-1">
+                      <label className="text-xs font-bold text-slate-500">Select Division</label>
+                      <select value={customDivId} onChange={e => { setCustomDivId(e.target.value); setCustomPOId(''); setCustomSchoolId(''); }}
+                        className="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm outline-none">
+                        <option value="">-- Choose Division --</option>
+                        {hierarchy?.map(d => <option key={d.id} value={d.id}>{d.name}</option>)}
+                      </select>
+                    </div>
+                  )}
+
+                  {['project_office', 'school'].includes(customLevel) && (
+                    <div className="space-y-1">
+                      <label className="text-xs font-bold text-slate-500">Select Project Office</label>
+                      <select value={customPOId} onChange={e => { setCustomPOId(e.target.value); setCustomSchoolId(''); }} disabled={!customDivId}
+                        className="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm outline-none disabled:opacity-50">
+                        <option value="">-- Choose Project Office --</option>
+                        {selectedDiv?.projectOffices.map((p: any) => <option key={p.id} value={p.id}>{p.name}</option>)}
+                      </select>
+                    </div>
+                  )}
+
+                  {customLevel === 'school' && (
+                    <div className="space-y-1">
+                      <label className="text-xs font-bold text-slate-500">Select School</label>
+                      <select value={customSchoolId} onChange={e => setCustomSchoolId(e.target.value)} disabled={!customPOId}
+                        className="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm outline-none disabled:opacity-50">
+                        <option value="">-- Choose School --</option>
+                        {selectedPO?.schools.map((s: any) => <option key={s.id} value={s.id}>{s.name} ({s.udiseCode})</option>)}
+                      </select>
+                    </div>
+                  )}
+
+                </div>
+              )}
+
+              {customError && <p className="text-red-500 text-sm font-semibold">{customError}</p>}
+
+              <button type="submit" disabled={creatingCustom}
+                className="w-full py-3 rounded-xl bg-indigo-600 text-white font-bold text-sm hover:bg-indigo-700 transition-all flex justify-center items-center gap-2">
+                {creatingCustom ? <Loader2 className="w-4 h-4 animate-spin" /> : <Check className="w-4 h-4" />}
+                Create Account
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 }

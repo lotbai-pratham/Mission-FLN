@@ -1,9 +1,22 @@
-import NextAuth from "next-auth";
+import NextAuth, { type DefaultSession } from "next-auth";
 import Google from "next-auth/providers/google";
 import Credentials from "next-auth/providers/credentials";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import { prisma } from "@/lib/db";
 import bcrypt from "bcryptjs";
+
+declare module "next-auth" {
+  interface Session {
+    user: {
+      id: string;
+      role: string;
+      schoolId: string | null;
+      schoolName: string | null;
+      projectOfficeId: string | null;
+      divisionId: string | null;
+    } & DefaultSession["user"];
+  }
+}
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   adapter: PrismaAdapter(prisma),
@@ -42,6 +55,8 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         const u = user as any;
         token.role = u.role ?? "user";
         token.schoolId = u.schoolId ?? null;
+        token.projectOfficeId = u.projectOfficeId ?? null;
+        token.divisionId = u.divisionId ?? null;
         token.id = u.id;
         return token;
       }
@@ -50,11 +65,13 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       if (token.id) {
         const fresh = await (prisma as any).user.findUnique({
           where: { id: token.id as string },
-          select: { role: true, schoolId: true, school: { select: { name: true } } },
+          select: { role: true, schoolId: true, projectOfficeId: true, divisionId: true, school: { select: { name: true } } },
         });
         if (fresh) {
           token.role = fresh.role;
           token.schoolId = fresh.schoolId ?? null;
+          token.projectOfficeId = fresh.projectOfficeId ?? null;
+          token.divisionId = fresh.divisionId ?? null;
           token.schoolName = (fresh as any).school?.name ?? null;
         }
       }
@@ -63,6 +80,8 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     async session({ session, token }) {
       session.user.role = token.role as string;
       session.user.schoolId = (token.schoolId as string) ?? null;
+      session.user.projectOfficeId = (token.projectOfficeId as string) ?? null;
+      session.user.divisionId = (token.divisionId as string) ?? null;
       session.user.schoolName = (token.schoolName as string) ?? null;
       session.user.id = token.id as string;
       return session;

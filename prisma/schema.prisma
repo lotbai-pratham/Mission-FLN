@@ -12,6 +12,7 @@ model Division {
   id             String          @id @default(cuid())
   name           String
   projectOffices ProjectOffice[]
+  users          User[]
 }
 
 model ProjectOffice {
@@ -20,6 +21,7 @@ model ProjectOffice {
   divisionId String
   division   Division @relation(fields: [divisionId], references: [id])
   schools    School[]
+  users      User[]
 }
 
 model School {
@@ -108,9 +110,13 @@ model User {
   email         String    @unique
   emailVerified DateTime?
   image         String?
-  role          String    @default("user")  // "admin" | "user"
+  role          String    @default("user")  // "admin" | "user" | "division" | "project_office"
   schoolId      String?
   school        School?   @relation(fields: [schoolId], references: [id])
+  projectOfficeId String?
+  projectOffice ProjectOffice? @relation(fields: [projectOfficeId], references: [id])
+  divisionId    String?
+  division      Division? @relation(fields: [divisionId], references: [id])
   passwordHash  String?
   createdAt     DateTime  @default(now())
   lastLoginAt   DateTime?
