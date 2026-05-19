@@ -88,6 +88,11 @@ export default function RosterClient({ hierarchy, initialData }: { hierarchy: an
                      <span className="text-[10px] font-black tracking-wider bg-slate-100 dark:bg-slate-800 text-slate-500 px-2 py-0.5 rounded-md uppercase">
                        {student.uid}
                      </span>
+                     {student._count?.assessments !== undefined && (
+                       <span className="text-[10px] font-black tracking-wider bg-blue-50 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400 px-2 py-0.5 rounded-md uppercase">
+                         {student._count.assessments} Assessed
+                       </span>
+                     )}
                    </div>
                    <div className="flex items-center gap-3 text-xs text-slate-400 mt-1">
                      <span className="flex items-center gap-1"><MapPin className="w-3 h-3"/> {student.school.name}</span>

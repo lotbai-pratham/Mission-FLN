@@ -57,8 +57,22 @@ export async function getStudentsList(query: string = "", page: number = 1, divI
 
   const students = await prisma.student.findMany({
     where: whereFilter,
-    include: { school: true },
-    orderBy: { name: 'asc' },
+    include: { 
+      school: true,
+      _count: {
+        select: { assessments: true }
+      }
+    },
+    orderBy: [
+      {
+        assessments: {
+          _count: 'desc'
+        }
+      },
+      {
+        name: 'asc'
+      }
+    ],
     take,
     skip
   });
