@@ -879,8 +879,8 @@ export async function getGrowthVelocity(schoolId?: string) {
       totalAssessed++;
       const latest = s.assessments[0];
       const canReadStory = latest.literacyLevel === 4;
-      const canDoDivision = latest.division === true || latest.numeracyLevel === 7;
-      if (canReadStory && canDoDivision) {
+      const canDoSubtraction = latest.subtraction === true || latest.numeracyLevel >= 5;
+      if (canReadStory && canDoSubtraction) {
         masters++;
       }
     }
@@ -944,7 +944,7 @@ export async function getPORankings(divisionId?: string) {
         if (latest) {
           totalAssessed++;
           if (latest.literacyLevel === 4) storyReaders++;
-          if (latest.subtraction) subtractionMasters++;
+          if (latest.subtraction === true || latest.numeracyLevel >= 5) subtractionMasters++;
         }
       });
     });
