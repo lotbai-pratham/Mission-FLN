@@ -104,10 +104,10 @@ export async function POST(req: Request) {
     
     const divMap = new Map(allDivisions.map(d => [normalize(d.name), d.id]));
     const poMap = new Map(allPOs.map(p => [`${p.divisionId}-${normalize(p.name)}`, p.id]));
-    const schoolMap = new Map();
+    const schoolMap = new Map<string, typeof allSchools[0]>();
     allSchools.forEach(s => {
       const key = `${normalize(s.projectOffice.division.name)}-${normalize(s.projectOffice.name)}-${normalize(s.name)}`;
-      schoolMap.set(key, s.id);
+      schoolMap.set(key, s);
     });
 
     const failedRows: any[] = [];
@@ -132,7 +132,8 @@ export async function POST(req: Request) {
 
       // Check hierarchy match
       const lookupKey = `${normalize(dName)}-${normalize(pName)}-${normalize(sName)}`;
-      const sId = schoolMap.get(lookupKey);
+      const schObj = schoolMap.get(lookupKey);
+      const sId = schObj?.id;
       if (!sId) {
         failedRows.push({ 
           row: i + 2, 
@@ -149,7 +150,22 @@ export async function POST(req: Request) {
       // Ensure student exists (unique by school + name + class in our updated model)
       const studentKey = `${sId}-${normalize(stdName)}-${classNum}`;
       if (!seenStudents.has(studentKey)) {
-        studentsToCreate.push({ name: stdName, class: classNum, gender, schoolId: sId });
+        // Generate deterministic UID
+        const divPart = schObj?.projectOffice.division.name.slice(0, 2).toUpperCase() || 'XX';
+        const poPart = schObj?.projectOffice.name.slice(0, 2).toUpperCase() || 'XX';
+        const schPart = schObj?.name.slice(0, 2).toUpperCase() || 'XX';
+        const cleanName = stdName.replace(/[^a-zA-Z]/g, '').toUpperCase().slice(0, 3) || 'STU';
+        
+        const fullKey = `${schObj?.name}-${classNum}-${stdName}`;
+        let hash = 0;
+        for (let idx = 0; idx < fullKey.length; idx++) {
+          hash = (hash << 5) - hash + fullKey.charCodeAt(idx);
+          hash |= 0;
+        }
+        const hashPartVal = Math.abs(hash).toString(36).toUpperCase().slice(0, 4);
+        const uid = `ST-${divPart}${poPart}${schPart}-${classNum}-${cleanName}-${hashPartVal}`;
+
+        studentsToCreate.push({ uid, name: stdName, class: classNum, gender, schoolId: sId });
         seenStudents.add(studentKey);
       }
     }

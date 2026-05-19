@@ -52,6 +52,7 @@ model ImplementationSession {
 
 model Student {
   id          String         @id @default(cuid())
+  uid         String         @unique @default("")
   name        String
   class       Int            // 1 to 8
   gender      String         // Male / Female / Other

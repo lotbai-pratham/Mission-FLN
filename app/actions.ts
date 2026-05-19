@@ -31,7 +31,12 @@ export async function getStudentsList(query: string = "", page: number = 1, divI
   const userDivId = (session?.user as any)?.divisionId;
 
   const whereFilter: any = {};
-  if (query) whereFilter.name = { contains: query, mode: 'insensitive' };
+  if (query) {
+    whereFilter.OR = [
+      { name: { contains: query, mode: 'insensitive' } },
+      { uid: { contains: query, mode: 'insensitive' } }
+    ];
+  }
 
   if (userSchoolId) {
     whereFilter.schoolId = userSchoolId;
@@ -368,8 +373,34 @@ export async function createStudent(data: {
   gender: string;
   schoolId: string;
 }) {
+  const school = await prisma.school.findUnique({
+    where: { id: data.schoolId },
+    include: { projectOffice: { include: { division: true } } }
+  });
+
+  const divPart = school?.projectOffice.division.name.slice(0, 2).toUpperCase() || 'XX';
+  const poPart = school?.projectOffice.name.slice(0, 2).toUpperCase() || 'XX';
+  const schPart = school?.name.slice(0, 2).toUpperCase() || 'XX';
+  const cleanName = data.name.replace(/[^a-zA-Z]/g, '').toUpperCase().slice(0, 3) || 'STU';
+  
+  const fullKey = `${school?.name}-${data.classNum}-${data.name}`;
+  let hash = 0;
+  for (let idx = 0; idx < fullKey.length; idx++) {
+    hash = (hash << 5) - hash + fullKey.charCodeAt(idx);
+    hash |= 0;
+  }
+  const hashPartVal = Math.abs(hash).toString(36).toUpperCase().slice(0, 4);
+  let uid = `ST-${divPart}${poPart}${schPart}-${data.classNum}-${cleanName}-${hashPartVal}`;
+
+  // Check if UID exists (rare collision safety)
+  const existing = await prisma.student.findUnique({ where: { uid } });
+  if (existing) {
+    uid = `${uid}-${Math.floor(100 + Math.random() * 900)}`;
+  }
+
   const student = await prisma.student.create({
     data: {
+      uid,
       name: data.name,
       class: data.classNum,
       gender: data.gender,

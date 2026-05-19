@@ -30,16 +30,24 @@ export default async function StudentProfilePage({ params }: { params: Promise<{
          ← Back to Directory
        </Link>
 
-       {/* Header Profile Card */}
+       {/* Header Profile Card - FLN Child Progress Report Card */}
        <div className="bg-white dark:bg-slate-900 rounded-3xl p-8 border border-slate-100 dark:border-slate-800 shadow-xl shadow-blue-900/5 relative overflow-hidden">
           <div className="absolute top-0 right-0 w-64 h-64 bg-blue-50 dark:bg-blue-900/20 rounded-full blur-3xl -mr-20 -mt-20 pointer-events-none"></div>
           
           <div className="flex flex-col sm:flex-row gap-6 items-center sm:items-start relative z-10">
             <div className="w-24 h-24 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center text-white shadow-lg shadow-blue-500/30">
-              <User className="w-10 h-10"/>
+              <GraduationCap className="w-10 h-10"/>
             </div>
             <div className="flex-1 text-center sm:text-left">
-               <h1 className="text-3xl font-black text-slate-900 dark:text-white tracking-tight">{student.name}</h1>
+               <div className="flex flex-wrap items-center justify-center sm:justify-start gap-3">
+                  <span className="text-[10px] font-black tracking-widest bg-blue-600 text-white px-3 py-1 rounded-full uppercase">
+                    FLN Child Progress Report Card
+                  </span>
+                  <span className="text-[10px] font-black tracking-wider bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 px-3 py-1 rounded-full border border-indigo-100/50 dark:border-indigo-800/50 uppercase">
+                    UID: {student.uid}
+                  </span>
+               </div>
+               <h1 className="text-3xl font-black text-slate-900 dark:text-white tracking-tight mt-2">{student.name}</h1>
                <div className="flex flex-wrap items-center justify-center sm:justify-start gap-4 mt-3 text-sm font-medium text-slate-500">
                   <span className="flex items-center gap-1.5 bg-slate-100 dark:bg-slate-800 px-3 py-1 rounded-full"><MapPin className="w-4 h-4"/> {student.school.name}</span>
                   <span className="flex items-center gap-1.5 bg-slate-100 dark:bg-slate-800 px-3 py-1 rounded-full"><GraduationCap className="w-4 h-4"/> Class {student.class}</span>
