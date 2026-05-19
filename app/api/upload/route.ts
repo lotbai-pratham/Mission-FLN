@@ -56,6 +56,53 @@ function parseNumeracyLevel(val: string) {
   return 0;
 }
 
+function resolveAssessments(assessments: any[], term: string) {
+  if (assessments.length === 0) return null;
+  if (assessments.length === 1) return assessments[0];
+  
+  const termLower = term.toLowerCase();
+  if (termLower.includes('baseline')) {
+    // Keep lowest level
+    assessments.sort((a, b) => {
+      const sumA = a.literacyLevel + a.numeracyLevel;
+      const sumB = b.literacyLevel + b.numeracyLevel;
+      if (sumA !== sumB) return sumA - sumB;
+      const timeA = a.date instanceof Date ? a.date.getTime() : new Date(a.date).getTime();
+      const timeB = b.date instanceof Date ? b.date.getTime() : new Date(b.date).getTime();
+      return timeA - timeB;
+    });
+    return assessments[0];
+  } else if (termLower.includes('endline')) {
+    // Keep highest level
+    assessments.sort((a, b) => {
+      const sumA = a.literacyLevel + a.numeracyLevel;
+      const sumB = b.literacyLevel + b.numeracyLevel;
+      if (sumA !== sumB) return sumB - sumA;
+      const timeA = a.date instanceof Date ? a.date.getTime() : new Date(a.date).getTime();
+      const timeB = b.date instanceof Date ? b.date.getTime() : new Date(b.date).getTime();
+      return timeB - timeA;
+    });
+    return assessments[0];
+  } else {
+    // Midline (or other): keep closest to average
+    const count = assessments.length;
+    const avgLit = assessments.reduce((sum, a) => sum + a.literacyLevel, 0) / count;
+    const avgNum = assessments.reduce((sum, a) => sum + a.numeracyLevel, 0) / count;
+
+    let minDistance = Infinity;
+    let kept = assessments[0];
+    
+    for (const a of assessments) {
+      const dist = Math.abs(a.literacyLevel - avgLit) + Math.abs(a.numeracyLevel - avgNum);
+      if (dist < minDistance) {
+        minDistance = dist;
+        kept = a;
+      }
+    }
+    return kept;
+  }
+}
+
 // Column aliases for robust sheet parsing
 const COLS = {
   division: ['Please select Division', 'Division Name', 'Division_Name', 'Division', 'विभाग'],
@@ -182,7 +229,7 @@ export async function POST(req: Request) {
     });
     const studentIdMap = new Map(allStudentsInScope.map(st => [`${st.schoolId}-${normalize(st.name)}-${st.class}`, st.id]));
 
-    const latestAssessments = new Map<string, any>();
+    const latestAssessments = new Map<string, any[]>();
 
     for (let i = 0; i < rows.length; i++) {
       const row = rows[i];
@@ -218,7 +265,6 @@ export async function POST(req: Request) {
       };
 
       const key = `${sid}-${term}`;
-      const existing = latestAssessments.get(key);
       const assessmentData = {
         date, 
         term, 
@@ -232,21 +278,65 @@ export async function POST(req: Request) {
         studentId: sid
       };
 
-      if (!existing || date.getTime() > existing.date.getTime()) {
-        latestAssessments.set(key, assessmentData);
+      if (!latestAssessments.has(key)) {
+        latestAssessments.set(key, []);
+      }
+      latestAssessments.get(key)!.push(assessmentData);
+    }
+
+    const studentIds = Array.from(new Set(Array.from(latestAssessments.keys()).map(k => k.split('-')[0])));
+    const dbAssessments = await prisma.assessment.findMany({
+      where: {
+        studentId: { in: studentIds },
+        term
+      }
+    });
+
+    const dbMap = new Map<string, any[]>();
+    for (const a of dbAssessments) {
+      const k = `${a.studentId}-${a.term}`;
+      if (!dbMap.has(k)) dbMap.set(k, []);
+      dbMap.get(k)!.push(a);
+    }
+
+    const assessmentsToInsert: any[] = [];
+    const deleteIds: string[] = [];
+
+    for (const [key, fileAssessments] of latestAssessments.entries()) {
+      const dbAssessmentsForKey = dbMap.get(key) || [];
+      const combined = [...fileAssessments, ...dbAssessmentsForKey];
+      
+      const resolved = resolveAssessments(combined, term);
+      if (resolved) {
+        const resolvedId = (resolved as any).id;
+        
+        for (const dbA of dbAssessmentsForKey) {
+          if (dbA.id !== resolvedId) {
+            deleteIds.push(dbA.id);
+          }
+        }
+
+        if (!resolvedId) {
+          assessmentsToInsert.push(resolved);
+        }
       }
     }
 
-    const assessmentsToCreate = Array.from(latestAssessments.values());
+    if (deleteIds.length > 0) {
+      for (let i = 0; i < deleteIds.length; i += 500) {
+        await prisma.assessment.deleteMany({
+          where: { id: { in: deleteIds.slice(i, i + 500) } }
+        });
+      }
+    }
 
-    // Phase 5: Chunked assessment creation
-    for (let i = 0; i < assessmentsToCreate.length; i += 500) {
-      await (prisma.assessment as any).createMany({ data: assessmentsToCreate.slice(i, i + 500) });
+    for (let i = 0; i < assessmentsToInsert.length; i += 500) {
+      await (prisma.assessment as any).createMany({ data: assessmentsToInsert.slice(i, i + 500) });
     }
 
     return NextResponse.json({ 
       success: true, 
-      count: assessmentsToCreate.length,
+      count: assessmentsToInsert.length,
       failedRows: failedRows.length > 0 ? failedRows : undefined 
     });
   } catch (error: any) {
