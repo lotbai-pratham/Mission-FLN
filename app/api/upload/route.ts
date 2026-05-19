@@ -112,7 +112,6 @@ export async function POST(req: Request) {
 
     const failedRows: any[] = [];
     const studentsToCreate: any[] = [];
-    const assessmentsToCreate: any[] = [];
     const seenStudents = new Set<string>();
 
     // --- PHASE 2: VALIDATE & PREP DATA ---
@@ -167,6 +166,8 @@ export async function POST(req: Request) {
     });
     const studentIdMap = new Map(allStudentsInScope.map(st => [`${st.schoolId}-${normalize(st.name)}-${st.class}`, st.id]));
 
+    const latestAssessments = new Map<string, any>();
+
     for (let i = 0; i < rows.length; i++) {
       const row = rows[i];
       const dName = getRowValue(row, COLS.division);
@@ -200,7 +201,9 @@ export async function POST(req: Request) {
         return s.includes('can do') || s.includes('kar shakte') || s.includes('yes') || s === '1' || s === 'true';
       };
 
-      assessmentsToCreate.push({
+      const key = `${sid}-${term}`;
+      const existing = latestAssessments.get(key);
+      const assessmentData = {
         date, 
         term, 
         assessorName: getRowValue(row, COLS.assessor) || 'Unknown Assessor',
@@ -211,8 +214,14 @@ export async function POST(req: Request) {
         multiplication: checkOp(getRowValue(row, COLS.multiplication)),
         division: checkOp(getRowValue(row, COLS.divisionOp)),
         studentId: sid
-      });
+      };
+
+      if (!existing || date.getTime() > existing.date.getTime()) {
+        latestAssessments.set(key, assessmentData);
+      }
     }
+
+    const assessmentsToCreate = Array.from(latestAssessments.values());
 
     // Phase 5: Chunked assessment creation
     for (let i = 0; i < assessmentsToCreate.length; i += 500) {
