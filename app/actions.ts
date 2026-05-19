@@ -143,7 +143,12 @@ export async function getDashboardStats(filters: { divisionId?: string, projectO
     prisma.assessment.count({ where: assessmentWhere }),
     prisma.school.count({ where: schoolWhere }),
     // @ts-ignore
-    prisma.battleRecord.count({ where: { schoolId: filters.schoolId || undefined } }),
+    prisma.battleRecord.count({
+      where: {
+        school: whereFilter.schoolId ? undefined : whereFilter.school,
+        schoolId: whereFilter.schoolId || undefined
+      }
+    }),
     prisma.assessment.groupBy({
       by: ['term', 'literacyLevel'] as any,
       where: assessmentWhere,
@@ -864,15 +869,37 @@ export async function getStrugglingStudents(schoolId: string) {
     });
 }
 
-export async function getGrowthVelocity(schoolId?: string) {
-  const where = schoolId ? { schoolId } : {};
+export async function getGrowthVelocity(filters: { divisionId?: string, projectOfficeId?: string, schoolId?: string } = {}) {
+  const session = await auth();
+  const userSchoolId = (session?.user as any)?.schoolId;
+  const userPOId = (session?.user as any)?.projectOfficeId;
+  const userDivId = (session?.user as any)?.divisionId;
+
+  const whereFilter: any = {};
+  if (userSchoolId) {
+    whereFilter.schoolId = userSchoolId;
+  } else if (userPOId) {
+    whereFilter.school = { projectOfficeId: userPOId };
+  } else if (userDivId) {
+    whereFilter.school = { projectOffice: { divisionId: userDivId } };
+  } else {
+    // Admin filters
+    if (filters.schoolId) {
+      whereFilter.schoolId = filters.schoolId;
+    } else if (filters.projectOfficeId) {
+      whereFilter.school = { projectOfficeId: filters.projectOfficeId };
+    } else if (filters.divisionId) {
+      whereFilter.school = { projectOffice: { divisionId: filters.divisionId } };
+    }
+  }
+
   const students = await prisma.student.findMany({
-    where,
+    where: whereFilter,
     include: { assessments: { where: { term: 'Endline' }, orderBy: { date: 'desc' } } },
   });
 
   let storyCount = 0;
-  let subtractionCount = 0;
+  let divisionCount = 0;
   let totalAssessed = 0;
 
   students.forEach(s => {
@@ -880,12 +907,12 @@ export async function getGrowthVelocity(schoolId?: string) {
       totalAssessed++;
       const latest = s.assessments[0];
       const canReadStory = latest.literacyLevel === 4;
-      const canDoSubtraction = latest.subtraction === true || latest.numeracyLevel >= 4;
+      const canDoDivision = latest.division === true || latest.numeracyLevel >= 6;
       if (canReadStory) {
         storyCount++;
       }
-      if (canDoSubtraction) {
-        subtractionCount++;
+      if (canDoDivision) {
+        divisionCount++;
       }
     }
   });
@@ -893,7 +920,7 @@ export async function getGrowthVelocity(schoolId?: string) {
   return {
     totalMeasured: totalAssessed,
     literacyScore: totalAssessed > 0 ? Math.round((storyCount / totalAssessed) * 100) : 0,
-    numeracyScore: totalAssessed > 0 ? Math.round((subtractionCount / totalAssessed) * 100) : 0,
+    numeracyScore: totalAssessed > 0 ? Math.round((divisionCount / totalAssessed) * 100) : 0,
   };
 }
 export async function getInterventionPlan(students: any[]) {

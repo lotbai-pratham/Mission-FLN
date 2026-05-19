@@ -42,7 +42,7 @@ export default function DashboardClient({ initialStats, hierarchy }: { initialSt
       const newStats = await getDashboardStats({ divisionId: divId, projectOfficeId: poId, schoolId, term });
       setStats(newStats);
       
-      const v = await getGrowthVelocity(schoolId);
+      const v = await getGrowthVelocity({ divisionId: divId, projectOfficeId: poId, schoolId });
       setVelocity(v);
 
       if (schoolId) {
