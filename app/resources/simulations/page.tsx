@@ -16,8 +16,8 @@ import LevelUpModal from "@/components/games/LevelUpModal";
 const SECTIONS = [
   // Language Pathways
   { label: "🔤 Akshargandh (Beginner)", filter: (i: Item) => i.pathway === "akshargandh", accent: "from-emerald-400 to-teal-500", glow: "shadow-emerald-500/40", ring: "ring-emerald-400", active: "bg-gradient-to-r from-emerald-400 to-teal-500 text-white" },
-  { label: "🌸 Pushpgandh (Intermediate)", filter: (i: Item) => i.pathway === "pushpgandh", accent: "from-pink-400 to-rose-500", glow: "shadow-pink-500/40", ring: "ring-pink-400", active: "bg-gradient-to-r from-pink-400 to-rose-500 text-white" },
-  { label: "📖 Shabdgandh (Advanced)", filter: (i: Item) => i.pathway === "shabdgandh", accent: "from-violet-500 to-purple-600", glow: "shadow-violet-500/40", ring: "ring-violet-400", active: "bg-gradient-to-r from-violet-500 to-purple-600 text-white" },
+  { label: "🌸 Pushpgandh (Advanced)", filter: (i: Item) => i.pathway === "pushpgandh", accent: "from-pink-400 to-rose-500", glow: "shadow-pink-500/40", ring: "ring-pink-400", active: "bg-gradient-to-r from-pink-400 to-rose-500 text-white" },
+  { label: "📖 Shabdgandh (Intermediate)", filter: (i: Item) => i.pathway === "shabdgandh", accent: "from-violet-500 to-purple-600", glow: "shadow-violet-500/40", ring: "ring-violet-400", active: "bg-gradient-to-r from-violet-500 to-purple-600 text-white" },
   
   // Math Pathways
   { label: "🔢 Pankti (Beginner Math)", filter: (i: Item) => i.pathway === "pankti", accent: "from-blue-400 to-cyan-500", glow: "shadow-blue-500/40", ring: "ring-blue-400", active: "bg-gradient-to-r from-blue-400 to-cyan-500 text-white" },
