@@ -161,8 +161,19 @@ export async function getDashboardStats(filters: { divisionId?: string, projectO
     else if (filters.divisionId) schoolWhere.projectOffice = { divisionId: filters.divisionId };
   }
 
+  const studentCountWhere: any = { ...whereFilter };
+  if (filters.term) {
+    studentCountWhere.assessments = {
+      some: { term: filters.term }
+    };
+  } else {
+    studentCountWhere.assessments = {
+      some: {}
+    };
+  }
+
   const [totalStudents, totalAssessments, totalSchools, totalArenaBattles, literacies, numeracies, allAssessments] = await Promise.all([
-    prisma.student.count({ where: whereFilter }),
+    prisma.student.count({ where: studentCountWhere }),
     prisma.assessment.count({ where: assessmentWhere }),
     prisma.school.count({ where: schoolWhere }),
     // @ts-ignore
