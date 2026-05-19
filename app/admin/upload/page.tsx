@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { UploadCloud, File, Activity, Building, CheckCircle2, Database } from "lucide-react";
+import { UploadCloud, File, Activity, Building, CheckCircle2, Database, AlertTriangle } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { seedHierarchy } from "@/app/actions";
 
@@ -19,7 +19,12 @@ export default function AdminUploadPage() {
     });
   }
   const [isUploading, setIsUploading] = useState(false);
-  const [result, setResult] = useState<{success: boolean; count?: number; error?: string} | null>(null);
+  const [result, setResult] = useState<{
+    success: boolean;
+    count?: number;
+    error?: string;
+    failedRows?: { row: number; school?: string; error: string }[];
+  } | null>(null);
 
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
@@ -45,8 +50,10 @@ export default function AdminUploadPage() {
       const data = await res.json();
       
       if(data.success) {
-        setResult({ success: true, count: data.count });
-        setTimeout(() => router.push('/'), 3000);
+        setResult({ success: true, count: data.count, failedRows: data.failedRows });
+        if (!data.failedRows || data.failedRows.length === 0) {
+          setTimeout(() => router.push('/'), 3000);
+        }
       } else {
         setResult({ success: false, error: data.error });
       }
@@ -71,10 +78,58 @@ export default function AdminUploadPage() {
 
          <div className="md:w-2/3 p-10">
             {result?.success ? (
-              <div className="h-full flex flex-col items-center justify-center text-center space-y-4 py-8">
-                 <CheckCircle2 className="w-16 h-16 text-green-500 animate-bounce"/>
-                 <h2 className="text-2xl font-bold text-slate-800 dark:text-white">Upload Successful!</h2>
-                 <p className="text-slate-500">Securely processed and inserted <b>{result.count}</b> student assessments directly into your database. Going to dashboard...</p>
+              <div className="h-full flex flex-col justify-center space-y-6 py-4">
+                {result.failedRows && result.failedRows.length > 0 ? (
+                  <div className="space-y-4">
+                    <div className="flex items-center gap-3 text-amber-500 bg-amber-50 dark:bg-amber-950/20 p-4 rounded-xl border border-amber-200 dark:border-amber-800">
+                      <AlertTriangle className="w-8 h-8 flex-shrink-0" />
+                      <div>
+                        <h3 className="font-bold text-slate-800 dark:text-slate-200">Imported with Warnings</h3>
+                        <p className="text-xs text-slate-600 dark:text-slate-400">
+                          Successfully imported {result.count} assessments, but {result.failedRows.length} rows could not be processed.
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden max-h-[300px] overflow-y-auto">
+                      <table className="w-full text-left text-xs">
+                        <thead className="bg-slate-50 dark:bg-slate-800 text-slate-500 font-semibold uppercase">
+                          <tr>
+                            <th className="px-3 py-2">Row</th>
+                            <th className="px-3 py-2">School</th>
+                            <th className="px-3 py-2">Error Reason</th>
+                          </tr>
+                        </thead>
+                        <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+                          {result.failedRows.map((err, idx) => (
+                            <tr key={idx} className="hover:bg-slate-50 dark:hover:bg-slate-800/50">
+                              <td className="px-3 py-2 font-mono font-bold text-slate-600 dark:text-slate-400">{err.row}</td>
+                              <td className="px-3 py-2 font-medium text-slate-700 dark:text-slate-300">{err.school || '—'}</td>
+                              <td className="px-3 py-2 text-red-500 dark:text-red-400">{err.error}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+
+                    <div className="flex gap-3 pt-2">
+                      <button onClick={() => setResult(null)}
+                              className="flex-1 py-3 px-4 border border-slate-200 dark:border-slate-700 rounded-xl font-bold text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all text-sm">
+                        Upload Another File
+                      </button>
+                      <button onClick={() => router.push('/')}
+                              className="flex-1 py-3 px-4 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl transition-all text-sm">
+                        Proceed to Dashboard
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="flex flex-col items-center justify-center text-center space-y-4 py-8">
+                     <CheckCircle2 className="w-16 h-16 text-green-500 animate-bounce"/>
+                     <h2 className="text-2xl font-bold text-slate-800 dark:text-white">Upload Successful!</h2>
+                     <p className="text-slate-500">Securely processed and inserted <b>{result.count}</b> student assessments directly into your database. Going to dashboard...</p>
+                  </div>
+                )}
               </div>
             ) : (
                <div className="h-full flex flex-col">

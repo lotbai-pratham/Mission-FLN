@@ -3,6 +3,34 @@ import { prisma } from '@/lib/db';
 import * as xlsx from 'xlsx';
 import { auth } from '@/auth';
 
+// Helper to match column names case-insensitively and with fallback aliases
+function getRowValue(row: any, aliases: string[]): string {
+  // 1. Try exact matches first
+  for (const alias of aliases) {
+    if (row[alias] !== undefined && row[alias] !== null) {
+      return String(row[alias]).trim();
+    }
+  }
+  
+  // 2. Try normalized substring matching (remove spaces, case-insensitive)
+  const rowKeys = Object.keys(row);
+  for (const alias of aliases) {
+    const normalizedAlias = alias.toLowerCase().replace(/[^a-z0-9]/g, '');
+    if (!normalizedAlias) continue;
+    
+    const foundKey = rowKeys.find(rk => {
+      const normalizedKey = rk.toLowerCase().replace(/[^a-z0-9]/g, '');
+      return normalizedKey.includes(normalizedAlias);
+    });
+    
+    if (foundKey !== undefined && row[foundKey] !== null && row[foundKey] !== undefined) {
+      return String(row[foundKey]).trim();
+    }
+  }
+  
+  return '';
+}
+
 // Matching the logic used in seed to parse levels correctly
 function parseLiteracyLevel(val: string) {
   if (!val) return 0;
@@ -30,6 +58,24 @@ function parseNumeracyLevel(val: string) {
   return 0;
 }
 
+// Column aliases for robust sheet parsing
+const COLS = {
+  division: ['Please select Division', 'Division Name', 'Division_Name', 'Division', 'विभाग'],
+  projectOffice: ['Please select project office', 'Project Office', 'Project_Office', 'office', 'po', 'केंद्र'],
+  schoolName: ['School Name', 'School_Name', 'School', 'शाळा'],
+  studentName: ['Write Student Name (विद्यार्थ्याचे नाव लिहा)', 'Student Name', 'Student_Name', 'Student', 'विद्यार्थ्याचे नाव', 'नाव'],
+  gender: ['Please select student gender (कृपया विद्यार्थी लिंग निवडा)', 'Student Gender', 'Gender', 'लिंग'],
+  class: ['Please select assessment class (कृपया मूल्यांकन वर्ग निवडा)', 'Student Class', 'Class', 'वर्ग'],
+  date: ['Date of Assessment', 'Date_of_Assessment', 'Date', 'दिनांक'],
+  assessor: ['Please select your name', 'Assessor Name', 'Assessor_Name', 'Assessor', 'मूल्यमापनकर्ता'],
+  literacy: ['Marathi Language', 'Marathi (मराठी)', 'Literacy Level', 'Literacy', 'भाषा'],
+  numeracy: ['Math Recognition (गणित ओळख)', 'Math Recognition', 'Numeracy Level', 'Numeracy', 'गणित ओळख', 'गणित'],
+  addition: ['Addition (बेरीज)', 'Addition', 'बेरीज'],
+  subtraction: ['Subtraction (वजाबाकी)', 'Subtraction', 'वजाबाकी'],
+  multiplication: ['Multiplication (गुणाकार)', 'Multiplication', 'गुणाकार'],
+  divisionOp: ['Division (भागाकार)', 'Division Fun', 'भागाकार']
+};
+
 export async function POST(req: Request) {
   const session = await auth();
   if (session?.user?.role !== 'admin') {
@@ -55,12 +101,14 @@ export async function POST(req: Request) {
       include: { projectOffice: { include: { division: true } } }
     });
 
-    // Lookup Maps
-    const divMap = new Map(allDivisions.map(d => [d.name.trim(), d.id]));
-    const poMap = new Map(allPOs.map(p => [`${p.divisionId}-${p.name.trim()}`, p.id]));
+    // Lookup Maps (normalized names for match resilience)
+    const normalize = (s: string) => s.trim().toLowerCase().replace(/\s+/g, '');
+    
+    const divMap = new Map(allDivisions.map(d => [normalize(d.name), d.id]));
+    const poMap = new Map(allPOs.map(p => [`${p.divisionId}-${normalize(p.name)}`, p.id]));
     const schoolMap = new Map();
     allSchools.forEach(s => {
-      const key = `${s.projectOffice.division.name.trim()}-${s.projectOffice.name.trim()}-${s.name.trim()}`;
+      const key = `${normalize(s.projectOffice.division.name)}-${normalize(s.projectOffice.name)}-${normalize(s.name)}`;
       schoolMap.set(key, s.id);
     });
 
@@ -72,30 +120,37 @@ export async function POST(req: Request) {
     // --- PHASE 2: VALIDATE & PREP DATA ---
     for (let i = 0; i < rows.length; i++) {
       const row = rows[i];
-      const dName = (row['Please select Division'] || '').trim();
-      const pName = (row['Please select project office'] || '').trim();
-      const sName = (row['School Name'] || row['Marathi (मराठी)'] || '').trim();
-      const stdName = (row['Write Student Name (विद्यार्थ्याचे नाव लिहा)'] || '').trim();
+      const dName = getRowValue(row, COLS.division);
+      const pName = getRowValue(row, COLS.projectOffice);
+      const sName = getRowValue(row, COLS.schoolName);
+      const stdName = getRowValue(row, COLS.studentName);
 
       if (!dName || !pName || !sName || !stdName) {
-        failedRows.push({ row: i + 2, error: "Missing required fields (Division/PO/School/Student)" });
+        failedRows.push({ 
+          row: i + 2, 
+          error: `Missing required fields. Got Division: "${dName}", PO: "${pName}", School: "${sName}", Student: "${stdName}"` 
+        });
         continue;
       }
 
       // Check hierarchy match
-      const sId = schoolMap.get(`${dName}-${pName}-${sName}`);
+      const lookupKey = `${normalize(dName)}-${normalize(pName)}-${normalize(sName)}`;
+      const sId = schoolMap.get(lookupKey);
       if (!sId) {
-        failedRows.push({ row: i + 2, school: sName, error: "School not in Master List (Check for typos or PO/Division mismatch)" });
+        failedRows.push({ 
+          row: i + 2, 
+          school: sName, 
+          error: `School "${sName}" under PO "${pName}" and Division "${dName}" not found in Master List. Check for spelling mismatches.` 
+        });
         continue;
       }
 
-      const gender = (row['Please select student gender (कृपया विद्यार्थी लिंग निवडा)'] || 'Unknown').trim();
-      const classStr = String(row['Please select assessment class (कृपया मूल्यांकन वर्ग निवडा)']);
+      const gender = getRowValue(row, COLS.gender) || 'Unknown';
+      const classStr = getRowValue(row, COLS.class);
       const classNum = classStr.match(/\d+/) ? parseInt(classStr.match(/\d+/)![0], 10) : 1;
 
       // Ensure student exists (unique by school + name in our simple model)
-      const studentKey = `${sId}-${stdName}`;
-      // Note: We'll create students first in the next phase
+      const studentKey = `${sId}-${normalize(stdName)}`;
       if (!seenStudents.has(studentKey)) {
         studentsToCreate.push({ name: stdName, class: classNum, gender, schoolId: sId });
         seenStudents.add(studentKey);
@@ -112,36 +167,48 @@ export async function POST(req: Request) {
     const allStudentsInScope = await prisma.student.findMany({ 
       where: { schoolId: { in: Array.from(new Set(studentsToCreate.map(s => s.schoolId))) } } 
     });
-    const studentIdMap = new Map(allStudentsInScope.map(st => [`${st.schoolId}-${st.name}`, st.id]));
+    const studentIdMap = new Map(allStudentsInScope.map(st => [`${st.schoolId}-${normalize(st.name)}`, st.id]));
 
-    for (const row of rows) {
-      const dName = (row['Please select Division'] || '').trim();
-      const pName = (row['Please select project office'] || '').trim();
-      const sName = (row['School Name'] || row['Marathi (मराठी)'] || '').trim();
-      const stdName = (row['Write Student Name (विद्यार्थ्याचे नाव लिहा)'] || '').trim();
+    for (let i = 0; i < rows.length; i++) {
+      const row = rows[i];
+      const dName = getRowValue(row, COLS.division);
+      const pName = getRowValue(row, COLS.projectOffice);
+      const sName = getRowValue(row, COLS.schoolName);
+      const stdName = getRowValue(row, COLS.studentName);
       
-      const sId = schoolMap.get(`${dName}-${pName}-${sName}`);
+      const sId = schoolMap.get(`${normalize(dName)}-${normalize(pName)}-${normalize(sName)}`);
       if (!sId) continue; // Already logged in failedRows
       
-      const sid = studentIdMap.get(`${sId}-${stdName}`);
+      const sid = studentIdMap.get(`${sId}-${normalize(stdName)}`);
       if (!sid) continue;
 
-      let dateVal = row['Date of Assessment'];
-      let date = typeof dateVal === 'number' ? new Date(Math.round((dateVal - 25569) * 86400 * 1000)) : new Date();
+      const dateVal = getRowValue(row, COLS.date);
+      let date = new Date();
+      if (dateVal) {
+        const numDate = Number(dateVal);
+        if (!isNaN(numDate)) {
+          date = new Date(Math.round((numDate - 25569) * 86400 * 1000));
+        } else {
+          const parsed = Date.parse(dateVal);
+          if (!isNaN(parsed)) date = new Date(parsed);
+        }
+      }
 
-      const checkOp = (val: any) => {
-        const s = String(val || '').toLowerCase();
+      const checkOp = (val: string) => {
+        const s = val.toLowerCase();
         return s.includes('can do') || s.includes('kar shakte') || s.includes('yes') || s === '1' || s === 'true';
       };
 
       assessmentsToCreate.push({
-        date, term, assessorName: row['Please select your name'] || 'Unknown Assessor',
-        literacyLevel: parseLiteracyLevel(row['Marathi Language'] || row['Marathi (मराठी)']),
-        numeracyLevel: parseNumeracyLevel(row['Math Recognition (गणित ओळख)'] || row['Math Recognition']),
-        addition: checkOp(row['Addition'] || row['Addition (बेरीज)']),
-        subtraction: checkOp(row['Subtraction'] || row['Subtraction (वजाबाकी)']),
-        multiplication: checkOp(row['Multiplication'] || row['Multiplication (गुणाकार)']),
-        division: checkOp(row['Division'] || row['Division (भागाकार)']),
+        date, 
+        term, 
+        assessorName: getRowValue(row, COLS.assessor) || 'Unknown Assessor',
+        literacyLevel: parseLiteracyLevel(getRowValue(row, COLS.literacy)),
+        numeracyLevel: parseNumeracyLevel(getRowValue(row, COLS.numeracy)),
+        addition: checkOp(getRowValue(row, COLS.addition)),
+        subtraction: checkOp(getRowValue(row, COLS.subtraction)),
+        multiplication: checkOp(getRowValue(row, COLS.multiplication)),
+        division: checkOp(getRowValue(row, COLS.divisionOp)),
         studentId: sid
       });
     }
