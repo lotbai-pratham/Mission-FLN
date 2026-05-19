@@ -182,7 +182,7 @@ export default function DashboardClient({ initialStats, hierarchy }: { initialSt
       <div className={`grid grid-cols-2 lg:grid-cols-4 gap-4 transition-opacity ${isPending ? 'opacity-50' : ''}`}>
         <KPI label="Total Students" value={stats.totalStudents} icon={<Users className="w-5 h-5" />} color="blue" />
         <KPI label="Total Assessments" value={stats.totalAssessments} icon={<BookOpen className="w-5 h-5" />} color="indigo" />
-        <KPI label="Learning Velocity" value={velocity?.velocity ?? 0} icon={<TrendingUp className="w-5 h-5" />} color="emerald" suffix="%" />
+        <KPI label="FLN Score" value={velocity?.score ?? 0} icon={<Trophy className="w-5 h-5" />} color="emerald" suffix="%" />
         <KPI label="Arena Engagement" value={stats.totalArenaBattles ?? 0} icon={<Sparkles className="w-5 h-5" />} color="blue" suffix=" Battles" />
       </div>
 

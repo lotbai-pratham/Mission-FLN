@@ -868,27 +868,29 @@ export async function getGrowthVelocity(schoolId?: string) {
   const where = schoolId ? { schoolId } : {};
   const students = await prisma.student.findMany({
     where,
-    include: { assessments: { orderBy: { date: 'asc' } } },
+    include: { assessments: { orderBy: { date: 'desc' } } },
   });
 
-  let improved = 0;
-  let totalWithData = 0;
+  let masters = 0;
+  let totalAssessed = 0;
 
   students.forEach(s => {
-    if (s.assessments.length >= 2) {
-      totalWithData++;
-      const first = s.assessments[0];
-      const last = s.assessments[s.assessments.length - 1];
-      if (last.literacyLevel > first.literacyLevel || last.numeracyLevel > first.numeracyLevel) {
-        improved++;
+    if (s.assessments.length > 0) {
+      totalAssessed++;
+      const latest = s.assessments[0];
+      const canReadStory = latest.literacyLevel === 4;
+      const canDoDivision = latest.division === true || latest.numeracyLevel === 7;
+      if (canReadStory && canDoDivision) {
+        masters++;
       }
     }
   });
 
   return {
-    velocity: totalWithData > 0 ? Math.round((improved / totalWithData) * 100) : 0,
-    totalMeasured: totalWithData,
-    improvedCount: improved
+    velocity: totalAssessed > 0 ? Math.round((masters / totalAssessed) * 100) : 0,
+    score: totalAssessed > 0 ? Math.round((masters / totalAssessed) * 100) : 0,
+    totalMeasured: totalAssessed,
+    mastersCount: masters
   };
 }
 export async function getInterventionPlan(students: any[]) {
