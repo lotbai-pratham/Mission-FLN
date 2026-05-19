@@ -149,8 +149,8 @@ export async function POST(req: Request) {
       const classStr = getRowValue(row, COLS.class);
       const classNum = classStr.match(/\d+/) ? parseInt(classStr.match(/\d+/)![0], 10) : 1;
 
-      // Ensure student exists (unique by school + name in our simple model)
-      const studentKey = `${sId}-${normalize(stdName)}`;
+      // Ensure student exists (unique by school + name + class in our updated model)
+      const studentKey = `${sId}-${normalize(stdName)}-${classNum}`;
       if (!seenStudents.has(studentKey)) {
         studentsToCreate.push({ name: stdName, class: classNum, gender, schoolId: sId });
         seenStudents.add(studentKey);
@@ -167,7 +167,7 @@ export async function POST(req: Request) {
     const allStudentsInScope = await prisma.student.findMany({ 
       where: { schoolId: { in: Array.from(new Set(studentsToCreate.map(s => s.schoolId))) } } 
     });
-    const studentIdMap = new Map(allStudentsInScope.map(st => [`${st.schoolId}-${normalize(st.name)}`, st.id]));
+    const studentIdMap = new Map(allStudentsInScope.map(st => [`${st.schoolId}-${normalize(st.name)}-${st.class}`, st.id]));
 
     for (let i = 0; i < rows.length; i++) {
       const row = rows[i];
@@ -179,7 +179,10 @@ export async function POST(req: Request) {
       const sId = schoolMap.get(`${normalize(dName)}-${normalize(pName)}-${normalize(sName)}`);
       if (!sId) continue; // Already logged in failedRows
       
-      const sid = studentIdMap.get(`${sId}-${normalize(stdName)}`);
+      const classStr = getRowValue(row, COLS.class);
+      const classNum = classStr.match(/\d+/) ? parseInt(classStr.match(/\d+/)![0], 10) : 1;
+      
+      const sid = studentIdMap.get(`${sId}-${normalize(stdName)}-${classNum}`);
       if (!sid) continue;
 
       const dateVal = getRowValue(row, COLS.date);
