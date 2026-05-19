@@ -39,21 +39,21 @@ export default function DashboardClient({ initialStats, hierarchy }: { initialSt
 
   useEffect(() => {
     startTransition(async () => {
-      const newStats = await getDashboardStats({ divisionId: divId, projectOfficeId: poId, schoolId, term });
+      const newStats = await getDashboardStats({ divisionId: divId, projectOfficeId: poId, schoolId, term, classNum: selectedClass });
       setStats(newStats);
       
-      const v = await getGrowthVelocity({ divisionId: divId, projectOfficeId: poId, schoolId });
+      const v = await getGrowthVelocity({ divisionId: divId, projectOfficeId: poId, schoolId, classNum: selectedClass });
       setVelocity(v);
 
       if (schoolId) {
-        const s = await getStrugglingStudents(schoolId);
+        const s = await getStrugglingStudents(schoolId, selectedClass);
         setStruggling(s);
       }
 
-      const r = await getPORankings(divId || undefined);
+      const r = await getPORankings(divId || undefined, selectedClass);
       setRankings(r);
     });
-  }, [divId, poId, schoolId, term]);
+  }, [divId, poId, schoolId, term, selectedClass]);
 
   // --- Build chart data for the selected class + type ---
   function buildChartData(type: 'literacy' | 'numeracy') {

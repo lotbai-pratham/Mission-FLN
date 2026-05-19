@@ -101,7 +101,7 @@ export async function getHierarchy() {
   });
 }
 
-export async function getDashboardStats(filters: { divisionId?: string, projectOfficeId?: string, schoolId?: string, term?: string } = {}) {
+export async function getDashboardStats(filters: { divisionId?: string, projectOfficeId?: string, schoolId?: string, term?: string, classNum?: number | 'all' } = {}) {
   const session = await auth();
   const userSchoolId = (session?.user as any)?.schoolId;
   const userPOId = (session?.user as any)?.projectOfficeId;
@@ -125,6 +125,10 @@ export async function getDashboardStats(filters: { divisionId?: string, projectO
     }
   }
 
+  if (filters.classNum && filters.classNum !== 'all') {
+    whereFilter.class = Number(filters.classNum);
+  }
+
   const assessmentWhere: any = { student: whereFilter };
   if (filters.term) assessmentWhere.term = filters.term;
 
@@ -146,7 +150,8 @@ export async function getDashboardStats(filters: { divisionId?: string, projectO
     prisma.battleRecord.count({
       where: {
         school: whereFilter.schoolId ? undefined : whereFilter.school,
-        schoolId: whereFilter.schoolId || undefined
+        schoolId: whereFilter.schoolId || undefined,
+        classNum: (filters.classNum && filters.classNum !== 'all') ? Number(filters.classNum) : undefined
       }
     }),
     prisma.assessment.groupBy({
@@ -843,9 +848,13 @@ export async function recordBattleResult(data: {
   revalidatePath('/dashboard');
 }
 
-export async function getStrugglingStudents(schoolId: string) {
+export async function getStrugglingStudents(schoolId: string, classNum?: number | 'all') {
+  const where: any = { schoolId };
+  if (classNum && classNum !== 'all') {
+    where.class = Number(classNum);
+  }
   const students = await prisma.student.findMany({
-    where: { schoolId },
+    where,
     include: { assessments: { orderBy: { date: 'asc' } } },
   });
 
@@ -869,7 +878,7 @@ export async function getStrugglingStudents(schoolId: string) {
     });
 }
 
-export async function getGrowthVelocity(filters: { divisionId?: string, projectOfficeId?: string, schoolId?: string } = {}) {
+export async function getGrowthVelocity(filters: { divisionId?: string, projectOfficeId?: string, schoolId?: string, classNum?: number | 'all' } = {}) {
   const session = await auth();
   const userSchoolId = (session?.user as any)?.schoolId;
   const userPOId = (session?.user as any)?.projectOfficeId;
@@ -891,6 +900,10 @@ export async function getGrowthVelocity(filters: { divisionId?: string, projectO
     } else if (filters.divisionId) {
       whereFilter.school = { projectOffice: { divisionId: filters.divisionId } };
     }
+  }
+
+  if (filters.classNum && filters.classNum !== 'all') {
+    whereFilter.class = Number(filters.classNum);
   }
 
   const students = await prisma.student.findMany({
@@ -941,9 +954,14 @@ export async function getInterventionPlan(students: any[]) {
   };
 }
 
-export async function getPORankings(divisionId?: string) {
+export async function getPORankings(divisionId?: string, classNum?: number | 'all') {
   const where: any = {};
   if (divisionId) where.divisionId = divisionId;
+
+  const studentWhere: any = {};
+  if (classNum && classNum !== 'all') {
+    studentWhere.class = Number(classNum);
+  }
 
   const pos = await prisma.projectOffice.findMany({
     where,
@@ -951,6 +969,7 @@ export async function getPORankings(divisionId?: string) {
       schools: {
         include: {
           students: {
+            where: studentWhere,
             include: {
               assessments: {
                 where: { term: 'Endline' },
