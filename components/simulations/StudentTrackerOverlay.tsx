@@ -77,6 +77,16 @@ export default function StudentTrackerOverlay({
     if (!assignedStudent || isSaving) return;
     setIsSaving(true);
     
+    if (assignedStudent.id === 'guest') {
+      setSaveSuccess(true);
+      setTimeout(() => {
+        setAssignedStudent(null);
+        setSaveSuccess(false);
+        setIsSaving(false);
+      }, 1500);
+      return;
+    }
+    
     const scoreEarned = currentXp - initialXp;
     
     const res = await recordSingleGameResult({
@@ -143,7 +153,7 @@ export default function StudentTrackerOverlay({
 
             {saveSuccess ? (
               <div className="flex items-center gap-1 text-emerald-400 font-bold px-2">
-                <CheckCircle2 className="w-4 h-4" /> Saved!
+                <CheckCircle2 className="w-4 h-4" /> {assignedStudent.id === 'guest' ? 'Done!' : 'Saved!'}
               </div>
             ) : (
               <button
@@ -152,7 +162,7 @@ export default function StudentTrackerOverlay({
                 className="flex items-center gap-2 bg-orange-500 hover:bg-orange-600 text-white px-3 py-1.5 rounded-lg text-xs font-black transition-all disabled:opacity-50"
               >
                 <Save className="w-3.5 h-3.5" />
-                {isSaving ? "SAVING..." : "FINISH & SAVE"}
+                {isSaving ? "WAIT..." : (assignedStudent.id === 'guest' ? "FINISH" : "FINISH & SAVE")}
               </button>
             )}
             
@@ -181,7 +191,7 @@ export default function StudentTrackerOverlay({
             <div className="p-4 border-b border-slate-800 bg-slate-800/30">
               <input
                 type="text"
-                placeholder="Search by name..."
+                placeholder="Search or type a new name..."
                 value={search}
                 onChange={e => setSearch(e.target.value)}
                 className="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-3 text-white focus:border-orange-500 outline-none transition-all"
@@ -189,6 +199,20 @@ export default function StudentTrackerOverlay({
             </div>
             
             <div className="flex-1 overflow-y-auto p-2">
+              {search.trim().length > 0 && (
+                <button
+                  onClick={() => handleAssign({ id: 'guest', name: search.trim() })}
+                  className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-slate-800 text-left transition-colors group mb-2 border border-dashed border-slate-700"
+                >
+                  <div className="w-10 h-10 rounded-full bg-slate-800 group-hover:bg-blue-500/20 text-slate-400 group-hover:text-blue-400 flex items-center justify-center font-black transition-colors">
+                    <User className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <p className="font-bold text-white">Play as "{search.trim()}"</p>
+                    <p className="text-[10px] text-slate-500 font-bold uppercase">Guest Mode (Stats won't be saved)</p>
+                  </div>
+                </button>
+              )}
               {students.length === 0 && schoolId !== "mock-school-id" ? (
                 <p className="text-center py-8 text-slate-500 text-sm font-bold animate-pulse">Loading students...</p>
               ) : filteredStudents.length === 0 ? (
