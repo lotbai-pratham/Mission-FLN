@@ -5,7 +5,7 @@ import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip,
   ResponsiveContainer, Legend, Cell
 } from 'recharts';
-import { BookOpen, Calculator, Users, School, Filter, TrendingUp, LayoutDashboard, Search, Sparkles, AlertCircle, TrendingDown, Trophy, Medal, Lightbulb } from 'lucide-react';
+import { BookOpen, Calculator, Users, School, Filter, TrendingUp, LayoutDashboard, Search, Sparkles, AlertCircle, TrendingDown, Trophy, Medal, Lightbulb, Gamepad2 } from 'lucide-react';
 import { getDashboardStats, getStrugglingStudents, getGrowthVelocity, getInterventionPlan, getPORankings } from "@/app/actions";
 
 const LIT_LABELS = ['Beginner', 'Letter', 'Word', 'Paragraph', 'Story'];
@@ -194,12 +194,13 @@ export default function DashboardClient({ initialStats, hierarchy }: { initialSt
       </div>
 
       {/* KPIs */}
-      <div className={`grid grid-cols-2 lg:grid-cols-5 gap-4 transition-opacity ${isPending ? 'opacity-50' : ''}`}>
+      <div className={`grid grid-cols-2 lg:grid-cols-6 gap-4 transition-opacity ${isPending ? 'opacity-50' : ''}`}>
         <KPI label="Total Students" value={stats.totalStudents} icon={<Users className="w-5 h-5" />} color="blue" />
         <KPI label="Total Assessments" value={stats.totalAssessments} icon={<BookOpen className="w-5 h-5" />} color="indigo" />
         <KPI label="Literacy Score (Endline)" value={velocity?.literacyScore ?? 0} icon={<BookOpen className="w-5 h-5" />} color="emerald" suffix="%" />
         <KPI label="Numeracy Score (Endline)" value={velocity?.numeracyScore ?? 0} icon={<Calculator className="w-5 h-5" />} color="emerald" suffix="%" />
         <KPI label="Arena Engagement" value={stats.totalArenaBattles ?? 0} icon={<Sparkles className="w-5 h-5" />} color="blue" suffix=" Battles" />
+        <KPI label="Single Games" value={stats.totalSingleGames ?? 0} icon={<Gamepad2 className="w-5 h-5" />} color="orange" suffix=" Games" />
       </div>
 
       {/* STRUGGLING STUDENTS ALERT */}

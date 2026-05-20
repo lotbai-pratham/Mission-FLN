@@ -36,6 +36,7 @@ model School {
   users           User[]
   battles         BattleRecord[]
   implementationSessions ImplementationSession[]
+  singleGames     SingleGameRecord[]
 }
 
 model ImplementationSession {
@@ -64,6 +65,7 @@ model Student {
   battlesAsP2 BattleRecord[] @relation("BattlePlayer2")
   battlesWon  BattleRecord[] @relation("BattleWinner")
   gamesPlayed Int            @default(0)
+  singleGames SingleGameRecord[]
 }
 
 model Assessment {
@@ -97,6 +99,18 @@ model BattleRecord {
   player2     Student  @relation("BattlePlayer2", fields: [player2Id], references: [id])
   winnerId    String?
   winner      Student? @relation("BattleWinner", fields: [winnerId], references: [id])
+  conductedAt DateTime @default(now())
+}
+
+model SingleGameRecord {
+  id          String   @id @default(cuid())
+  schoolId    String
+  school      School   @relation(fields: [schoolId], references: [id])
+  studentId   String
+  student     Student  @relation(fields: [studentId], references: [id])
+  gameSlug    String
+  score       Int
+  duration    Int      // duration in seconds
   conductedAt DateTime @default(now())
 }
 

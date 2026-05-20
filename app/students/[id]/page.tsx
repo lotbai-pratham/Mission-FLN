@@ -1,6 +1,6 @@
 export const dynamic = 'force-dynamic';
 import { getStudentProfile } from "@/app/actions";
-import { User, BookOpen, Calculator, MapPin, Calendar, Lightbulb, GraduationCap, Flame, ArrowRight, Clock, ShieldCheck, TrendingUp, Minus, TrendingDown, Sparkles } from "lucide-react";
+import { User, BookOpen, Calculator, MapPin, Calendar, Lightbulb, GraduationCap, Flame, ArrowRight, Clock, ShieldCheck, TrendingUp, Minus, TrendingDown, Sparkles, Gamepad2 } from "lucide-react";
 import Link from "next/link";
 import { LITERACY_ACTIVITIES, NUMERACY_ACTIVITIES, TaRLActivity } from "@/lib/tarl_data";
 import ProgressChart from "@/components/ProgressChart";
@@ -201,6 +201,40 @@ export default async function StudentProfilePage({ params }: { params: Promise<{
          <div className="bg-white dark:bg-slate-900 rounded-3xl border border-dashed border-slate-300 dark:border-slate-700 p-12 text-center">
             <h3 className="text-xl font-bold text-slate-400">No Assessments Yet</h3>
             <p className="text-slate-500 mt-2">Test this student to generate personalized TaRL curriculum recommendations.</p>
+         </div>
+       )}
+
+       {/* Single Game Records */}
+       {(student as any).singleGames && (student as any).singleGames.length > 0 && (
+         <div className="space-y-6 mt-12 px-2">
+            <div className="flex items-center gap-3">
+              <Gamepad2 className="w-6 h-6 text-orange-500"/>
+              <h2 className="text-2xl font-extrabold text-slate-800 dark:text-slate-100">Game Records</h2>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+              {(student as any).singleGames.map((game: any) => (
+                <div key={game.id} className="bg-white dark:bg-slate-900 rounded-2xl p-5 border border-slate-100 dark:border-slate-800 shadow-sm flex flex-col justify-between">
+                  <div className="flex justify-between items-start mb-4">
+                    <span className="font-bold text-slate-800 dark:text-white truncate">{game.gameSlug}</span>
+                    <span className="text-[10px] text-slate-400 font-black tracking-widest uppercase">
+                      {new Date(game.conductedAt).toLocaleDateString()}
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Score</p>
+                      <p className="text-xl font-black text-emerald-500">+{game.score}</p>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Time</p>
+                      <p className="text-lg font-mono font-bold text-slate-600 dark:text-slate-300">
+                        {Math.floor(game.duration / 60)}:{(game.duration % 60).toString().padStart(2, '0')}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
          </div>
        )}
     </div>

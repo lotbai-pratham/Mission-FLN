@@ -7,6 +7,7 @@ import { ArrowLeft, Gamepad2, Info } from "lucide-react";
 import Link from "next/link";
 import GameWrapper from "@/components/games/GameWrapper";
 import LevelUpModal from "@/components/games/LevelUpModal";
+import StudentTrackerOverlay from "@/components/simulations/StudentTrackerOverlay";
 
 export default function DirectPlayPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
@@ -56,6 +57,7 @@ export default function DirectPlayPage({ params }: { params: Promise<{ id: strin
 
       {/* Full Screen Game Area */}
       <div className="flex-1 relative overflow-auto bg-slate-50 flex items-center justify-center">
+         <StudentTrackerOverlay schoolId="mock-school-id" classNum={3} gameSlug={game.id} />
          <div className="w-full h-full max-w-7xl mx-auto md:p-8 p-0 flex flex-col items-center justify-center">
             <Suspense fallback={
               <div className="flex flex-col items-center gap-4 animate-pulse">

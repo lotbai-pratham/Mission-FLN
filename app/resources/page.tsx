@@ -72,6 +72,7 @@ import VachanPravas from "@/components/simulations/VachanPravas";
 import AksharCrush from "@/components/simulations/AksharCrush";
 import MatraChakra from "@/components/simulations/MatraChakra";
 import GyanSidi from "@/components/simulations/GyanSidi";
+import StudentTrackerOverlay from "@/components/simulations/StudentTrackerOverlay";
 
 const SIM_COMPONENTS: Record<string, React.ComponentType<any>> = {
   "bundle-builder": BundleBuilder,
@@ -615,7 +616,8 @@ function MissionControl() {
                         </button>
                       </div>
                       {ActiveSimulation ? (
-                        <div className="flex-1 flex flex-col min-h-0">
+                        <div className="flex-1 flex flex-col min-h-0 relative">
+                          <StudentTrackerOverlay schoolId={battleContext?.schoolId || session?.user?.schoolId || "mock-school-id"} classNum={classNum || 1} gameSlug={simList[activeSimIndex % simList.length]} />
                           <div className="flex-1 min-h-[520px] bg-slate-950 overflow-hidden">
                             <ActiveSimulation player1={battleContext?.p1} player2={battleContext?.p2} schoolId={battleContext?.schoolId || "mock-school-id"} classNum={classNum || 1} />
                           </div>
@@ -786,7 +788,8 @@ function MissionControl() {
                   </div>
                   {/* Simulation — full-width, tall */}
                   {ActiveSimulation && (
-                    <div className="border-t border-slate-100 dark:border-slate-800 flex flex-col">
+                    <div className="border-t border-slate-100 dark:border-slate-800 flex flex-col relative">
+                      <StudentTrackerOverlay schoolId={battleContext?.schoolId || session?.user?.schoolId || "mock-school-id"} classNum={classNum || 3} gameSlug={simList[activeSimIndex % simList.length]} />
                       <div className={cn("min-h-[520px] bg-slate-950 overflow-hidden", simList.length <= 1 ? "rounded-b-[32px]" : "")}>
                         <ActiveSimulation player1={battleContext?.p1} player2={battleContext?.p2} schoolId={battleContext?.schoolId || "mock-school-id"} classNum={classNum || 3} />
                       </div>

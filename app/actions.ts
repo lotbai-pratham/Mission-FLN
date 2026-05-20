@@ -91,7 +91,8 @@ export async function getStudentProfile(studentId: string) {
     where: { id: studentId },
     include: {
       school: { include: { projectOffice: { include: { division: true } } } },
-      assessments: { orderBy: { date: 'desc' } }
+      assessments: { orderBy: { date: 'desc' } },
+      singleGames: { orderBy: { conductedAt: 'desc' } }
     }
   });
 
@@ -172,7 +173,7 @@ export async function getDashboardStats(filters: { divisionId?: string, projectO
     };
   }
 
-  const [totalStudents, totalAssessments, totalSchools, totalArenaBattles, literacies, numeracies, allAssessments] = await Promise.all([
+  const [totalStudents, totalAssessments, totalSchools, totalArenaBattles, totalSingleGames, literacies, numeracies, allAssessments] = await Promise.all([
     prisma.student.count({ where: studentCountWhere }),
     prisma.assessment.count({ where: assessmentWhere }),
     prisma.school.count({ where: schoolWhere }),
@@ -182,6 +183,12 @@ export async function getDashboardStats(filters: { divisionId?: string, projectO
         school: whereFilter.schoolId ? undefined : whereFilter.school,
         schoolId: whereFilter.schoolId || undefined,
         classNum: (filters.classNum && filters.classNum !== 'all') ? Number(filters.classNum) : undefined
+      }
+    }),
+    prisma.singleGameRecord.count({
+      where: {
+        school: whereFilter.schoolId ? undefined : whereFilter.school,
+        schoolId: whereFilter.schoolId || undefined,
       }
     }),
     prisma.assessment.groupBy({
@@ -295,6 +302,7 @@ export async function getDashboardStats(filters: { divisionId?: string, projectO
     totalAssessments,
     totalSchools,
     totalArenaBattles,
+    totalSingleGames,
     literacies,
     numeracies,
     operations,
@@ -1089,3 +1097,36 @@ export async function getClassStats(schoolId: string, classNum: number) {
 }
 
 const labels = ['Beginner', 'Letter', 'Word', 'Paragraph', 'Story'];
+
+export async function recordSingleGameResult(data: {
+  schoolId: string;
+  studentId: string;
+  gameSlug: string;
+  score: number;
+  duration: number;
+}) {
+  try {
+    const record = await prisma.singleGameRecord.create({
+      data: {
+        schoolId: data.schoolId,
+        studentId: data.studentId,
+        gameSlug: data.gameSlug,
+        score: data.score,
+        duration: data.duration,
+      }
+    });
+
+    await prisma.student.update({
+      where: { id: data.studentId },
+      data: {
+        gamesPlayed: { increment: 1 }
+      }
+    });
+
+    revalidatePath(`/students/${data.studentId}`);
+    return { success: true, record };
+  } catch (error) {
+    console.error("Failed to record single game:", error);
+    return { success: false, error: "Failed to save record" };
+  }
+}
