@@ -3,11 +3,12 @@ import { useState, useEffect } from 'react';
 import CompetitiveArena from './CompetitiveArena';
 import { recordBattleResult } from '@/app/actions';
 import { sfx } from '@/lib/sounds';
+import { useNonRepeatingGenerator } from '@/lib/game-utils';
 
 const MARATHI_WORDS = [
   { word: 'साखर', cat: 'खाद्यपदार्थ' },
   { word: 'पाणी', cat: 'पेय' },
-  { word: 'हाथी', cat: 'प्राणी' },
+  { word: 'हत्ती', cat: 'प्राणी' },
   { word: 'सूर्य', cat: 'निसर्ग' },
   { word: 'गुलाब', cat: 'फूल' },
   { word: 'आंबा', cat: 'फळ' },
@@ -19,8 +20,22 @@ const MARATHI_WORDS = [
   { word: 'कांदा', cat: 'भाजी' },
   { word: 'नदी', cat: 'जल' },
   { word: 'डोंगर', cat: 'निसर्ग' },
-  { word: 'पक्षी', cat: 'प्राणी' }
+  { word: 'पक्षी', cat: 'प्राणी' },
+  { word: 'सफरचंद', cat: 'फळ' },
+  { word: 'टोमॅटो', cat: 'भाजी' },
+  { word: 'पुस्तक', cat: 'वस्तू' },
+  { word: 'चहा', cat: 'पेय' },
+  { word: 'कुत्रा', cat: 'प्राणी' }
 ];
+
+function generateRandomWordRound() {
+  const correct = MARATHI_WORDS[Math.floor(Math.random() * MARATHI_WORDS.length)];
+  const others = CATEGORIES.filter(c => c !== correct.cat).sort(() => 0.5 - Math.random()).slice(0, 3);
+  return {
+    correct,
+    options: [correct.cat, ...others].sort(() => 0.5 - Math.random())
+  };
+}
 
 const CATEGORIES = ['प्राणी', 'खाद्यपदार्थ', 'वस्तू', 'निसर्ग', 'ठिकाण', 'वाहन', 'फूल', 'फळ', 'भाजी', 'पेय', 'जल'];
 
@@ -29,11 +44,15 @@ export default function WordRace({ player1, player2, schoolId, classNum, onClose
   const [options, setOptions] = useState<string[]>([]);
   const [lastWinner, setLastWinner] = useState<'A' | 'B' | null>(null);
 
+  const { generateUnique } = useNonRepeatingGenerator(
+    generateRandomWordRound,
+    (res) => res.correct.word
+  );
+
   const generateRound = () => {
-    const correct = MARATHI_WORDS[Math.floor(Math.random() * MARATHI_WORDS.length)];
-    const others = CATEGORIES.filter(c => c !== correct.cat).sort(() => 0.5 - Math.random()).slice(0, 3);
-    setCurrentWord(correct);
-    setOptions([correct.cat, ...others].sort(() => 0.5 - Math.random()));
+    const res = generateUnique();
+    setCurrentWord(res.correct);
+    setOptions(res.options);
     setLastWinner(null);
   };
 

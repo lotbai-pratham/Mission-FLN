@@ -4,13 +4,23 @@ import { Plus, Minus, RotateCcw, Package, Info, CheckCircle2, ChevronRight, Arro
 import { cn } from "@/lib/utils";
 import { usePoints } from '@/lib/points-store';
 import GameHeader from '@/components/games/GameHeader';
+import { useNonRepeatingGenerator } from '@/lib/game-utils';
 
 type NumberState = { tens: number; ones: number };
 
 export default function AdditionMaster() {
   const { addXP } = usePoints();
-  const [num1, setNum1] = useState<NumberState>({ tens: 1, ones: 7 });
-  const [num2, setNum2] = useState<NumberState>({ tens: 0, ones: 5 });
+  const { generateUnique } = useNonRepeatingGenerator(
+    () => ({
+      n1: { tens: Math.floor(Math.random() * 3) + 1, ones: Math.floor(Math.random() * 9) + 1 },
+      n2: { tens: Math.floor(Math.random() * 2) + 1, ones: Math.floor(Math.random() * 9) + 1 }
+    }),
+    (res) => `${res.n1.tens}${res.n1.ones}+${res.n2.tens}${res.n2.ones}`
+  );
+
+  const [initialRound] = useState(generateUnique);
+  const [num1, setNum1] = useState<NumberState>(initialRound.n1);
+  const [num2, setNum2] = useState<NumberState>(initialRound.n2);
   const [step, setStep] = useState<'setup' | 'add_ones' | 're_bundle' | 'add_tens' | 'completed'>('setup');
   const [combinedOnes, setCombinedOnes] = useState(0);
   const [combinedTens, setCombinedTens] = useState(0);
@@ -18,8 +28,9 @@ export default function AdditionMaster() {
   const [sessionScore, setSessionScore] = useState(0);
 
   const reset = () => {
-    setNum1({ tens: Math.floor(Math.random() * 3) + 1, ones: Math.floor(Math.random() * 9) + 1 });
-    setNum2({ tens: Math.floor(Math.random() * 2) + 1, ones: Math.floor(Math.random() * 9) + 1 });
+    const next = generateUnique();
+    setNum1(next.n1);
+    setNum2(next.n2);
     setStep('setup');
     setCombinedOnes(0);
     setCombinedTens(0);

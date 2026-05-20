@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { generateGameQuestions } from '@/app/actions/ai';
 import { usePoints } from '@/lib/points-store';
 import { Sparkles, ShoppingCart, Zap, Trophy } from 'lucide-react';
+import { useNonRepeatingGenerator } from '@/lib/game-utils';
 
 const ITEMS = [
   { name: 'सफरचंद', emoji: '🍎', price: 5 },
@@ -46,7 +47,12 @@ function makeRound() {
 }
 
 export default function MarketMath() {
-  const [round, setRound] = useState(makeRound);
+  const { generateUnique } = useNonRepeatingGenerator(
+    makeRound,
+    (r) => `${r.mode}-${r.item.name}-${r.question}-${r.answer}`
+  );
+
+  const [round, setRound] = useState(generateUnique);
   const [score, setScore] = useState(0);
   const [chosen, setChosen] = useState<number | null>(null);
   const [feedback, setFeedback] = useState<'correct' | 'wrong' | null>(null);
@@ -85,7 +91,7 @@ export default function MarketMath() {
       });
       if (questionPool.length < 2) fetchAiQuestions();
     } else {
-      setRound(makeRound());
+      setRound(generateUnique());
     }
   }
 

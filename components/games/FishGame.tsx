@@ -1,7 +1,8 @@
 "use client";
 import { useState } from 'react';
-import { sfx } from '@/lib/sounds';
 import { usePoints } from '@/lib/points-store';
+import { useNonRepeatingArray, shuffle } from '@/lib/game-utils';
+import { sfx } from '@/lib/sounds';
 
 const ROUNDS = [
   { image: '🌳', word: 'झाड', distractors: ['फूल', 'पान', 'फांदी'] },
@@ -12,22 +13,21 @@ const ROUNDS = [
   { image: '🐟', word: 'मासा', distractors: ['बेडूक', 'खेकडा', 'बदक'] },
   { image: '✏️', word: 'पेन्सिल', distractors: ['खोडरबर', 'पट्टी', 'खडू'] },
   { image: '🎒', word: 'दप्तर', distractors: ['पुस्तक', 'पेटी', 'पेन'] },
+  { image: '🌻', word: 'सूर्यफूल', distractors: ['गुलाब', 'मोगरा', 'कमळ'] },
+  { image: '🐱', word: 'मांजर', distractors: ['कुत्रा', 'ससा', 'उंदीर'] },
+  { image: '🐘', word: 'हत्ती', distractors: ['वाघ', 'सिंह', 'घोडा'] },
+  { image: '🚗', word: 'गाडी', distractors: ['सायकल', 'बस', 'विमान'] },
+  { image: '🦋', word: 'फुलपाखरू', distractors: ['मुंगी', 'माशी', 'झुरळ'] },
+  { image: '⚽', word: 'चेंडू', distractors: ['बॅट', 'रिंग', 'खेळणी'] },
 ];
-
-function shuffle<T>(arr: T[]): T[] {
-  return [...arr].sort(() => Math.random() - 0.5);
-}
 
 export default function FishGame() {
   const { addXP } = usePoints();
-  const [roundIdx, setRoundIdx] = useState(0);
+  const { current: round, getNext, poolIndex } = useNonRepeatingArray(ROUNDS, r => r.word);
   const [score, setScore] = useState(0);
   const [feedback, setFeedback] = useState<'correct' | 'wrong' | null>(null);
   const [chosen, setChosen] = useState<string | null>(null);
-  const [shuffledRounds] = useState(() => shuffle(ROUNDS));
-
-  const round = shuffledRounds[roundIdx % shuffledRounds.length];
-  const options = shuffle([round.word, ...round.distractors.slice(0, 3)]);
+  const [options, setOptions] = useState(() => shuffle([round.word, ...round.distractors.slice(0, 3)]));
 
   function catch_(word: string) {
     if (feedback) return;
@@ -42,7 +42,8 @@ export default function FishGame() {
       sfx.playError();
     }
     setTimeout(() => {
-      setRoundIdx(i => i + 1);
+      const nextRound = getNext();
+      setOptions(shuffle([nextRound.word, ...nextRound.distractors.slice(0, 3)]));
       setFeedback(null);
       setChosen(null);
     }, 1200);
@@ -51,7 +52,7 @@ export default function FishGame() {
   return (
     <div className="bg-white dark:bg-slate-900 rounded-3xl overflow-hidden border border-blue-100 shadow-sm">
       <div className="flex justify-between items-center px-6 py-4">
-        <span className="text-sm font-bold text-blue-600 bg-blue-50 px-3 py-1 rounded-full">गुण: {score}/{roundIdx}</span>
+        <span className="text-sm font-bold text-blue-600 bg-blue-50 px-3 py-1 rounded-full">गुण: {score}/{poolIndex}</span>
         <span className="text-2xl">🐟</span>
       </div>
 

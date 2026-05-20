@@ -1,5 +1,7 @@
 "use client";
 import { useState } from 'react';
+import { useNonRepeatingArray } from '@/lib/game-utils';
+import { usePoints } from '@/lib/points-store';
 
 // Marathi CVC words with one letter missing
 const ROUNDS = [
@@ -13,20 +15,20 @@ const ROUNDS = [
   { template: 'क_ल', answer: 'म', options: ['म', 'न', 'ल', 'व'], image: '🪷', hint: 'पाण्यात उगवणारे फूल' },
   { template: '_र', answer: 'घ', options: ['घ', 'क', 'त', 'म'], image: '🏠', hint: 'आपण राहतो ते ठिकाण' },
   { template: 'क_', answer: 'प', options: ['प', 'म', 'न', 'ल'], image: '☕', hint: 'पाणी पितात त्यात' },
+  { template: '_स', answer: 'ब', options: ['ब', 'क', 'म', 'प'], image: '🚌', hint: 'प्रवासासाठी वापरतात' },
+  { template: 'फ_', answer: 'ळ', options: ['ळ', 'ल', 'त', 'थ'], image: '🍎', hint: 'झाडाला येते' },
+  { template: '_ग', answer: 'ढ', options: ['ढ', 'ड', 'म', 'न'], image: '☁️', hint: 'आकाशात असतात, पाऊस देतात' },
+  { template: 'वा_', answer: 'घ', options: ['घ', 'ग', 'च', 'म'], image: '🐅', hint: 'जंगलाचा राजा सारखा' },
+  { template: 'हा_', answer: 'त', options: ['त', 'थ', 'प', 'ब'], image: '✋', hint: 'लिहिण्यासाठी वापरतो' },
 ];
 
-function shuffle<T>(arr: T[]): T[] {
-  return [...arr].sort(() => Math.random() - 0.5);
-}
-
 export default function MissingLetter() {
-  const [rounds] = useState(() => shuffle(ROUNDS));
-  const [idx, setIdx] = useState(0);
+  const { addXP } = usePoints();
+  const { current: round, getNext, poolIndex } = useNonRepeatingArray(ROUNDS, r => r.template);
   const [score, setScore] = useState(0);
   const [chosen, setChosen] = useState<string | null>(null);
   const [feedback, setFeedback] = useState<'correct' | 'wrong' | null>(null);
 
-  const round = rounds[idx % rounds.length];
   const completed = round.template.replace('_', chosen ?? '_');
 
   function pick(letter: string) {
@@ -34,9 +36,12 @@ export default function MissingLetter() {
     setChosen(letter);
     const correct = letter === round.answer;
     setFeedback(correct ? 'correct' : 'wrong');
-    if (correct) setScore(s => s + 1);
+    if (correct) {
+      setScore(s => s + 1);
+      addXP(10);
+    }
     setTimeout(() => {
-      setIdx(i => i + 1);
+      getNext();
       setFeedback(null);
       setChosen(null);
     }, 1200);
@@ -45,7 +50,7 @@ export default function MissingLetter() {
   return (
     <div className="bg-white dark:bg-slate-900 rounded-3xl p-8 border border-teal-100 shadow-sm space-y-6">
       <div className="flex justify-between items-center">
-        <span className="text-sm font-bold text-teal-600 bg-teal-50 px-3 py-1 rounded-full">गुण: {score}/{idx}</span>
+        <span className="text-sm font-bold text-teal-600 bg-teal-50 px-3 py-1 rounded-full">गुण: {score}/{poolIndex}</span>
         <span className="text-2xl">🔡</span>
       </div>
 

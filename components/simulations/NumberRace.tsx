@@ -1,32 +1,41 @@
 'use client';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import CompetitiveArena from './CompetitiveArena';
 import { recordBattleResult } from '@/app/actions';
+import { useNonRepeatingGenerator } from '@/lib/game-utils';
+
+function generateRandomNumbers() {
+  const isHard = Math.random() > 0.5;
+  const range = isHard ? 90 : 9;
+  const min = isHard ? 10 : 1;
+
+  const roundNumbers = new Set<number>();
+  while (roundNumbers.size < 4) {
+    roundNumbers.add(Math.floor(Math.random() * range) + min);
+  }
+  return Array.from(roundNumbers).sort(() => 0.5 - Math.random());
+}
 
 export default function NumberRace({ player1, player2, schoolId, classNum, onClose }: any) {
   const [numbers, setNumbers] = useState<number[]>([]);
   const [target, setTarget] = useState<number>(0);
   const [lastWinner, setLastWinner] = useState<'A' | 'B' | null>(null);
 
-  const generateRound = () => {
-    // Determine level: 1-9 or 10-99
-    const isHard = Math.random() > 0.5;
-    const range = isHard ? 90 : 9;
-    const min = isHard ? 10 : 1;
+  const { generateUnique } = useNonRepeatingGenerator(
+    generateRandomNumbers,
+    (arr) => [...arr].sort().join(',')
+  );
 
-    const roundNumbers = new Set<number>();
-    while (roundNumbers.size < 4) {
-      roundNumbers.add(Math.floor(Math.random() * range) + min);
-    }
-    const arr = Array.from(roundNumbers);
-    setNumbers(arr.sort(() => 0.5 - Math.random()));
+  const generateRound = useCallback(() => {
+    const arr = generateUnique();
+    setNumbers(arr);
     setTarget(Math.max(...arr));
     setLastWinner(null);
-  };
+  }, [generateUnique]);
 
   useEffect(() => {
     generateRound();
-  }, []);
+  }, [generateRound]);
 
   const handleEnd = async (winner: 'A' | 'B' | 'Draw', _scores: { a: number, b: number }) => {
     if (!player1 || !player2 || !schoolId) return;
