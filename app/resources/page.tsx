@@ -147,6 +147,7 @@ function MissionControl() {
   const [sessionPlan, setSessionPlan] = useState<SessionPlan | null>(null);
   const [groupActivityIdx, setGroupActivityIdx] = useState<number[]>([0, 0]);
   const [selectedDetail, setSelectedDetail] = useState<{ groupIdx: number; actIdx: number } | null>(null);
+  const [activeSimIndex, setActiveSimIndex] = useState(0);
   const [completedActivities, setCompletedActivities] = useState<Set<string>>(new Set());
   const [elapsed, setElapsed] = useState(0);
   const [isTimerRunning, setIsTimerRunning] = useState(false);
@@ -192,9 +193,14 @@ function MissionControl() {
     setSessionPlan(plan);
     setGroupActivityIdx(plan.groups.map(() => 0));
     setSelectedDetail(null);
+    setActiveSimIndex(0);
     setCompletedActivities(new Set());
     setSelectedGroupIdx(null);
   }, [classNum, subject]);
+
+  useEffect(() => {
+    setActiveSimIndex(0);
+  }, [selectedDetail]);
 
   useEffect(() => {
     let interval: NodeJS.Timeout;
@@ -227,10 +233,18 @@ function MissionControl() {
     ? sessionPlan.groups[selectedDetail.groupIdx]?.activities[selectedDetail.actIdx]
     : null;
 
-  const ActiveSimulation = useMemo(() => {
-    if (!selectedActivity?.simulationId) return null;
-    return SIM_COMPONENTS[selectedActivity.simulationId] || null;
+  const simList = useMemo(() => {
+    if (!selectedActivity) return [];
+    if (selectedActivity.simulationIds && selectedActivity.simulationIds.length > 0) return selectedActivity.simulationIds;
+    if (selectedActivity.simulationId) return [selectedActivity.simulationId];
+    return [];
   }, [selectedActivity]);
+
+  const ActiveSimulation = useMemo(() => {
+    if (simList.length === 0) return null;
+    const simId = simList[activeSimIndex % simList.length];
+    return SIM_COMPONENTS[simId] || null;
+  }, [simList, activeSimIndex]);
 
   const getNextDetail = () => {
     if (!selectedDetail || !sessionPlan) return null;
@@ -255,7 +269,7 @@ function MissionControl() {
   const resetSession = () => {
     setStep('setup'); setClassNum(null); setSubject(null); setSelectedGroupIdx(null); setIsFocusMode(false);
     setGroupActivityIdx([0, 0]); setCompletedActivities(new Set());
-    setElapsed(0); setLogSuccess(false); setSelectedDetail(null);
+    setElapsed(0); setLogSuccess(false); setSelectedDetail(null); setActiveSimIndex(0);
   };
 
   const handleFinishAndLog = async () => {
@@ -605,6 +619,11 @@ function MissionControl() {
                           <div className="flex-1 min-h-[520px] bg-slate-950 overflow-hidden">
                             <ActiveSimulation player1={battleContext?.p1} player2={battleContext?.p2} schoolId={battleContext?.schoolId || "mock-school-id"} classNum={classNum || 1} />
                           </div>
+                          {simList.length > 1 && (
+                             <button onClick={() => setActiveSimIndex(i => i + 1)} className="w-full py-3 bg-indigo-600 text-white font-black text-sm hover:bg-indigo-700 transition-colors flex items-center justify-center gap-2">
+                               <Gamepad2 className="w-4 h-4" /> EXPLORE ANOTHER GAME
+                             </button>
+                          )}
                           {selectedActivity.materials.length > 0 && (
                             <div className="px-6 py-4 border-t border-slate-100 dark:border-slate-800 flex items-center gap-3 flex-wrap">
                               <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest shrink-0">Materials:</span>
@@ -767,10 +786,15 @@ function MissionControl() {
                   </div>
                   {/* Simulation — full-width, tall */}
                   {ActiveSimulation && (
-                    <div className="border-t border-slate-100 dark:border-slate-800">
-                      <div className="min-h-[520px] bg-slate-950 overflow-hidden rounded-b-[32px]">
+                    <div className="border-t border-slate-100 dark:border-slate-800 flex flex-col">
+                      <div className={cn("min-h-[520px] bg-slate-950 overflow-hidden", simList.length <= 1 ? "rounded-b-[32px]" : "")}>
                         <ActiveSimulation player1={battleContext?.p1} player2={battleContext?.p2} schoolId={battleContext?.schoolId || "mock-school-id"} classNum={classNum || 3} />
                       </div>
+                      {simList.length > 1 && (
+                         <button onClick={() => setActiveSimIndex(i => i + 1)} className="w-full py-4 rounded-b-[32px] bg-indigo-600 text-white font-black text-sm hover:bg-indigo-700 transition-colors flex items-center justify-center gap-2">
+                           <Gamepad2 className="w-5 h-5" /> EXPLORE ANOTHER GAME
+                         </button>
+                      )}
                     </div>
                   )}
                 </div>

@@ -6,6 +6,7 @@ export interface SessionActivity {
   instructions: string[];
   materials: string[];
   simulationId?: string;
+  simulationIds?: string[];
   daySpecific?: 1 | 2;
 }
 
@@ -51,7 +52,7 @@ export const CLASS_1_2_PLAN: SessionPlan = {
             "Keep energy high — this sets the tone for the day"
           ],
           materials: ["Open space or circle seating", "Handkerchief / small prop if needed"],
-          simulationId: "g-oddone"
+          simulationIds: ["g-oddone", "marathi-words", "g-fish"]
         },
         {
           name: "चला ऐकुया",
@@ -65,7 +66,7 @@ export const CLASS_1_2_PLAN: SessionPlan = {
             "Praise participation, not just correct answers"
           ],
           materials: ["Picture card or storybook", "Chitra Card from TaRL kit"],
-          simulationId: "sound-explorer"
+          simulationIds: ["sound-explorer", "story-reader"]
         },
         {
           name: "चला करूया",
@@ -79,7 +80,7 @@ export const CLASS_1_2_PLAN: SessionPlan = {
             "Correct gently using Chaudakhadi reference if needed"
           ],
           materials: ["Notebook or slate", "Pencil / chalk", "Letter/number cards"],
-          simulationId: "g-letters"
+          simulationIds: ["g-letters", "g-missing", "marathi-letters"]
         },
         {
           name: "TLM Based Activities",
@@ -98,7 +99,7 @@ export const CLASS_1_2_PLAN: SessionPlan = {
             "Stones / Seeds for counting", "Bundles of sticks (tens)",
             "Chaudakhadi chart"
           ],
-          simulationId: "bundle-builder"
+          simulationIds: ["bundle-builder", "number-hunter", "g-counting"]
         }
       ]
     }
@@ -131,7 +132,7 @@ export const CLASS_3_4_LANGUAGE_PLAN: SessionPlan = {
             "Can use tongue twisters (ukhane) for language warm-up"
           ],
           materials: ["None required"],
-          simulationId: "g-rhyme"
+          simulationIds: ["g-rhyme", "marathi-letters"]
         },
         {
           name: "Discussion & Story",
@@ -147,7 +148,7 @@ export const CLASS_3_4_LANGUAGE_PLAN: SessionPlan = {
             "Students circle difficult words and write them in their notebooks"
           ],
           materials: ["Story cards / Basic Stories booklet", "Picture Cards", "Paragraph Pustika", "Notebooks"],
-          simulationId: "g-story"
+          simulationIds: ["g-story", "story-reader"]
         },
         {
           name: "Sound Recognition",
@@ -162,7 +163,7 @@ export const CLASS_3_4_LANGUAGE_PLAN: SessionPlan = {
             "Shabdgandh group: focus on building 2–3 letter words from those sounds"
           ],
           materials: ["Chaudakhadi chart", "Letter cards", "Slates or notebooks"],
-          simulationId: "chaudakhadi"
+          simulationIds: ["chaudakhadi", "sound-explorer", "g-letters"]
         },
         {
           name: "Play",
@@ -176,7 +177,7 @@ export const CLASS_3_4_LANGUAGE_PLAN: SessionPlan = {
             "Keep it energetic — students can stand and move"
           ],
           materials: ["Word cards if available", "Chalk for floor games"],
-          simulationId: "marathi-words"
+          simulationIds: ["marathi-words", "g-missing", "g-fish"]
         },
         {
           name: "Matra Practice",
@@ -191,7 +192,7 @@ export const CLASS_3_4_LANGUAGE_PLAN: SessionPlan = {
             "Key matras: आ (ा), इ (ि), ई (ी), उ (ु), ऊ (ू)"
           ],
           materials: ["Chaudakhadi chart for reference", "Student readers"],
-          simulationId: "g-matra"
+          simulationIds: ["g-matra", "matra-chakra"]
         },
         {
           name: "Write",
@@ -206,7 +207,7 @@ export const CLASS_3_4_LANGUAGE_PLAN: SessionPlan = {
             "Correct errors using Chaudakhadi — help, don't scold"
           ],
           materials: ["Notebook", "Pencil", "Dictation word list from story"],
-          simulationId: "word-builder"
+          simulationIds: ["word-builder", "g-sentence"]
         }
       ]
     },
@@ -233,7 +234,7 @@ export const CLASS_3_4_LANGUAGE_PLAN: SessionPlan = {
             "For physical readers: use Basic Stories booklet alongside"
           ],
           materials: ["Basic Stories booklet", "Anuched Pustika", "Notebooks"],
-          simulationId: "story-reader",
+          simulationIds: ["story-reader", "vachan-pravas"],
           daySpecific: 1
         },
         {
@@ -277,7 +278,7 @@ export const CLASS_3_4_LANGUAGE_PLAN: SessionPlan = {
             "Teacher circulates and provides individual feedback"
           ],
           materials: ["Bal Library Worksheet", "Notebook", "Pencil"],
-          simulationId: "sentence-arch",
+          simulationIds: ["sentence-arch", "word-builder"],
           daySpecific: 1
         },
         // DAY 2
@@ -293,7 +294,7 @@ export const CLASS_3_4_LANGUAGE_PLAN: SessionPlan = {
             "Appreciate effort — clap for everyone"
           ],
           materials: ["Story text", "Basic props if available"],
-          simulationId: "marathi-sent",
+          simulationIds: ["marathi-sent", "g-true"],
           daySpecific: 2
         },
         {
@@ -321,7 +322,7 @@ export const CLASS_3_4_LANGUAGE_PLAN: SessionPlan = {
             "Go over answers as a class — discuss any mistakes"
           ],
           materials: ["Bal Library Worksheet", "Pencil"],
-          simulationId: "vachan-pravas",
+          simulationIds: ["vachan-pravas", "sentence-arch"],
           daySpecific: 2
         }
       ]
@@ -356,7 +357,7 @@ export const CLASS_3_4_MATHS_PLAN: SessionPlan = {
             "Samay group: count in tens — 10, 20, 30..."
           ],
           materials: ["Number Flash Cards", "Stones / seeds for Pankti group"],
-          simulationId: "g-bigger"
+          simulationIds: ["g-bigger", "math-sprint"]
         },
         {
           name: "Discussion around Mathematics",
@@ -370,7 +371,7 @@ export const CLASS_3_4_MATHS_PLAN: SessionPlan = {
             "Write one problem on the board — students discuss before solving"
           ],
           materials: ["Blackboard", "Word Problem Cards"],
-          simulationId: "g-counting"
+          simulationIds: ["g-counting", "g-market"]
         },
         {
           name: "Number Recognition",
@@ -385,7 +386,7 @@ export const CLASS_3_4_MATHS_PLAN: SessionPlan = {
             "Ask students to find numbers in the room (on books, walls, etc.)"
           ],
           materials: ["Number Flash Cards", "Stones/seeds", "Bundles of 10 sticks", "Slates"],
-          simulationId: "number-line"
+          simulationIds: ["number-line", "number-hunter", "bundle-builder", "sankhya-chakra"]
         },
         {
           name: "Basic Operation & Word Problem",
@@ -404,7 +405,7 @@ export const CLASS_3_4_MATHS_PLAN: SessionPlan = {
             "Stones / seeds", "Bundles of 10 sticks", "Slates + chalk",
             "Word Problem Cards", "Math Worksheets (Class 3-5, Level 1)"
           ],
-          simulationId: "addition-master"
+          simulationIds: ["addition-master", "g-bonds"]
         },
         {
           name: "Games",
@@ -417,7 +418,7 @@ export const CLASS_3_4_MATHS_PLAN: SessionPlan = {
             "Award points or stars to encourage friendly competition"
           ],
           materials: ["Number cards", "Stones if needed"],
-          simulationId: "g-train"
+          simulationIds: ["g-train", "g-weights", "num-race-b"]
         }
       ]
     },
@@ -439,7 +440,7 @@ export const CLASS_3_4_MATHS_PLAN: SessionPlan = {
             "Students suggest their own 3-digit riddles for the group to solve"
           ],
           materials: ["Blackboard", "Word Problem Cards"],
-          simulationId: "g-place"
+          simulationIds: ["g-place", "math-mania-market"]
         },
         {
           name: "Number Recognition",
@@ -453,7 +454,7 @@ export const CLASS_3_4_MATHS_PLAN: SessionPlan = {
             "Students arrange pebbles in H-T-U columns to represent numbers"
           ],
           materials: ["H-T-O grid (drawn on board)", "Pebbles/seeds", "Slates"],
-          simulationId: "pv-battle-b"
+          simulationIds: ["pv-battle-b", "sankhya-chakra", "digital-abacus"]
         },
         {
           name: "Basic Operation & Word Problem",
@@ -470,7 +471,7 @@ export const CLASS_3_4_MATHS_PLAN: SessionPlan = {
             "Blackboard", "Slates", "Word Problem Cards",
             "Math Worksheets (Class 3-5, Level 2)"
           ],
-          simulationId: "math-duel-b"
+          simulationIds: ["math-duel-b", "addition-master"]
         },
         {
           name: "Working in Small Groups",
@@ -485,7 +486,7 @@ export const CLASS_3_4_MATHS_PLAN: SessionPlan = {
             "Teacher observes and asks probing questions to each group"
           ],
           materials: ["Word Problem Cards", "Blackboard for group presentations", "Slates"],
-          simulationId: "math-mania-market"
+          simulationIds: ["math-mania-market", "g-market"]
         },
         {
           name: "टिली-बंडल द्वंद्व",
@@ -500,7 +501,7 @@ export const CLASS_3_4_MATHS_PLAN: SessionPlan = {
             "Repeat for 5–6 rounds; highest score wins"
           ],
           materials: ["Tablet / screen", "Physical bundle sticks (optional reference)"],
-          simulationId: "tili-bundle-duel"
+          simulationIds: ["tili-bundle-duel"]
         },
         {
           name: "संख्या चक्र",
@@ -514,7 +515,7 @@ export const CLASS_3_4_MATHS_PLAN: SessionPlan = {
             "Use alongside the blackboard — write the number and ask a student to decompose it"
           ],
           materials: ["Tablet / screen", "Blackboard"],
-          simulationId: "sankhya-chakra"
+          simulationIds: ["sankhya-chakra", "number-line"]
         },
         {
           name: "डिजिटल अबॅकस",
@@ -528,7 +529,7 @@ export const CLASS_3_4_MATHS_PLAN: SessionPlan = {
             "Cross-check: bead total must match the target number"
           ],
           materials: ["Tablet / screen", "Physical abacus (optional)"],
-          simulationId: "digital-abacus"
+          simulationIds: ["digital-abacus"]
         },
         {
           name: "गुणाकार शिका",
@@ -543,7 +544,7 @@ export const CLASS_3_4_MATHS_PLAN: SessionPlan = {
             "Reinforce: 4 × 6 is '4 groups of 6', not just a fact to memorise"
           ],
           materials: ["Tablet / screen", "Counters or pebbles for physical modelling"],
-          simulationId: "multiplication-sim"
+          simulationIds: ["multiplication-sim", "repeated-addition"]
         },
         {
           name: "समान वाटणी — भागाकार",
@@ -558,7 +559,7 @@ export const CLASS_3_4_MATHS_PLAN: SessionPlan = {
             "Ask: 'each child gets how many?' — connect to the quotient"
           ],
           materials: ["Tablet / screen", "Physical objects (stones, seeds) for parallel activity"],
-          simulationId: "division-sim"
+          simulationIds: ["division-sim", "equal-sharing"]
         },
         {
           name: "वारंवार बेरीज → गुणाकार",
@@ -573,7 +574,7 @@ export const CLASS_3_4_MATHS_PLAN: SessionPlan = {
             "Connect explicitly: 'वारंवार बेरीज = गुणाकार'"
           ],
           materials: ["Tablet / screen", "Physical objects for parallel grouping"],
-          simulationId: "repeated-addition"
+          simulationIds: ["repeated-addition"]
         },
         {
           name: "अपूर्णांक — आकृतीद्वारे",
@@ -588,7 +589,7 @@ export const CLASS_3_4_MATHS_PLAN: SessionPlan = {
             "Use physical chapati or paper folding alongside this activity"
           ],
           materials: ["Tablet / screen", "Paper for folding (optional)", "Chapati / circular object"],
-          simulationId: "fraction-viz"
+          simulationIds: ["fraction-viz"]
         },
         {
           name: "समान वाटणी — भागाकार",
@@ -603,7 +604,7 @@ export const CLASS_3_4_MATHS_PLAN: SessionPlan = {
             "After each round, ask: 'प्रत्येकाला किती मिळाले? समान आहे का?'"
           ],
           materials: ["Tablet / screen", "Physical stones or seeds for parallel distribution"],
-          simulationId: "equal-sharing"
+          simulationIds: ["equal-sharing", "division-sim"]
         }
       ]
     }
