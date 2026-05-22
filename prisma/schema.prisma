@@ -78,7 +78,6 @@ model Assessment {
   
   addition        Boolean  @default(false)
   subtraction     Boolean  @default(false)
-  multiplication  Boolean  @default(false)
   division        Boolean  @default(false)
 
   studentId       String

@@ -210,7 +210,6 @@ export async function getDashboardStats(filters: { divisionId?: string, projectO
         numeracyLevel: true,
         addition: true,
         subtraction: true,
-        multiplication: true,
         division: true,
         student: { select: { class: true } }
       }
@@ -219,11 +218,10 @@ export async function getDashboardStats(filters: { divisionId?: string, projectO
 
   // Operations by term
   const operations = allAssessments.reduce((acc: any, curr: any) => {
-    if (!acc[curr.term]) acc[curr.term] = { addition: 0, subtraction: 0, multiplication: 0, division: 0, total: 0 };
+    if (!acc[curr.term]) acc[curr.term] = { addition: 0, subtraction: 0, division: 0, total: 0 };
     acc[curr.term].total += 1;
     if (curr.addition) acc[curr.term].addition += 1;
     if (curr.subtraction) acc[curr.term].subtraction += 1;
-    if (curr.multiplication) acc[curr.term].multiplication += 1;
     if (curr.division) acc[curr.term].division += 1;
     return acc;
   }, {});
@@ -360,7 +358,6 @@ export async function getCohortStats(filters: { divisionId?: string, projectOffi
   const opsTransitions: Record<string, any> = {
     addition: { gained: 0, maintained: 0, regressed: 0, stagnant: 0 },
     subtraction: { gained: 0, maintained: 0, regressed: 0, stagnant: 0 },
-    multiplication: { gained: 0, maintained: 0, regressed: 0, stagnant: 0 },
     division: { gained: 0, maintained: 0, regressed: 0, stagnant: 0 }
   };
 
@@ -374,11 +371,13 @@ export async function getCohortStats(filters: { divisionId?: string, projectOffi
       litTransitions[litKey] = (litTransitions[litKey] || 0) + 1;
 
       // Numeracy transition
-      const numKey = `${startAssessment.numeracyLevel}to${endAssessment.numeracyLevel}`;
+      const startNum = startAssessment.numeracyLevel === 6 ? 5 : startAssessment.numeracyLevel === 5 ? 4 : startAssessment.numeracyLevel;
+      const endNum = endAssessment.numeracyLevel === 6 ? 5 : endAssessment.numeracyLevel === 5 ? 4 : endAssessment.numeracyLevel;
+      const numKey = `${startNum}to${endNum}`;
       numTransitions[numKey] = (numTransitions[numKey] || 0) + 1;
 
       // Operations transitions
-      ['addition', 'subtraction', 'multiplication', 'division'].forEach(op => {
+      ['addition', 'subtraction', 'division'].forEach(op => {
          const start = (startAssessment as any)[op];
          const end = (endAssessment as any)[op];
          if (!start && end) opsTransitions[op].gained++;
@@ -446,7 +445,7 @@ export async function createStudent(data: {
   return student;
 }
 
-export async function createAssessment(data: { studentId: string, assessorName: string, literacyLevel: number, numeracyLevel: number, addition?: boolean, subtraction?: boolean, multiplication?: boolean, division?: boolean }) {
+export async function createAssessment(data: { studentId: string, assessorName: string, literacyLevel: number, numeracyLevel: number, addition?: boolean, subtraction?: boolean, division?: boolean }) {
   const assessment = await prisma.assessment.create({
     data: {
       studentId: data.studentId,
@@ -455,7 +454,6 @@ export async function createAssessment(data: { studentId: string, assessorName: 
       numeracyLevel: data.numeracyLevel,
       addition: data.addition || false,
       subtraction: data.subtraction || false,
-      multiplication: data.multiplication || false,
       division: data.division || false,
       date: new Date()
     } as any
@@ -567,7 +565,6 @@ export async function updateAssessment(id: string, data: {
   term: string;
   addition: boolean;
   subtraction: boolean;
-  multiplication: boolean;
   division: boolean;
 }) {
   await requireAdmin();
@@ -871,9 +868,20 @@ export async function getMatchCandidates(
     .filter(s => {
       const latest = s.assessments[0];
       if (!latest) return false;
-      return subject === 'literacy'
-        ? latest.literacyLevel === level
-        : latest.numeracyLevel === level;
+      if (subject === 'literacy') {
+        return latest.literacyLevel === level;
+      } else {
+        // UI levels: 0: Beginner, 1: 1-9, 2: 10-99, 3: Addition, 4: Subtraction, 5: Division
+        // DB levels: 0: Beginner, 1: 1-9, 2: 10-99, 3: Addition, 4: Subtraction, 5: Multiplication, 6: Division
+        const dbLevel = latest.numeracyLevel;
+        if (level === 5) {
+          return dbLevel === 6;
+        } else if (level === 4) {
+          return dbLevel === 4 || dbLevel === 5;
+        } else {
+          return dbLevel === level;
+        }
+      }
     })
     .map(s => ({ id: s.id, name: s.name, class: s.class, gender: s.gender }));
 }

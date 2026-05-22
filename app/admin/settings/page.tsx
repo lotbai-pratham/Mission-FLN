@@ -14,7 +14,6 @@ const DEFAULT_ASSETS = {
   Num100to999: "456   102   890   365   741",
   AddProblem: "42 + 15 = ?",
   SubProblem: "73 - 28 = ?",
-  MulProblem: "14 × 3 = ?",
   DivProblem: "84 ÷ 4 = ?"
 };
 
@@ -115,7 +114,7 @@ export default function AdminSettingsPage() {
       {/* OPERATIONS */}
       <div className="bg-white dark:bg-slate-900 rounded-3xl p-8 border border-slate-200 dark:border-slate-800 shadow-sm">
          <h2 className="text-xl font-bold flex items-center gap-2 text-slate-800 dark:text-slate-100 mb-6 border-b pb-4"><Variable className="w-5 h-5 text-emerald-500"/> Arithmetic Operations</h2>
-         <div className="grid md:grid-cols-2 gap-5">
+         <div className="grid md:grid-cols-3 gap-5">
             <div>
                <label className="text-sm font-bold text-slate-600 mb-2 block">Addition Problem</label>
                <input type="text" value={settings.AddProblem} onChange={(e) => handleChange("AddProblem", e.target.value)}
@@ -124,11 +123,6 @@ export default function AdminSettingsPage() {
             <div>
                <label className="text-sm font-bold text-slate-600 mb-2 block">Subtraction Problem</label>
                <input type="text" value={settings.SubProblem} onChange={(e) => handleChange("SubProblem", e.target.value)}
-                         className="w-full bg-slate-50 dark:bg-slate-800 border-none ring-1 ring-slate-200 rounded-xl px-4 py-3 text-lg font-black tracking-widest outline-none focus:ring-2 focus:ring-blue-500"/>
-            </div>
-            <div>
-               <label className="text-sm font-bold text-slate-600 mb-2 block">Multiplication Problem</label>
-               <input type="text" value={settings.MulProblem} onChange={(e) => handleChange("MulProblem", e.target.value)}
                          className="w-full bg-slate-50 dark:bg-slate-800 border-none ring-1 ring-slate-200 rounded-xl px-4 py-3 text-lg font-black tracking-widest outline-none focus:ring-2 focus:ring-blue-500"/>
             </div>
             <div>

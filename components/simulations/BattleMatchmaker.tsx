@@ -35,6 +35,11 @@ export default function BattleMatchmaker({
   const [searchQuery, setSearchQuery] = useState('');
   const [isManual, setIsManual] = useState(!userSchoolId && !isAdmin);
   const [manualNames, setManualNames] = useState({ p1: '', p2: '' });
+  const [selectedLevel, setSelectedLevel] = useState<number>(level);
+
+  useEffect(() => {
+    setSelectedLevel(level);
+  }, [level]);
 
   // Fetch schools if admin
   useEffect(() => {
@@ -43,11 +48,11 @@ export default function BattleMatchmaker({
     }
   }, [isAdmin]);
 
-  // Fetch candidates when school/class changes
+  // Fetch candidates when school/class/level changes
   useEffect(() => {
     if (selectedSchoolId && classNum) {
       setMatching(true);
-      getMatchCandidates(selectedSchoolId, classNum, subject, level)
+      getMatchCandidates(selectedSchoolId, classNum, subject, selectedLevel)
         .then(res => {
           setCandidates(res);
           // Auto-match first two DISTINCT candidates if available
@@ -62,7 +67,7 @@ export default function BattleMatchmaker({
         })
         .finally(() => setMatching(false));
     }
-  }, [selectedSchoolId, classNum, subject, level]);
+  }, [selectedSchoolId, classNum, subject, selectedLevel]);
 
   const filteredCandidates = candidates.filter(c => 
     c.name.toLowerCase().includes(searchQuery.toLowerCase())
@@ -106,7 +111,7 @@ export default function BattleMatchmaker({
             </button>
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-3 gap-4">
             <div className="space-y-2">
               <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest flex items-center gap-1.5">
                 <School className="w-3 h-3" /> Select School
@@ -115,16 +120,50 @@ export default function BattleMatchmaker({
                 <select 
                   value={selectedSchoolId} 
                   onChange={(e) => setSelectedSchoolId(e.target.value)}
-                  className="w-full bg-slate-800 border-none rounded-xl px-4 py-2.5 text-sm text-white focus:ring-2 focus:ring-orange-500 transition-all font-bold"
+                  className="w-full bg-slate-800 border-none rounded-xl px-3 py-2 text-[11px] text-white focus:ring-2 focus:ring-orange-500 transition-all font-bold"
                 >
                   <option value="">Choose School...</option>
                   {schools.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
                 </select>
               ) : (
-                <div className="w-full bg-slate-800/50 rounded-xl px-4 py-2.5 text-sm text-white font-bold border border-slate-700/50">
+                <div className="w-full bg-slate-800/50 rounded-xl px-3 py-2 text-[11px] text-white font-bold border border-slate-700/50 truncate">
                   {userSchoolId ? "Your School" : "No School Assigned"}
                 </div>
               )}
+            </div>
+
+            <div className="space-y-2">
+              <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest flex items-center gap-1.5">
+                <GraduationCap className="w-3 h-3" /> Class
+              </label>
+              <select 
+                value={classNum} 
+                onChange={(e) => setClassNum(Number(e.target.value))}
+                className="w-full bg-slate-800 border-none rounded-xl px-3 py-2 text-[11px] text-white focus:ring-2 focus:ring-orange-500 transition-all font-bold"
+              >
+                {[1, 2, 3, 4, 5].map(c => <option key={c} value={c}>Class {c}</option>)}
+              </select>
+            </div>
+
+            <div className="space-y-2">
+              <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest flex items-center gap-1.5">
+                <Users className="w-3 h-3" /> Level
+              </label>
+              <select 
+                value={selectedLevel} 
+                onChange={(e) => setSelectedLevel(Number(e.target.value))}
+                className="w-full bg-slate-800 border-none rounded-xl px-3 py-2 text-[11px] text-white focus:ring-2 focus:ring-orange-500 transition-all font-bold"
+              >
+                {subject === 'literacy' ? (
+                  ['Beginner', 'Letter', 'Word', 'Paragraph', 'Story'].map((label, idx) => (
+                    <option key={idx} value={idx}>{label}</option>
+                  ))
+                ) : (
+                  ['Beginner', '1–9', '10–99', 'Addition', 'Subtraction', 'Division'].map((label, idx) => (
+                    <option key={idx} value={idx}>{label}</option>
+                  ))
+                )}
+              </select>
             </div>
           </div>
 
@@ -209,8 +248,11 @@ export default function BattleMatchmaker({
             <div className="flex items-center justify-between">
               <h3 className="text-sm font-black text-slate-300 flex items-center gap-2">
                 <Users className="w-4 h-4 text-orange-500" /> Eligible Students
-                <span className="text-[10px] bg-slate-800 px-2 py-0.5 rounded-full text-slate-500 font-bold ml-1">
-                  Level {level}
+                <span className="text-[10px] bg-slate-800 px-2 py-0.5 rounded-full text-slate-400 font-bold ml-1">
+                  {subject === 'literacy'
+                    ? ['Beginner', 'Letter', 'Word', 'Paragraph', 'Story'][selectedLevel]
+                    : ['Beginner', '1–9', '10–99', 'Addition', 'Subtraction', 'Division'][selectedLevel]
+                  }
                 </span>
               </h3>
               <div className="relative">

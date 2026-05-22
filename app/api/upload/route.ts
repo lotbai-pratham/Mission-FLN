@@ -50,8 +50,7 @@ function parseNumeracyLevel(val: string) {
   if (str.includes('1-9') || str.includes('1 ते 9')) return 1;
   if (str.includes('10-99') || str.includes('10 ते 99') || str.includes('100') || str.includes('999')) return 2;
   if (str.includes('addition') || str.includes('बेरीज')) return 3;
-  if (str.includes('subtraction') || str.includes('वजाबाकी')) return 4;
-  if (str.includes('multiplication') || str.includes('गुणाकार')) return 5;
+  if (str.includes('subtraction') || str.includes('वजाबाकी') || str.includes('multiplication') || str.includes('गुणाकार')) return 4;
   if (str.includes('division') || str.includes('भागाकार')) return 6;
   return 0;
 }
@@ -117,7 +116,6 @@ const COLS = {
   numeracy: ['Math Recognition (गणित ओळख)', 'Math Recognition', 'Numeracy Level', 'Numeracy', 'गणित ओळख', 'गणित'],
   addition: ['Addition (बेरीज)', 'Addition', 'बेरीज'],
   subtraction: ['Subtraction (वजाबाकी)', 'Subtraction', 'वजाबाकी'],
-  multiplication: ['Multiplication (गुणाकार)', 'Multiplication', 'गुणाकार'],
   divisionOp: ['Division (भागाकार)', 'Division Fun', 'भागाकार']
 };
 
@@ -273,7 +271,6 @@ export async function POST(req: Request) {
         numeracyLevel: parseNumeracyLevel(getRowValue(row, COLS.numeracy)),
         addition: checkOp(getRowValue(row, COLS.addition)),
         subtraction: checkOp(getRowValue(row, COLS.subtraction)),
-        multiplication: checkOp(getRowValue(row, COLS.multiplication)),
         division: checkOp(getRowValue(row, COLS.divisionOp)),
         studentId: sid
       };

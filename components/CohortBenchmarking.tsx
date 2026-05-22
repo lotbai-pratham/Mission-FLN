@@ -5,7 +5,7 @@ import { getCohortStats } from "@/app/actions";
 import { TrendingUp, ArrowRight, BookOpen, Calculator, Users } from "lucide-react";
 
 const LIT_LABELS = ['Beginner', 'Letter', 'Word', 'Paragraph', 'Story'];
-const NUM_LABELS = ['Beginner', 'N 1-9', 'N 10-99', 'N 100-999'];
+const NUM_LABELS = ['Beginner', 'N 1-9', 'N 10-99', 'Addition', 'Subtraction', 'Division'];
 
 export default function CohortBenchmarking({ filters, hierarchy }: { filters: any, hierarchy: any[] }) {
   const [startTerm, setStartTerm] = useState("Baseline");
@@ -191,10 +191,9 @@ export default function CohortBenchmarking({ filters, hierarchy }: { filters: an
                   </div>
                   <div className="text-xs font-bold text-slate-400">{startTerm} → {endTerm} Mastery Tracking</div>
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
                   {renderOpsMatrix('Addition', data.opsTransitions.addition)}
                   {renderOpsMatrix('Subtraction', data.opsTransitions.subtraction)}
-                  {renderOpsMatrix('Multiplication', data.opsTransitions.multiplication)}
                   {renderOpsMatrix('Division', data.opsTransitions.division)}
               </div>
           </div>

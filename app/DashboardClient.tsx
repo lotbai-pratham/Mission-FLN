@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useTransition } from "react";
+import { useState, useEffect, useTransition, Fragment } from "react";
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip,
   ResponsiveContainer, Legend, Cell
@@ -9,9 +9,9 @@ import { BookOpen, Calculator, Users, School, Filter, TrendingUp, LayoutDashboar
 import { getDashboardStats, getStrugglingStudents, getGrowthVelocity, getInterventionPlan, getPORankings } from "@/app/actions";
 
 const LIT_LABELS = ['Beginner', 'Letter', 'Word', 'Paragraph', 'Story'];
-const NUM_LABELS = ['Beginner', '1-9', '10-99', 'Addition', 'Subtraction', 'Multiplication', 'Division'];
+const NUM_LABELS = ['Beginner', '1-9', '10-99', 'Addition', 'Subtraction', 'Division'];
 const LIT_COLORS = ['#ef4444', '#f97316', '#eab308', '#22c55e', '#3b82f6'];
-const NUM_COLORS = ['#ef4444', '#f97316', '#eab308', '#22c55e', '#3b82f6', '#8b5cf6', '#ec4899'];
+const NUM_COLORS = ['#ef4444', '#f97316', '#eab308', '#22c55e', '#3b82f6', '#ec4899'];
 const TERM_COLORS: Record<string, string> = { Baseline: '#6366f1', Midline: '#f59e0b', Endline: '#22c55e' };
 const TERMS = ['Baseline', 'Midline', 'Endline'];
 
@@ -94,8 +94,18 @@ export default function DashboardClient({ initialStats, hierarchy }: { initialSt
     return labels.map((label, level) => {
       const entry: any = { name: label };
       TERMS.forEach(t => {
-        const found = dataArray?.find((item: any) => item[key] === level && item.term === t);
-        const count = found ? found._count.studentId : 0;
+        let count = 0;
+        if (type === 'num') {
+          const matchingItems = dataArray?.filter((item: any) => {
+            const dbLvl = item[key];
+            const mappedLvl = dbLvl === 6 ? 5 : dbLvl === 5 ? 4 : dbLvl;
+            return mappedLvl === level && item.term === t;
+          }) ?? [];
+          count = matchingItems.reduce((acc: number, item: any) => acc + item._count.studentId, 0);
+        } else {
+          const found = dataArray?.find((item: any) => item[key] === level && item.term === t);
+          count = found ? found._count.studentId : 0;
+        }
         entry[t] = asPct ? (termTotals[t] > 0 ? Math.round((count / termTotals[t]) * 100) : 0) : count;
       });
       return entry;
@@ -108,7 +118,7 @@ export default function DashboardClient({ initialStats, hierarchy }: { initialSt
 
     TERMS.forEach(t => {
       termTotals[t] = 0;
-      opCounts[t] = { addition: 0, subtraction: 0, multiplication: 0, division: 0 };
+      opCounts[t] = { addition: 0, subtraction: 0, division: 0 };
 
       (stats.numeracies ?? [])
         .filter((item: any) => item.term === t)
@@ -119,12 +129,11 @@ export default function DashboardClient({ initialStats, hierarchy }: { initialSt
 
           if (lvl >= 3) opCounts[t].addition += count;
           if (lvl >= 4) opCounts[t].subtraction += count;
-          if (lvl >= 5) opCounts[t].multiplication += count;
           if (lvl >= 6) opCounts[t].division += count;
         });
     });
 
-    return ['addition', 'subtraction', 'multiplication', 'division'].map(op => {
+    return ['addition', 'subtraction', 'division'].map(op => {
       const entry: any = { name: op[0].toUpperCase() + op.slice(1) };
       TERMS.forEach(t => {
         const count = opCounts[t]?.[op] ?? 0;
@@ -511,10 +520,10 @@ function SummaryTable({ type, selectedClass, overallBreakdown, classBreakdown }:
             <tr className="bg-slate-50/50 dark:bg-slate-800/30 text-xs text-slate-400">
               <th className="px-6 py-1" />
               {termsPresent.map(t => (
-                <>
-                  <th key={`${t}_pct`} className="px-4 py-1 text-center">%</th>
-                  <th key={`${t}_cnt`} className="px-4 py-1 text-center">#</th>
-                </>
+                <Fragment key={t}>
+                  <th className="px-4 py-1 text-center">%</th>
+                  <th className="px-4 py-1 text-center">#</th>
+                </Fragment>
               ))}
             </tr>
           </thead>
@@ -525,12 +534,12 @@ function SummaryTable({ type, selectedClass, overallBreakdown, classBreakdown }:
                 {termsPresent.map(t => {
                   const d = breakdown[t]?.levels?.[lvl];
                   return (
-                    <>
-                      <td key={`${t}_pct`} className="px-4 py-3 text-center">
+                    <Fragment key={t}>
+                      <td className="px-4 py-3 text-center">
                         <span className="font-extrabold" style={{ color: TERM_COLORS[t] }}>{d?.pct ?? 0}%</span>
                       </td>
-                      <td key={`${t}_cnt`} className="px-4 py-3 text-center text-slate-500">{d?.count ?? 0}</td>
-                    </>
+                      <td className="px-4 py-3 text-center text-slate-500">{d?.count ?? 0}</td>
+                    </Fragment>
                   );
                 })}
               </tr>

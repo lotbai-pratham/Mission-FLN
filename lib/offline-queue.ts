@@ -11,7 +11,6 @@ export type OfflineAssessment = {
   numeracyLevel: number;
   addition: boolean;
   subtraction: boolean;
-  multiplication: boolean;
   division: boolean;
   // For display only
   studentName?: string;

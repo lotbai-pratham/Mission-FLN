@@ -19,7 +19,6 @@ type Assessment = {
   numeracyLevel: number;
   addition: boolean;
   subtraction: boolean;
-  multiplication: boolean;
   division: boolean;
   student: {
     name: string;
@@ -68,7 +67,6 @@ export default function DataClient({
       term: a.term,
       addition: a.addition,
       subtraction: a.subtraction,
-      multiplication: a.multiplication,
       division: a.division,
     });
   }
@@ -334,7 +332,7 @@ export default function DataClient({
                     <td className="px-4 py-3">
                       {isEditing ? (
                         <div className="flex flex-col gap-1 text-xs">
-                          {(["addition", "subtraction", "multiplication", "division"] as const).map((op) => (
+                          {(["addition", "subtraction", "division"] as const).map((op) => (
                             <label key={op} className="flex items-center gap-1 capitalize cursor-pointer">
                               <input type="checkbox" checked={editForm[op]} onChange={(e) => setEditForm({ ...editForm, [op]: e.target.checked })} className="rounded" />
                               {op}
@@ -343,10 +341,10 @@ export default function DataClient({
                         </div>
                       ) : (
                         <div className="flex flex-wrap gap-1">
-                          {(["addition", "subtraction", "multiplication", "division"] as const).filter((op) => a[op]).map((op) => (
+                          {(["addition", "subtraction", "division"] as const).filter((op) => a[op]).map((op) => (
                             <span key={op} className="px-1.5 py-0.5 bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-400 rounded text-xs capitalize">{op.slice(0, 3)}</span>
                           ))}
-                          {!a.addition && !a.subtraction && !a.multiplication && !a.division && <span className="text-slate-300 text-xs">—</span>}
+                          {!a.addition && !a.subtraction && !a.division && <span className="text-slate-300 text-xs">—</span>}
                         </div>
                       )}
                     </td>

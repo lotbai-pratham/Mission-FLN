@@ -6,7 +6,7 @@ import { LITERACY_ACTIVITIES, NUMERACY_ACTIVITIES, TaRLActivity } from "@/lib/ta
 import ProgressChart from "@/components/ProgressChart";
 
 const LEVEL_LABELS_LIT = ['Beginner', 'Letter', 'Word', 'Paragraph', 'Story'];
-const LEVEL_LABELS_NUM = ['Beginner', 'Num 1-9', 'Num 10-99', 'Addition', 'Subtraction', 'Multiplication', 'Division'];
+const LEVEL_LABELS_NUM = ['Beginner', 'Num 1-9', 'Num 10-99', 'Addition', 'Subtraction', 'Division'];
 
 // Data now comes from lib/tarl_data.ts
 
@@ -18,7 +18,8 @@ export default async function StudentProfilePage({ params }: { params: Promise<{
 
   const latestAssessment = student.assessments[0]; // Ordered by date desc
   const litLevel = latestAssessment?.literacyLevel ?? -1;
-  const numLevel = latestAssessment?.numeracyLevel ?? -1;
+  const dbNumLevel = latestAssessment?.numeracyLevel ?? -1;
+  const numLevel = dbNumLevel === 6 ? 5 : dbNumLevel === 5 ? 4 : dbNumLevel;
 
   const litActivities = LITERACY_ACTIVITIES[litLevel] || [];
   const numActivities = NUMERACY_ACTIVITIES[numLevel] || [];
@@ -180,7 +181,7 @@ export default async function StudentProfilePage({ params }: { params: Promise<{
                                      <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Numeracy</span>
                                      <div className="flex items-center gap-2">
                                         <span className="bg-emerald-50 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400 px-3 py-1 rounded-lg text-xs font-black">
-                                           {LEVEL_LABELS_NUM[a.numeracyLevel]}
+                                           {LEVEL_LABELS_NUM[a.numeracyLevel === 6 ? 5 : a.numeracyLevel === 5 ? 4 : a.numeracyLevel]}
                                         </span>
                                         {numGrowth > 0 && <TrendingUp className="w-4 h-4 text-emerald-500" />}
                                         {numGrowth === 0 && idx < student.assessments.length - 1 && <Minus className="w-4 h-4 text-slate-300" />}

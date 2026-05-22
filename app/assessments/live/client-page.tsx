@@ -79,10 +79,10 @@ export default function LiveTrackerClient({ hierarchy: serverHierarchy, settings
   // Scoring Hooks
   const [litLevel, setLitLevel] = useState<number | null>(null);
   const [numLevel, setNumLevel] = useState<number | null>(null);
-  const [ops, setOps] = useState({ add: false, sub: false, mul: false, div: false });
+  const [ops, setOps] = useState({ add: false, sub: false, div: false });
   const [litNode, setLitNode] = useState<'Paragraph' | 'Story' | 'Words' | 'Letters'>('Paragraph');
   const [numNode, setNumNode] = useState<'2-digit' | '1-digit' | '3-digit'>('2-digit');
-  const [currentOp, setCurrentOp] = useState<'add' | 'sub' | 'mul' | 'div'>('add');
+  const [currentOp, setCurrentOp] = useState<'add' | 'sub' | 'div'>('add');
 
   const fetchStudents = async (sId: string) => {
     setSchoolId(sId);
@@ -146,8 +146,7 @@ export default function LiveTrackerClient({ hierarchy: serverHierarchy, settings
     setOps(prev => ({ ...prev, [currentOp]: pass }));
     const delay = funMode ? 1300 : 0;
     if (currentOp === 'add') setTimeout(() => setCurrentOp('sub'), delay);
-    else if (currentOp === 'sub') setTimeout(() => setCurrentOp('mul'), delay);
-    else if (currentOp === 'mul') setTimeout(() => setCurrentOp('div'), delay);
+    else if (currentOp === 'sub') setTimeout(() => setCurrentOp('div'), delay);
     else setTimeout(() => finishTest(pass), delay);
   };
 
@@ -160,7 +159,6 @@ export default function LiveTrackerClient({ hierarchy: serverHierarchy, settings
       numeracyLevel: numLevel as number,
       addition: ops.add,
       subtraction: ops.sub,
-      multiplication: ops.mul,
       division: divisionPass,
     };
 
@@ -364,8 +362,7 @@ export default function LiveTrackerClient({ hierarchy: serverHierarchy, settings
               {funMode && <StarProgress earned={starsEarned} total={TOTAL_STARS} />}
               <h2 className="text-2xl font-black tracking-tight flex items-center justify-center gap-3">{funMode ? '➕ Math Challenge!' : '➕ Arithmetic Operations'}</h2>
               {!funMode && <p className="mt-2 font-medium">
-                {currentOp === 'add' && "Addition"}{currentOp === 'sub' && "Subtraction"}
-                {currentOp === 'mul' && "Multiplication"}{currentOp === 'div' && "Division"}
+                {currentOp === 'add' && "Addition"}{currentOp === 'sub' && "Subtraction"}{currentOp === 'div' && "Division"}
               </p>}
             </div>
             <div className="flex-1 p-8 flex flex-col items-center justify-center text-center animate-in slide-in-from-right duration-300">
@@ -376,7 +373,6 @@ export default function LiveTrackerClient({ hierarchy: serverHierarchy, settings
                 <h3 className="text-6xl font-black tracking-widest text-slate-800 dark:text-slate-100">
                   {currentOp === 'add' && getAsset('AddProblem')}
                   {currentOp === 'sub' && getAsset('SubProblem')}
-                  {currentOp === 'mul' && getAsset('MulProblem')}
                   {currentOp === 'div' && getAsset('DivProblem')}
                 </h3>
               </div>

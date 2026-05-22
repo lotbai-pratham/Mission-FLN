@@ -99,50 +99,26 @@ export const NUMERACY_ACTIVITIES: Record<number, TaRLActivity[]> = {
       materials: ["Sticks/Straws", "Rubber bands"]
     },
     {
-      title: "Shopping for Tens",
-      description: "Roleplay a shop where items cost 10, 20, or 30. Use bundles of 10 to 'pay' for the items.",
-      materials: ["Classroom items", "Bundles of 10"]
-    }
-  ],
-  3: [ // Num 100-999
-    {
-      title: "Currency Play",
-      description: "Use fake notes (100s and 10s). Ask students to 'withdraw' 425 from the pretend bank using the largest notes possible.",
-      materials: ["Fake notes", "Bank roleplay corner"]
-    },
-    {
       title: "Place Value Grids",
       description: "Use an abacus or a drawn H-T-U (Hundreds, Tens, Units) grid. Have students place pebbles in each column to represent 562.",
       materials: ["H-T-U Grid", "Pebbles"]
     }
   ],
-  4: [ // Addition
+  3: [ // Addition
     {
       title: "Carry-over Grids",
       description: "Use a color-coded carry-over grid. When adding 9+5, show how the '1' jumps into the Tens column visually.",
       materials: ["Color markers", "Grid paper"]
-    },
-    {
-      title: "Market Addition",
-      description: "Give a budget of 50. Have students pick two items (15 and 20) and add their totals mentally.",
-      materials: ["Price tags", "Classroom shop"]
     }
   ],
-  5: [ // Subtraction
+  4: [ // Subtraction
     {
       title: "Borrowing Roleplay",
       description: "Roleplay 'Borrowing a Bundle'. If I have 2 bundles and 3 sticks, and I need to give away 5, I must 'untie' one bundle.",
       materials: ["Bundles of 10", "Loose sticks"]
     }
   ],
-  6: [ // Multiplication
-    {
-      title: "Stone Arrays",
-      description: "Arrange stones in a 4x3 grid. Show how this is the same as counting 4 stones, 3 times over.",
-      materials: ["Stones", "Array grid"]
-    }
-  ],
-  7: [ // Division
+  5: [ // Division
     {
       title: "Fair Share Picnic",
       description: "Give a student 20 seeds and 4 friends. Ask them to distribute the seeds 'fairly' so everyone has an equal amount.",

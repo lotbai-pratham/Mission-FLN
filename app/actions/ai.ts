@@ -230,7 +230,7 @@ export async function generateGameQuestions(gameId: string, level: number = 1, c
     } else if (gameId.includes('math') || gameId.includes('number') || gameId === 'jungle-fight') {
       prompt = `
         Generate ${count} math problems for an Indian school student (Class 1-5).
-        Difficulty Level: ${level} (1: 1-digit, 2: 2-digit, 3: carry/borrow, 4: multiplication/division, 5: complex word problems).
+        Difficulty Level: ${level} (1: 1-digit, 2: 2-digit, 3: carry/borrow, 4: division, 5: complex word problems).
         Return JSON ONLY as an array of objects.
         Format:
         [

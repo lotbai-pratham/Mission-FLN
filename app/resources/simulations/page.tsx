@@ -12,6 +12,7 @@ import { SIMS, GAMES, ALL, Item } from "@/lib/sim-data";
 import BattleMatchmaker from "@/components/simulations/BattleMatchmaker";
 import GameWrapper from "@/components/games/GameWrapper";
 import LevelUpModal from "@/components/games/LevelUpModal";
+import StudentTrackerOverlay from "@/components/simulations/StudentTrackerOverlay";
 
 const SECTIONS = [
   // Language Pathways
@@ -357,6 +358,13 @@ function SimulationsContent() {
                 transform: 'translate(-50%, -50%) rotate(90deg)',
               } : {}}
             >
+              {!battleContext && (
+                <StudentTrackerOverlay 
+                  schoolId={userSchoolId || "mock-school-id"} 
+                  classNum={3} 
+                  gameSlug={active.id} 
+                />
+              )}
               {forceLandscape && (
                 <button 
                   onClick={() => setForceLandscape(false)}

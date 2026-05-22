@@ -55,7 +55,7 @@ async function buildMissionContext(): Promise<string> {
         const op = stats.operations[term];
         if (!op || op.total === 0) continue;
         const pct = (n: number) => Math.round((n / op.total) * 100);
-        lines.push(`  ${term}: Addition=${pct(op.addition)}% | Subtraction=${pct(op.subtraction)}% | Multiplication=${pct(op.multiplication)}% | Division=${pct(op.division)}%`);
+        lines.push(`  ${term}: Addition=${pct(op.addition)}% | Subtraction=${pct(op.subtraction)}% | Division=${pct(op.division)}%`);
       }
     }
 

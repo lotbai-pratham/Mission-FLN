@@ -58,7 +58,6 @@ export default function OfflineSync() {
             numeracyLevel: item.numeracyLevel,
             addition: item.addition,
             subtraction: item.subtraction,
-            multiplication: item.multiplication,
             division: item.division,
           });
           removeFromQueue(item.localId);
