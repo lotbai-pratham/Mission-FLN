@@ -240,7 +240,8 @@ export async function getDashboardStats(filters: { divisionId?: string, projectO
 
     if (!classNum[cls]) classNum[cls] = {};
     if (!classNum[cls][a.term]) classNum[cls][a.term] = {};
-    classNum[cls][a.term][a.numeracyLevel] = (classNum[cls][a.term][a.numeracyLevel] || 0) + 1;
+    const mappedNumLvl = a.numeracyLevel === 6 ? 5 : a.numeracyLevel === 5 ? 4 : a.numeracyLevel;
+    classNum[cls][a.term][mappedNumLvl] = (classNum[cls][a.term][mappedNumLvl] || 0) + 1;
   }
 
   // Convert to percentage + count per (class, term, level)
@@ -273,7 +274,8 @@ export async function getDashboardStats(filters: { divisionId?: string, projectO
     if (!overallLit[a.term]) overallLit[a.term] = {};
     overallLit[a.term][a.literacyLevel] = (overallLit[a.term][a.literacyLevel] || 0) + 1;
     if (!overallNum[a.term]) overallNum[a.term] = {};
-    overallNum[a.term][a.numeracyLevel] = (overallNum[a.term][a.numeracyLevel] || 0) + 1;
+    const mappedNumLvl = a.numeracyLevel === 6 ? 5 : a.numeracyLevel === 5 ? 4 : a.numeracyLevel;
+    overallNum[a.term][mappedNumLvl] = (overallNum[a.term][mappedNumLvl] || 0) + 1;
   }
 
   function computeOverallPcts(raw: Record<string, Record<number, number>>) {

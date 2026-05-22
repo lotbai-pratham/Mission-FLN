@@ -135,13 +135,14 @@ export default function RecordAssessmentPage({ schools }: { schools: any[] }) {
                     { val: 0, label: "Beginner" },
                     { val: 1, label: "Number 1-9" },
                     { val: 2, label: "Number 10-99" },
-                    { val: 3, label: "Subtraction" },
-                    { val: 4, label: "Division" }
+                    { val: 3, label: "Addition" },
+                    { val: 4, label: "Subtraction" },
+                    { val: 5, label: "Division" }
                   ].map(lvl => (
                     <label key={lvl.val} className="flex items-center gap-3 cursor-pointer group">
                       <input type="radio" name="numeracyLevel" value={lvl.val} defaultChecked={lvl.val === 0}
                         className="w-5 h-5 text-blue-600 border-gray-300 focus:ring-blue-500 cursor-pointer" />
-                      <span className="text-sm font-medium text-slate-700 dark:text-slate-300 group-hover:text-blue-600 transition-colors">{lvl.val} - {lvl.label}</span>
+                      <span className="text-sm font-medium text-slate-700 dark:text-slate-300 group-hover:text-blue-600 transition-colors">{lvl.label}</span>
                     </label>
                   ))}
                 </div>

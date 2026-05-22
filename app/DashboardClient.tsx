@@ -113,31 +113,13 @@ export default function DashboardClient({ initialStats, hierarchy }: { initialSt
   };
 
   const formatOpsData = (ops: any, asPct: boolean) => {
-    const termTotals: Record<string, number> = {};
-    const opCounts: Record<string, Record<string, number>> = {};
-
-    TERMS.forEach(t => {
-      termTotals[t] = 0;
-      opCounts[t] = { addition: 0, subtraction: 0, division: 0 };
-
-      (stats.numeracies ?? [])
-        .filter((item: any) => item.term === t)
-        .forEach((item: any) => {
-          const count = item._count.studentId;
-          const lvl = item.numeracyLevel;
-          termTotals[t] += count;
-
-          if (lvl >= 3) opCounts[t].addition += count;
-          if (lvl >= 4) opCounts[t].subtraction += count;
-          if (lvl >= 6) opCounts[t].division += count;
-        });
-    });
-
     return ['addition', 'subtraction', 'division'].map(op => {
       const entry: any = { name: op[0].toUpperCase() + op.slice(1) };
       TERMS.forEach(t => {
-        const count = opCounts[t]?.[op] ?? 0;
-        entry[t] = asPct ? (termTotals[t] > 0 ? Math.round((count / termTotals[t]) * 100) : 0) : count;
+        const termData = ops?.[t] || { addition: 0, subtraction: 0, division: 0, total: 0 };
+        const count = termData[op] ?? 0;
+        const total = termData.total ?? 0;
+        entry[t] = asPct ? (total > 0 ? Math.round((count / total) * 100) : 0) : count;
       });
       return entry;
     });

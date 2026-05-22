@@ -7,7 +7,7 @@ import { Trash2, Pencil, X, Check, AlertTriangle, Filter, ShieldCheck } from "lu
 import { cn } from "@/lib/utils";
 
 const LIT_LABELS = ["Beginner", "Letter", "Word", "Paragraph", "Story"];
-const NUM_LABELS = ["Beginner", "1–9", "10–99", "100–999"];
+const NUM_LABELS = ["Beginner", "1-9", "10-99", "Addition", "Subtraction", "Division"];
 const TERMS = ["Baseline", "Midline", "Endline"];
 
 type Assessment = {
@@ -60,10 +60,12 @@ export default function DataClient({
 
   function startEdit(a: Assessment) {
     setEditingId(a.id);
+    const dbNumLvl = a.numeracyLevel;
+    const mappedNumLvl = dbNumLvl === 6 ? 5 : dbNumLvl === 5 ? 4 : dbNumLvl;
     setEditForm({
       assessorName: a.assessorName,
       literacyLevel: a.literacyLevel,
-      numeracyLevel: a.numeracyLevel,
+      numeracyLevel: mappedNumLvl,
       term: a.term,
       addition: a.addition,
       subtraction: a.subtraction,
@@ -324,7 +326,9 @@ export default function DataClient({
                           {NUM_LABELS.map((l, i) => <option key={i} value={i}>{l}</option>)}
                         </select>
                       ) : (
-                        <span className="px-2 py-1 bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400 rounded-md text-xs font-bold">{NUM_LABELS[a.numeracyLevel]}</span>
+                        <span className="px-2 py-1 bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400 rounded-md text-xs font-bold">
+                          {NUM_LABELS[a.numeracyLevel === 6 ? 5 : a.numeracyLevel === 5 ? 4 : a.numeracyLevel] ?? `Level ${a.numeracyLevel}`}
+                        </span>
                       )}
                     </td>
 
