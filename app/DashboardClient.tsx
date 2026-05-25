@@ -217,7 +217,7 @@ export default function DashboardClient({ initialStats, hierarchy }: { initialSt
               
               <div className="space-y-1.5">
                 <div className="flex justify-between text-xs font-bold">
-                  <span className="text-slate-400">Class 4 Current Level</span>
+                  <span className="text-slate-400">Our Current Level</span>
                   <span className="text-blue-400">{(velocity?.literacyScore ?? 0)}%</span>
                 </div>
                 <div className="h-2 bg-white/10 rounded-full overflow-hidden relative">
@@ -244,7 +244,7 @@ export default function DashboardClient({ initialStats, hierarchy }: { initialSt
               
               <div className="space-y-1.5">
                 <div className="flex justify-between text-xs font-bold">
-                  <span className="text-slate-400">Class 4 Current Level</span>
+                  <span className="text-slate-400">Our Current Level</span>
                   <span className="text-emerald-400">{(velocity?.numeracyScore ?? 0)}%</span>
                 </div>
                 <div className="h-2 bg-white/10 rounded-full overflow-hidden relative">
@@ -264,8 +264,8 @@ export default function DashboardClient({ initialStats, hierarchy }: { initialSt
       <div className={`grid grid-cols-2 lg:grid-cols-6 gap-4 transition-opacity ${isPending ? 'opacity-50' : ''}`}>
         <KPI label="Total Students" value={stats.totalStudents} icon={<Users className="w-5 h-5" />} color="blue" />
         <KPI label="Total Assessments" value={stats.totalAssessments} icon={<BookOpen className="w-5 h-5" />} color="indigo" />
-        <KPI label="Class 4 Literacy Level" value={velocity?.literacyScore ?? 0} icon={<BookOpen className="w-5 h-5" />} color="emerald" suffix="%" />
-        <KPI label="Class 4 Numeracy Level" value={velocity?.numeracyScore ?? 0} icon={<Calculator className="w-5 h-5" />} color="emerald" suffix="%" />
+        <KPI label="Our Literacy Level" value={velocity?.literacyScore ?? 0} icon={<BookOpen className="w-5 h-5" />} color="emerald" suffix="%" />
+        <KPI label="Our Numeracy Level" value={velocity?.numeracyScore ?? 0} icon={<Calculator className="w-5 h-5" />} color="emerald" suffix="%" />
         <KPI label="Arena Engagement" value={stats.totalArenaBattles ?? 0} icon={<Sparkles className="w-5 h-5" />} color="blue" suffix=" Battles" />
         <KPI label="Single Games" value={stats.totalSingleGames ?? 0} icon={<Gamepad2 className="w-5 h-5" />} color="orange" suffix=" Games" />
       </div>

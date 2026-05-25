@@ -981,7 +981,7 @@ export async function getGrowthVelocity(filters: { divisionId?: string, projectO
 
   const students = await prisma.student.findMany({
     where: whereFilter,
-    include: { assessments: { orderBy: { date: 'desc' }, take: 1 } },
+    include: { assessments: { where: { term: 'Endline' }, orderBy: { date: 'desc' } } },
   });
 
   let storyCount = 0;
