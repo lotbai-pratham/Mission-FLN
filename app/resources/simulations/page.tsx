@@ -421,7 +421,7 @@ function SimulationsContent() {
         </div>
       )}
       <LevelUpModal
-        isOpen={showLevelUp}
+        isOpen={showLevelUp && !activeId}
         level={newLevelReached}
         onClose={dismissLevelUp}
       />

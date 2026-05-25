@@ -35,6 +35,27 @@ export default function CompetitiveArena({
   const [gameState, setGameState] = useState<GameState>('waiting');
   const [timeLeft, setTimeLeft] = useState(duration);
   const [scores, setScores] = useState({ a: 0, b: 0 });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
+  const [submitSuccess, setSubmitSuccess] = useState(false);
+
+  const handleFinish = async (winner: 'A' | 'B' | 'Draw', finalScores: { a: number, b: number }) => {
+    setGameState('finished');
+    if (onGameEnd) {
+      setIsSubmitting(true);
+      setSubmitError(null);
+      setSubmitSuccess(false);
+      try {
+        await onGameEnd(winner, finalScores);
+        setSubmitSuccess(true);
+      } catch (err: any) {
+        console.error(err);
+        setSubmitError(err.message || 'Failed to save battle log');
+      } finally {
+        setIsSubmitting(false);
+      }
+    }
+  };
 
   useEffect(() => {
     let timer: NodeJS.Timeout;
@@ -42,16 +63,17 @@ export default function CompetitiveArena({
       timer = setInterval(() => setTimeLeft(prev => prev - 1), 1000);
     } else if (timeLeft === 0 && gameState === 'running') {
       const winner = scores.a > scores.b ? 'A' : scores.b > scores.a ? 'B' : 'Draw';
-      setGameState('finished');
-      onGameEnd?.(winner, scores);
+      handleFinish(winner, scores);
     }
     return () => clearInterval(timer);
-  }, [gameState, timeLeft]);
+  }, [gameState, timeLeft, scores]);
 
   const startGame = () => {
     setScores({ a: 0, b: 0 });
     setTimeLeft(duration);
     setGameState('running');
+    setSubmitSuccess(false);
+    setSubmitError(null);
   };
 
   const addPoint = (team: 'A' | 'B') => {
@@ -88,19 +110,32 @@ export default function CompetitiveArena({
               <Timer className="w-6 h-6 md:w-8 md:h-8" />
               <span className="text-2xl md:text-4xl font-black font-mono tracking-tighter w-8 md:w-12">{timeLeft}s</span>
            </div>
-           <div className="flex gap-2">
+           <div className="flex items-center gap-2">
+              {gameState === 'running' && (
+                <button 
+                   onClick={() => {
+                     const winner = scores.a > scores.b ? 'A' : scores.b > scores.a ? 'B' : 'Draw';
+                     handleFinish(winner, scores);
+                   }}
+                   className="px-5 py-3 md:px-6 md:py-4 bg-emerald-600 hover:bg-emerald-500 text-white font-black rounded-2xl text-[10px] md:text-xs transition-all active:scale-95 flex items-center gap-2 shadow-lg shadow-emerald-600/20 shrink-0"
+                >
+                   <Medal className="w-4.5 h-4.5 text-yellow-300 fill-yellow-300" /> SUBMIT & FINISH
+                </button>
+              )}
               <button 
                  onClick={startGame}
-                 className="p-5 bg-white text-black hover:bg-blue-500 hover:text-white rounded-[28px] transition-all active:scale-90"
+                 className="p-3 md:p-5 bg-white text-black hover:bg-blue-500 hover:text-white rounded-[20px] md:rounded-[28px] transition-all active:scale-90"
+                 title="Restart Game"
               >
-                 <RotateCcw className="w-6 h-6" />
+                 <RotateCcw className="w-5 h-5 md:w-6 md:h-6" />
               </button>
               {onClose && (
                 <button 
                    onClick={onClose}
-                   className="p-5 bg-red-600/20 border border-red-600/50 text-red-500 hover:bg-red-600 hover:text-white rounded-[28px] transition-all active:scale-90"
+                   className="p-3 md:p-5 bg-red-600/20 border border-red-600/50 text-red-500 hover:bg-red-600 hover:text-white rounded-[20px] md:rounded-[28px] transition-all active:scale-90"
+                   title="Exit Arena"
                 >
-                   <X className="w-6 h-6" />
+                   <X className="w-5 h-5 md:w-6 md:h-6" />
                 </button>
               )}
            </div>
@@ -141,28 +176,49 @@ export default function CompetitiveArena({
            <div className="absolute inset-0 z-30 flex flex-col items-center justify-center p-8 text-center animate-in fade-in zoom-in-105 duration-1000 bg-slate-950/90 backdrop-blur-xl rounded-[40px]">
               <div className="relative">
                  <div className="absolute inset-0 bg-yellow-400 blur-3xl opacity-20 animate-pulse"></div>
-                 <Trophy className="w-32 h-32 text-yellow-500 mb-8 relative z-10" />
+                 <Trophy className="w-20 h-20 md:w-32 md:h-32 text-yellow-500 mb-4 md:mb-8 relative z-10" />
               </div>
-              <h3 className="text-6xl font-black mb-2 tracking-tighter">
+              <h3 className="text-4xl md:text-6xl font-black mb-2 tracking-tighter">
                  {winner === 'Draw' ? "IT'S A DRAW!" : `${winner} WINS!`}
               </h3>
               <p className="text-slate-500 text-sm font-bold mb-2">{p1Name} vs {p2Name}</p>
-              <p className="text-slate-400 text-xl font-medium mb-12">Congratulations to all participants!</p>
               
-              <div className="flex flex-col md:flex-row items-center gap-4 md:gap-12 mb-8 md:mb-12">
-                 <div className="text-center p-4 md:p-8 bg-white/5 rounded-3xl md:rounded-[40px] border border-white/10 min-w-[150px] md:min-w-[180px]">
-                    <div className="text-[8px] md:text-[10px] font-black uppercase tracking-widest text-slate-500 mb-1 md:mb-2">{p1Name}</div>
-                    <div className="text-4xl md:text-6xl font-black text-blue-500">{scores.a}</div>
+              <div className="flex flex-col md:flex-row items-center gap-4 md:gap-12 mb-4 md:mb-8">
+                 <div className="text-center p-4 md:p-6 bg-white/5 rounded-3xl border border-white/10 min-w-[120px] md:min-w-[180px]">
+                    <div className="text-[8px] md:text-[10px] font-black uppercase tracking-widest text-slate-500 mb-1">{p1Name}</div>
+                    <div className="text-3xl md:text-5xl font-black text-blue-500">{scores.a}</div>
                  </div>
-                 <div className="text-center p-4 md:p-8 bg-white/5 rounded-3xl md:rounded-[40px] border border-white/10 min-w-[150px] md:min-w-[180px]">
-                    <div className="text-[8px] md:text-[10px] font-black uppercase tracking-widest text-slate-500 mb-1 md:mb-2">{p2Name}</div>
-                    <div className="text-4xl md:text-6xl font-black text-emerald-500">{scores.b}</div>
+                 <div className="text-center p-4 md:p-6 bg-white/5 rounded-3xl border border-white/10 min-w-[120px] md:min-w-[180px]">
+                    <div className="text-[8px] md:text-[10px] font-black uppercase tracking-widest text-slate-500 mb-1">{p2Name}</div>
+                    <div className="text-3xl md:text-5xl font-black text-emerald-500">{scores.b}</div>
                  </div>
+              </div>
+
+              {/* Submission Log */}
+              <div className="mb-8 flex flex-col items-center justify-center gap-2">
+                 {isSubmitting && (
+                   <div className="flex items-center gap-2 text-slate-400 text-xs font-bold uppercase tracking-wider bg-slate-900 px-4 py-2 rounded-full border border-slate-800">
+                     <div className="w-3.5 h-3.5 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin" />
+                     Submitting Battle Log Live...
+                   </div>
+                 )}
+                 {submitSuccess && (
+                   <div className="flex items-center gap-2 text-emerald-400 text-xs font-black uppercase tracking-wider bg-emerald-500/10 px-4 py-2 rounded-full border border-emerald-500/20">
+                     <span className="text-emerald-400">●</span>
+                     ✓ Battle Saved Live to Database!
+                   </div>
+                 )}
+                 {submitError && (
+                   <div className="flex items-center gap-2 text-rose-400 text-xs font-black uppercase tracking-wider bg-rose-500/10 px-4 py-2 rounded-full border border-rose-500/20">
+                     <span>⚠️</span>
+                     Error: {submitError}
+                   </div>
+                 )}
               </div>
 
               <button 
                  onClick={startGame}
-                 className="px-10 py-5 bg-white text-black font-black rounded-3xl hover:bg-blue-500 hover:text-white transition-all active:scale-95"
+                 className="px-10 py-5 bg-white text-black font-black rounded-3xl hover:bg-blue-500 hover:text-white transition-all active:scale-95 text-sm md:text-base"
               >
                  REPLAY BATTLE
               </button>

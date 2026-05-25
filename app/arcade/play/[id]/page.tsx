@@ -84,12 +84,6 @@ export default function DirectPlayPage({ params }: { params: Promise<{ id: strin
       <div className="bg-white border-t border-slate-100 px-4 py-2 flex justify-center items-center shrink-0">
          <p className="text-[9px] font-black text-slate-300 uppercase tracking-[4px]">Powered by FLN Hub Arcade</p>
       </div>
-
-      <LevelUpModal
-        isOpen={showLevelUp}
-        level={newLevelReached}
-        onClose={dismissLevelUp}
-      />
     </div>
   );
 }
