@@ -195,10 +195,10 @@ export default function DashboardClient({ initialStats, hierarchy }: { initialSt
               <Target className="w-3.5 h-3.5 animate-pulse" /> NIPUN Bharat Targets
             </div>
             <h2 className="text-2xl font-black tracking-tight">
-              State-Wide FLN Targets
+              Class 4 State Targets
             </h2>
             <p className="text-slate-400 text-sm font-medium leading-relaxed">
-              Static proficiency targets established for Language (Story Level Reading) and Mathematics (Basic Division) under the state foundational learning guidelines.
+              NIPUN Bharat targets require 100% proficiency for Class 4 students in Language (Story Reading) and Mathematics (Division) in their most recent assessments.
             </p>
           </div>
           
@@ -208,7 +208,7 @@ export default function DashboardClient({ initialStats, hierarchy }: { initialSt
               <div className="flex justify-between items-start">
                 <div>
                   <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">Language Target (Story)</p>
-                  <h3 className="text-4xl font-black text-white mt-1">57%</h3>
+                  <h3 className="text-4xl font-black text-white mt-1">100%</h3>
                 </div>
                 <div className="w-10 h-10 rounded-xl bg-blue-500/20 flex items-center justify-center text-blue-400">
                   <BookOpen className="w-5 h-5" />
@@ -217,15 +217,15 @@ export default function DashboardClient({ initialStats, hierarchy }: { initialSt
               
               <div className="space-y-1.5">
                 <div className="flex justify-between text-xs font-bold">
-                  <span className="text-slate-400">Current Progress</span>
+                  <span className="text-slate-400">Class 4 Current Level</span>
                   <span className="text-blue-400">{(velocity?.literacyScore ?? 0)}%</span>
                 </div>
                 <div className="h-2 bg-white/10 rounded-full overflow-hidden relative">
-                  <div className="absolute top-0 left-[57%] w-0.5 h-full bg-indigo-400 z-10" title="Target: 57%" />
+                  <div className="absolute top-0 left-[100%] w-0.5 h-full bg-indigo-400 z-10" title="Target: 100%" />
                   <div className="h-full bg-blue-500 rounded-full transition-all duration-1000" style={{ width: `${velocity?.literacyScore ?? 0}%` }} />
                 </div>
                 <p className="text-[10px] text-slate-400 font-medium">
-                  State Target benchmark is represented by the marker at 57%.
+                  State Target benchmark is represented at 100%.
                 </p>
               </div>
             </div>
@@ -235,7 +235,7 @@ export default function DashboardClient({ initialStats, hierarchy }: { initialSt
               <div className="flex justify-between items-start">
                 <div>
                   <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">Mathematics Target (Division)</p>
-                  <h3 className="text-4xl font-black text-white mt-1">29%</h3>
+                  <h3 className="text-4xl font-black text-white mt-1">100%</h3>
                 </div>
                 <div className="w-10 h-10 rounded-xl bg-emerald-500/20 flex items-center justify-center text-emerald-400">
                   <Calculator className="w-5 h-5" />
@@ -244,15 +244,15 @@ export default function DashboardClient({ initialStats, hierarchy }: { initialSt
               
               <div className="space-y-1.5">
                 <div className="flex justify-between text-xs font-bold">
-                  <span className="text-slate-400">Current Progress</span>
+                  <span className="text-slate-400">Class 4 Current Level</span>
                   <span className="text-emerald-400">{(velocity?.numeracyScore ?? 0)}%</span>
                 </div>
                 <div className="h-2 bg-white/10 rounded-full overflow-hidden relative">
-                  <div className="absolute top-0 left-[29%] w-0.5 h-full bg-indigo-400 z-10" title="Target: 29%" />
+                  <div className="absolute top-0 left-[100%] w-0.5 h-full bg-indigo-400 z-10" title="Target: 100%" />
                   <div className="h-full bg-emerald-500 rounded-full transition-all duration-1000" style={{ width: `${velocity?.numeracyScore ?? 0}%` }} />
                 </div>
                 <p className="text-[10px] text-slate-400 font-medium">
-                  State Target benchmark is represented by the marker at 29%.
+                  State Target benchmark is represented at 100%.
                 </p>
               </div>
             </div>

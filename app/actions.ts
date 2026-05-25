@@ -976,13 +976,12 @@ export async function getGrowthVelocity(filters: { divisionId?: string, projectO
     }
   }
 
-  if (filters.classNum && filters.classNum !== 'all') {
-    whereFilter.class = Number(filters.classNum);
-  }
+  // Always evaluate Class 4 students
+  whereFilter.class = 4;
 
   const students = await prisma.student.findMany({
     where: whereFilter,
-    include: { assessments: { where: { term: 'Endline' }, orderBy: { date: 'desc' } } },
+    include: { assessments: { orderBy: { date: 'desc' }, take: 1 } },
   });
 
   let storyCount = 0;
@@ -994,7 +993,7 @@ export async function getGrowthVelocity(filters: { divisionId?: string, projectO
       totalAssessed++;
       const latest = s.assessments[0];
       const canReadStory = latest.literacyLevel === 4;
-      const canDoDivision = latest.division === true || latest.numeracyLevel >= 6;
+      const canDoDivision = latest.division === true || latest.numeracyLevel >= 5;
       if (canReadStory) {
         storyCount++;
       }
