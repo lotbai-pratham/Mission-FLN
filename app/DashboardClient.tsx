@@ -207,26 +207,21 @@ export default function DashboardClient({ initialStats, hierarchy }: { initialSt
             <div className="bg-white/5 border border-white/10 rounded-2xl p-5 backdrop-blur-md space-y-4">
               <div className="flex justify-between items-start">
                 <div>
-                  <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">Language Target</p>
-                  <h3 className="text-4xl font-black text-white mt-1">100%</h3>
+                  <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">Our Language Level</p>
+                  <h3 className="text-4xl font-black text-white mt-1">{(velocity?.literacyScore ?? 0)}%</h3>
                 </div>
                 <div className="w-10 h-10 rounded-xl bg-blue-500/20 flex items-center justify-center text-blue-400">
                   <BookOpen className="w-5 h-5" />
                 </div>
               </div>
               
-              <div className="space-y-1.5">
-                <div className="flex justify-between text-xs font-bold">
-                  <span className="text-slate-400">Our Current Level</span>
-                  <span className="text-blue-400">{(velocity?.literacyScore ?? 0)}%</span>
+              <div className="space-y-1">
+                <div className="flex items-center gap-3">
+                  <div className="flex-1 h-2.5 bg-white/10 rounded-full overflow-hidden relative">
+                    <div className="h-full bg-blue-500 rounded-full transition-all duration-1000" style={{ width: `${velocity?.literacyScore ?? 0}%` }} />
+                  </div>
+                  <span className="text-xs font-black text-blue-400 shrink-0">100% Target</span>
                 </div>
-                <div className="h-2 bg-white/10 rounded-full overflow-hidden relative">
-                  <div className="absolute top-0 left-[100%] w-0.5 h-full bg-indigo-400 z-10" title="Target: 100%" />
-                  <div className="h-full bg-blue-500 rounded-full transition-all duration-1000" style={{ width: `${velocity?.literacyScore ?? 0}%` }} />
-                </div>
-                <p className="text-[10px] text-slate-400 font-medium">
-                  State Target benchmark is represented at 100%.
-                </p>
               </div>
             </div>
 
@@ -234,26 +229,21 @@ export default function DashboardClient({ initialStats, hierarchy }: { initialSt
             <div className="bg-white/5 border border-white/10 rounded-2xl p-5 backdrop-blur-md space-y-4">
               <div className="flex justify-between items-start">
                 <div>
-                  <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">Mathematics Target</p>
-                  <h3 className="text-4xl font-black text-white mt-1">100%</h3>
+                  <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">Our Mathematics Level</p>
+                  <h3 className="text-4xl font-black text-white mt-1">{(velocity?.numeracyScore ?? 0)}%</h3>
                 </div>
                 <div className="w-10 h-10 rounded-xl bg-emerald-500/20 flex items-center justify-center text-emerald-400">
                   <Calculator className="w-5 h-5" />
                 </div>
               </div>
               
-              <div className="space-y-1.5">
-                <div className="flex justify-between text-xs font-bold">
-                  <span className="text-slate-400">Our Current Level</span>
-                  <span className="text-emerald-400">{(velocity?.numeracyScore ?? 0)}%</span>
+              <div className="space-y-1">
+                <div className="flex items-center gap-3">
+                  <div className="flex-1 h-2.5 bg-white/10 rounded-full overflow-hidden relative">
+                    <div className="h-full bg-emerald-500 rounded-full transition-all duration-1000" style={{ width: `${velocity?.numeracyScore ?? 0}%` }} />
+                  </div>
+                  <span className="text-xs font-black text-emerald-400 shrink-0">100% Target</span>
                 </div>
-                <div className="h-2 bg-white/10 rounded-full overflow-hidden relative">
-                  <div className="absolute top-0 left-[100%] w-0.5 h-full bg-indigo-400 z-10" title="Target: 100%" />
-                  <div className="h-full bg-emerald-500 rounded-full transition-all duration-1000" style={{ width: `${velocity?.numeracyScore ?? 0}%` }} />
-                </div>
-                <p className="text-[10px] text-slate-400 font-medium">
-                  State Target benchmark is represented at 100%.
-                </p>
               </div>
             </div>
           </div>
