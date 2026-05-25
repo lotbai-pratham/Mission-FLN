@@ -5,7 +5,7 @@ import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip,
   ResponsiveContainer, Legend, Cell
 } from 'recharts';
-import { BookOpen, Calculator, Users, School, Filter, TrendingUp, LayoutDashboard, Search, Sparkles, AlertCircle, TrendingDown, Trophy, Medal, Lightbulb, Gamepad2 } from 'lucide-react';
+import { BookOpen, Calculator, Users, School, Filter, TrendingUp, LayoutDashboard, Search, Sparkles, AlertCircle, TrendingDown, Trophy, Medal, Lightbulb, Gamepad2, Target } from 'lucide-react';
 import { getDashboardStats, getStrugglingStudents, getGrowthVelocity, getInterventionPlan, getPORankings } from "@/app/actions";
 
 const LIT_LABELS = ['Beginner', 'Letter', 'Word', 'Paragraph', 'Story'];
@@ -184,12 +184,88 @@ export default function DashboardClient({ initialStats, hierarchy }: { initialSt
         {isPending && <span className="text-sm font-bold text-blue-500 animate-pulse shrink-0">Updating…</span>}
       </div>
 
+      {/* State FLN Targets (NIPUN Bharat Target vs Current) */}
+      <div className="bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-950 text-white rounded-3xl p-8 border border-slate-800 shadow-xl relative overflow-hidden transition-all duration-300">
+        <div className="absolute top-0 right-0 w-80 h-80 bg-indigo-500/10 rounded-full blur-3xl -mr-20 -mt-20 pointer-events-none" />
+        <div className="absolute bottom-0 left-0 w-80 h-80 bg-blue-500/10 rounded-full blur-3xl -ml-20 -mb-20 pointer-events-none" />
+        
+        <div className="relative z-10 grid grid-cols-1 lg:grid-cols-3 gap-8 items-center">
+          <div className="space-y-2">
+            <div className="inline-flex items-center gap-2 px-3 py-1 bg-indigo-500/20 rounded-full text-indigo-300 text-xs font-black uppercase tracking-wider">
+              <Target className="w-3.5 h-3.5 animate-pulse" /> NIPUN Bharat Targets
+            </div>
+            <h2 className="text-2xl font-black tracking-tight">
+              State-Wide FLN Targets
+            </h2>
+            <p className="text-slate-400 text-sm font-medium leading-relaxed">
+              Static proficiency targets established for Language (Story Level Reading) and Mathematics (Basic Division) under the state foundational learning guidelines.
+            </p>
+          </div>
+          
+          <div className="lg:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
+            {/* Language / Literacy Target */}
+            <div className="bg-white/5 border border-white/10 rounded-2xl p-5 backdrop-blur-md space-y-4">
+              <div className="flex justify-between items-start">
+                <div>
+                  <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">Language Target (Story)</p>
+                  <h3 className="text-4xl font-black text-white mt-1">57%</h3>
+                </div>
+                <div className="w-10 h-10 rounded-xl bg-blue-500/20 flex items-center justify-center text-blue-400">
+                  <BookOpen className="w-5 h-5" />
+                </div>
+              </div>
+              
+              <div className="space-y-1.5">
+                <div className="flex justify-between text-xs font-bold">
+                  <span className="text-slate-400">Current Progress</span>
+                  <span className="text-blue-400">{(velocity?.literacyScore ?? 0)}%</span>
+                </div>
+                <div className="h-2 bg-white/10 rounded-full overflow-hidden relative">
+                  <div className="absolute top-0 left-[57%] w-0.5 h-full bg-indigo-400 z-10" title="Target: 57%" />
+                  <div className="h-full bg-blue-500 rounded-full transition-all duration-1000" style={{ width: `${velocity?.literacyScore ?? 0}%` }} />
+                </div>
+                <p className="text-[10px] text-slate-400 font-medium">
+                  State Target benchmark is represented by the marker at 57%.
+                </p>
+              </div>
+            </div>
+
+            {/* Maths / Numeracy Target */}
+            <div className="bg-white/5 border border-white/10 rounded-2xl p-5 backdrop-blur-md space-y-4">
+              <div className="flex justify-between items-start">
+                <div>
+                  <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">Mathematics Target (Division)</p>
+                  <h3 className="text-4xl font-black text-white mt-1">29%</h3>
+                </div>
+                <div className="w-10 h-10 rounded-xl bg-emerald-500/20 flex items-center justify-center text-emerald-400">
+                  <Calculator className="w-5 h-5" />
+                </div>
+              </div>
+              
+              <div className="space-y-1.5">
+                <div className="flex justify-between text-xs font-bold">
+                  <span className="text-slate-400">Current Progress</span>
+                  <span className="text-emerald-400">{(velocity?.numeracyScore ?? 0)}%</span>
+                </div>
+                <div className="h-2 bg-white/10 rounded-full overflow-hidden relative">
+                  <div className="absolute top-0 left-[29%] w-0.5 h-full bg-indigo-400 z-10" title="Target: 29%" />
+                  <div className="h-full bg-emerald-500 rounded-full transition-all duration-1000" style={{ width: `${velocity?.numeracyScore ?? 0}%` }} />
+                </div>
+                <p className="text-[10px] text-slate-400 font-medium">
+                  State Target benchmark is represented by the marker at 29%.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
       {/* KPIs */}
       <div className={`grid grid-cols-2 lg:grid-cols-6 gap-4 transition-opacity ${isPending ? 'opacity-50' : ''}`}>
         <KPI label="Total Students" value={stats.totalStudents} icon={<Users className="w-5 h-5" />} color="blue" />
         <KPI label="Total Assessments" value={stats.totalAssessments} icon={<BookOpen className="w-5 h-5" />} color="indigo" />
-        <KPI label="Literacy Score (Endline)" value={velocity?.literacyScore ?? 0} icon={<BookOpen className="w-5 h-5" />} color="emerald" suffix="%" />
-        <KPI label="Numeracy Score (Endline)" value={velocity?.numeracyScore ?? 0} icon={<Calculator className="w-5 h-5" />} color="emerald" suffix="%" />
+        <KPI label="Current Literacy Level" value={velocity?.literacyScore ?? 0} icon={<BookOpen className="w-5 h-5" />} color="emerald" suffix="%" />
+        <KPI label="Current Numeracy Level" value={velocity?.numeracyScore ?? 0} icon={<Calculator className="w-5 h-5" />} color="emerald" suffix="%" />
         <KPI label="Arena Engagement" value={stats.totalArenaBattles ?? 0} icon={<Sparkles className="w-5 h-5" />} color="blue" suffix=" Battles" />
         <KPI label="Single Games" value={stats.totalSingleGames ?? 0} icon={<Gamepad2 className="w-5 h-5" />} color="orange" suffix=" Games" />
       </div>
