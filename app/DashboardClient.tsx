@@ -198,7 +198,7 @@ export default function DashboardClient({ initialStats, hierarchy }: { initialSt
               Class 4 State Targets
             </h2>
             <p className="text-slate-400 text-sm font-medium leading-relaxed">
-              NIPUN Bharat targets require 100% proficiency for Class 4 students in Language (Story Reading) and Mathematics (Division) in their most recent assessments.
+              NIPUN Bharat targets require 100% proficiency for Class 4 students in Language and Mathematics in their most recent assessments.
             </p>
           </div>
           
@@ -207,7 +207,7 @@ export default function DashboardClient({ initialStats, hierarchy }: { initialSt
             <div className="bg-white/5 border border-white/10 rounded-2xl p-5 backdrop-blur-md space-y-4">
               <div className="flex justify-between items-start">
                 <div>
-                  <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">Language Target (Story)</p>
+                  <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">Language Target</p>
                   <h3 className="text-4xl font-black text-white mt-1">100%</h3>
                 </div>
                 <div className="w-10 h-10 rounded-xl bg-blue-500/20 flex items-center justify-center text-blue-400">
@@ -234,7 +234,7 @@ export default function DashboardClient({ initialStats, hierarchy }: { initialSt
             <div className="bg-white/5 border border-white/10 rounded-2xl p-5 backdrop-blur-md space-y-4">
               <div className="flex justify-between items-start">
                 <div>
-                  <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">Mathematics Target (Division)</p>
+                  <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">Mathematics Target</p>
                   <h3 className="text-4xl font-black text-white mt-1">100%</h3>
                 </div>
                 <div className="w-10 h-10 rounded-xl bg-emerald-500/20 flex items-center justify-center text-emerald-400">
@@ -264,8 +264,8 @@ export default function DashboardClient({ initialStats, hierarchy }: { initialSt
       <div className={`grid grid-cols-2 lg:grid-cols-6 gap-4 transition-opacity ${isPending ? 'opacity-50' : ''}`}>
         <KPI label="Total Students" value={stats.totalStudents} icon={<Users className="w-5 h-5" />} color="blue" />
         <KPI label="Total Assessments" value={stats.totalAssessments} icon={<BookOpen className="w-5 h-5" />} color="indigo" />
-        <KPI label="Current Literacy Level" value={velocity?.literacyScore ?? 0} icon={<BookOpen className="w-5 h-5" />} color="emerald" suffix="%" />
-        <KPI label="Current Numeracy Level" value={velocity?.numeracyScore ?? 0} icon={<Calculator className="w-5 h-5" />} color="emerald" suffix="%" />
+        <KPI label="Class 4 Literacy Level" value={velocity?.literacyScore ?? 0} icon={<BookOpen className="w-5 h-5" />} color="emerald" suffix="%" />
+        <KPI label="Class 4 Numeracy Level" value={velocity?.numeracyScore ?? 0} icon={<Calculator className="w-5 h-5" />} color="emerald" suffix="%" />
         <KPI label="Arena Engagement" value={stats.totalArenaBattles ?? 0} icon={<Sparkles className="w-5 h-5" />} color="blue" suffix=" Battles" />
         <KPI label="Single Games" value={stats.totalSingleGames ?? 0} icon={<Gamepad2 className="w-5 h-5" />} color="orange" suffix=" Games" />
       </div>
