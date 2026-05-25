@@ -195,10 +195,10 @@ export default function DashboardClient({ initialStats, hierarchy }: { initialSt
               <Target className="w-3.5 h-3.5 animate-pulse" /> NIPUN Bharat Targets
             </div>
             <h2 className="text-2xl font-black tracking-tight">
-              Class 4 State Targets
+              NIPUN Bharat Mission
             </h2>
             <p className="text-slate-400 text-sm font-medium leading-relaxed">
-              NIPUN Bharat targets require 100% proficiency for Class 4 students in Language and Mathematics in their most recent assessments.
+              The National Initiative for Proficiency in Reading with Understanding and Numeracy (NIPUN Bharat) aims to ensure every child achieves foundational learning, tracking student progress towards universal 100% proficiency.
             </p>
           </div>
           
@@ -261,11 +261,9 @@ export default function DashboardClient({ initialStats, hierarchy }: { initialSt
       </div>
 
       {/* KPIs */}
-      <div className={`grid grid-cols-2 lg:grid-cols-6 gap-4 transition-opacity ${isPending ? 'opacity-50' : ''}`}>
+      <div className={`grid grid-cols-2 lg:grid-cols-4 gap-4 transition-opacity ${isPending ? 'opacity-50' : ''}`}>
         <KPI label="Total Students" value={stats.totalStudents} icon={<Users className="w-5 h-5" />} color="blue" />
         <KPI label="Total Assessments" value={stats.totalAssessments} icon={<BookOpen className="w-5 h-5" />} color="indigo" />
-        <KPI label="Our Literacy Level" value={velocity?.literacyScore ?? 0} icon={<BookOpen className="w-5 h-5" />} color="emerald" suffix="%" />
-        <KPI label="Our Numeracy Level" value={velocity?.numeracyScore ?? 0} icon={<Calculator className="w-5 h-5" />} color="emerald" suffix="%" />
         <KPI label="Arena Engagement" value={stats.totalArenaBattles ?? 0} icon={<Sparkles className="w-5 h-5" />} color="blue" suffix=" Battles" />
         <KPI label="Single Games" value={stats.totalSingleGames ?? 0} icon={<Gamepad2 className="w-5 h-5" />} color="orange" suffix=" Games" />
       </div>
