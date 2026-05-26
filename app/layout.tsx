@@ -39,6 +39,7 @@ import OfflineSync from "@/components/OfflineSync";
 import SessionWrapper from "@/components/SessionWrapper";
 import PrathamChat from "@/components/PrathamChat";
 import MobileNav from "@/components/MobileNav";
+import { LanguageProvider } from "@/context/LanguageContext";
 
 export default function RootLayout({
   children,
@@ -52,15 +53,17 @@ export default function RootLayout({
     >
       <body className="min-h-full flex flex-col font-sans text-slate-900 dark:text-slate-100 selection:bg-blue-200 dark:selection:bg-blue-900">
         <SessionWrapper>
-          <Navbar />
-          <div className="fixed bottom-4 right-4 z-50">
-            <OfflineSync />
-          </div>
-          <main className="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pb-24 md:pb-8">
-            {children}
-          </main>
-          <MobileNav />
-          <PrathamChat />
+          <LanguageProvider>
+            <Navbar />
+            <div className="fixed bottom-4 right-4 z-50">
+              <OfflineSync />
+            </div>
+            <main className="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pb-24 md:pb-8">
+              {children}
+            </main>
+            <MobileNav />
+            <PrathamChat />
+          </LanguageProvider>
         </SessionWrapper>
       </body>
     </html>

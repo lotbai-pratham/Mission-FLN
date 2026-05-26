@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
+import { useLanguage } from "@/context/LanguageContext";
 import { VIDEOS, ARTICLES, SIMULATIONS } from "@/lib/resource_data";
 import { cn } from "@/lib/utils";
 import BattleMatchmaker from '@/components/simulations/BattleMatchmaker';
@@ -919,14 +920,15 @@ function MissionControl() {
 
 // --- Main Resources Page Component (Implementation Corner) ---
 export default function ResourcesPage() {
+  const { t } = useLanguage();
   const [activeTab, setActiveTab] = useState<"mission" | "videos" | "articles" | "simulations">("mission");
   const [searchTerm, setSearchTerm] = useState("");
 
   const TABS = [
-    { id: "mission", label: "Mission Mode", icon: <ClipboardPlus className="w-5 h-5" /> },
-    { id: "videos", label: "Training Videos", icon: <MonitorPlay className="w-5 h-5" /> },
-    { id: "articles", label: "Coaching Articles", icon: <BookOpen className="w-5 h-5" /> },
-    { id: "simulations", label: "Level Simulations", icon: <Gamepad2 className="w-5 h-5" /> },
+    { id: "mission", label: t("Session Planner") || "Mission Mode", icon: <ClipboardPlus className="w-5 h-5" /> },
+    { id: "videos", label: t("Pedagogy Videos") || "Training Videos", icon: <MonitorPlay className="w-5 h-5" /> },
+    { id: "articles", label: t("Articles") || "Coaching Articles", icon: <BookOpen className="w-5 h-5" /> },
+    { id: "simulations", label: t("Interactive Simulations") || "Level Simulations", icon: <Gamepad2 className="w-5 h-5" /> },
   ] as const;
 
   return (
@@ -935,13 +937,13 @@ export default function ResourcesPage() {
       {/* Hero Section */}
       <div className="text-center space-y-4 max-w-3xl mx-auto">
         <div className="inline-flex items-center gap-2 px-4 py-2 bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-full text-[10px] font-black uppercase tracking-widest">
-          <GraduationCap className="w-4 h-4" /> Implementation Corner
+          <GraduationCap className="w-4 h-4" /> {t('Implementation Corner')}
         </div>
         <h1 className="text-3xl sm:text-5xl font-black text-slate-900 dark:text-white tracking-tight leading-tight">
           Classroom <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600 underline decoration-blue-500/30">Action Hub</span>
         </h1>
         <p className="text-lg text-slate-500 dark:text-slate-400 leading-relaxed">
-          The ultimate engine for FLN training and pedagogical execution. Run your 90-minute daily missions or sharpen your skills with our library.
+          {t('Interactive Simulations') ? t('Hands-on simulations, games and learning pathways to master FLN concepts.') : 'The ultimate engine for FLN training and pedagogical execution. Run your 90-minute daily missions or sharpen your skills with our library.'}
         </p>
       </div>
 

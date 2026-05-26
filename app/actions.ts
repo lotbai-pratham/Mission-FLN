@@ -92,7 +92,23 @@ export async function getStudentProfile(studentId: string) {
     include: {
       school: { include: { projectOffice: { include: { division: true } } } },
       assessments: { orderBy: { date: 'desc' } },
-      singleGames: { orderBy: { conductedAt: 'desc' } }
+      singleGames: { orderBy: { conductedAt: 'desc' } },
+      battlesAsP1: {
+        include: {
+          player1: { select: { id: true, name: true } },
+          player2: { select: { id: true, name: true } },
+          winner: { select: { id: true, name: true } }
+        },
+        orderBy: { conductedAt: 'desc' }
+      },
+      battlesAsP2: {
+        include: {
+          player1: { select: { id: true, name: true } },
+          player2: { select: { id: true, name: true } },
+          winner: { select: { id: true, name: true } }
+        },
+        orderBy: { conductedAt: 'desc' }
+      }
     }
   });
 

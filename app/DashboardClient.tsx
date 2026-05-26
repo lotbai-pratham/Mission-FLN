@@ -7,6 +7,7 @@ import {
 } from 'recharts';
 import { BookOpen, Calculator, Users, School, Filter, TrendingUp, LayoutDashboard, Search, Sparkles, AlertCircle, TrendingDown, Trophy, Medal, Lightbulb, Gamepad2, Target } from 'lucide-react';
 import { getDashboardStats, getStrugglingStudents, getGrowthVelocity, getInterventionPlan, getPORankings } from "@/app/actions";
+import { useLanguage } from "@/context/LanguageContext";
 
 const LIT_LABELS = ['Beginner', 'Letter', 'Word', 'Paragraph', 'Story'];
 const NUM_LABELS = ['Beginner', '1-9', '10-99', 'Addition', 'Subtraction', 'Division'];
@@ -16,6 +17,7 @@ const TERM_COLORS: Record<string, string> = { Baseline: '#6366f1', Midline: '#f5
 const TERMS = ['Baseline', 'Midline', 'Endline'];
 
 export default function DashboardClient({ initialStats, hierarchy }: { initialStats: any; hierarchy: any[] }) {
+  const { t } = useLanguage();
   const [stats, setStats] = useState(initialStats);
   const [isPending, startTransition] = useTransition();
   const [divId, setDivId] = useState("");
@@ -163,22 +165,22 @@ export default function DashboardClient({ initialStats, hierarchy }: { initialSt
       {/* Filters */}
       <div className="bg-white dark:bg-slate-900 rounded-3xl p-5 shadow-sm border border-slate-200 dark:border-slate-800 flex flex-col md:flex-row gap-3 items-center">
         <div className="flex items-center gap-2 text-slate-400 font-bold px-2 shrink-0">
-          <Filter className="w-5 h-5" /><span className="hidden lg:inline text-sm">Filters:</span>
+          <Filter className="w-5 h-5" /><span className="hidden lg:inline text-sm">{t('Filters') || 'Filters'}:</span>
         </div>
         <select value={term} onChange={e => setTerm(e.target.value)} className="flex-1 bg-slate-50 dark:bg-slate-800 rounded-xl px-4 py-2.5 ring-1 ring-slate-200 focus:ring-2 focus:ring-blue-500 text-sm border-none">
-          <option value="">All Terms</option>
+          <option value="">{t('All Terms') || 'All Terms'}</option>
           {TERMS.map(t => <option key={t} value={t}>{t}</option>)}
         </select>
         <select value={divId} onChange={e => { setDivId(e.target.value); setPoId(""); setSchoolId(""); }} className="flex-1 bg-slate-50 dark:bg-slate-800 rounded-xl px-4 py-2.5 ring-1 ring-slate-200 focus:ring-2 focus:ring-blue-500 text-sm border-none">
-          <option value="">All Divisions</option>
+          <option value="">{t('All Divisions')}</option>
           {hierarchy.map(d => <option key={d.id} value={d.id}>{d.name}</option>)}
         </select>
         <select value={poId} onChange={e => { setPoId(e.target.value); setSchoolId(""); }} disabled={!divId} className="flex-1 bg-slate-50 dark:bg-slate-800 rounded-xl px-4 py-2.5 ring-1 ring-slate-200 focus:ring-2 focus:ring-blue-500 text-sm border-none disabled:opacity-50">
-          <option value="">All Project Offices</option>
+          <option value="">{t('All Project Offices')}</option>
           {pos.map((p: any) => <option key={p.id} value={p.id}>{p.name}</option>)}
         </select>
         <select value={schoolId} onChange={e => setSchoolId(e.target.value)} disabled={!poId} className="flex-1 bg-slate-50 dark:bg-slate-800 rounded-xl px-4 py-2.5 ring-1 ring-slate-200 focus:ring-2 focus:ring-blue-500 text-sm border-none disabled:opacity-50">
-          <option value="">All Schools</option>
+          <option value="">{t('All Schools')}</option>
           {schools.map((s: any) => <option key={s.id} value={s.id}>{s.name}</option>)}
         </select>
         {isPending && <span className="text-sm font-bold text-blue-500 animate-pulse shrink-0">Updating…</span>}
@@ -192,13 +194,13 @@ export default function DashboardClient({ initialStats, hierarchy }: { initialSt
         <div className="relative z-10 grid grid-cols-1 lg:grid-cols-3 gap-8 items-center">
           <div className="space-y-2">
             <div className="inline-flex items-center gap-2 px-3 py-1 bg-indigo-500/20 rounded-full text-indigo-300 text-xs font-black uppercase tracking-wider">
-              <Target className="w-3.5 h-3.5 animate-pulse" /> NIPUN Bharat Targets
+              <Target className="w-3.5 h-3.5 animate-pulse" /> {t('NIPUN Bharat Targets') || 'NIPUN Bharat Targets'}
             </div>
             <h2 className="text-2xl font-black tracking-tight">
-              NIPUN Bharat Mission
+              {t('NIPUN Bharat Mission')}
             </h2>
             <p className="text-slate-400 text-sm font-medium leading-relaxed">
-              The National Initiative for Proficiency in Reading with Understanding and Numeracy (NIPUN Bharat) aims to ensure every child achieves foundational learning, tracking student progress towards universal 100% proficiency.
+              {t('The NIPUN Bharat Mission targets 100% foundational literacy and numeracy proficiency for all grade-level students. We monitor student progress through targeted baseline and endline assessments to bridge the learning gap.')}
             </p>
           </div>
           
@@ -207,7 +209,7 @@ export default function DashboardClient({ initialStats, hierarchy }: { initialSt
             <div className="bg-white/5 border border-white/10 rounded-2xl p-5 backdrop-blur-md space-y-4">
               <div className="flex justify-between items-start">
                 <div>
-                  <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">Our Language Level</p>
+                  <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">{t('Literacy (L4 Story Reading)')}</p>
                   <h3 className="text-4xl font-black text-white mt-1">{(velocity?.literacyScore ?? 0)}%</h3>
                 </div>
                 <div className="w-10 h-10 rounded-xl bg-blue-500/20 flex items-center justify-center text-blue-400">
@@ -220,7 +222,7 @@ export default function DashboardClient({ initialStats, hierarchy }: { initialSt
                   <div className="flex-1 h-2.5 bg-white/10 rounded-full overflow-hidden relative">
                     <div className="h-full bg-blue-500 rounded-full transition-all duration-1000" style={{ width: `${velocity?.literacyScore ?? 0}%` }} />
                   </div>
-                  <span className="text-xs font-black text-blue-400 shrink-0">100% Target</span>
+                  <span className="text-xs font-black text-blue-400 shrink-0">{t('Target')} 100%</span>
                 </div>
               </div>
             </div>
@@ -229,7 +231,7 @@ export default function DashboardClient({ initialStats, hierarchy }: { initialSt
             <div className="bg-white/5 border border-white/10 rounded-2xl p-5 backdrop-blur-md space-y-4">
               <div className="flex justify-between items-start">
                 <div>
-                  <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">Our Mathematics Level</p>
+                  <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">{t('Numeracy (L3 Division)')}</p>
                   <h3 className="text-4xl font-black text-white mt-1">{(velocity?.numeracyScore ?? 0)}%</h3>
                 </div>
                 <div className="w-10 h-10 rounded-xl bg-emerald-500/20 flex items-center justify-center text-emerald-400">
@@ -242,7 +244,7 @@ export default function DashboardClient({ initialStats, hierarchy }: { initialSt
                   <div className="flex-1 h-2.5 bg-white/10 rounded-full overflow-hidden relative">
                     <div className="h-full bg-emerald-500 rounded-full transition-all duration-1000" style={{ width: `${velocity?.numeracyScore ?? 0}%` }} />
                   </div>
-                  <span className="text-xs font-black text-emerald-400 shrink-0">100% Target</span>
+                  <span className="text-xs font-black text-emerald-400 shrink-0">{t('Target')} 100%</span>
                 </div>
               </div>
             </div>
@@ -252,10 +254,10 @@ export default function DashboardClient({ initialStats, hierarchy }: { initialSt
 
       {/* KPIs */}
       <div className={`grid grid-cols-2 lg:grid-cols-4 gap-4 transition-opacity ${isPending ? 'opacity-50' : ''}`}>
-        <KPI label="Total Students" value={stats.totalStudents} icon={<Users className="w-5 h-5" />} color="blue" />
-        <KPI label="Total Assessments" value={stats.totalAssessments} icon={<BookOpen className="w-5 h-5" />} color="indigo" />
-        <KPI label="Arena Engagement" value={stats.totalArenaBattles ?? 0} icon={<Sparkles className="w-5 h-5" />} color="blue" suffix=" Battles" />
-        <KPI label="Single Games" value={stats.totalSingleGames ?? 0} icon={<Gamepad2 className="w-5 h-5" />} color="orange" suffix=" Games" />
+        <KPI label={t("Total Students")} value={stats.totalStudents} icon={<Users className="w-5 h-5" />} color="blue" />
+        <KPI label={t("Total Assessments")} value={stats.totalAssessments} icon={<BookOpen className="w-5 h-5" />} color="indigo" />
+        <KPI label={t("Arena Engagement")} value={stats.totalArenaBattles ?? 0} icon={<Sparkles className="w-5 h-5" />} color="blue" suffix={` ${t('Arena Engagement') !== 'Arena Engagement' ? '' : 'Battles'}`} />
+        <KPI label={t("Single Games")} value={stats.totalSingleGames ?? 0} icon={<Gamepad2 className="w-5 h-5" />} color="orange" suffix={` ${t('Single Games') !== 'Single Games' ? '' : 'Games'}`} />
       </div>
 
       {/* STRUGGLING STUDENTS ALERT */}
@@ -342,9 +344,9 @@ export default function DashboardClient({ initialStats, hierarchy }: { initialSt
       {/* Tabs */}
       <div className="flex p-1.5 bg-slate-100 dark:bg-slate-800/50 rounded-2xl w-fit border border-slate-200 dark:border-slate-800">
         {([
-          ['trends', 'Level Trends', TrendingUp],
-          ['overview', 'Term Overview', LayoutDashboard],
-          ['ranking', 'P.O. Ranking', Trophy],
+          ['trends', t('Target Tracking') || 'Level Trends', TrendingUp],
+          ['overview', t('Growth Over Time') || 'Term Overview', LayoutDashboard],
+          ['ranking', t('Division Rank') || 'P.O. Ranking', Trophy],
         ] as const).map(([id, label, Icon]) => (
           <button key={id} onClick={() => setActiveTab(id as any)}
             className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold transition-all ${activeTab === id ? 'bg-white dark:bg-slate-700 text-blue-600 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}>
@@ -536,6 +538,7 @@ export default function DashboardClient({ initialStats, hierarchy }: { initialSt
 }
 
 function SummaryTable({ type, selectedClass, overallBreakdown, classBreakdown }: any) {
+  const { t } = useLanguage();
   const labels = type === 'literacy' ? LIT_LABELS : NUM_LABELS;
   const breakdown = selectedClass === 'all' ? overallBreakdown?.[type] : classBreakdown?.[type]?.[selectedClass];
   if (!breakdown) return null;
@@ -546,14 +549,14 @@ function SummaryTable({ type, selectedClass, overallBreakdown, classBreakdown }:
     <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
       <div className="px-6 py-4 border-b border-slate-100 dark:border-slate-800">
         <h3 className="font-bold text-slate-700 dark:text-slate-200 text-sm">
-          Detailed Breakdown {selectedClass !== 'all' ? `— Class ${selectedClass}` : '— All Classes'}
+          {t('Detailed Breakdown') || 'Detailed Breakdown'} {selectedClass !== 'all' ? `— ${t('Class')} ${selectedClass}` : `— ${t('All Classes') || 'All Classes'}`}
         </h3>
       </div>
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
           <thead>
             <tr className="bg-slate-50 dark:bg-slate-800/50 text-xs font-semibold text-slate-500 uppercase tracking-wider">
-              <th className="text-left px-6 py-3">Level</th>
+              <th className="text-left px-6 py-3">{t('Level') || 'Level'}</th>
               {termsPresent.map(t => (
                 <th key={t} className="px-4 py-3 text-center" colSpan={2}>
                   <span className="inline-flex items-center gap-1">

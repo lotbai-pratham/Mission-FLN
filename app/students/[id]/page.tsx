@@ -8,7 +8,67 @@ import ProgressChart from "@/components/ProgressChart";
 const LEVEL_LABELS_LIT = ['Beginner', 'Letter', 'Word', 'Paragraph', 'Story'];
 const LEVEL_LABELS_NUM = ['Beginner', 'Num 1-9', 'Num 10-99', 'Addition', 'Subtraction', 'Division'];
 
-// Data now comes from lib/tarl_data.ts
+const GAME_SLUG_TO_TITLE: Record<string, string> = {
+  // Arena / Battle slugs
+  'marathi-letters': 'अक्षर ओळख (Letter Flash)',
+  'marathi-words': 'शब्द वाचन (Word Race)',
+  'marathi-sent': 'वाक्य पूर्ण करा (Sentence Fill)',
+  'math-duel-b': 'Math Duel',
+  'num-race-b': 'Number Race',
+  'pv-battle-b': 'Place Value Battle',
+  'math-sprint': 'Math Sprint',
+  'sound-duel': 'Sound Duel',
+  'tili-duel': 'Bundle Duel',
+  'gyansidi': '🐍 ज्ञानशिडी (GyanSidi)',
+  'g-jungle': 'Jungle Fight',
+  // Practise simulations
+  'number-hunter': 'Number Hunter',
+  'bundle-builder': 'Bundle Builder',
+  'addition-master': 'Addition Master',
+  'sound-explorer': 'Sound Explorer',
+  'word-builder': 'Word Builder',
+  'sentence-arch': 'Sentence Architect',
+  'chaudakhadi': 'चौदाखडी Chart',
+  'story-reader': 'Story Reader',
+  'number-line': 'Number Line',
+  'math-mania-market': '🛒 Math Mania Market',
+  'vachan-pravas': '📖 Vachan Pravas',
+  'akshar-crush': '🍬 अक्षर कँडी',
+  'matra-chakra': '🎡 मात्रा चक्र',
+  'fraction-viz': '🍰 Fractions Explorer',
+  'digital-abacus': '🧮 Digital Abacus',
+  'division-sim': '➗ Division Fun',
+  'equal-sharing': '🍎 Equal Sharing',
+  'multi-sim': '✖️ Multiplier',
+  'repeat-add': '➕ Repeated Addition',
+  'sankhya-chakra': '☸️ संख्या चक्र',
+  // Practice games
+  'g-oddone': 'Odd One Out',
+  'g-letters': 'Letter Explorer',
+  'g-missing': 'Missing Letter',
+  'g-fish': 'Fish Word Catch',
+  'g-rhyme': 'Rhyme Time',
+  'g-sentence': 'Sentence Builder',
+  'g-story': 'Story Sequence',
+  'g-truefalse': 'True or False',
+  'g-bigger': 'Bigger or Smaller',
+  'g-counting': 'Count the Stones',
+  'g-numbertrain': 'Number Train',
+  'g-weights': 'Balance the Scale',
+  'g-placevalue': 'Place Value Builder',
+  'g-bonds': 'Number Bonds',
+  'g-market': 'Market Math',
+  'g-river': 'Number River',
+  'g-clock': 'Clock Reader',
+  'g-sorting': 'Sorting Hat',
+  'g-matra': 'Matra Practice',
+  'g-empathy': '❤️ सहानूभूती नायक (Empathy Hero)',
+  'g-buddy': '🦸‍♂️ बडीचा मोठा दिवस (Buddy\'s Big Day)',
+  'g-germs': '🧼 स्वच्छता रक्षक (Germ Buster)',
+  'g-plate': '🍏 आरोग्यदायी थाळी (Healthy Plate)',
+  'g-routine': '⏰ माझी दिनचर्या (Daily Routine)',
+  'g-waste': '♻️ कचरा व्यवस्थापन (Waste Sort)',
+};
 
 export default async function StudentProfilePage({ params }: { params: Promise<{ id: string }> }) {
   const resolvedParams = await params;
@@ -24,6 +84,28 @@ export default async function StudentProfilePage({ params }: { params: Promise<{
   const litActivities = LITERACY_ACTIVITIES[litLevel] || [];
   const numActivities = NUMERACY_ACTIVITIES[numLevel] || [];
 
+  // Gameplay Calculations
+  const battlesAsP1 = student.battlesAsP1 || [];
+  const battlesAsP2 = student.battlesAsP2 || [];
+  const battleCount = battlesAsP1.length + battlesAsP2.length;
+  const singleGameCount = student.singleGames?.length || 0;
+  
+  const totalPracticeSeconds = student.singleGames?.reduce((sum, g) => sum + g.duration, 0) || 0;
+  const estimatedBattleSeconds = battleCount * 60; // Estimate 1 minute per battle
+  const totalPlaytimeSeconds = totalPracticeSeconds + estimatedBattleSeconds;
+
+  const formatTime = (totalSecs: number) => {
+    const mins = Math.floor(totalSecs / 60);
+    const secs = totalSecs % 60;
+    if (mins === 0) return `${secs}s`;
+    return `${mins}m ${secs}s`;
+  };
+
+  const battles = [
+    ...battlesAsP1.map((b: any) => ({ ...b, role: 'P1' as const })),
+    ...battlesAsP2.map((b: any) => ({ ...b, role: 'P2' as const }))
+  ].sort((a: any, b: any) => new Date(b.conductedAt).getTime() - new Date(a.conductedAt).getTime());
+
   return (
     <div className="max-w-5xl mx-auto space-y-8 pb-12 animate-in fade-in zoom-in-95 duration-500">
        
@@ -37,7 +119,7 @@ export default async function StudentProfilePage({ params }: { params: Promise<{
           
           <div className="flex flex-col sm:flex-row gap-6 items-center sm:items-start relative z-10">
             <div className="w-24 h-24 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center text-white shadow-lg shadow-blue-500/30">
-              <GraduationCap className="w-10 h-10"/>
+               <GraduationCap className="w-10 h-10"/>
             </div>
             <div className="flex-1 text-center sm:text-left">
                <div className="flex flex-wrap items-center justify-center sm:justify-start gap-3">
@@ -53,7 +135,6 @@ export default async function StudentProfilePage({ params }: { params: Promise<{
                   <span className="flex items-center gap-1.5 bg-slate-100 dark:bg-slate-800 px-3 py-1 rounded-full"><MapPin className="w-4 h-4"/> {student.school.name}</span>
                   <span className="flex items-center gap-1.5 bg-slate-100 dark:bg-slate-800 px-3 py-1 rounded-full"><GraduationCap className="w-4 h-4"/> Class {student.class}</span>
                   <span className="flex items-center gap-1.5 bg-slate-100 dark:bg-slate-800 px-3 py-1 rounded-full">Gender: {student.gender}</span>
-                  <span className="flex items-center gap-1.5 bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 px-3 py-1 rounded-full"><Sparkles className="w-4 h-4"/> Arena Battles: {student.gamesPlayed}</span>
                </div>
             </div>
             <div>
@@ -61,6 +142,39 @@ export default async function StudentProfilePage({ params }: { params: Promise<{
                  <Flame className="w-5 h-5"/> Test Now
                </Link>
             </div>
+          </div>
+       </div>
+
+       {/* Gameplay & Practice Stats Grid */}
+       <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+          <div className="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-[32px] p-6 shadow-sm flex items-center gap-4 hover:shadow-md transition-shadow">
+             <div className="w-12 h-12 bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-2xl flex items-center justify-center">
+                <Gamepad2 className="w-6 h-6" />
+             </div>
+             <div>
+                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Practice Games</p>
+                <p className="text-2xl font-black text-slate-800 dark:text-white mt-1">{singleGameCount}</p>
+             </div>
+          </div>
+          
+          <div className="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-[32px] p-6 shadow-sm flex items-center gap-4 hover:shadow-md transition-shadow">
+             <div className="w-12 h-12 bg-orange-50 dark:bg-orange-900/30 text-orange-600 dark:text-orange-400 rounded-2xl flex items-center justify-center">
+                <Flame className="w-6 h-6 animate-pulse" />
+             </div>
+             <div>
+                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Arena Battles</p>
+                <p className="text-2xl font-black text-slate-800 dark:text-white mt-1">{battleCount}</p>
+             </div>
+          </div>
+
+          <div className="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-[32px] p-6 shadow-sm flex items-center gap-4 hover:shadow-md transition-shadow">
+             <div className="w-12 h-12 bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 rounded-2xl flex items-center justify-center">
+                <Clock className="w-6 h-6" />
+             </div>
+             <div>
+                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Total Learning Playtime</p>
+                <p className="text-2xl font-black text-slate-800 dark:text-white mt-1">{formatTime(totalPlaytimeSeconds)}</p>
+             </div>
           </div>
        </div>
 
@@ -168,27 +282,27 @@ export default async function StudentProfilePage({ params }: { params: Promise<{
                                   <div className="flex flex-col items-end">
                                      <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Literacy</span>
                                      <div className="flex items-center gap-2">
-                                        <span className="bg-orange-50 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400 px-3 py-1 rounded-lg text-xs font-black">
-                                           {LEVEL_LABELS_LIT[a.literacyLevel]}
-                                        </span>
-                                        {litGrowth > 0 && <TrendingUp className="w-4 h-4 text-emerald-500" />}
-                                        {litGrowth === 0 && idx < student.assessments.length - 1 && <Minus className="w-4 h-4 text-slate-300" />}
-                                        {litGrowth < 0 && <TrendingDown className="w-4 h-4 text-red-500" />}
+                                         <span className="bg-orange-50 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400 px-3 py-1 rounded-lg text-xs font-black">
+                                            {LEVEL_LABELS_LIT[a.literacyLevel]}
+                                         </span>
+                                         {litGrowth > 0 && <TrendingUp className="w-4 h-4 text-emerald-500" />}
+                                         {litGrowth === 0 && idx < student.assessments.length - 1 && <Minus className="w-4 h-4 text-slate-300" />}
+                                         {litGrowth < 0 && <TrendingDown className="w-4 h-4 text-red-500" />}
                                      </div>
                                   </div>
                                   {/* Numeracy Result */}
                                   <div className="flex flex-col items-end border-l border-slate-100 dark:border-slate-800 pl-4">
                                      <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Numeracy</span>
                                      <div className="flex items-center gap-2">
-                                        <span className="bg-emerald-50 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400 px-3 py-1 rounded-lg text-xs font-black">
-                                           {LEVEL_LABELS_NUM[a.numeracyLevel === 6 ? 5 : a.numeracyLevel === 5 ? 4 : a.numeracyLevel]}
-                                        </span>
-                                        {numGrowth > 0 && <TrendingUp className="w-4 h-4 text-emerald-500" />}
-                                        {numGrowth === 0 && idx < student.assessments.length - 1 && <Minus className="w-4 h-4 text-slate-300" />}
-                                        {numGrowth < 0 && <TrendingDown className="w-4 h-4 text-red-500" />}
+                                         <span className="bg-emerald-50 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400 px-3 py-1 rounded-lg text-xs font-black">
+                                            {LEVEL_LABELS_NUM[a.numeracyLevel === 6 ? 5 : a.numeracyLevel === 5 ? 4 : a.numeracyLevel]}
+                                         </span>
+                                         {numGrowth > 0 && <TrendingUp className="w-4 h-4 text-emerald-500" />}
+                                         {numGrowth === 0 && idx < student.assessments.length - 1 && <Minus className="w-4 h-4 text-slate-300" />}
+                                         {numGrowth < 0 && <TrendingDown className="w-4 h-4 text-red-500" />}
                                      </div>
                                   </div>
-                               </div>
+                                </div>
                             </div>
                          </div>
                       </div>
@@ -205,39 +319,110 @@ export default async function StudentProfilePage({ params }: { params: Promise<{
          </div>
        )}
 
-       {/* Single Game Records */}
-       {(student as any).singleGames && (student as any).singleGames.length > 0 && (
-         <div className="space-y-6 mt-12 px-2">
-            <div className="flex items-center gap-3">
-              <Gamepad2 className="w-6 h-6 text-orange-500"/>
-              <h2 className="text-2xl font-extrabold text-slate-800 dark:text-slate-100">Game Records</h2>
+       {/* Dual Gameplay & Battle Records History */}
+       {(singleGameCount > 0 || battleCount > 0) ? (
+         <div className="grid md:grid-cols-2 gap-8 mt-12 px-2">
+            
+            {/* Practice Game Records */}
+            <div className="space-y-6">
+               <div className="flex items-center gap-3 border-b border-slate-100 dark:border-slate-800 pb-3">
+                 <Gamepad2 className="w-6 h-6 text-blue-500"/>
+                 <h2 className="text-xl font-black text-slate-800 dark:text-slate-100">Practice Records ({singleGameCount})</h2>
+               </div>
+               
+               {singleGameCount > 0 ? (
+                 <div className="space-y-4 max-h-[480px] overflow-y-auto pr-2">
+                   {student.singleGames.map((game: any) => (
+                     <div key={game.id} className="bg-white dark:bg-slate-900 rounded-[24px] p-4 border border-slate-100 dark:border-slate-800 shadow-sm flex flex-col justify-between hover:shadow-md transition-shadow">
+                       <div className="flex justify-between items-start gap-2 mb-2">
+                         <span className="font-bold text-slate-800 dark:text-white truncate text-sm">
+                           {GAME_SLUG_TO_TITLE[game.gameSlug] || game.gameSlug}
+                         </span>
+                         <span className="text-[9px] text-slate-400 font-bold whitespace-nowrap">
+                           {new Date(game.conductedAt).toLocaleDateString()}
+                         </span>
+                       </div>
+                       <div className="flex items-center justify-between">
+                         <div>
+                           <p className="text-[9px] text-slate-400 font-bold uppercase tracking-wider">Score</p>
+                           <p className="text-lg font-black text-emerald-500">+{game.score}</p>
+                         </div>
+                         <div className="text-right">
+                           <p className="text-[9px] text-slate-400 font-bold uppercase tracking-wider">Time</p>
+                           <p className="text-sm font-mono font-bold text-slate-600 dark:text-slate-300">
+                             {formatTime(game.duration)}
+                           </p>
+                         </div>
+                       </div>
+                     </div>
+                   ))}
+                 </div>
+               ) : (
+                 <div className="p-8 text-center text-slate-400 bg-slate-50 dark:bg-slate-800/30 rounded-[24px] border border-dashed border-slate-200 dark:border-slate-800 text-xs font-bold">
+                    No practice sessions logged yet.
+                 </div>
+               )}
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-              {(student as any).singleGames.map((game: any) => (
-                <div key={game.id} className="bg-white dark:bg-slate-900 rounded-2xl p-5 border border-slate-100 dark:border-slate-800 shadow-sm flex flex-col justify-between">
-                  <div className="flex justify-between items-start mb-4">
-                    <span className="font-bold text-slate-800 dark:text-white truncate">{game.gameSlug}</span>
-                    <span className="text-[10px] text-slate-400 font-black tracking-widest uppercase">
-                      {new Date(game.conductedAt).toLocaleDateString()}
-                    </span>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Score</p>
-                      <p className="text-xl font-black text-emerald-500">+{game.score}</p>
-                    </div>
-                    <div className="text-right">
-                      <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Time</p>
-                      <p className="text-lg font-mono font-bold text-slate-600 dark:text-slate-300">
-                        {Math.floor(game.duration / 60)}:{(game.duration % 60).toString().padStart(2, '0')}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              ))}
+
+            {/* Arena Battle History */}
+            <div className="space-y-6">
+               <div className="flex items-center gap-3 border-b border-slate-100 dark:border-slate-800 pb-3">
+                 <Flame className="w-6 h-6 text-orange-500"/>
+                 <h2 className="text-xl font-black text-slate-800 dark:text-slate-100">Arena Battles ({battleCount})</h2>
+               </div>
+               
+               {battleCount > 0 ? (
+                 <div className="space-y-4 max-h-[480px] overflow-y-auto pr-2">
+                   {battles.map((battle: any) => {
+                     const isWinner = battle.winnerId === student.id;
+                     const isDraw = battle.winnerId === null;
+                     const opponentName = battle.role === 'P1' ? battle.player2.name : battle.player1.name;
+                     
+                     return (
+                       <div key={battle.id} className="bg-white dark:bg-slate-900 rounded-[24px] p-4 border border-slate-100 dark:border-slate-800 shadow-sm flex flex-col justify-between hover:shadow-md transition-shadow">
+                         <div className="flex justify-between items-start gap-2 mb-2">
+                           <span className="font-bold text-slate-800 dark:text-white truncate text-sm">
+                             {GAME_SLUG_TO_TITLE[battle.gameSlug] || battle.gameSlug}
+                           </span>
+                           <span className="text-[9px] text-slate-400 font-bold whitespace-nowrap">
+                             {new Date(battle.conductedAt).toLocaleDateString()}
+                           </span>
+                         </div>
+                         <div className="flex items-center justify-between">
+                           <div>
+                             <p className="text-[9px] text-slate-400 font-bold uppercase tracking-wider">Opponent</p>
+                             <p className="text-xs font-bold text-slate-700 dark:text-slate-300 truncate max-w-[120px] sm:max-w-none">{opponentName}</p>
+                           </div>
+                           <div className="text-right">
+                             <p className="text-[9px] text-slate-400 font-bold uppercase tracking-wider mb-0.5">Result</p>
+                             {isDraw ? (
+                               <span className="inline-block text-[9px] font-black bg-slate-100 dark:bg-slate-800 text-slate-500 px-2 py-0.5 rounded-full uppercase">
+                                 Draw
+                               </span>
+                             ) : isWinner ? (
+                               <span className="inline-block text-[9px] font-black bg-emerald-50 dark:bg-emerald-950 text-emerald-500 px-2.5 py-0.5 rounded-full uppercase">
+                                 Won 🏆
+                               </span>
+                             ) : (
+                               <span className="inline-block text-[9px] font-black bg-rose-50 dark:bg-rose-950 text-rose-500 px-2.5 py-0.5 rounded-full uppercase">
+                                 Lost
+                               </span>
+                             )}
+                           </div>
+                         </div>
+                       </div>
+                     );
+                   })}
+                 </div>
+               ) : (
+                 <div className="p-8 text-center text-slate-400 bg-slate-50 dark:bg-slate-800/30 rounded-[24px] border border-dashed border-slate-200 dark:border-slate-800 text-xs font-bold">
+                    No arena battles played yet.
+                 </div>
+               )}
             </div>
+
          </div>
-       )}
+       ) : null}
     </div>
   );
 }
