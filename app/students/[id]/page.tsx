@@ -4,9 +4,11 @@ import { User, BookOpen, Calculator, MapPin, Calendar, Lightbulb, GraduationCap,
 import Link from "next/link";
 import { LITERACY_ACTIVITIES, NUMERACY_ACTIVITIES, TaRLActivity } from "@/lib/tarl_data";
 import ProgressChart from "@/components/ProgressChart";
+import { cookies } from 'next/headers';
+import { translations, Language } from "@/context/LanguageContext";
 
 const LEVEL_LABELS_LIT = ['Beginner', 'Letter', 'Word', 'Paragraph', 'Story'];
-const LEVEL_LABELS_NUM = ['Beginner', 'Num 1-9', 'Num 10-99', 'Addition', 'Subtraction', 'Division'];
+const LEVEL_LABELS_NUM = ['Beginner', 'Num 1-9', 'Num 10-99', 'Addition', 'Subtraction', 'Math Division'];
 
 const GAME_SLUG_TO_TITLE: Record<string, string> = {
   // Arena / Battle slugs
@@ -74,7 +76,14 @@ export default async function StudentProfilePage({ params }: { params: Promise<{
   const resolvedParams = await params;
   const student = await getStudentProfile(resolvedParams.id);
   
-  if (!student) return <div className="p-10 text-center text-slate-500">Student not found.</div>;
+  const cookieStore = await cookies();
+  const langCookie = cookieStore.get('app-language')?.value as Language | undefined;
+  const lang: Language = (langCookie === 'en' || langCookie === 'hi' || langCookie === 'mr') ? langCookie : 'en';
+  const t = (key: string): string => {
+    return translations[lang]?.[key] ?? key;
+  };
+  
+  if (!student) return <div className="p-10 text-center text-slate-500">{t('Student not found.')}</div>;
 
   const latestAssessment = student.assessments[0]; // Ordered by date desc
   const litLevel = latestAssessment?.literacyLevel ?? -1;
@@ -110,7 +119,7 @@ export default async function StudentProfilePage({ params }: { params: Promise<{
     <div className="max-w-5xl mx-auto space-y-8 pb-12 animate-in fade-in zoom-in-95 duration-500">
        
        <Link href="/students" className="text-sm font-bold flex items-center gap-2 text-slate-400 hover:text-blue-500 transition-colors">
-         ← Back to Directory
+         ← {t('Back to Directory')}
        </Link>
 
        {/* Header Profile Card - FLN Child Progress Report Card */}
@@ -124,7 +133,7 @@ export default async function StudentProfilePage({ params }: { params: Promise<{
             <div className="flex-1 text-center sm:text-left">
                <div className="flex flex-wrap items-center justify-center sm:justify-start gap-3">
                   <span className="text-[10px] font-black tracking-widest bg-blue-600 text-white px-3 py-1 rounded-full uppercase">
-                    FLN Child Progress Report Card
+                    {t('FLN Child Progress Report Card')}
                   </span>
                   <span className="text-[10px] font-black tracking-wider bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 px-3 py-1 rounded-full border border-indigo-100/50 dark:border-indigo-800/50 uppercase">
                     UID: {student.uid}
@@ -133,13 +142,13 @@ export default async function StudentProfilePage({ params }: { params: Promise<{
                <h1 className="text-3xl font-black text-slate-900 dark:text-white tracking-tight mt-2">{student.name}</h1>
                <div className="flex flex-wrap items-center justify-center sm:justify-start gap-4 mt-3 text-sm font-medium text-slate-500">
                   <span className="flex items-center gap-1.5 bg-slate-100 dark:bg-slate-800 px-3 py-1 rounded-full"><MapPin className="w-4 h-4"/> {student.school.name}</span>
-                  <span className="flex items-center gap-1.5 bg-slate-100 dark:bg-slate-800 px-3 py-1 rounded-full"><GraduationCap className="w-4 h-4"/> Class {student.class}</span>
-                  <span className="flex items-center gap-1.5 bg-slate-100 dark:bg-slate-800 px-3 py-1 rounded-full">Gender: {student.gender}</span>
+                  <span className="flex items-center gap-1.5 bg-slate-100 dark:bg-slate-800 px-3 py-1 rounded-full"><GraduationCap className="w-4 h-4"/> {t('Class')} {student.class}</span>
+                  <span className="flex items-center gap-1.5 bg-slate-100 dark:bg-slate-800 px-3 py-1 rounded-full">{t('Gender')}: {t(student.gender)}</span>
                </div>
             </div>
             <div>
                <Link href="/assessments/live" className="whitespace-nowrap px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-2xl shadow-md transition-all flex items-center gap-2 transform hover:-translate-y-1">
-                 <Flame className="w-5 h-5"/> Test Now
+                 <Flame className="w-5 h-5"/> {t('Test Now')}
                </Link>
             </div>
           </div>
@@ -152,7 +161,7 @@ export default async function StudentProfilePage({ params }: { params: Promise<{
                 <Gamepad2 className="w-6 h-6" />
              </div>
              <div>
-                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Practice Games</p>
+                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('Practice Games')}</p>
                 <p className="text-2xl font-black text-slate-800 dark:text-white mt-1">{singleGameCount}</p>
              </div>
           </div>
@@ -162,7 +171,7 @@ export default async function StudentProfilePage({ params }: { params: Promise<{
                 <Flame className="w-6 h-6 animate-pulse" />
              </div>
              <div>
-                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Arena Battles</p>
+                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('Arena Battles')}</p>
                 <p className="text-2xl font-black text-slate-800 dark:text-white mt-1">{battleCount}</p>
              </div>
           </div>
@@ -172,7 +181,7 @@ export default async function StudentProfilePage({ params }: { params: Promise<{
                 <Clock className="w-6 h-6" />
              </div>
              <div>
-                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Total Learning Playtime</p>
+                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('Total Learning Playtime')}</p>
                 <p className="text-2xl font-black text-slate-800 dark:text-white mt-1">{formatTime(totalPlaytimeSeconds)}</p>
              </div>
           </div>
@@ -183,31 +192,31 @@ export default async function StudentProfilePage({ params }: { params: Promise<{
          <div className="space-y-6">
             <div className="flex items-center gap-3 px-2">
               <Lightbulb className="w-6 h-6 text-yellow-500"/>
-              <h2 className="text-2xl font-extrabold text-slate-800 dark:text-slate-100">Recommended TaRL Activities</h2>
+              <h2 className="text-2xl font-extrabold text-slate-800 dark:text-slate-100">{t('Recommended TaRL Activities')}</h2>
             </div>
 
             <div className="grid md:grid-cols-2 gap-8">
                {/* Literacy Recommendation */}
                <div className="space-y-4">
                   <div className="flex items-center gap-3 text-orange-600 dark:text-orange-400 font-black uppercase tracking-[0.2em] text-xs px-2 mb-2">
-                    <BookOpen className="w-4 h-4"/> Literacy Focus: {LEVEL_LABELS_LIT[litLevel]}
+                    <BookOpen className="w-4 h-4"/> {t('Literacy Focus')}: {t(LEVEL_LABELS_LIT[litLevel] || 'Beginner')}
                   </div>
                   {litActivities.length > 0 ? litActivities.map((act, i) => (
                     <div key={i} className="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-[32px] p-6 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden group">
                        <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
                           <BookOpen className="w-12 h-12" />
                        </div>
-                       <h3 className="text-lg font-bold text-slate-800 dark:text-white mb-2">{act.title}</h3>
-                       <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed mb-4">{act.description}</p>
+                       <h3 className="text-lg font-bold text-slate-800 dark:text-white mb-2">{t(act.title)}</h3>
+                       <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed mb-4">{t(act.description)}</p>
                        <div className="flex flex-wrap gap-2">
                           {act.materials.map((m, j) => (
-                            <span key={j} className="text-[10px] font-bold bg-slate-50 dark:bg-slate-800 text-slate-400 px-2.5 py-1 rounded-full uppercase">{m}</span>
+                            <span key={j} className="text-[10px] font-bold bg-slate-50 dark:bg-slate-800 text-slate-400 px-2.5 py-1 rounded-full uppercase">{t(m)}</span>
                           ))}
                        </div>
                     </div>
                   )) : (
                     <div className="p-8 text-center text-slate-400 bg-slate-50 dark:bg-slate-800/50 rounded-3xl border border-dashed border-slate-200 dark:border-slate-700">
-                       No specific activities mapped for this level yet.
+                       {t('No specific activities mapped for this level yet.')}
                     </div>
                   )}
                </div>
@@ -215,24 +224,24 @@ export default async function StudentProfilePage({ params }: { params: Promise<{
                {/* Numeracy Recommendation */}
                <div className="space-y-4">
                   <div className="flex items-center gap-3 text-emerald-600 dark:text-emerald-400 font-black uppercase tracking-[0.2em] text-xs px-2 mb-2">
-                    <Calculator className="w-4 h-4"/> Numeracy Focus: {LEVEL_LABELS_NUM[numLevel]}
+                    <Calculator className="w-4 h-4"/> {t('Numeracy Focus')}: {t(LEVEL_LABELS_NUM[numLevel] || 'Beginner')}
                   </div>
                   {numActivities.length > 0 ? numActivities.map((act, i) => (
                     <div key={i} className="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-[32px] p-6 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden group">
                        <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
                           <Calculator className="w-12 h-12" />
                        </div>
-                       <h3 className="text-lg font-bold text-slate-800 dark:text-white mb-2">{act.title}</h3>
-                       <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed mb-4">{act.description}</p>
+                       <h3 className="text-lg font-bold text-slate-800 dark:text-white mb-2">{t(act.title)}</h3>
+                       <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed mb-4">{t(act.description)}</p>
                        <div className="flex flex-wrap gap-2">
                           {act.materials.map((m, j) => (
-                            <span key={j} className="text-[10px] font-bold bg-slate-50 dark:bg-slate-800 text-slate-400 px-2.5 py-1 rounded-full uppercase">{m}</span>
+                            <span key={j} className="text-[10px] font-bold bg-slate-50 dark:bg-slate-800 text-slate-400 px-2.5 py-1 rounded-full uppercase">{t(m)}</span>
                           ))}
                        </div>
                     </div>
                   )) : (
                     <div className="p-8 text-center text-slate-400 bg-slate-50 dark:bg-slate-800/50 rounded-3xl border border-dashed border-slate-200 dark:border-slate-700">
-                       No specific activities mapped for this level yet.
+                       {t('No specific activities mapped for this level yet.')}
                     </div>
                   )}
                </div>
@@ -249,9 +258,9 @@ export default async function StudentProfilePage({ params }: { params: Promise<{
             <div className="mt-12 space-y-6">
                <div className="flex items-center justify-between px-2">
                  <h3 className="text-xl font-bold flex items-center gap-2">
-                    <ShieldCheck className="w-6 h-6 text-blue-500"/> Assessment Audit Trail
+                    <ShieldCheck className="w-6 h-6 text-blue-500"/> {t('Assessment Audit Trail')}
                  </h3>
-                 <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">Reliability Feed</span>
+                 <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">{t('Reliability Feed')}</span>
                </div>
 
                <div className="relative ml-4 pl-8 border-l-2 border-slate-100 dark:border-slate-800 space-y-8 py-4">
@@ -280,10 +289,10 @@ export default async function StudentProfilePage({ params }: { params: Promise<{
                                <div className="flex items-center gap-4">
                                   {/* Literacy Result */}
                                   <div className="flex flex-col items-end">
-                                     <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Literacy</span>
+                                     <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">{t('Literacy')}</span>
                                      <div className="flex items-center gap-2">
                                          <span className="bg-orange-50 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400 px-3 py-1 rounded-lg text-xs font-black">
-                                            {LEVEL_LABELS_LIT[a.literacyLevel]}
+                                            {t(LEVEL_LABELS_LIT[a.literacyLevel] || 'Beginner')}
                                          </span>
                                          {litGrowth > 0 && <TrendingUp className="w-4 h-4 text-emerald-500" />}
                                          {litGrowth === 0 && idx < student.assessments.length - 1 && <Minus className="w-4 h-4 text-slate-300" />}
@@ -292,10 +301,10 @@ export default async function StudentProfilePage({ params }: { params: Promise<{
                                   </div>
                                   {/* Numeracy Result */}
                                   <div className="flex flex-col items-end border-l border-slate-100 dark:border-slate-800 pl-4">
-                                     <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Numeracy</span>
+                                     <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">{t('Numeracy')}</span>
                                      <div className="flex items-center gap-2">
                                          <span className="bg-emerald-50 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400 px-3 py-1 rounded-lg text-xs font-black">
-                                            {LEVEL_LABELS_NUM[a.numeracyLevel === 6 ? 5 : a.numeracyLevel === 5 ? 4 : a.numeracyLevel]}
+                                            {t(LEVEL_LABELS_NUM[a.numeracyLevel === 6 ? 5 : a.numeracyLevel === 5 ? 4 : a.numeracyLevel] || 'Beginner')}
                                          </span>
                                          {numGrowth > 0 && <TrendingUp className="w-4 h-4 text-emerald-500" />}
                                          {numGrowth === 0 && idx < student.assessments.length - 1 && <Minus className="w-4 h-4 text-slate-300" />}
@@ -314,8 +323,8 @@ export default async function StudentProfilePage({ params }: { params: Promise<{
          </div>
        ) : (
          <div className="bg-white dark:bg-slate-900 rounded-3xl border border-dashed border-slate-300 dark:border-slate-700 p-12 text-center">
-            <h3 className="text-xl font-bold text-slate-400">No Assessments Yet</h3>
-            <p className="text-slate-500 mt-2">Test this student to generate personalized TaRL curriculum recommendations.</p>
+            <h3 className="text-xl font-bold text-slate-400">{t('No Assessments Yet')}</h3>
+            <p className="text-slate-500 mt-2">{t('Test this student to generate personalized TaRL curriculum recommendations.')}</p>
          </div>
        )}
 
@@ -327,7 +336,7 @@ export default async function StudentProfilePage({ params }: { params: Promise<{
             <div className="space-y-6">
                <div className="flex items-center gap-3 border-b border-slate-100 dark:border-slate-800 pb-3">
                  <Gamepad2 className="w-6 h-6 text-blue-500"/>
-                 <h2 className="text-xl font-black text-slate-800 dark:text-slate-100">Practice Records ({singleGameCount})</h2>
+                 <h2 className="text-xl font-black text-slate-800 dark:text-slate-100">{t('Practice Records')} ({singleGameCount})</h2>
                </div>
                
                {singleGameCount > 0 ? (
@@ -344,11 +353,11 @@ export default async function StudentProfilePage({ params }: { params: Promise<{
                        </div>
                        <div className="flex items-center justify-between">
                          <div>
-                           <p className="text-[9px] text-slate-400 font-bold uppercase tracking-wider">Score</p>
+                           <p className="text-[9px] text-slate-400 font-bold uppercase tracking-wider">{t('Score')}</p>
                            <p className="text-lg font-black text-emerald-500">+{game.score}</p>
                          </div>
                          <div className="text-right">
-                           <p className="text-[9px] text-slate-400 font-bold uppercase tracking-wider">Time</p>
+                           <p className="text-[9px] text-slate-400 font-bold uppercase tracking-wider">{t('Time')}</p>
                            <p className="text-sm font-mono font-bold text-slate-600 dark:text-slate-300">
                              {formatTime(game.duration)}
                            </p>
@@ -359,7 +368,7 @@ export default async function StudentProfilePage({ params }: { params: Promise<{
                  </div>
                ) : (
                  <div className="p-8 text-center text-slate-400 bg-slate-50 dark:bg-slate-800/30 rounded-[24px] border border-dashed border-slate-200 dark:border-slate-800 text-xs font-bold">
-                    No practice sessions logged yet.
+                    {t('No practice sessions logged yet.')}
                  </div>
                )}
             </div>
@@ -368,7 +377,7 @@ export default async function StudentProfilePage({ params }: { params: Promise<{
             <div className="space-y-6">
                <div className="flex items-center gap-3 border-b border-slate-100 dark:border-slate-800 pb-3">
                  <Flame className="w-6 h-6 text-orange-500"/>
-                 <h2 className="text-xl font-black text-slate-800 dark:text-slate-100">Arena Battles ({battleCount})</h2>
+                 <h2 className="text-xl font-black text-slate-800 dark:text-slate-100">{t('Arena Battles')} ({battleCount})</h2>
                </div>
                
                {battleCount > 0 ? (
@@ -390,22 +399,22 @@ export default async function StudentProfilePage({ params }: { params: Promise<{
                          </div>
                          <div className="flex items-center justify-between">
                            <div>
-                             <p className="text-[9px] text-slate-400 font-bold uppercase tracking-wider">Opponent</p>
+                             <p className="text-[9px] text-slate-400 font-bold uppercase tracking-wider">{t('Opponent')}</p>
                              <p className="text-xs font-bold text-slate-700 dark:text-slate-300 truncate max-w-[120px] sm:max-w-none">{opponentName}</p>
                            </div>
                            <div className="text-right">
-                             <p className="text-[9px] text-slate-400 font-bold uppercase tracking-wider mb-0.5">Result</p>
+                             <p className="text-[9px] text-slate-400 font-bold uppercase tracking-wider mb-0.5">{t('Result')}</p>
                              {isDraw ? (
                                <span className="inline-block text-[9px] font-black bg-slate-100 dark:bg-slate-800 text-slate-500 px-2 py-0.5 rounded-full uppercase">
-                                 Draw
+                                 {t('Draw')}
                                </span>
                              ) : isWinner ? (
                                <span className="inline-block text-[9px] font-black bg-emerald-50 dark:bg-emerald-950 text-emerald-500 px-2.5 py-0.5 rounded-full uppercase">
-                                 Won 🏆
+                                 {t('Won 🏆')}
                                </span>
                              ) : (
                                <span className="inline-block text-[9px] font-black bg-rose-50 dark:bg-rose-950 text-rose-500 px-2.5 py-0.5 rounded-full uppercase">
-                                 Lost
+                                 {t('Lost')}
                                </span>
                              )}
                            </div>
@@ -416,7 +425,7 @@ export default async function StudentProfilePage({ params }: { params: Promise<{
                  </div>
                ) : (
                  <div className="p-8 text-center text-slate-400 bg-slate-50 dark:bg-slate-800/30 rounded-[24px] border border-dashed border-slate-200 dark:border-slate-800 text-xs font-bold">
-                    No arena battles played yet.
+                    {t('No arena battles played yet.')}
                  </div>
                )}
             </div>

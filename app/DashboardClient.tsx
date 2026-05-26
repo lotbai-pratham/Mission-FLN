@@ -6,7 +6,7 @@ import {
   ResponsiveContainer, Legend, Cell
 } from 'recharts';
 import { BookOpen, Calculator, Users, School, Filter, TrendingUp, LayoutDashboard, Search, Sparkles, AlertCircle, TrendingDown, Trophy, Medal, Lightbulb, Gamepad2, Target } from 'lucide-react';
-import { getDashboardStats, getStrugglingStudents, getGrowthVelocity, getInterventionPlan, getPORankings } from "@/app/actions";
+import { getDashboardStats, getStrugglingStudents, getGrowthVelocity, getInterventionPlan, getPORankings, getStudentLeaderboard } from "@/app/actions";
 import { useLanguage } from "@/context/LanguageContext";
 
 const LIT_LABELS = ['Beginner', 'Letter', 'Word', 'Paragraph', 'Story'];
@@ -24,9 +24,10 @@ export default function DashboardClient({ initialStats, hierarchy }: { initialSt
   const [poId, setPoId] = useState("");
   const [schoolId, setSchoolId] = useState("");
   const [term, setTerm] = useState("");
-  const [activeTab, setActiveTab] = useState<'overview' | 'trends' | 'ranking'>('trends');
+  const [activeTab, setActiveTab] = useState<'overview' | 'trends' | 'ranking' | 'students'>('trends');
   const [selectedClass, setSelectedClass] = useState<number | 'all'>('all');
   const [rankings, setRankings] = useState<any[]>([]);
+  const [leaderboard, setLeaderboard] = useState<any[]>([]);
   const [trendType, setTrendType] = useState<'literacy' | 'numeracy'>('literacy');
   const [showPct, setShowPct] = useState(true);
   const [struggling, setStruggling] = useState<any[]>([]);
@@ -54,6 +55,14 @@ export default function DashboardClient({ initialStats, hierarchy }: { initialSt
 
       const r = await getPORankings(divId || undefined, selectedClass);
       setRankings(r);
+
+      const l = await getStudentLeaderboard({
+        divisionId: divId || undefined,
+        projectOfficeId: poId || undefined,
+        schoolId: schoolId || undefined,
+        classNum: selectedClass
+      });
+      setLeaderboard(l);
     });
   }, [divId, poId, schoolId, term, selectedClass]);
 
@@ -342,11 +351,12 @@ export default function DashboardClient({ initialStats, hierarchy }: { initialSt
       )}
 
       {/* Tabs */}
-      <div className="flex p-1.5 bg-slate-100 dark:bg-slate-800/50 rounded-2xl w-fit border border-slate-200 dark:border-slate-800">
+      <div className="flex p-1.5 bg-slate-100 dark:bg-slate-800/50 rounded-2xl w-fit border border-slate-200 dark:border-slate-800 flex-wrap gap-1">
         {([
           ['trends', t('Target Tracking') || 'Level Trends', TrendingUp],
           ['overview', t('Growth Over Time') || 'Term Overview', LayoutDashboard],
           ['ranking', t('Division Rank') || 'P.O. Ranking', Trophy],
+          ['students', t('Student Leaderboard') || 'Student Leaderboard', Medal],
         ] as const).map(([id, label, Icon]) => (
           <button key={id} onClick={() => setActiveTab(id as any)}
             className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold transition-all ${activeTab === id ? 'bg-white dark:bg-slate-700 text-blue-600 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}>
@@ -531,6 +541,159 @@ export default function DashboardClient({ initialStats, hierarchy }: { initialSt
                  )}
               </div>
            </div>
+        </div>
+      )}
+
+      {/* TAB: STUDENT LEADERBOARD */}
+      {activeTab === 'students' && (
+        <div className={`space-y-6 animate-in slide-in-from-bottom-4 duration-500 ${isPending ? 'opacity-50' : ''}`}>
+          <div className="bg-white dark:bg-slate-900 rounded-[48px] p-10 border border-slate-100 dark:border-slate-800 shadow-2xl">
+            <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-10">
+              <div>
+                <h2 className="text-3xl font-black text-slate-900 dark:text-white tracking-tight flex items-center gap-3">
+                  <Medal className="w-8 h-8 text-yellow-500" /> {t('Best Performing Students')}
+                </h2>
+                <p className="text-slate-500 font-medium mt-1">
+                  {t('Based on FLN levels, game participation, and battle victories')}
+                </p>
+              </div>
+            </div>
+
+            {/* Top 3 Podium Card Grid */}
+            {leaderboard.length > 0 && (
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                {leaderboard.slice(0, 3).map((stu, index) => {
+                  const medalColors = [
+                    'from-yellow-400 to-amber-500 text-yellow-950 border-amber-300', // Gold
+                    'from-slate-300 to-slate-400 text-slate-900 border-slate-200',   // Silver
+                    'from-orange-400 to-amber-600 text-orange-950 border-orange-300' // Bronze
+                  ];
+                  const podiumTitles = [t('1st Place') || '1st Place', t('2nd Place') || '2nd Place', t('3rd Place') || '3rd Place'];
+                  return (
+                    <div key={stu.id} className="relative bg-slate-50 dark:bg-slate-850 hover:bg-white dark:hover:bg-slate-800 rounded-[32px] p-6 border border-slate-100 dark:border-slate-800 shadow-lg hover:shadow-xl transition-all hover:-translate-y-1 flex flex-col justify-between overflow-hidden">
+                      {/* Decorative corner tag for Rank */}
+                      <div className={`absolute top-0 right-0 px-5 py-2.5 bg-gradient-to-r ${medalColors[index]} text-[10px] font-black rounded-bl-3xl shadow-sm uppercase tracking-wider`}>
+                        {podiumTitles[index]}
+                      </div>
+                      
+                      <div className="space-y-4">
+                        <div className="flex items-center gap-3 mt-4">
+                          <div className="w-12 h-12 rounded-full bg-slate-100 dark:bg-slate-900 flex items-center justify-center font-black text-slate-700 dark:text-slate-200 shadow-sm border border-slate-100 dark:border-slate-800">
+                            {stu.name.slice(0, 2).toUpperCase()}
+                          </div>
+                          <div>
+                            <h4 className="font-extrabold text-slate-800 dark:text-white text-base truncate max-w-[150px]">{stu.name}</h4>
+                            <p className="text-[10px] text-slate-400 font-medium">{stu.uid}</p>
+                          </div>
+                        </div>
+                        
+                        <div className="text-xs text-slate-500 dark:text-slate-400 space-y-1 font-medium">
+                          <p className="truncate">🏫 {stu.schoolName}</p>
+                          <p className="truncate">🏢 {stu.poName} • {stu.divName}</p>
+                          <p>📚 {t('Class')} {stu.classNum}</p>
+                        </div>
+                        
+                        <div className="grid grid-cols-2 gap-3 pt-3 border-t border-slate-100 dark:border-slate-800">
+                          <div>
+                             <p className="text-[9px] text-slate-400 font-bold uppercase tracking-wider">{t('Literacy')}</p>
+                             <span className="inline-block mt-1 px-2.5 py-0.5 bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-full text-[10px] font-bold">
+                               {t(LIT_LABELS[stu.litLevel]) || LIT_LABELS[stu.litLevel]}
+                             </span>
+                          </div>
+                          <div>
+                             <p className="text-[9px] text-slate-400 font-bold uppercase tracking-wider">{t('Numeracy')}</p>
+                             <span className="inline-block mt-1 px-2.5 py-0.5 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 rounded-full text-[10px] font-bold">
+                               {t(NUM_LABELS[stu.numLevel === 6 ? 5 : stu.numLevel === 5 ? 4 : stu.numLevel]) || NUM_LABELS[stu.numLevel === 6 ? 5 : stu.numLevel === 5 ? 4 : stu.numLevel]}
+                             </span>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="mt-6 flex justify-between items-end">
+                        <div className="space-y-1">
+                          <div className="flex items-center gap-1.5 text-[11px] text-slate-500">
+                            <Gamepad2 className="w-3.5 h-3.5 text-orange-500" />
+                            <span>{t('Games Played')}: <strong>{stu.gamesPlayed}</strong></span>
+                          </div>
+                          <div className="flex items-center gap-1.5 text-[11px] text-slate-500">
+                            <Trophy className="w-3.5 h-3.5 text-yellow-500" />
+                            <span>{t('Victories')}: <strong>{stu.victories}</strong></span>
+                          </div>
+                        </div>
+                        <div className="text-right">
+                          <p className="text-[8px] text-slate-400 font-black uppercase tracking-widest">{t('Performance Score')}</p>
+                          <p className="text-2xl font-black text-blue-600 dark:text-blue-400">{stu.totalScore}</p>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+
+            {/* Rest of Leaderboard */}
+            {leaderboard.length > 3 && (
+              <div className="bg-slate-50 dark:bg-slate-800/20 rounded-[32px] border border-slate-100 dark:border-slate-800 overflow-hidden shadow-sm">
+                <div className="overflow-x-auto">
+                  <table className="w-full text-sm">
+                    <thead>
+                      <tr className="bg-slate-100 dark:bg-slate-850 text-xs font-semibold text-slate-500 uppercase tracking-wider border-b border-slate-200 dark:border-slate-850">
+                        <th className="text-center px-4 py-4 w-16">{t('Rank') || 'Rank'}</th>
+                        <th className="text-left px-6 py-4">{t('Student') || 'Student'}</th>
+                        <th className="text-left px-6 py-4">{t('Location') || 'Location'}</th>
+                        <th className="text-center px-4 py-4">{t('FLN Status') || 'FLN Status'}</th>
+                        <th className="text-center px-4 py-4">{t('Engagement') || 'Engagement'}</th>
+                        <th className="text-right px-6 py-4">{t('Score') || 'Score'}</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+                      {leaderboard.slice(3).map((stu, index) => (
+                        <tr key={stu.id} className="hover:bg-slate-100 dark:hover:bg-slate-800/40 transition-colors">
+                          <td className="px-4 py-4 text-center font-black text-slate-400">
+                            #{index + 4}
+                          </td>
+                          <td className="px-6 py-4">
+                            <div className="font-extrabold text-slate-700 dark:text-slate-200">{stu.name}</div>
+                            <div className="text-[10px] text-slate-400 font-medium">{stu.uid} • {t('Class')} {stu.classNum}</div>
+                          </td>
+                          <td className="px-6 py-4 text-xs text-slate-500 font-medium">
+                            <div>{stu.schoolName}</div>
+                            <div className="text-[10px] text-slate-400">{stu.poName} • {stu.divName}</div>
+                          </td>
+                          <td className="px-4 py-4">
+                            <div className="flex flex-col gap-1 items-center">
+                              <span className="px-2 py-0.5 bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 rounded-full text-[10px] font-bold">
+                                L: {t(LIT_LABELS[stu.litLevel]) || LIT_LABELS[stu.litLevel]}
+                              </span>
+                              <span className="px-2 py-0.5 bg-indigo-50 dark:bg-indigo-900/20 text-indigo-600 dark:text-indigo-400 rounded-full text-[10px] font-bold">
+                                N: {t(NUM_LABELS[stu.numLevel === 6 ? 5 : stu.numLevel === 5 ? 4 : stu.numLevel]) || NUM_LABELS[stu.numLevel === 6 ? 5 : stu.numLevel === 5 ? 4 : stu.numLevel]}
+                              </span>
+                            </div>
+                          </td>
+                          <td className="px-4 py-4 text-center text-xs text-slate-500 font-medium">
+                            <div>🎮 {stu.gamesPlayed} {t('Games') || 'Games'}</div>
+                            <div className="text-[10px] text-yellow-600">🏆 {stu.victories} {t('Victories')}</div>
+                          </td>
+                          <td className="px-6 py-4 text-right">
+                            <span className="font-black text-base text-blue-600 dark:text-blue-400">{stu.totalScore}</span>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            )}
+
+            {leaderboard.length === 0 && (
+              <div className="py-20 text-center space-y-4">
+                <div className="w-20 h-20 bg-slate-50 dark:bg-slate-800 rounded-full flex items-center justify-center mx-auto">
+                  <AlertCircle className="w-10 h-10 text-slate-300" />
+                </div>
+                <p className="text-slate-400 font-bold">{t('No students found matching current filters.')}</p>
+              </div>
+            )}
+          </div>
         </div>
       )}
     </div>

@@ -2,8 +2,10 @@
 import { useState, useEffect } from 'react';
 import CompetitiveArena from './CompetitiveArena';
 import { recordBattleResult } from '@/app/actions';
+import { useLanguage } from '@/context/LanguageContext';
 
 export default function MathDuel({ player1, player2, schoolId, classNum, onClose }: any) {
+  const { t, tNum } = useLanguage();
   const [problem, setProblem] = useState<any>(null);
   const [options, setOptions] = useState<number[]>([]);
   const [lastWinner, setLastWinner] = useState<'A' | 'B' | null>(null);
@@ -53,8 +55,8 @@ export default function MathDuel({ player1, player2, schoolId, classNum, onClose
 
   return (
     <CompetitiveArena
-      title="Math Duel (वजाबाकी आणि भागाकार)"
-      description="Quickly solve the math problem! Speed is key to winning the point."
+      title={t("Math Duel (वजाबाकी आणि भागाकार)")}
+      description={t("Quickly solve the math problem! Speed is key to winning the point.")}
       icon={<span className="text-2xl">⚡</span>}
       player1={player1}
       player2={player2}
@@ -65,11 +67,11 @@ export default function MathDuel({ player1, player2, schoolId, classNum, onClose
         <div className="flex flex-col h-full gap-8">
           {/* Problem Display */}
           <div className="flex-1 flex flex-col items-center justify-center p-3 md:p-8 bg-white/5 rounded-[24px] md:rounded-[48px] border-2 border-white/10 shadow-2xl relative">
-            <div className="absolute top-1 md:top-4 left-1/2 -translate-x-1/2 text-[8px] md:text-[10px] font-black uppercase tracking-widest text-slate-500">Solve this:</div>
+            <div className="absolute top-1 md:top-4 left-1/2 -translate-x-1/2 text-[8px] md:text-[10px] font-black uppercase tracking-widest text-slate-500">{t("Solve this")}:</div>
             <div className="flex items-center gap-4 md:gap-8 text-4xl md:text-7xl font-black text-white">
-              <span>{problem?.a}</span>
+              <span>{tNum(problem?.a)}</span>
               <span className="text-blue-500">{problem?.op}</span>
-              <span>{problem?.b}</span>
+              <span>{tNum(problem?.b)}</span>
               <span className="text-slate-600">=</span>
               <span className="w-12 h-12 md:w-24 md:h-24 bg-white/10 rounded-2xl md:rounded-3xl border-2 border-dashed border-white/20 flex items-center justify-center text-xl md:text-4xl text-slate-500">?</span>
             </div>
@@ -109,6 +111,7 @@ export default function MathDuel({ player1, player2, schoolId, classNum, onClose
 }
 
 function MathSide({ player, color, options, target, onCorrect, disabled }: any) {
+  const { tNum } = useLanguage();
   return (
     <div className={`p-3 md:p-6 rounded-[30px] md:rounded-[40px] border-2 flex flex-col gap-2 md:gap-4 ${color === 'blue' ? 'bg-blue-600/10 border-blue-500/40' : 'bg-red-600/10 border-red-500/40'}`}>
       <div className="grid grid-cols-2 gap-2 md:gap-4 flex-1">
@@ -121,7 +124,7 @@ function MathSide({ player, color, options, target, onCorrect, disabled }: any) 
             }}
             className={classNameForMathButton(color)}
           >
-            {opt}
+            {tNum(opt)}
           </button>
         ))}
       </div>

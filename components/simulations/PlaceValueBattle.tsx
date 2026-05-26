@@ -2,8 +2,10 @@
 import { useState, useEffect } from 'react';
 import CompetitiveArena from './CompetitiveArena';
 import { recordBattleResult } from '@/app/actions';
+import { useLanguage } from '@/context/LanguageContext';
 
 export default function PlaceValueBattle({ player1, player2, schoolId, classNum, onClose }: any) {
+  const { t, tNum } = useLanguage();
   const [targetNumber, setTargetNumber] = useState<{ h: number; t: number; o: number }>({ h: 0, t: 0, o: 0 });
   const [options, setOptions] = useState<number[]>([]);
   const [lastWinner, setLastWinner] = useState<'A' | 'B' | null>(null);
@@ -49,8 +51,8 @@ export default function PlaceValueBattle({ player1, player2, schoolId, classNum,
 
   return (
     <CompetitiveArena
-      title="Place Value Battle (शतक-दशक-एकक)"
-      description="Identify the total number from the H-T-O representation! First correct tap wins."
+      title={t("Place Value Battle (शतक-दशक-एकक)")}
+      description={t("Identify the total number from the H-T-O representation! First correct tap wins.")}
       icon={<span className="text-2xl">🏛️</span>}
       player1={player1}
       player2={player2}
@@ -67,7 +69,7 @@ export default function PlaceValueBattle({ player1, player2, schoolId, classNum,
                 <PlaceBox value={targetNumber.t} label="T" color="blue" />
                 <PlaceBox value={targetNumber.o} label="O" color="emerald" />
              </div>
-             <p className="mt-4 md:mt-8 text-[8px] md:text-xs font-black text-slate-500 uppercase tracking-widest italic">याचे एकूण मूल्य किती?</p>
+             <p className="mt-4 md:mt-8 text-[8px] md:text-xs font-black text-slate-500 uppercase tracking-widest italic">{t("याचे एकूण मूल्य किती?")}</p>
           </div>
 
           {/* Player Sides */}
@@ -104,18 +106,20 @@ export default function PlaceValueBattle({ player1, player2, schoolId, classNum,
 }
 
 function PlaceBox({ value, label, color }: { value: number, label: string, color: 'orange' | 'blue' | 'emerald' }) {
+  const { t, tNum } = useLanguage();
   const bg = color === 'orange' ? 'from-orange-500 to-amber-600' : color === 'blue' ? 'from-blue-500 to-indigo-600' : 'from-emerald-500 to-teal-600';
   return (
     <div className="flex flex-col items-center gap-2 md:gap-4">
       <div className={`w-16 h-16 md:w-28 md:h-28 rounded-2xl md:rounded-[32px] bg-gradient-to-br ${bg} shadow-2xl flex flex-col items-center justify-center border-2 border-white/20 transition-all hover:scale-105 active:scale-95`}>
-         <span className="text-2xl md:text-5xl font-black text-white">{value}</span>
+         <span className="text-2xl md:text-5xl font-black text-white">{tNum(value)}</span>
       </div>
-      <span className="text-[10px] md:text-xs font-black bg-white/10 px-2 md:px-3 py-0.5 md:py-1 rounded-full text-slate-400 border border-white/5">{label}</span>
+      <span className="text-[10px] md:text-xs font-black bg-white/10 px-2 md:px-3 py-0.5 md:py-1 rounded-full text-slate-400 border border-white/5">{t(label)}</span>
     </div>
   );
 }
 
 function PlaceSide({ player, color, options, target, onCorrect, disabled }: any) {
+  const { tNum } = useLanguage();
   return (
     <div className={`p-3 md:p-6 rounded-[30px] md:rounded-[40px] border-2 flex flex-col gap-2 md:gap-4 ${color === 'blue' ? 'bg-blue-600/10 border-blue-500/40' : 'bg-red-600/10 border-red-500/40'}`}>
       <div className="grid grid-cols-2 gap-2 md:gap-4 flex-1">
@@ -132,7 +136,7 @@ function PlaceSide({ player, color, options, target, onCorrect, disabled }: any)
                 : 'bg-red-600 hover:bg-red-500 shadow-xl shadow-red-500/20'
             } text-white`}
           >
-            {opt}
+            {tNum(opt)}
           </button>
         ))}
       </div>

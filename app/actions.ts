@@ -1155,3 +1155,107 @@ export async function recordSingleGameResult(data: {
     return { success: false, error: "Failed to save record" };
   }
 }
+
+export async function getStudentLeaderboard(filters: {
+  divisionId?: string;
+  projectOfficeId?: string;
+  schoolId?: string;
+  classNum?: number | 'all';
+} = {}) {
+  const session = await auth();
+  const userSchoolId = (session?.user as any)?.schoolId;
+  const userPOId = (session?.user as any)?.projectOfficeId;
+  const userDivId = (session?.user as any)?.divisionId;
+
+  const whereFilter: any = {};
+  if (userSchoolId) {
+    whereFilter.schoolId = userSchoolId;
+  } else if (userPOId) {
+    whereFilter.school = { projectOfficeId: userPOId };
+  } else if (userDivId) {
+    whereFilter.school = { projectOffice: { divisionId: userDivId } };
+  } else {
+    // Admin/State filters
+    if (filters.schoolId) {
+      whereFilter.schoolId = filters.schoolId;
+    } else if (filters.projectOfficeId) {
+      whereFilter.school = { projectOfficeId: filters.projectOfficeId };
+    } else if (filters.divisionId) {
+      whereFilter.school = { projectOffice: { divisionId: filters.divisionId } };
+    }
+  }
+
+  if (filters.classNum && filters.classNum !== 'all') {
+    whereFilter.class = Number(filters.classNum);
+  }
+
+  const students = await prisma.student.findMany({
+    where: whereFilter,
+    include: {
+      school: {
+        include: {
+          projectOffice: {
+            include: { division: true }
+          }
+        }
+      },
+      assessments: {
+        orderBy: { date: 'desc' },
+        take: 1
+      },
+      _count: {
+        select: {
+          battlesWon: true,
+          singleGames: true,
+          battlesAsP1: true,
+          battlesAsP2: true
+        }
+      }
+    }
+  });
+
+  const leaderboard = students.map(student => {
+    const latestAssessment = student.assessments[0];
+    const litLevel = latestAssessment?.literacyLevel ?? 0;
+    const numLevel = latestAssessment?.numeracyLevel ?? 0;
+    
+    // FLN Level score: 20 points per level
+    const flnScore = (litLevel * 20) + (numLevel * 20);
+    
+    const battlesCount = student._count.battlesAsP1 + student._count.battlesAsP2;
+    const singleGamesCount = student._count.singleGames;
+    const totalGamesPlayed = student.gamesPlayed || (battlesCount + singleGamesCount);
+    
+    // Engagement score: 5 points per game played
+    const engagementScore = totalGamesPlayed * 5;
+    
+    // Victory bonus: 10 points per battle won
+    const victories = student._count.battlesWon;
+    const victoryBonus = victories * 10;
+    
+    const totalScore = flnScore + engagementScore + victoryBonus;
+
+    return {
+      id: student.id,
+      uid: student.uid,
+      name: student.name,
+      classNum: student.class,
+      schoolName: student.school.name,
+      poName: student.school.projectOffice.name,
+      divName: student.school.projectOffice.division.name,
+      litLevel,
+      numLevel,
+      gamesPlayed: totalGamesPlayed,
+      victories,
+      flnScore,
+      engagementScore,
+      victoryBonus,
+      totalScore
+    };
+  });
+
+  // Sort by totalScore desc, then by name asc
+  return leaderboard
+    .sort((a, b) => b.totalScore - a.totalScore || a.name.localeCompare(b.name))
+    .slice(0, 100); // return top 100
+}

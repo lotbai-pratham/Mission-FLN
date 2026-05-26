@@ -3,6 +3,7 @@ import { useState, useEffect, useCallback } from 'react';
 import CompetitiveArena from './CompetitiveArena';
 import { recordBattleResult } from '@/app/actions';
 import { useNonRepeatingGenerator } from '@/lib/game-utils';
+import { useLanguage } from '@/context/LanguageContext';
 
 function generateRandomNumbers() {
   const isHard = Math.random() > 0.5;
@@ -17,6 +18,7 @@ function generateRandomNumbers() {
 }
 
 export default function NumberRace({ player1, player2, schoolId, classNum, onClose }: any) {
+  const { t, tNum } = useLanguage();
   const [numbers, setNumbers] = useState<number[]>([]);
   const [target, setTarget] = useState<number>(0);
   const [lastWinner, setLastWinner] = useState<'A' | 'B' | null>(null);
@@ -53,8 +55,8 @@ export default function NumberRace({ player1, player2, schoolId, classNum, onClo
 
   return (
     <CompetitiveArena
-      title="Number Race (सर्वात मोठी संख्या)"
-      description="Find the LARGEST number before your opponent does! Be the fastest to score."
+      title={t("Number Race (सर्वात मोठी संख्या)")}
+      description={t("Find the LARGEST number before your opponent does! Be the fastest to score.")}
       icon={<span className="text-2xl">🏁</span>}
       player1={player1}
       player2={player2}
@@ -65,9 +67,9 @@ export default function NumberRace({ player1, player2, schoolId, classNum, onClo
         <div className="flex flex-col h-full gap-8">
           {/* Instructions */}
           <div className="flex-1 flex flex-col items-center justify-center p-3 md:p-8 bg-white/5 rounded-[24px] md:rounded-[48px] border-2 border-white/10 shadow-2xl relative">
-            <div className="absolute top-1 md:top-4 left-1/2 -translate-x-1/2 text-[8px] md:text-[10px] font-black uppercase tracking-widest text-slate-500 italic">Largest Number:</div>
+            <div className="absolute top-1 md:top-4 left-1/2 -translate-x-1/2 text-[8px] md:text-[10px] font-black uppercase tracking-widest text-slate-500 italic">{t("Largest Number")}:</div>
             <div className="flex items-center gap-4 md:gap-6">
-               <div className="w-16 h-16 md:w-24 md:h-24 rounded-2xl md:rounded-[32px] bg-gradient-to-br from-orange-400 to-red-500 shadow-xl shadow-orange-500/20 flex items-center justify-center text-2xl md:text-4xl font-black text-white italic">BIG</div>
+               <div className="w-16 h-16 md:w-24 md:h-24 rounded-2xl md:rounded-[32px] bg-gradient-to-br from-orange-400 to-red-500 shadow-xl shadow-orange-500/20 flex items-center justify-center text-2xl md:text-4xl font-black text-white italic">{t("BIG")}</div>
                <div className="text-2xl md:text-4xl text-slate-600 font-bold mb-2">?</div>
             </div>
           </div>
@@ -106,6 +108,7 @@ export default function NumberRace({ player1, player2, schoolId, classNum, onClo
 }
 
 function NumberSide({ player, color, options, target, onCorrect, disabled }: any) {
+  const { tNum } = useLanguage();
   return (
     <div className={`p-3 md:p-6 rounded-[30px] md:rounded-[40px] border-2 flex flex-col gap-2 md:gap-4 ${color === 'blue' ? 'bg-blue-600/10 border-blue-500/40' : 'bg-red-600/10 border-red-500/40'}`}>
       <div className="grid grid-cols-2 gap-2 md:gap-4 flex-1">
@@ -122,7 +125,7 @@ function NumberSide({ player, color, options, target, onCorrect, disabled }: any
                 : 'bg-red-600 hover:bg-red-500 shadow-xl'
             } text-white`}
           >
-            {opt}
+            {tNum(opt)}
           </button>
         ))}
       </div>

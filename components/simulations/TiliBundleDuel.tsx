@@ -4,6 +4,7 @@ import { Package, Swords } from 'lucide-react';
 import CompetitiveArena from './CompetitiveArena';
 import { cn } from '@/lib/utils';
 import { recordBattleResult } from '@/app/actions';
+import { useLanguage } from '@/context/LanguageContext';
 
 function newTarget() {
   // Two-digit numbers only: tens 1–9, ones 0–9
@@ -26,9 +27,10 @@ interface PlayerBoardProps {
 }
 
 function PlayerBoard({ color, bundles, sticks, target, feedback, disabled, onBundle, onStick, onRemoveBundle, onRemoveStick }: PlayerBoardProps) {
+  const { t, tNum } = useLanguage();
   const c = color === 'indigo'
-    ? { bg: 'bg-indigo-600', light: 'bg-indigo-500/20', border: 'border-indigo-500', text: 'text-indigo-400', label: 'संघ अ' }
-    : { bg: 'bg-violet-600', light: 'bg-violet-500/20', border: 'border-violet-500', text: 'text-violet-400', label: 'संघ ब' };
+    ? { bg: 'bg-indigo-600', light: 'bg-indigo-500/20', border: 'border-indigo-500', text: 'text-indigo-400', label: t('Team A') }
+    : { bg: 'bg-violet-600', light: 'bg-violet-500/20', border: 'border-violet-500', text: 'text-violet-400', label: t('Team B') };
 
   const correct = bundles === target.tens && sticks === target.ones;
 
@@ -45,21 +47,21 @@ function PlayerBoard({ color, bundles, sticks, target, feedback, disabled, onBun
       {/* Bundles row */}
       <div className="w-full space-y-1">
         <div className="flex justify-between items-center">
-          <span className="text-[10px] font-black uppercase text-slate-500 tracking-widest">टिली (दहे)</span>
-          <span className={cn('font-black text-lg', c.text)}>{bundles}</span>
+          <span className="text-[10px] font-black uppercase text-slate-500 tracking-widest">{t('Bundles (Tens)')}</span>
+          <span className={cn('font-black text-lg', c.text)}>{tNum(bundles)}</span>
         </div>
         <div className="min-h-[60px] bg-white/5 rounded-2xl p-2 flex flex-wrap gap-2 items-center">
           {Array.from({ length: bundles }).map((_, i) => (
             <div key={i} className="w-8 h-12 bg-orange-400 border-2 border-orange-500 rounded relative flex items-center justify-center shadow">
               <div className="w-full h-1 bg-blue-500 absolute top-1/2 -translate-y-1/2" />
-              <span className="text-[8px] font-black text-white absolute bottom-0.5">१०</span>
+              <span className="text-[8px] font-black text-white absolute bottom-0.5">{tNum(10)}</span>
             </div>
           ))}
         </div>
         <div className="flex gap-2">
           <button onClick={onBundle} disabled={disabled || bundles >= 9}
             className={cn('flex-1 py-2 rounded-xl text-xs font-black text-white transition-all active:scale-95', c.bg, 'disabled:opacity-30')}>
-            + टिली
+            {t('+ Bundle')}
           </button>
           <button onClick={onRemoveBundle} disabled={disabled || bundles === 0}
             className="w-10 py-2 rounded-xl text-xs font-black bg-white/10 text-slate-300 transition-all active:scale-95 disabled:opacity-30">
@@ -71,8 +73,8 @@ function PlayerBoard({ color, bundles, sticks, target, feedback, disabled, onBun
       {/* Sticks row */}
       <div className="w-full space-y-1">
         <div className="flex justify-between items-center">
-          <span className="text-[10px] font-black uppercase text-slate-500 tracking-widest">काड्या (एकके)</span>
-          <span className={cn('font-black text-lg', c.text)}>{sticks}</span>
+          <span className="text-[10px] font-black uppercase text-slate-500 tracking-widest">{t('Sticks (Ones)')}</span>
+          <span className={cn('font-black text-lg', c.text)}>{tNum(sticks)}</span>
         </div>
         <div className="min-h-[48px] bg-white/5 rounded-2xl p-2 flex flex-wrap gap-1 items-center">
           {Array.from({ length: sticks }).map((_, i) => (
@@ -82,7 +84,7 @@ function PlayerBoard({ color, bundles, sticks, target, feedback, disabled, onBun
         <div className="flex gap-2">
           <button onClick={onStick} disabled={disabled || sticks >= 9}
             className={cn('flex-1 py-2 rounded-xl text-xs font-black text-white transition-all active:scale-95', c.bg, 'disabled:opacity-30')}>
-            + काडी
+            {t('+ Stick')}
           </button>
           <button onClick={onRemoveStick} disabled={disabled || sticks === 0}
             className="w-10 py-2 rounded-xl text-xs font-black bg-white/10 text-slate-300 transition-all active:scale-95 disabled:opacity-30">
@@ -96,13 +98,14 @@ function PlayerBoard({ color, bundles, sticks, target, feedback, disabled, onBun
         'w-full py-3 rounded-2xl text-center font-black text-3xl border-2 transition-all',
         correct ? `${c.border} ${c.text} ${c.light}` : 'border-white/10 text-white/30'
       )}>
-        {bundles * 10 + sticks}
+        {tNum(bundles * 10 + sticks)}
       </div>
     </div>
   );
 }
 
 export default function TiliBundleDuel({ player1, player2, schoolId, classNum, onClose }: any) {
+  const { t, tNum } = useLanguage();
   const [target, setTarget] = useState(newTarget);
   const [aB, setAB] = useState(0); const [aS, setAS] = useState(0);
   const [bB, setBB] = useState(0); const [bS, setBS] = useState(0);
@@ -135,8 +138,8 @@ export default function TiliBundleDuel({ player1, player2, schoolId, classNum, o
 
   return (
     <CompetitiveArena
-      title="टिली-बंडल द्वंद्व"
-      description="शिक्षक संख्या सांगतात — टिली (दहे) आणि काड्या (एकके) वापरून ती संख्या आधी बनवा!"
+      title={t("Tili Bundle Duel")}
+      description={t("Make the number using bundles and sticks!")}
       icon={<Package className="w-10 h-10 text-white" />}
       duration={90}
       player1={player1}
@@ -149,9 +152,9 @@ export default function TiliBundleDuel({ player1, player2, schoolId, classNum, o
           {/* Target number */}
           <div className="flex justify-center">
             <div className="bg-yellow-400 text-black px-10 py-3 rounded-[32px] font-black text-center">
-              <div className="text-[10px] uppercase tracking-widest opacity-60">संख्या बनवा</div>
-              <div className="text-5xl">{target.value}</div>
-              <div className="text-xs opacity-60">{target.tens} दहे + {target.ones} एकके</div>
+              <div className="text-[10px] uppercase tracking-widest opacity-60">{t("Make the Number")}</div>
+              <div className="text-5xl">{tNum(target.value)}</div>
+              <div className="text-xs opacity-60">{tNum(target.tens)} {t("Tens")} + {tNum(target.ones)} {t("Ones")}</div>
             </div>
           </div>
 
