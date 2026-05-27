@@ -6,6 +6,22 @@ import { getStudentsBySchool, recordSingleGameResult, getSchools } from '@/app/a
 import { usePoints } from '@/lib/points-store';
 import { cn } from '@/lib/utils';
 
+const BATTLE_GAMES = [
+  'marathi-letters',
+  'marathi-words',
+  'marathi-sent',
+  'math-duel',
+  'math-duel-b',
+  'num-race',
+  'num-race-b',
+  'pv-battle',
+  'pv-battle-b',
+  'math-sprint',
+  'sound-duel',
+  'tili-duel',
+  'tili-bundle-duel'
+];
+
 export default function StudentTrackerOverlay({
   schoolId: initialSchoolId,
   classNum: initialClassNum,
@@ -15,6 +31,10 @@ export default function StudentTrackerOverlay({
   classNum?: number;
   gameSlug: string;
 }) {
+  if (BATTLE_GAMES.includes(gameSlug)) {
+    return null;
+  }
+
   const { xp: globalXp } = usePoints();
   const [schools, setSchools] = useState<any[]>([]);
   const [selectedSchoolId, setSelectedSchoolId] = useState(initialSchoolId || '');

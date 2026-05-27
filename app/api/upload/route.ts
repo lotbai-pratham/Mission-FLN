@@ -121,7 +121,7 @@ const COLS = {
 
 export async function POST(req: Request) {
   const session = await auth();
-  if (session?.user?.role !== 'admin') {
+  if (!hasRole(session, "admin")) {
     return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
   }
 

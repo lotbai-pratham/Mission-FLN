@@ -1,5 +1,5 @@
 'use client';
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import CompetitiveArena from './CompetitiveArena';
 import { recordBattleResult } from '@/app/actions';
 import { useNonRepeatingGenerator } from '@/lib/game-utils';
@@ -28,16 +28,16 @@ export default function NumberRace({ player1, player2, schoolId, classNum, onClo
     (arr) => [...arr].sort().join(',')
   );
 
-  const generateRound = useCallback(() => {
+  const generateRound = () => {
     const arr = generateUnique();
     setNumbers(arr);
     setTarget(Math.max(...arr));
     setLastWinner(null);
-  }, [generateUnique]);
+  };
 
   useEffect(() => {
     generateRound();
-  }, [generateRound]);
+  }, []);
 
   const handleEnd = async (winner: 'A' | 'B' | 'Draw', _scores: { a: number, b: number }) => {
     if (!player1 || !player2 || !schoolId) return;

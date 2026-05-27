@@ -1,5 +1,6 @@
 "use server";
 import { prisma } from "@/lib/db";
+import { hasRole, getScopeFilters } from "@/lib/checkAccess";
 import { revalidatePath } from "next/cache";
 import { auth } from "@/auth";
 import bcrypt from "bcryptjs";
@@ -24,11 +25,9 @@ export async function getStudentsList(query: string = "", page: number = 1, divI
   const take = 20;
   const skip = (page - 1) * take;
 
-  // Scope to the logged-in user's school if they have one (teacher login)
+  // Scope to the logged-in user's hierarchy using helper
   const session = await auth();
-  const userSchoolId = (session?.user as any)?.schoolId;
-  const userPOId = (session?.user as any)?.projectOfficeId;
-  const userDivId = (session?.user as any)?.divisionId;
+  const scope = getScopeFilters(session);
 
   const whereFilter: any = {};
   if (query) {
@@ -38,21 +37,13 @@ export async function getStudentsList(query: string = "", page: number = 1, divI
     ];
   }
 
-  if (userSchoolId) {
-    whereFilter.schoolId = userSchoolId;
-  } else if (userPOId) {
-    whereFilter.school = { projectOfficeId: userPOId };
-  } else if (userDivId) {
-    whereFilter.school = { projectOffice: { divisionId: userDivId } };
+  // Merge explicit filters if provided and user is admin
+  if (Object.keys(scope).length === 0) {
+    if (schoolId) whereFilter.schoolId = schoolId;
+    else if (poId) whereFilter.school = { projectOfficeId: poId };
+    else if (divId) whereFilter.school = { projectOffice: { divisionId: divId } };
   } else {
-    // State/Admin: apply requested filters
-    if (schoolId) {
-      whereFilter.schoolId = schoolId;
-    } else if (poId) {
-      whereFilter.school = { projectOfficeId: poId };
-    } else if (divId) {
-      whereFilter.school = { projectOffice: { divisionId: divId } };
-    }
+    Object.assign(whereFilter, scope);
   }
 
   const students = await prisma.student.findMany({
@@ -83,10 +74,7 @@ export async function getStudentsList(query: string = "", page: number = 1, divI
 
 export async function getStudentProfile(studentId: string) {
   const session = await auth();
-  const userSchoolId = (session?.user as any)?.schoolId;
-  const userPOId = (session?.user as any)?.projectOfficeId;
-  const userDivId = (session?.user as any)?.divisionId;
-
+  const scope = getScopeFilters(session);
   const student = await prisma.student.findUnique({
     where: { id: studentId },
     include: {
@@ -112,10 +100,10 @@ export async function getStudentProfile(studentId: string) {
     }
   });
 
-  if (student) {
-    if (userSchoolId && student.schoolId !== userSchoolId) throw new Error("Access denied");
-    if (userPOId && student.school.projectOfficeId !== userPOId) throw new Error("Access denied");
-    if (userDivId && student.school.projectOffice.divisionId !== userDivId) throw new Error("Access denied");
+  if (student && Object.keys(scope).length > 0) {
+    if (scope.schoolId && student.schoolId !== scope.schoolId) throw new Error("Access denied");
+    if (scope.projectOfficeId && student.school.projectOfficeId !== scope.projectOfficeId) throw new Error("Access denied");
+    if (scope.divisionId && student.school.projectOffice.divisionId !== scope.divisionId) throw new Error("Access denied");
   }
 
   return student;
@@ -139,26 +127,15 @@ export async function getHierarchy() {
 
 export async function getDashboardStats(filters: { divisionId?: string, projectOfficeId?: string, schoolId?: string, term?: string, classNum?: number | 'all' } = {}) {
   const session = await auth();
-  const userSchoolId = (session?.user as any)?.schoolId;
-  const userPOId = (session?.user as any)?.projectOfficeId;
-  const userDivId = (session?.user as any)?.divisionId;
-
+  const scope = getScopeFilters(session);
   const whereFilter: any = {};
-  if (userSchoolId) {
-    whereFilter.schoolId = userSchoolId;
-  } else if (userPOId) {
-    whereFilter.school = { projectOfficeId: userPOId };
-  } else if (userDivId) {
-    whereFilter.school = { projectOffice: { divisionId: userDivId } };
+  // Merge explicit admin filters if no scope (admin)
+  if (Object.keys(scope).length === 0) {
+    if (filters.schoolId) whereFilter.schoolId = filters.schoolId;
+    else if (filters.projectOfficeId) whereFilter.school = { projectOfficeId: filters.projectOfficeId };
+    else if (filters.divisionId) whereFilter.school = { projectOffice: { divisionId: filters.divisionId } };
   } else {
-    // Admin filters
-    if (filters.schoolId) {
-      whereFilter.schoolId = filters.schoolId;
-    } else if (filters.projectOfficeId) {
-      whereFilter.school = { projectOfficeId: filters.projectOfficeId };
-    } else if (filters.divisionId) {
-      whereFilter.school = { projectOffice: { divisionId: filters.divisionId } };
-    }
+    Object.assign(whereFilter, scope);
   }
 
   if (filters.classNum && filters.classNum !== 'all') {
@@ -168,14 +145,15 @@ export async function getDashboardStats(filters: { divisionId?: string, projectO
   const assessmentWhere: any = { student: whereFilter };
   if (filters.term) assessmentWhere.term = filters.term;
 
+
+  // Build schoolWhere based on scope or admin filters
   const schoolWhere: any = {};
-  if (userSchoolId) schoolWhere.id = userSchoolId;
-  else if (userPOId) schoolWhere.projectOfficeId = userPOId;
-  else if (userDivId) schoolWhere.projectOffice = { divisionId: userDivId };
-  else {
+  if (Object.keys(scope).length === 0) {
     if (filters.schoolId) schoolWhere.id = filters.schoolId;
     else if (filters.projectOfficeId) schoolWhere.projectOfficeId = filters.projectOfficeId;
     else if (filters.divisionId) schoolWhere.projectOffice = { divisionId: filters.divisionId };
+  } else {
+    Object.assign(schoolWhere, scope);
   }
 
   const studentCountWhere: any = { ...whereFilter };
@@ -518,7 +496,7 @@ export async function saveSettings(payload: Record<string, string>) {
 
 async function requireAdmin() {
   const session = await auth();
-  if (session?.user?.role !== "admin") throw new Error("Unauthorized");
+  if (!hasRole(session, "admin")) throw new Error("Unauthorized");
 }
 
 export async function getUsers(): Promise<any[]> {
