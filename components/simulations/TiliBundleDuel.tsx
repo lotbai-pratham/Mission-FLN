@@ -5,6 +5,7 @@ import CompetitiveArena from './CompetitiveArena';
 import { cn } from '@/lib/utils';
 import { recordBattleResult } from '@/app/actions';
 import { useLanguage } from '@/context/LanguageContext';
+import { useNonRepeatingGenerator } from '@/lib/game-utils';
 
 function newTarget() {
   // Two-digit numbers only: tens 1–9, ones 0–9
@@ -106,7 +107,17 @@ function PlayerBoard({ color, bundles, sticks, target, feedback, disabled, onBun
 
 export default function TiliBundleDuel({ player1, player2, schoolId, classNum, onClose }: any) {
   const { t, tNum } = useLanguage();
-  const [target, setTarget] = useState(newTarget);
+
+  const { generateUnique } = useNonRepeatingGenerator(
+    () => {
+      const tens = Math.floor(Math.random() * 9) + 1;
+      const ones = Math.floor(Math.random() * 10);
+      return { tens, ones, value: tens * 10 + ones };
+    },
+    (item) => `${item.value}`
+  );
+
+  const [target, setTarget] = useState(() => generateUnique());
   const [aB, setAB] = useState(0); const [aS, setAS] = useState(0);
   const [bB, setBB] = useState(0); const [bS, setBS] = useState(0);
   const [fbA, setFbA] = useState<'idle' | 'success' | 'error'>('idle');
@@ -115,13 +126,13 @@ export default function TiliBundleDuel({ player1, player2, schoolId, classNum, o
   const checkA = (nb: number, ns: number, addPoint: (t: 'A' | 'B') => void) => {
     if (nb === target.tens && ns === target.ones) {
       setFbA('success'); addPoint('A');
-      setTimeout(() => { const t = newTarget(); setTarget(t); setAB(0); setAS(0); setFbA('idle'); }, 800);
+      setTimeout(() => { const t = generateUnique(); setTarget(t); setAB(0); setAS(0); setFbA('idle'); }, 800);
     }
   };
   const checkB = (nb: number, ns: number, addPoint: (t: 'A' | 'B') => void) => {
     if (nb === target.tens && ns === target.ones) {
       setFbB('success'); addPoint('B');
-      setTimeout(() => { const t = newTarget(); setTarget(t); setBB(0); setBS(0); setFbB('idle'); }, 800);
+      setTimeout(() => { const t = generateUnique(); setTarget(t); setBB(0); setBS(0); setFbB('idle'); }, 800);
     }
   };
 
