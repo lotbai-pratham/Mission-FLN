@@ -1,0 +1,1141 @@
+﻿diff --git a/app/DashboardClient.tsx b/app/DashboardClient.tsx
+index 2087d2e..979311d 100644
+--- a/app/DashboardClient.tsx
++++ b/app/DashboardClient.tsx
+@@ -3,10 +3,11 @@
+ import { useState, useEffect, useTransition, Fragment } from "react";
+ import {
+   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip,
+-  ResponsiveContainer, Legend, Cell
++  ResponsiveContainer, Legend, Cell, AreaChart, Area, LineChart, Line
+ } from 'recharts';
+-import { BookOpen, Calculator, Users, School, Filter, TrendingUp, LayoutDashboard, Search, Sparkles, AlertCircle, TrendingDown, Trophy, Medal, Lightbulb, Gamepad2, Target } from 'lucide-react';
++import { BookOpen, Calculator, Users, School, Filter, TrendingUp, LayoutDashboard, Search, Sparkles, AlertCircle, TrendingDown, Trophy, Medal, Lightbulb, Gamepad2, Target, ClipboardList, Clock, CheckCircle2, Activity } from 'lucide-react';
+ import { getDashboardStats, getStrugglingStudents, getGrowthVelocity, getInterventionPlan, getPORankings, getStudentLeaderboard } from "@/app/actions";
++import { getImplementationAnalytics } from "@/app/actions/implementation";
+ import { useLanguage } from "@/context/LanguageContext";
+ 
+ const LIT_LABELS = ['Beginner', 'Letter', 'Word', 'Paragraph', 'Story'];
+@@ -24,7 +25,7 @@ export default function DashboardClient({ initialStats, hierarchy }: { initialSt
+   const [poId, setPoId] = useState("");
+   const [schoolId, setSchoolId] = useState("");
+   const [term, setTerm] = useState("");
+-  const [activeTab, setActiveTab] = useState<'overview' | 'trends' | 'ranking' | 'students'>('trends');
++  const [activeTab, setActiveTab] = useState<'overview' | 'trends' | 'ranking' | 'students' | 'implementation'>('trends');
+   const [selectedClass, setSelectedClass] = useState<number | 'all'>('all');
+   const [rankings, setRankings] = useState<any[]>([]);
+   const [leaderboard, setLeaderboard] = useState<any[]>([]);
+@@ -34,6 +35,8 @@ export default function DashboardClient({ initialStats, hierarchy }: { initialSt
+   const [velocity, setVelocity] = useState<any>(null);
+   const [plan, setPlan] = useState<any>(null);
+   const [isGeneratingPlan, setIsGeneratingPlan] = useState(false);
++  const [implData, setImplData] = useState<any>(null);
++  const [implPeriod, setImplPeriod] = useState<'7d' | '30d' | 'all'>('30d');
+ 
+   const activeDivision = hierarchy.find(d => d.id === divId);
+   const pos = activeDivision ? activeDivision.projectOffices : [];
+@@ -63,8 +66,16 @@ export default function DashboardClient({ initialStats, hierarchy }: { initialSt
+         classNum: selectedClass
+       });
+       setLeaderboard(l);
++
++      const impl = await getImplementationAnalytics({
++        divisionId: divId || undefined,
++        projectOfficeId: poId || undefined,
++        schoolId: schoolId || undefined,
++        period: implPeriod,
++      });
++      setImplData(impl);
+     });
+-  }, [divId, poId, schoolId, term, selectedClass]);
++  }, [divId, poId, schoolId, term, selectedClass, implPeriod]);
+ 
+   // --- Build chart data for the selected class + type ---
+   function buildChartData(type: 'literacy' | 'numeracy') {
+@@ -355,8 +366,9 @@ export default function DashboardClient({ initialStats, hierarchy }: { initialSt
+         {([
+           ['trends', t('Target Tracking') || 'Level Trends', TrendingUp],
+           ['overview', t('Growth Over Time') || 'Term Overview', LayoutDashboard],
+-          ['ranking', t('Division Rank') || 'P.O. Ranking', Trophy],
++          ['ranking', t('P.O. Rank') || 'P.O. Rank', Trophy],
+           ['students', t('Student Leaderboard') || 'Student Leaderboard', Medal],
++          ['implementation', t('Implementation Tracker') || 'Implementation Tracker', ClipboardList],
+         ] as const).map(([id, label, Icon]) => (
+           <button key={id} onClick={() => setActiveTab(id as any)}
+             className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold transition-all ${activeTab === id ? 'bg-white dark:bg-slate-700 text-blue-600 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}>
+@@ -467,13 +479,13 @@ export default function DashboardClient({ initialStats, hierarchy }: { initialSt
+               <div className="flex items-center justify-between mb-10">
+                  <div>
+                     <h2 className="text-3xl font-black text-slate-900 dark:text-white tracking-tight flex items-center gap-3">
+-                       <Trophy className="w-8 h-8 text-yellow-500" /> Project Office Leaderboard (Endline Only)
++                       <Trophy className="w-8 h-8 text-yellow-500" /> {t('Project Office Leaderboard (Endline Only)') || 'Project Office Leaderboard (Endline Only)'}
+                     </h2>
+-                    <p className="text-slate-500 font-medium mt-1">Ranking based on student story reading and subtraction mastery rates in Endline assessments.</p>
++                    <p className="text-slate-500 font-medium mt-1">{t('Ranking based on student story reading and subtraction mastery rates in Endline assessments.')}</p>
+                  </div>
+                  <div className="hidden md:flex gap-2">
+                     <div className="px-4 py-2 bg-blue-50 dark:bg-blue-900/30 rounded-xl text-[10px] font-black text-blue-600 uppercase tracking-widest border border-blue-100 dark:border-blue-800">
+-                       Top Performer: {rankings[0]?.name || "N/A"}
++                       {t('Top Performer')}: {rankings[0]?.name || "N/A"}
+                     </div>
+                  </div>
+               </div>
+@@ -492,9 +504,12 @@ export default function DashboardClient({ initialStats, hierarchy }: { initialSt
+ 
+                           <div className="flex-1 space-y-4">
+                              <div className="flex items-center justify-between">
+-                                <h3 className="text-xl font-black text-slate-800 dark:text-white">{po.name}</h3>
++                                <div className="flex items-center gap-3">
++                                   <h3 className="text-xl font-black text-slate-800 dark:text-white">{po.name}</h3>
++                                   <span className="px-3 py-1 bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 rounded-lg text-[10px] font-bold uppercase tracking-wider">{t('Project Office')}</span>
++                                </div>
+                                 <div className="text-right">
+-                                   <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Efficiency Score</p>
++                                   <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('Efficiency Score')}</p>
+                                    <p className="text-2xl font-black text-blue-600">{po.score}%</p>
+                                 </div>
+                              </div>
+@@ -503,7 +518,7 @@ export default function DashboardClient({ initialStats, hierarchy }: { initialSt
+                                 {/* Story Progress */}
+                                 <div className="space-y-2">
+                                    <div className="flex justify-between text-[11px] font-bold">
+-                                      <span className="text-slate-500 uppercase tracking-wider">Story Reading</span>
++                                      <span className="text-slate-500 uppercase tracking-wider">{t('Story Reading')}</span>
+                                       <span className="text-slate-800 dark:text-slate-200">{po.storyPct}%</span>
+                                    </div>
+                                    <div className="h-2 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
+@@ -513,7 +528,7 @@ export default function DashboardClient({ initialStats, hierarchy }: { initialSt
+                                 {/* Subtraction Progress */}
+                                 <div className="space-y-2">
+                                    <div className="flex justify-between text-[11px] font-bold">
+-                                      <span className="text-slate-500 uppercase tracking-wider">Subtraction Mastery</span>
++                                      <span className="text-slate-500 uppercase tracking-wider">{t('Subtraction Mastery')}</span>
+                                       <span className="text-slate-800 dark:text-slate-200">{po.subtractionPct}%</span>
+                                    </div>
+                                    <div className="h-2 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
+@@ -524,7 +539,7 @@ export default function DashboardClient({ initialStats, hierarchy }: { initialSt
+                           </div>
+ 
+                           <div className="shrink-0 text-center px-6 border-l border-slate-100 dark:border-slate-800 hidden lg:block">
+-                             <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Assessed</p>
++                             <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">{t('Assessed')}</p>
+                              <p className="text-xl font-black text-slate-800 dark:text-slate-100">{po.totalAssessed}</p>
+                           </div>
+                        </div>
+@@ -536,7 +551,7 @@ export default function DashboardClient({ initialStats, hierarchy }: { initialSt
+                        <div className="w-20 h-20 bg-slate-50 dark:bg-slate-800 rounded-full flex items-center justify-center mx-auto">
+                           <AlertCircle className="w-10 h-10 text-slate-300" />
+                        </div>
+-                       <p className="text-slate-400 font-bold">No ranking data available for selected filters.</p>
++                       <p className="text-slate-400 font-bold">{t('No ranking data available for selected filters.')}</p>
+                     </div>
+                  )}
+               </div>
+@@ -696,6 +711,211 @@ export default function DashboardClient({ initialStats, hierarchy }: { initialSt
+           </div>
+         </div>
+       )}
++
++      {/* TAB: IMPLEMENTATION TRACKER */}
++      {activeTab === 'implementation' && (
++        <div className={`space-y-6 animate-in slide-in-from-bottom-4 duration-500 ${isPending ? 'opacity-50' : ''}`}>
++
++          {/* Period Toggle */}
++          <div className="flex items-center justify-between flex-wrap gap-3">
++            <div>
++              <h2 className="text-2xl font-black text-slate-900 dark:text-white tracking-tight flex items-center gap-3">
++                <ClipboardList className="w-7 h-7 text-indigo-500" />
++                {t('Implementation Tracker')}
++              </h2>
++              <p className="text-slate-500 font-medium mt-0.5 text-sm">{t('Track school-wise 90-minute cycle implementation and activity completion.')}</p>
++            </div>
++            <div className="flex p-1 bg-slate-100 dark:bg-slate-800 rounded-xl gap-1">
++              {(['7d', '30d', 'all'] as const).map(p => (
++                <button key={p} onClick={() => setImplPeriod(p)}
++                  className={`px-4 py-1.5 rounded-lg text-sm font-bold transition-all ${
++                    implPeriod === p ? 'bg-white dark:bg-slate-700 text-indigo-600 shadow-sm' : 'text-slate-500 hover:text-slate-700'
++                  }`}>
++                  {p === '7d' ? t('7 Days') : p === '30d' ? t('30 Days') : t('All Time')}
++                </button>
++              ))}
++            </div>
++          </div>
++
++          {/* KPI Cards */}
++          {implData && (
++            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
++              <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 border border-slate-100 dark:border-slate-800 shadow-sm border-l-4 border-l-indigo-500">
++                <div className="flex items-center gap-2 mb-2 text-indigo-500"><School className="w-5 h-5" /></div>
++                <p className="text-sm font-semibold text-slate-500 mb-1">{t('Active Schools')}</p>
++                <h3 className="text-3xl font-black text-slate-800 dark:text-slate-100">{implData.kpis.activeSchools}<span className="text-base font-bold text-slate-400">/{implData.kpis.totalSchools}</span></h3>
++              </div>
++              <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 border border-slate-100 dark:border-slate-800 shadow-sm border-l-4 border-l-blue-500">
++                <div className="flex items-center gap-2 mb-2 text-blue-500"><Activity className="w-5 h-5" /></div>
++                <p className="text-sm font-semibold text-slate-500 mb-1">{t('Total Sessions')}</p>
++                <h3 className="text-3xl font-black text-slate-800 dark:text-slate-100">{implData.kpis.totalSessions}</h3>
++              </div>
++              <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 border border-slate-100 dark:border-slate-800 shadow-sm border-l-4 border-l-amber-500">
++                <div className="flex items-center gap-2 mb-2 text-amber-500"><Clock className="w-5 h-5" /></div>
++                <p className="text-sm font-semibold text-slate-500 mb-1">{t('Avg Duration')}</p>
++                <h3 className="text-3xl font-black text-slate-800 dark:text-slate-100">{implData.kpis.avgDuration}<span className="text-base font-bold text-slate-400"> min</span></h3>
++              </div>
++              <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 border border-slate-100 dark:border-slate-800 shadow-sm border-l-4 border-l-emerald-500">
++                <div className="flex items-center gap-2 mb-2 text-emerald-500"><CheckCircle2 className="w-5 h-5" /></div>
++                <p className="text-sm font-semibold text-slate-500 mb-1">{t('Avg Completion')}</p>
++                <h3 className="text-3xl font-black text-slate-800 dark:text-slate-100">{implData.kpis.avgCompletion}<span className="text-base font-bold text-slate-400">%</span></h3>
++              </div>
++            </div>
++          )}
++
++          {/* School-wise Heatmap Table */}
++          {implData && implData.schoolTable.length > 0 && (
++            <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
++              <div className="px-6 py-4 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
++                <h3 className="font-bold text-slate-700 dark:text-slate-200 text-sm flex items-center gap-2">
++                  <School className="w-4 h-4 text-indigo-500" /> {t('School-wise Implementation Status')}
++                </h3>
++                <span className="text-xs text-slate-400 font-medium">
++                  {implData.schoolTable.filter((s: any) => s.status === 'active').length} {t('active')} ┬╖ {implData.schoolTable.filter((s: any) => s.status === 'stale').length} {t('stale')} ┬╖ {implData.schoolTable.filter((s: any) => s.status === 'inactive').length} {t('inactive')}
++                </span>
++              </div>
++              <div className="overflow-x-auto">
++                <table className="w-full text-sm">
++                  <thead>
++                    <tr className="bg-slate-50 dark:bg-slate-800/50 text-xs font-semibold text-slate-500 uppercase tracking-wider">
++                      <th className="text-left px-6 py-3">{t('School')}</th>
++                      <th className="text-left px-4 py-3">{t('P.O. / Division')}</th>
++                      <th className="text-center px-4 py-3">{t('Sessions')}</th>
++                      <th className="text-center px-4 py-3">{t('Last Session')}</th>
++                      <th className="text-center px-4 py-3">{t('Avg Duration')}</th>
++                      <th className="text-center px-4 py-3">{t('Completion')}</th>
++                      <th className="text-center px-4 py-3">{t('Status')}</th>
++                    </tr>
++                  </thead>
++                  <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
++                    {implData.schoolTable.map((school: any) => {
++                      const statusColors: Record<string, string> = {
++                        active: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400',
++                        stale: 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400',
++                        inactive: 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400',
++                      };
++                      const statusIcons: Record<string, string> = { active: '≡ƒƒó', stale: '≡ƒƒí', inactive: '≡ƒö┤' };
++                      const lastSessionText = school.lastSession
++                        ? (() => {
++                            const days = Math.floor((Date.now() - new Date(school.lastSession).getTime()) / (1000 * 60 * 60 * 24));
++                            if (days === 0) return t('Today');
++                            if (days === 1) return `1 ${t('day ago')}`;
++                            return `${days} ${t('days ago')}`;
++                          })()
++                        : t('Never');
++                      return (
++                        <tr key={school.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/30 transition-colors">
++                          <td className="px-6 py-3 font-semibold text-slate-700 dark:text-slate-200">{school.name}</td>
++                          <td className="px-4 py-3 text-xs text-slate-500">
++                            <div>{school.poName}</div>
++                            <div className="text-[10px] text-slate-400">{school.divName}</div>
++                          </td>
++                          <td className="px-4 py-3 text-center font-black text-slate-700 dark:text-slate-200">{school.totalSessions}</td>
++                          <td className="px-4 py-3 text-center text-xs text-slate-500">{lastSessionText}</td>
++                          <td className="px-4 py-3 text-center text-xs font-medium text-slate-600">{school.avgDuration > 0 ? `${school.avgDuration}m` : 'ΓÇö'}</td>
++                          <td className="px-4 py-3 text-center">
++                            {school.completionRate > 0 ? (
++                              <div className="flex items-center justify-center gap-2">
++                                <div className="w-16 h-1.5 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
++                                  <div className="h-full bg-emerald-500 transition-all" style={{ width: `${school.completionRate}%` }} />
++                                </div>
++                                <span className="text-xs font-bold text-slate-600">{school.completionRate}%</span>
++                              </div>
++                            ) : (
++                              <span className="text-xs text-slate-400">ΓÇö</span>
++                            )}
++                          </td>
++                          <td className="px-4 py-3 text-center">
++                            <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider ${statusColors[school.status]}`}>
++                              {statusIcons[school.status]} {t(school.status)}
++                            </span>
++                          </td>
++                        </tr>
++                      );
++                    })}
++                  </tbody>
++                </table>
++              </div>
++            </div>
++          )}
++
++          {/* Charts Row: Activity Breakdown + Weekly Trend */}
++          {implData && (
++            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
++              {/* Activity Completion Breakdown */}
++              <div className="bg-white dark:bg-slate-900 rounded-3xl p-8 border border-slate-200 dark:border-slate-800 shadow-sm">
++                <h3 className="text-base font-bold text-slate-800 dark:text-slate-100 mb-1 flex items-center gap-2">
++                  <CheckCircle2 className="w-5 h-5 text-emerald-500" /> {t('Activity Completion Rates')}
++                </h3>
++                <p className="text-xs text-slate-400 mb-5">{t('Which activities are teachers completing vs skipping?')}</p>
++                {implData.activityBreakdown.length > 0 ? (
++                  <div className="space-y-3 max-h-[400px] overflow-y-auto pr-2">
++                    {implData.activityBreakdown.map((act: any) => (
++                      <div key={act.name} className="space-y-1">
++                        <div className="flex justify-between text-xs">
++                          <span className="font-bold text-slate-700 dark:text-slate-300 truncate max-w-[200px]">{act.name}</span>
++                          <span className="font-black text-slate-800 dark:text-slate-200 shrink-0 ml-2">{act.rate}%
++                            <span className="text-slate-400 font-normal ml-1">({act.completed}/{act.total})</span>
++                          </span>
++                        </div>
++                        <div className="h-2 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
++                          <div className={`h-full rounded-full transition-all duration-700 ${
++                            act.rate >= 75 ? 'bg-emerald-500' : act.rate >= 50 ? 'bg-amber-500' : 'bg-red-500'
++                          }`} style={{ width: `${act.rate}%` }} />
++                        </div>
++                      </div>
++                    ))}
++                  </div>
++                ) : (
++                  <div className="h-48 flex items-center justify-center text-slate-400 text-sm">{t('No activity data yet')}</div>
++                )}
++              </div>
++
++              {/* Weekly Trend */}
++              <div className="bg-white dark:bg-slate-900 rounded-3xl p-8 border border-slate-200 dark:border-slate-800 shadow-sm">
++                <h3 className="text-base font-bold text-slate-800 dark:text-slate-100 mb-1 flex items-center gap-2">
++                  <TrendingUp className="w-5 h-5 text-blue-500" /> {t('Weekly Session Frequency')}
++                </h3>
++                <p className="text-xs text-slate-400 mb-5">{t('Sessions per week over the last 12 weeks')}</p>
++                {implData.weeklyTrend.some((w: any) => w.sessions > 0) ? (
++                  <div className="h-64">
++                    <ResponsiveContainer width="100%" height="100%">
++                      <AreaChart data={implData.weeklyTrend} margin={{ top: 5, right: 10, left: -20, bottom: 0 }}>
++                        <defs>
++                          <linearGradient id="implGrad" x1="0" y1="0" x2="0" y2="1">
++                            <stop offset="5%" stopColor="#6366f1" stopOpacity={0.3} />
++                            <stop offset="95%" stopColor="#6366f1" stopOpacity={0} />
++                          </linearGradient>
++                        </defs>
++                        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
++                        <XAxis dataKey="week" axisLine={false} tickLine={false} tick={{ fill: '#64748b', fontSize: 11 }} dy={8} />
++                        <YAxis axisLine={false} tickLine={false} tick={{ fill: '#64748b', fontSize: 11 }} allowDecimals={false} />
++                        <Tooltip
++                          contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)' }}
++                          formatter={(value: any) => [`${value} sessions`]} />
++                        <Area type="monotone" dataKey="sessions" stroke="#6366f1" strokeWidth={2.5} fill="url(#implGrad)" />
++                      </AreaChart>
++                    </ResponsiveContainer>
++                  </div>
++                ) : (
++                  <div className="h-48 flex items-center justify-center text-slate-400 text-sm">{t('No session data yet')}</div>
++                )}
++              </div>
++            </div>
++          )}
++
++          {/* Empty state */}
++          {(!implData || implData.kpis.totalSessions === 0) && (
++            <div className="bg-white dark:bg-slate-900 rounded-3xl p-20 border border-slate-100 dark:border-slate-800 shadow-sm text-center space-y-4">
++              <div className="w-20 h-20 bg-slate-50 dark:bg-slate-800 rounded-full flex items-center justify-center mx-auto">
++                <ClipboardList className="w-10 h-10 text-slate-300" />
++              </div>
++              <p className="text-slate-400 font-bold">{t('No implementation sessions recorded yet.')}</p>
++              <p className="text-sm text-slate-400">{t('Teachers can log sessions from the Implementation Corner.')}</p>
++            </div>
++          )}
++        </div>
++      )}
+     </div>
+   );
+ }
+diff --git a/app/actions.ts b/app/actions.ts
+index 93b7b8c..47a7d8c 100644
+--- a/app/actions.ts
++++ b/app/actions.ts
+@@ -236,9 +236,12 @@ export async function getDashboardStats(filters: { divisionId?: string, projectO
+   const operations = allAssessments.reduce((acc: any, curr: any) => {
+     if (!acc[curr.term]) acc[curr.term] = { addition: 0, subtraction: 0, division: 0, total: 0 };
+     acc[curr.term].total += 1;
+-    if (curr.addition) acc[curr.term].addition += 1;
+-    if (curr.subtraction) acc[curr.term].subtraction += 1;
+-    if (curr.division) acc[curr.term].division += 1;
++    const hasAdd = curr.addition || curr.numeracyLevel >= 3;
++    const hasSub = curr.subtraction || curr.numeracyLevel >= 4;
++    const hasDiv = curr.division || curr.numeracyLevel >= 6;
++    if (hasAdd) acc[curr.term].addition += 1;
++    if (hasSub) acc[curr.term].subtraction += 1;
++    if (hasDiv) acc[curr.term].division += 1;
+     return acc;
+   }, {});
+ 
+@@ -395,9 +398,19 @@ export async function getCohortStats(filters: { divisionId?: string, projectOffi
+       numTransitions[numKey] = (numTransitions[numKey] || 0) + 1;
+ 
+       // Operations transitions
++      const hasAddStart = startAssessment.addition || startAssessment.numeracyLevel >= 3;
++      const hasAddEnd = endAssessment.addition || endAssessment.numeracyLevel >= 3;
++      const hasSubStart = startAssessment.subtraction || startAssessment.numeracyLevel >= 4;
++      const hasSubEnd = endAssessment.subtraction || endAssessment.numeracyLevel >= 4;
++      const hasDivStart = startAssessment.division || startAssessment.numeracyLevel >= 6;
++      const hasDivEnd = endAssessment.division || endAssessment.numeracyLevel >= 6;
++
++      const opStatesStart = { addition: hasAddStart, subtraction: hasSubStart, division: hasDivStart };
++      const opStatesEnd = { addition: hasAddEnd, subtraction: hasSubEnd, division: hasDivEnd };
++
+       ['addition', 'subtraction', 'division'].forEach(op => {
+-         const start = (startAssessment as any)[op];
+-         const end = (endAssessment as any)[op];
++         const start = (opStatesStart as any)[op];
++         const end = (opStatesEnd as any)[op];
+          if (!start && end) opsTransitions[op].gained++;
+          else if (start && end) opsTransitions[op].maintained++;
+          else if (start && !end) opsTransitions[op].regressed++;
+diff --git a/app/actions/implementation.ts b/app/actions/implementation.ts
+index 78e9b38..5ca28d8 100644
+--- a/app/actions/implementation.ts
++++ b/app/actions/implementation.ts
+@@ -85,3 +85,268 @@ export async function getImplementationLogsAdmin(page: number = 1, schoolId?: st
+     return { logs: [], total: 0, pages: 0 };
+   }
+ }
++
++// ΓöÇΓöÇΓöÇ Activity name maps for decoding activityLogs.completed keys ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
++// Keys are "groupIdx-actIdx" ΓåÆ we map them per class/subject combo
++const CLASS_12_ACTIVITIES: Record<string, string> = {
++  '0-0': 'αñÜαñ▓αñ╛ αñûαÑçαñ│αÑéαñ»αñ╛ (Play)',
++  '0-1': 'αñÜαñ▓αñ╛ αñÉαñòαÑüαñ»αñ╛ (Listen)',
++  '0-2': 'αñÜαñ▓αñ╛ αñòαñ░αÑéαñ»αñ╛ (Do)',
++  '0-3': 'TLM Activities',
++};
++const CLASS_34_LANG_ACTIVITIES: Record<string, string> = {
++  '0-0': 'Warm Up', '0-1': 'Discussion & Story', '0-2': 'Sound Recognition',
++  '0-3': 'Play (Word Games)', '0-4': 'Matra Practice', '0-5': 'Write',
++  '1-0': 'Story Reading', '1-1': 'Mind Map', '1-2': 'Role Play Prep',
++  '1-3': 'Writing (Worksheet)', '1-4': 'Role Play', '1-5': 'Writing', '1-6': 'Worksheet',
++};
++const CLASS_34_MATHS_ACTIVITIES: Record<string, string> = {
++  '0-0': 'Warm-up Pre-Maths', '0-1': 'Discussion', '0-2': 'Number Recognition',
++  '0-3': 'Operation & Word Problem', '0-4': 'Games',
++  '1-0': 'Discussion', '1-1': 'Number Recognition', '1-2': 'Operation & Word Problem',
++  '1-3': 'Small Group Work', '1-4': 'αñƒαñ┐αñ▓αÑÇ-αñ¼αñéαñíαñ▓ αñªαÑìαñ╡αñéαñªαÑìαñ╡', '1-5': 'αñ╕αñéαñûαÑìαñ»αñ╛ αñÜαñòαÑìαñ░',
++  '1-6': 'αñíαñ┐αñ£αñ┐αñƒαñ▓ αñàαñ¼αÑàαñòαñ╕', '1-7': 'αñùαÑüαñúαñ╛αñòαñ╛αñ░ αñ╢αñ┐αñòαñ╛', '1-8': 'αñ╕αñ«αñ╛αñ¿ αñ╡αñ╛αñƒαñúαÑÇ',
++  '1-9': 'αñ╡αñ╛αñ░αñéαñ╡αñ╛αñ░ αñ¼αÑçαñ░αÑÇαñ£', '1-10': 'αñàαñ¬αÑéαñ░αÑìαñúαñ╛αñéαñò', '1-11': 'αñ╕αñ«αñ╛αñ¿ αñ╡αñ╛αñƒαñúαÑÇ (αñ¡αñ╛αñùαñ╛αñòαñ╛αñ░)',
++};
++
++function getActivityMap(classNum: number, subject: string | null): Record<string, string> {
++  if (classNum <= 2) return CLASS_12_ACTIVITIES;
++  if (subject === 'maths') return CLASS_34_MATHS_ACTIVITIES;
++  return CLASS_34_LANG_ACTIVITIES;
++}
++
++/**
++ * Returns comprehensive implementation analytics for the dashboard.
++ */
++export async function getImplementationAnalytics(filters: {
++  divisionId?: string;
++  projectOfficeId?: string;
++  schoolId?: string;
++  period?: '7d' | '30d' | 'all';
++} = {}) {
++  try {
++    // Build school filter for hierarchy
++    const schoolWhere: any = {};
++    if (filters.schoolId) {
++      schoolWhere.id = filters.schoolId;
++    } else if (filters.projectOfficeId) {
++      schoolWhere.projectOfficeId = filters.projectOfficeId;
++    } else if (filters.divisionId) {
++      schoolWhere.projectOffice = { divisionId: filters.divisionId };
++    }
++
++    // Date cutoff for period
++    const now = new Date();
++    let dateCutoff: Date | null = null;
++    if (filters.period === '7d') {
++      dateCutoff = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
++    } else if (filters.period === '30d' || !filters.period) {
++      dateCutoff = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
++    }
++    // 'all' ΓåÆ no cutoff
++
++    // Fetch all schools matching filter (including those with 0 sessions)
++    const allSchools = await prisma.school.findMany({
++      where: schoolWhere,
++      select: {
++        id: true,
++        name: true,
++        projectOffice: {
++          select: {
++            name: true,
++            division: { select: { name: true } }
++          }
++        }
++      },
++      orderBy: { name: 'asc' }
++    });
++
++    // Fetch sessions matching school filter + date range
++    const sessionWhere: any = {
++      school: Object.keys(schoolWhere).length > 0 ? schoolWhere : undefined,
++    };
++    if (dateCutoff) {
++      sessionWhere.conductedAt = { gte: dateCutoff };
++    }
++
++    const sessions = await (prisma as any).implementationSession.findMany({
++      where: sessionWhere,
++      select: {
++        id: true,
++        schoolId: true,
++        teacherName: true,
++        classNum: true,
++        subject: true,
++        totalDuration: true,
++        activityLogs: true,
++        conductedAt: true,
++      },
++      orderBy: { conductedAt: 'desc' },
++    });
++
++    // ΓöÇΓöÇ KPIs ΓöÇΓöÇ
++    const activeSchoolIds = new Set(sessions.map((s: any) => s.schoolId));
++    const totalSessions = sessions.length;
++    const avgDuration = totalSessions > 0
++      ? Math.round(sessions.reduce((sum: number, s: any) => sum + (s.totalDuration || 0), 0) / totalSessions / 60)
++      : 0;
++
++    // Avg completion rate
++    let totalCompletionPct = 0;
++    let completionCount = 0;
++    for (const s of sessions) {
++      const logs = s.activityLogs as any;
++      if (logs?.completed) {
++        const actMap = getActivityMap(s.classNum, s.subject);
++        const expectedCount = Object.keys(actMap).length;
++        if (expectedCount > 0) {
++          totalCompletionPct += (logs.completed.length / expectedCount) * 100;
++          completionCount++;
++        }
++      }
++    }
++    const avgCompletion = completionCount > 0 ? Math.round(totalCompletionPct / completionCount) : 0;
++
++    // ΓöÇΓöÇ School Table ΓöÇΓöÇ
++    // Also fetch ALL sessions (no date filter) for "last session" column
++    const allSessions = dateCutoff
++      ? await (prisma as any).implementationSession.findMany({
++          where: { school: Object.keys(schoolWhere).length > 0 ? schoolWhere : undefined },
++          select: { schoolId: true, conductedAt: true, totalDuration: true, activityLogs: true, classNum: true, subject: true },
++          orderBy: { conductedAt: 'desc' },
++        })
++      : sessions;
++
++    const schoolSessionMap: Record<string, any[]> = {};
++    for (const s of allSessions) {
++      if (!schoolSessionMap[s.schoolId]) schoolSessionMap[s.schoolId] = [];
++      schoolSessionMap[s.schoolId].push(s);
++    }
++
++    // For period-filtered counts
++    const periodSessionMap: Record<string, any[]> = {};
++    for (const s of sessions) {
++      if (!periodSessionMap[s.schoolId]) periodSessionMap[s.schoolId] = [];
++      periodSessionMap[s.schoolId].push(s);
++    }
++
++    const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
++    const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
++
++    const schoolTable = allSchools.map(school => {
++      const allSchoolSessions = schoolSessionMap[school.id] || [];
++      const periodSessions = periodSessionMap[school.id] || [];
++      const lastSession = allSchoolSessions.length > 0 ? allSchoolSessions[0].conductedAt : null;
++      const avgDur = periodSessions.length > 0
++        ? Math.round(periodSessions.reduce((s: number, sess: any) => s + (sess.totalDuration || 0), 0) / periodSessions.length / 60)
++        : 0;
++
++      // Completion rate for this school
++      let schoolCompPct = 0;
++      let schoolCompCount = 0;
++      for (const sess of periodSessions) {
++        const logs = sess.activityLogs as any;
++        if (logs?.completed) {
++          const actMap = getActivityMap(sess.classNum, sess.subject);
++          const expected = Object.keys(actMap).length;
++          if (expected > 0) {
++            schoolCompPct += (logs.completed.length / expected) * 100;
++            schoolCompCount++;
++          }
++        }
++      }
++
++      // Status
++      let status: 'active' | 'stale' | 'inactive' = 'inactive';
++      if (lastSession) {
++        const lastDate = new Date(lastSession);
++        if (lastDate >= sevenDaysAgo) status = 'active';
++        else if (lastDate >= thirtyDaysAgo) status = 'stale';
++      }
++
++      return {
++        id: school.id,
++        name: school.name,
++        poName: school.projectOffice.name,
++        divName: school.projectOffice.division.name,
++        totalSessions: periodSessions.length,
++        lastSession,
++        avgDuration: avgDur,
++        completionRate: schoolCompCount > 0 ? Math.round(schoolCompPct / schoolCompCount) : 0,
++        status,
++      };
++    }).sort((a, b) => b.totalSessions - a.totalSessions);
++
++    // ΓöÇΓöÇ Activity Breakdown ΓöÇΓöÇ
++    // Aggregate across all sessions: count how many times each activity key was completed
++    const activityCounts: Record<string, { completed: number; total: number; name: string }> = {};
++
++    for (const s of sessions) {
++      const logs = s.activityLogs as any;
++      const actMap = getActivityMap(s.classNum, s.subject);
++      const completedSet = new Set(logs?.completed || []);
++
++      for (const [key, name] of Object.entries(actMap)) {
++        if (!activityCounts[name]) activityCounts[name] = { completed: 0, total: 0, name };
++        activityCounts[name].total += 1;
++        if (completedSet.has(key)) activityCounts[name].completed += 1;
++      }
++    }
++
++    const activityBreakdown = Object.values(activityCounts)
++      .map(a => ({
++        name: a.name,
++        rate: a.total > 0 ? Math.round((a.completed / a.total) * 100) : 0,
++        completed: a.completed,
++        total: a.total,
++      }))
++      .sort((a, b) => b.rate - a.rate);
++
++    // ΓöÇΓöÇ Weekly Trend (last 12 weeks) ΓöÇΓöÇ
++    const twelveWeeksAgo = new Date(now.getTime() - 12 * 7 * 24 * 60 * 60 * 1000);
++    const trendSessions = allSessions.filter((s: any) => new Date(s.conductedAt) >= twelveWeeksAgo);
++
++    const weeklyData: Record<string, number> = {};
++    for (let w = 0; w < 12; w++) {
++      const weekStart = new Date(now.getTime() - (11 - w) * 7 * 24 * 60 * 60 * 1000);
++      const weekLabel = `W${w + 1}`;
++      weeklyData[weekLabel] = 0;
++    }
++
++    for (const s of trendSessions) {
++      const sessionDate = new Date(s.conductedAt);
++      const weeksAgo = Math.floor((now.getTime() - sessionDate.getTime()) / (7 * 24 * 60 * 60 * 1000));
++      const weekIdx = 11 - Math.min(weeksAgo, 11);
++      const weekLabel = `W${weekIdx + 1}`;
++      if (weeklyData[weekLabel] !== undefined) {
++        weeklyData[weekLabel]++;
++      }
++    }
++
++    const weeklyTrend = Object.entries(weeklyData).map(([week, count]) => ({
++      week,
++      sessions: count,
++    }));
++
++    return {
++      kpis: {
++        activeSchools: activeSchoolIds.size,
++        totalSchools: allSchools.length,
++        totalSessions,
++        avgDuration,
++        avgCompletion,
++      },
++      schoolTable,
++      activityBreakdown,
++      weeklyTrend,
++    };
++  } catch (error) {
++    console.error("Failed to fetch implementation analytics:", error);
++    return {
++      kpis: { activeSchools: 0, totalSchools: 0, totalSessions: 0, avgDuration: 0, avgCompletion: 0 },
++      schoolTable: [],
++      activityBreakdown: [],
++      weeklyTrend: [],
++    };
++  }
++}
+diff --git a/app/resources/page.tsx b/app/resources/page.tsx
+index 5342b67..118502e 100644
+--- a/app/resources/page.tsx
++++ b/app/resources/page.tsx
+@@ -618,7 +618,9 @@ function MissionControl() {
+                       </div>
+                       {ActiveSimulation ? (
+                         <div className="flex-1 flex flex-col min-h-0 relative">
+-                          <StudentTrackerOverlay schoolId={battleContext?.schoolId || session?.user?.schoolId || "mock-school-id"} classNum={classNum || 1} gameSlug={simList[activeSimIndex % simList.length]} />
++                          {!battleContext && (
++                            <StudentTrackerOverlay schoolId={battleContext?.schoolId || session?.user?.schoolId || "mock-school-id"} classNum={classNum || 1} gameSlug={simList[activeSimIndex % simList.length]} />
++                          )}
+                           <div className="flex-1 min-h-[520px] bg-slate-950 overflow-hidden">
+                             <ActiveSimulation player1={battleContext?.p1} player2={battleContext?.p2} schoolId={battleContext?.schoolId || "mock-school-id"} classNum={classNum || 1} />
+                           </div>
+@@ -790,7 +792,9 @@ function MissionControl() {
+                   {/* Simulation ΓÇö full-width, tall */}
+                   {ActiveSimulation && (
+                     <div className="border-t border-slate-100 dark:border-slate-800 flex flex-col relative">
+-                      <StudentTrackerOverlay schoolId={battleContext?.schoolId || session?.user?.schoolId || "mock-school-id"} classNum={classNum || 3} gameSlug={simList[activeSimIndex % simList.length]} />
++                      {!battleContext && (
++                        <StudentTrackerOverlay schoolId={battleContext?.schoolId || session?.user?.schoolId || "mock-school-id"} classNum={classNum || 3} gameSlug={simList[activeSimIndex % simList.length]} />
++                      )}
+                       <div className={cn("min-h-[520px] bg-slate-950 overflow-hidden", simList.length <= 1 ? "rounded-b-[32px]" : "")}>
+                         <ActiveSimulation player1={battleContext?.p1} player2={battleContext?.p2} schoolId={battleContext?.schoolId || "mock-school-id"} classNum={classNum || 3} />
+                       </div>
+diff --git a/components/simulations/LetterFlash.tsx b/components/simulations/LetterFlash.tsx
+index 433d876..2dc3175 100644
+--- a/components/simulations/LetterFlash.tsx
++++ b/components/simulations/LetterFlash.tsx
+@@ -3,24 +3,38 @@ import { useState, useEffect } from 'react';
+ import CompetitiveArena from './CompetitiveArena';
+ import { recordBattleResult } from '@/app/actions';
+ import { sfx } from '@/lib/sounds';
++import { useNonRepeatingGenerator } from '@/lib/game-utils';
+ 
+ const MARATHI_LETTERS = [
+   'αñà', 'αñå', 'αñç', 'αñê', 'αñë', 'αñè', 'αñÅ', 'αñÉ', 'αñô', 'αñö', 'αñàαñé', 'αñàαñâ',
+   'αñò', 'αñû', 'αñù', 'αñÿ', 'αñÖ', 'αñÜ', 'αñ¢', 'αñ£', 'αñ¥', 'αñ₧',
+   'αñƒ', 'αñá', 'αñí', 'αñó', 'αñú', 'αññ', 'αñÑ', 'αñª', 'αñº', 'αñ¿',
+-  'αñ¬', 'ph', 'αñ¼', 'αñ¡', 'αñ«', 'αñ»', 'αñ░', 'αñ▓', 'αñ╡', 'αñ╢', 'αñ╖', 'αñ╕', 'αñ╣', 'αñ│', 'αñòαÑìαñ╖', 'αñ£αÑìαñ₧'
++  'αñ¬', 'αñ½', 'αñ¼', 'αñ¡', 'αñ«', 'αñ»', 'αñ░', 'αñ▓', 'αñ╡', 'αñ╢', 'αñ╖', 'αñ╕', 'αñ╣', 'αñ│', 'αñòαÑìαñ╖', 'αñ£αÑìαñ₧'
+ ];
+ 
++function generateRandomLetterRound() {
++  const correct = MARATHI_LETTERS[Math.floor(Math.random() * MARATHI_LETTERS.length)];
++  const others = [...MARATHI_LETTERS].filter(l => l !== correct).sort(() => 0.5 - Math.random()).slice(0, 3);
++  return {
++    correct,
++    options: [correct, ...others].sort(() => 0.5 - Math.random())
++  };
++}
++
+ export default function LetterFlash({ player1, player2, schoolId, classNum, onClose }: any) {
+   const [currentLetter, setCurrentLetter] = useState('');
+   const [options, setOptions] = useState<string[]>([]);
+   const [lastWinner, setLastWinner] = useState<'A' | 'B' | null>(null);
+ 
++  const { generateUnique } = useNonRepeatingGenerator(
++    generateRandomLetterRound,
++    (res) => res.correct
++  );
++
+   const generateRound = () => {
+-    const correct = MARATHI_LETTERS[Math.floor(Math.random() * MARATHI_LETTERS.length)];
+-    const others = [...MARATHI_LETTERS].filter(l => l !== correct).sort(() => 0.5 - Math.random()).slice(0, 3);
+-    setCurrentLetter(correct);
+-    setOptions([correct, ...others].sort(() => 0.5 - Math.random()));
++    const res = generateUnique();
++    setCurrentLetter(res.correct);
++    setOptions(res.options);
+     setLastWinner(null);
+   };
+ 
+diff --git a/components/simulations/MathDuel.tsx b/components/simulations/MathDuel.tsx
+index badc710..c7258a1 100644
+--- a/components/simulations/MathDuel.tsx
++++ b/components/simulations/MathDuel.tsx
+@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
+ import CompetitiveArena from './CompetitiveArena';
+ import { recordBattleResult } from '@/app/actions';
+ import { useLanguage } from '@/context/LanguageContext';
++import { useNonRepeatingGenerator } from '@/lib/game-utils';
+ 
+ export default function MathDuel({ player1, player2, schoolId, classNum, onClose }: any) {
+   const { t, tNum } = useLanguage();
+@@ -10,19 +11,29 @@ export default function MathDuel({ player1, player2, schoolId, classNum, onClose
+   const [options, setOptions] = useState<number[]>([]);
+   const [lastWinner, setLastWinner] = useState<'A' | 'B' | null>(null);
+ 
+-  const generateRound = () => {
+-    const isDivision = Math.random() > 0.5;
+-    let a, b, answer;
++  const { generateUnique } = useNonRepeatingGenerator(
++    () => {
++      const isDivision = Math.random() > 0.5;
++      let a, b, answer;
+ 
+-    if (isDivision) {
+-      b = Math.floor(Math.random() * 9) + 1;
+-      answer = Math.floor(Math.random() * 10) + 1;
+-      a = b * answer;
+-    } else {
+-      a = Math.floor(Math.random() * 50) + 10;
+-      b = Math.floor(Math.random() * a);
+-      answer = a - b;
+-    }
++      if (isDivision) {
++        b = Math.floor(Math.random() * 9) + 1;
++        answer = Math.floor(Math.random() * 10) + 1;
++        a = b * answer;
++      } else {
++        a = Math.floor(Math.random() * 50) + 10;
++        b = Math.floor(Math.random() * a);
++        answer = a - b;
++      }
++
++      return { a, b, op: isDivision ? '├╖' : '-', answer };
++    },
++    (item) => `${item.a}${item.op}${item.b}`
++  );
++
++  const generateRound = () => {
++    const nextProblem = generateUnique();
++    const { answer } = nextProblem;
+ 
+     const others = new Set<number>();
+     while (others.size < 3) {
+@@ -30,7 +41,7 @@ export default function MathDuel({ player1, player2, schoolId, classNum, onClose
+       if (off !== 0 && (answer + off) >= 0) others.add(answer + off);
+     }
+ 
+-    setProblem({ a, b, op: isDivision ? '├╖' : '-', answer });
++    setProblem(nextProblem);
+     setOptions([answer, ...Array.from(others)].sort(() => 0.5 - Math.random()));
+     setLastWinner(null);
+   };
+diff --git a/components/simulations/PlaceValueBattle.tsx b/components/simulations/PlaceValueBattle.tsx
+index b972eab..f4a5c25 100644
+--- a/components/simulations/PlaceValueBattle.tsx
++++ b/components/simulations/PlaceValueBattle.tsx
+@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
+ import CompetitiveArena from './CompetitiveArena';
+ import { recordBattleResult } from '@/app/actions';
+ import { useLanguage } from '@/context/LanguageContext';
++import { useNonRepeatingGenerator } from '@/lib/game-utils';
+ 
+ export default function PlaceValueBattle({ player1, player2, schoolId, classNum, onClose }: any) {
+   const { t, tNum } = useLanguage();
+@@ -10,10 +11,18 @@ export default function PlaceValueBattle({ player1, player2, schoolId, classNum,
+   const [options, setOptions] = useState<number[]>([]);
+   const [lastWinner, setLastWinner] = useState<'A' | 'B' | null>(null);
+ 
++  const { generateUnique } = useNonRepeatingGenerator(
++    () => {
++      const h = Math.floor(Math.random() * 9) + 1;
++      const t = Math.floor(Math.random() * 10);
++      const o = Math.floor(Math.random() * 10);
++      return { h, t, o };
++    },
++    (item) => `${item.h}-${item.t}-${item.o}`
++  );
++
+   const generateRound = () => {
+-    const h = Math.floor(Math.random() * 9) + 1;
+-    const t = Math.floor(Math.random() * 10);
+-    const o = Math.floor(Math.random() * 10);
++    const { h, t, o } = generateUnique();
+     const num = h * 100 + t * 10 + o;
+     
+     const others = new Set<number>();
+@@ -22,8 +31,14 @@ export default function PlaceValueBattle({ player1, player2, schoolId, classNum,
+                   (Math.floor(Math.random() * 3) - 1) * 10 + 
+                   (Math.floor(Math.random() * 3) - 1);
+       const val = num + off;
+-      if (val !== num && val >= 100 && val <= 999) others.add(val);
+-      else others.add(Math.floor(Math.random() * 900) + 100);
++      if (val !== num && val >= 100 && val <= 999) {
++        others.add(val);
++      } else {
++        const randVal = Math.floor(Math.random() * 900) + 100;
++        if (randVal !== num) {
++          others.add(randVal);
++        }
++      }
+     }
+     
+     setTargetNumber({ h, t, o });
+diff --git a/components/simulations/SentenceFill.tsx b/components/simulations/SentenceFill.tsx
+index 1f9b36b..5e10457 100644
+--- a/components/simulations/SentenceFill.tsx
++++ b/components/simulations/SentenceFill.tsx
+@@ -2,6 +2,7 @@
+ import { useState, useEffect } from 'react';
+ import CompetitiveArena from './CompetitiveArena';
+ import { recordBattleResult } from '@/app/actions';
++import { useNonRepeatingGenerator } from '@/lib/game-utils';
+ 
+ const MARATHI_SENTENCES = [
+   { sentence: 'αñ╕αÑéαñ░αÑìαñ» {blank} αñëαñùαñ╡αññαÑï.', correct: 'αñ¬αÑéαñ░αÑìαñ╡αÑçαñ▓αñ╛', others: ['αñ¬αñ╢αÑìαñÜαñ┐αñ«αÑçαñ▓αñ╛', 'αñëαññαÑìαññαñ░αÑçαñ▓αñ╛', 'αñªαñòαÑìαñ╖αñ┐αñúαÑçαñ▓αñ╛'] },
+@@ -14,15 +15,28 @@ const MARATHI_SENTENCES = [
+   { sentence: 'αñ«αÑüαñ▓αÑç αñ«αÑêαñªαñ╛αñ¿αñ╛αñ╡αñ░ {blank} αñåαñ╣αÑçαññ.', correct: 'αñûαÑçαñ│αññ', others: ['αñ░αñíαññ', 'αñ¥αÑïαñ¬αññ', 'αñ¼αñ╕αÑéαñ¿'] }
+ ];
+ 
++function generateRandomSentenceRound() {
++  const correct = MARATHI_SENTENCES[Math.floor(Math.random() * MARATHI_SENTENCES.length)];
++  return {
++    correct,
++    options: [correct.correct, ...correct.others].sort(() => 0.5 - Math.random())
++  };
++}
++
+ export default function SentenceFill({ player1, player2, schoolId, classNum, onClose }: any) {
+   const [currentSentence, setCurrentSentence] = useState<any>(null);
+   const [options, setOptions] = useState<string[]>([]);
+   const [lastWinner, setLastWinner] = useState<'A' | 'B' | null>(null);
+ 
++  const { generateUnique } = useNonRepeatingGenerator(
++    generateRandomSentenceRound,
++    (res) => res.correct.sentence
++  );
++
+   const generateRound = () => {
+-    const item = MARATHI_SENTENCES[Math.floor(Math.random() * MARATHI_SENTENCES.length)];
+-    setCurrentSentence(item);
+-    setOptions([item.correct, ...item.others].sort(() => 0.5 - Math.random()));
++    const res = generateUnique();
++    setCurrentSentence(res.correct);
++    setOptions(res.options);
+     setLastWinner(null);
+   };
+ 
+diff --git a/components/simulations/SoundDuel.tsx b/components/simulations/SoundDuel.tsx
+index d985bf0..31950d7 100644
+--- a/components/simulations/SoundDuel.tsx
++++ b/components/simulations/SoundDuel.tsx
+@@ -5,6 +5,7 @@ import CompetitiveArena from './CompetitiveArena';
+ import { cn } from "@/lib/utils";
+ import { speakLetter } from '@/lib/speak';
+ import { recordBattleResult } from '@/app/actions';
++import { useNonRepeatingGenerator } from '@/lib/game-utils';
+ 
+ const MARATHI_LETTERS = [
+   "αñò", "αñû", "αñù", "αñÿ",
+@@ -16,15 +17,29 @@ const MARATHI_LETTERS = [
+   "αñ╢", "αñ╖", "αñ╕", "αñ╣", "αñ│",
+ ];
+ 
+-function generateProblem(): { t: string; options: string[] } {
+-  const t = MARATHI_LETTERS[Math.floor(Math.random() * MARATHI_LETTERS.length)];
+-  const others = MARATHI_LETTERS.filter(x => x !== t).sort(() => 0.5 - Math.random()).slice(0, 3);
+-  return { t, options: [t, ...others].sort(() => 0.5 - Math.random()) };
+-}
+-
+ export default function SoundDuel({ player1, player2, schoolId, classNum, onClose }: any) {
+-  const [probA, setProbA] = useState(generateProblem);
+-  const [probB, setProbB] = useState(generateProblem);
++  const { generateUnique: genA } = useNonRepeatingGenerator(
++    () => MARATHI_LETTERS[Math.floor(Math.random() * MARATHI_LETTERS.length)],
++    (item) => item
++  );
++
++  const { generateUnique: genB } = useNonRepeatingGenerator(
++    () => MARATHI_LETTERS[Math.floor(Math.random() * MARATHI_LETTERS.length)],
++    (item) => item
++  );
++
++  const [probA, setProbA] = useState(() => {
++    const t = genA();
++    const others = MARATHI_LETTERS.filter(x => x !== t).sort(() => 0.5 - Math.random()).slice(0, 3);
++    return { t, options: [t, ...others].sort(() => 0.5 - Math.random()) };
++  });
++
++  const [probB, setProbB] = useState(() => {
++    const t = genB();
++    const others = MARATHI_LETTERS.filter(x => x !== t).sort(() => 0.5 - Math.random()).slice(0, 3);
++    return { t, options: [t, ...others].sort(() => 0.5 - Math.random()) };
++  });
++
+   const [feedbackA, setFeedbackA] = useState<'idle' | 'success' | 'error'>('idle');
+   const [feedbackB, setFeedbackB] = useState<'idle' | 'success' | 'error'>('idle');
+   const [speakingA, setSpeakingA] = useState(false);
+@@ -46,17 +61,21 @@ export default function SoundDuel({ player1, player2, schoolId, classNum, onClos
+   };
+ 
+   const nextA = () => {
+-    const next = generateProblem();
+-    setProbA(next);
++    const t = genA();
++    const others = MARATHI_LETTERS.filter(x => x !== t).sort(() => 0.5 - Math.random()).slice(0, 3);
++    const options = [t, ...others].sort(() => 0.5 - Math.random());
++    setProbA({ t, options });
+     setFeedbackA('idle');
+-    setTimeout(() => speakLetter(next.t), 200);
++    setTimeout(() => speakLetter(t), 200);
+   };
+ 
+   const nextB = () => {
+-    const next = generateProblem();
+-    setProbB(next);
++    const t = genB();
++    const others = MARATHI_LETTERS.filter(x => x !== t).sort(() => 0.5 - Math.random()).slice(0, 3);
++    const options = [t, ...others].sort(() => 0.5 - Math.random());
++    setProbB({ t, options });
+     setFeedbackB('idle');
+-    setTimeout(() => speakLetter(next.t), 200);
++    setTimeout(() => speakLetter(t), 200);
+   };
+ 
+   const handleEnd = async (winner: 'A' | 'B' | 'Draw', _scores: { a: number, b: number }) => {
+diff --git a/context/LanguageContext.tsx b/context/LanguageContext.tsx
+index 58e43cf..a516a57 100644
+--- a/context/LanguageContext.tsx
++++ b/context/LanguageContext.tsx
+@@ -46,6 +46,16 @@ export const translations: Record<Language, Record<string, string>> = {
+     'Engagement Metrics': 'Engagement Metrics',
+     'Pedagogy Coverage': 'Pedagogy Coverage',
+     'Division Rank': 'Division Rank',
++    'P.O. Rank': 'P.O. Rank',
++    'Project Office Leaderboard (Endline Only)': 'Project Office Leaderboard (Endline Only)',
++    'Ranking based on student story reading and subtraction mastery rates in Endline assessments.': 'Ranking based on student story reading and subtraction mastery rates in Endline assessments.',
++    'Top Performer': 'Top Performer',
++    'Project Office': 'Project Office',
++    'Efficiency Score': 'Efficiency Score',
++    'Story Reading': 'Story Reading',
++    'Subtraction Mastery': 'Subtraction Mastery',
++    'Assessed': 'Assessed',
++    'No ranking data available for selected filters.': 'No ranking data available for selected filters.',
+     'Division': 'Division',
+     'Proficiency': 'Proficiency',
+     'Assessments': 'Assessments',
+@@ -223,6 +233,41 @@ export const translations: Record<Language, Record<string, string>> = {
+     'Give a student 20 seeds and 4 friends. Ask them to distribute the seeds \'fairly\' so everyone has an equal amount.': 'Give a student 20 seeds and 4 friends. Ask them to distribute the seeds \'fairly\' so everyone has an equal amount.',
+     'Seeds': 'Seeds',
+     'Plates/Cups': 'Plates/Cups',
++    // Implementation Tracker
++    'Implementation Tracker': 'Implementation Tracker',
++    'Track school-wise 90-minute cycle implementation and activity completion.': 'Track school-wise 90-minute cycle implementation and activity completion.',
++    '7 Days': '7 Days',
++    '30 Days': '30 Days',
++    'All Time': 'All Time',
++    'Active Schools': 'Active Schools',
++    'Total Sessions': 'Total Sessions',
++    'Avg Duration': 'Avg Duration',
++    'Avg Completion': 'Avg Completion',
++    'School-wise Implementation Status': 'School-wise Implementation Status',
++    'Sessions': 'Sessions',
++    'Last Session': 'Last Session',
++    'Completion': 'Completion',
++    'active': 'Active',
++    'stale': 'Stale',
++    'inactive': 'Inactive',
++    'Today': 'Today',
++    'day ago': 'day ago',
++    'days ago': 'days ago',
++    'Never': 'Never',
++    'Activity Completion Rates': 'Activity Completion Rates',
++    'Which activities are teachers completing vs skipping?': 'Which activities are teachers completing vs skipping?',
++    'No activity data yet': 'No activity data yet',
++    'Weekly Session Frequency': 'Weekly Session Frequency',
++    'Sessions per week over the last 12 weeks': 'Sessions per week over the last 12 weeks',
++    'No session data yet': 'No session data yet',
++    'No implementation sessions recorded yet.': 'No implementation sessions recorded yet.',
++    'Teachers can log sessions from the Implementation Corner.': 'Teachers can log sessions from the Implementation Corner.',
++    'P.O. / Division': 'P.O. / Division',
++    'Flash Math Sprint': 'Flash Math Sprint',
++    '2v2 Arithmetic Race: Solve addition and subtraction problems as fast as you can!': '2v2 Arithmetic Race: Solve addition and subtraction problems as fast as you can!',
++    'Team A Zone': 'Team A Zone',
++    'Team B Zone': 'Team B Zone',
++    'Solve this': 'Solve this',
+   },
+   hi: {
+     // Navbar
+@@ -257,6 +302,16 @@ export const translations: Record<Language, Record<string, string>> = {
+     'Engagement Metrics': 'αñ£αÑüαñíαñ╝αñ╛αñ╡ αñ«αÑçαñƒαÑìαñ░αñ┐αñòαÑìαñ╕',
+     'Pedagogy Coverage': 'αñ╢αñ┐αñòαÑìαñ╖αñ╛αñ╢αñ╛αñ╕αÑìαññαÑìαñ░ αñòαñ╡αñ░αÑçαñ£',
+     'Division Rank': 'αñíαñ┐αñ╡αÑÇαñ£αñ¿ αñ░αÑêαñéαñò',
++    'P.O. Rank': 'αñ¬αÑÇ.αñô. αñ░αÑêαñéαñò',
++    'Project Office Leaderboard (Endline Only)': 'αñ¬αñ░αñ┐αñ»αÑïαñ£αñ¿αñ╛ αñòαñ╛αñ░αÑìαñ»αñ╛αñ▓αñ» αñ▓αÑÇαñíαñ░αñ¼αÑïαñ░αÑìαñí (αñòαÑçαñ╡αñ▓ αñÅαñéαñíαñ▓αñ╛αñçαñ¿)',
++    'Ranking based on student story reading and subtraction mastery rates in Endline assessments.': 'αñÅαñéαñíαñ▓αñ╛αñçαñ¿ αñ«αÑéαñ▓αÑìαñ»αñ╛αñéαñòαñ¿ αñ«αÑçαñé αñ¢αñ╛αññαÑìαñ░αÑïαñé αñòαÑÇ αñòαñ╣αñ╛αñ¿αÑÇ αñ¬αñóαñ╝αñ¿αÑç αñöαñ░ αñÿαñƒαñ╛αñ╡ αñ¬αÑìαñ░αñ╡αÑÇαñúαññαñ╛ αñªαñ░αÑïαñé αñòαÑç αñåαñºαñ╛αñ░ αñ¬αñ░ αñ░αÑêαñéαñòαñ┐αñéαñùαÑñ',
++    'Top Performer': 'αñ╢αÑÇαñ░αÑìαñ╖ αñ¬αÑìαñ░αñªαñ░αÑìαñ╢αñ¿αñòαñ░αÑìαññαñ╛',
++    'Project Office': 'αñ¬αñ░αñ┐αñ»αÑïαñ£αñ¿αñ╛ αñòαñ╛αñ░αÑìαñ»αñ╛αñ▓αñ»',
++    'Efficiency Score': 'αñªαñòαÑìαñ╖αññαñ╛ αñ╕αÑìαñòαÑïαñ░',
++    'Story Reading': 'αñòαñ╣αñ╛αñ¿αÑÇ αñ¬αñóαñ╝αñ¿αñ╛',
++    'Subtraction Mastery': 'αñÿαñƒαñ╛αñ╡ αñ¬αÑìαñ░αñ╡αÑÇαñúαññαñ╛',
++    'Assessed': 'αñ«αÑéαñ▓αÑìαñ»αñ╛αñéαñòαñ┐αññ',
++    'No ranking data available for selected filters.': 'αñÜαñ»αñ¿αñ┐αññ αñ½αñ╝αñ┐αñ▓αÑìαñƒαñ░ αñòαÑç αñ▓αñ┐αñÅ αñòαÑïαñê αñ░αÑêαñéαñòαñ┐αñéαñù αñíαÑçαñƒαñ╛ αñëαñ¬αñ▓αñ¼αÑìαñº αñ¿αñ╣αÑÇαñé αñ╣αÑêαÑñ',
+     'Division': 'αñíαñ┐αñ╡αÑÇαñ£αñ¿',
+     'Proficiency': 'αñ¬αÑìαñ░αñ╡αÑÇαñúαññαñ╛',
+     'Assessments': 'αñ«αÑéαñ▓αÑìαñ»αñ╛αñéαñòαñ¿',
+@@ -434,6 +489,36 @@ export const translations: Record<Language, Record<string, string>> = {
+     'Give a student 20 seeds and 4 friends. Ask them to distribute the seeds \'fairly\' so everyone has an equal amount.': 'αñÅαñò αñ¢αñ╛αññαÑìαñ░ αñòαÑï 20 αñ¼αÑÇαñ£ αñöαñ░ 4 αñ«αñ┐αññαÑìαñ░ αñªαÑçαñéαÑñ αñëαñ¿αñ╕αÑç αñ¼αÑÇαñ£αÑïαñé αñòαÑï \'αñ╕αñ«αñ╛αñ¿ αñ░αÑéαñ¬ αñ╕αÑç\' αñ╡αñ┐αññαñ░αñ┐αññ αñòαñ░αñ¿αÑç αñòαÑç αñ▓αñ┐αñÅ αñòαñ╣αÑçαñé αññαñ╛αñòαñ┐ αñ╕αñ¡αÑÇ αñòαÑç αñ¬αñ╛αñ╕ αñ╕αñ«αñ╛αñ¿ αñ«αñ╛αññαÑìαñ░αñ╛ αñ╣αÑïαÑñ',
+     'Seeds': 'αñ¼αÑÇαñ£',
+     'Plates/Cups': 'αñ¬αÑìαñ▓αÑçαñƒ/αñòαñ¬',
++    // Implementation Tracker
++    'Implementation Tracker': 'αñòαñ╛αñ░αÑìαñ»αñ╛αñ¿αÑìαñ╡αñ»αñ¿ αñƒαÑìαñ░αÑêαñòαñ░',
++    'Track school-wise 90-minute cycle implementation and activity completion.': 'αñ╕αÑìαñòαÑéαñ▓-αñ╡αñ╛αñ░ 90-αñ«αñ┐αñ¿αñƒ αñÜαñòαÑìαñ░ αñòαñ╛αñ░αÑìαñ»αñ╛αñ¿αÑìαñ╡αñ»αñ¿ αñöαñ░ αñùαññαñ┐αñ╡αñ┐αñºαñ┐ αñ¬αÑéαñ░αÑìαñúαññαñ╛ αñòαÑï αñƒαÑìαñ░αÑêαñò αñòαñ░αÑçαñéαÑñ',
++    '7 Days': '7 αñªαñ┐αñ¿',
++    '30 Days': '30 αñªαñ┐αñ¿',
++    'All Time': 'αñ╕αñéαñ¬αÑéαñ░αÑìαñú αñ╕αñ«αñ»',
++    'Active Schools': 'αñ╕αñòαÑìαñ░αñ┐αñ» αñ╕αÑìαñòαÑéαñ▓',
++    'Total Sessions': 'αñòαÑüαñ▓ αñ╕αññαÑìαñ░',
++    'Avg Duration': 'αñöαñ╕αññ αñàαñ╡αñºαñ┐',
++    'Avg Completion': 'αñöαñ╕αññ αñ¬αÑéαñ░αÑìαñúαññαñ╛',
++    'School-wise Implementation Status': 'αñ╕αÑìαñòαÑéαñ▓-αñ╡αñ╛αñ░ αñòαñ╛αñ░αÑìαñ»αñ╛αñ¿αÑìαñ╡αñ»αñ¿ αñ╕αÑìαñÑαñ┐αññαñ┐',
++    'Sessions': 'αñ╕αññαÑìαñ░',
++    'Last Session': 'αñàαñéαññαñ┐αñ« αñ╕αññαÑìαñ░',
++    'Completion': 'αñ¬αÑéαñ░αÑìαñúαññαñ╛',
++    'active': 'αñ╕αñòαÑìαñ░αñ┐αñ»',
++    'stale': 'αñàαñÜαñ▓',
++    'inactive': 'αñ¿αñ┐αñ╖αÑìαñòαÑìαñ░αñ┐αñ»',
++    'Today': 'αñåαñ£',
++    'day ago': 'αñªαñ┐αñ¿ αñ¬αñ╣αñ▓αÑç',
++    'days ago': 'αñªαñ┐αñ¿ αñ¬αñ╣αñ▓αÑç',
++    'Never': 'αñòαñ¡αÑÇ αñ¿αñ╣αÑÇαñé',
++    'Activity Completion Rates': 'αñùαññαñ┐αñ╡αñ┐αñºαñ┐ αñ¬αÑéαñ░αÑìαñúαññαñ╛ αñªαñ░',
++    'Which activities are teachers completing vs skipping?': 'αñ╢αñ┐αñòαÑìαñ╖αñò αñòαÑîαñ¿ αñ╕αÑÇ αñùαññαñ┐αñ╡αñ┐αñºαñ┐αñ»αñ╛αñü αñ¬αÑéαñ░αÑÇ αñòαñ░ αñ░αñ╣αÑç αñ╣αÑêαñé αñöαñ░ αñòαÑîαñ¿ αñ╕αÑÇ αñ¢αÑïαñíαñ╝ αñ░αñ╣αÑç αñ╣αÑêαñé?',
++    'No activity data yet': 'αñàαñ¡αÑÇ αññαñò αñòαÑïαñê αñùαññαñ┐αñ╡αñ┐αñºαñ┐ αñíαÑçαñƒαñ╛ αñ¿αñ╣αÑÇαñé',
++    'Weekly Session Frequency': 'αñ╕αñ╛αñ¬αÑìαññαñ╛αñ╣αñ┐αñò αñ╕αññαÑìαñ░ αñåαñ╡αÑâαññαÑìαññαñ┐',
++    'Sessions per week over the last 12 weeks': 'αñ¬αñ┐αñ¢αñ▓αÑç 12 αñ╕αñ¬αÑìαññαñ╛αñ╣ αñ«αÑçαñé αñ¬αÑìαñ░αññαñ┐ αñ╕αñ¬αÑìαññαñ╛αñ╣ αñ╕αññαÑìαñ░',
++    'No session data yet': 'αñàαñ¡αÑÇ αññαñò αñòαÑïαñê αñ╕αññαÑìαñ░ αñíαÑçαñƒαñ╛ αñ¿αñ╣αÑÇαñé',
++    'No implementation sessions recorded yet.': 'αñàαñ¡αÑÇ αññαñò αñòαÑïαñê αñòαñ╛αñ░αÑìαñ»αñ╛αñ¿αÑìαñ╡αñ»αñ¿ αñ╕αññαÑìαñ░ αñ░αñ┐αñòαÑëαñ░αÑìαñí αñ¿αñ╣αÑÇαñé αñòαñ┐αñ»αñ╛ αñùαñ»αñ╛αÑñ',
++    'Teachers can log sessions from the Implementation Corner.': 'αñ╢αñ┐αñòαÑìαñ╖αñò αñòαñ╛αñ░αÑìαñ»αñ╛αñ¿αÑìαñ╡αñ»αñ¿ αñòαÑïαñ¿αÑç αñ╕αÑç αñ╕αññαÑìαñ░ αñ▓αÑëαñù αñòαñ░ αñ╕αñòαññαÑç αñ╣αÑêαñéαÑñ',
++    'P.O. / Division': 'αñ¬.αñòαñ╛. / αñ╡αñ┐αñ¡αñ╛αñù',
+   },
+   mr: {
+     // Navbar
+@@ -468,6 +553,16 @@ export const translations: Record<Language, Record<string, string>> = {
+     'Engagement Metrics': 'αñ╕αñ╣αñ¡αñ╛αñù αñ«αÑçαñƒαÑìαñ░αñ┐αñòαÑìαñ╕',
+     'Pedagogy Coverage': 'αñ╢αñ┐αñòαÑìαñ╖αñúαñ╢αñ╛αñ╕αÑìαññαÑìαñ░ αñ╡αÑìαñ»αñ╛αñ¬αÑìαññαÑÇ',
+     'Division Rank': 'αñ╡αñ┐αñ¡αñ╛αñù αñ░αñüαñò',
++    'P.O. Rank': 'αñ¬αÑÇ.αñô. αñ░αñüαñò',
++    'Project Office Leaderboard (Endline Only)': 'αñ¬αÑìαñ░αñòαñ▓αÑìαñ¬ αñòαñ╛αñ░αÑìαñ»αñ╛αñ▓αñ» αñ▓αÑÇαñíαñ░αñ¼αÑïαñ░αÑìαñí (αñ½αñòαÑìαññ αñÅαñéαñíαñ▓αñ╛αñçαñ¿)',
++    'Ranking based on student story reading and subtraction mastery rates in Endline assessments.': 'αñÅαñéαñíαñ▓αñ╛αñçαñ¿ αñ«αÑéαñ▓αÑìαñ»αñ╛αñéαñòαñ¿αñ╛αññ αñ╡αñ┐αñªαÑìαñ»αñ╛αñ░αÑìαñÑαÑìαñ»αñ╛αñéαñÜαÑìαñ»αñ╛ αñùαÑïαñ╖αÑìαñƒ αñ╡αñ╛αñÜαñ¿ αñåαñúαñ┐ αñ╡αñ£αñ╛αñ¼αñ╛αñòαÑÇ αñ¬αÑìαñ░αñ╡αÑÇαñúαññαñ╛ αñªαñ░αñ╛αñéαñ╡αñ░ αñåαñºαñ╛αñ░αñ┐αññ αñòαÑìαñ░αñ«αñ╡αñ╛αñ░αÑÇ.',
++    'Top Performer': 'αñëαññαÑìαñòαÑâαñ╖αÑìαñƒ αñòαñ╛αñ«αñùαñ┐αñ░αÑÇ αñòαñ░αñúαñ╛αñ░αñ╛',
++    'Project Office': 'αñ¬αÑìαñ░αñòαñ▓αÑìαñ¬ αñòαñ╛αñ░αÑìαñ»αñ╛αñ▓αñ»',
++    'Efficiency Score': 'αñªαñòαÑìαñ╖αññαñ╛ αñ╕αÑìαñòαÑïαñ░',
++    'Story Reading': 'αñùαÑïαñ╖αÑìαñƒ αñ╡αñ╛αñÜαñ¿',
++    'Subtraction Mastery': 'αñ╡αñ£αñ╛αñ¼αñ╛αñòαÑÇ αñ¬αÑìαñ░αñ╡αÑÇαñúαññαñ╛',
++    'Assessed': 'αñ«αÑéαñ▓αÑìαñ»αñ╛αñéαñòαñ¿ αñòαÑçαñ▓αÑçαñ▓αÑç',
++    'No ranking data available for selected filters.': 'αñ¿αñ┐αñ╡αñíαñ▓αÑçαñ▓αÑìαñ»αñ╛ αñ½αñ┐αñ▓αÑìαñƒαñ░αñ╕αñ╛αñáαÑÇ αñòαÑïαñúαññαÑÇαñ╣αÑÇ αñòαÑìαñ░αñ«αñ╡αñ╛αñ░αÑÇ αñëαñ¬αñ▓αñ¼αÑìαñº αñ¿αñ╛αñ╣αÑÇαÑñ',
+     'Division': 'αñ╡αñ┐αñ¡αñ╛αñù',
+     'Proficiency': 'αñ¬αÑìαñ░αñ╛αñ╡αñ┐αñúαÑìαñ»',
+     'Assessments': 'αñ«αÑéαñ▓αÑìαñ»αñ«αñ╛αñ¬αñ¿αÑç',
+@@ -645,6 +740,36 @@ export const translations: Record<Language, Record<string, string>> = {
+     'Give a student 20 seeds and 4 friends. Ask them to distribute the seeds \'fairly\' so everyone has an equal amount.': 'αñ╡αñ┐αñªαÑìαñ»αñ╛αñ░αÑìαñÑαÑìαñ»αñ╛αñ▓αñ╛ αÑ¿αÑª αñ¼αñ┐αñ»αñ╛ αñåαñúαñ┐ αÑ¬ αñ«αñ┐αññαÑìαñ░ αñªαÑìαñ»αñ╛. αñ¼αñ┐αñ»αñ╛αñéαñÜαÑç αñ╕αñ░αÑìαñ╡αñ╛αñéαñ¿αñ╛ αñ╕αñ«αñ╛αñ¿ αñ╡αñ╛αñƒαñ¬ αñòαñ░αñúαÑìαñ»αñ╛αñ╕ αñ╕αñ╛αñéαñùαñ╛ αñ£αÑçαñúαÑçαñòαñ░αÑéαñ¿ αñ¬αÑìαñ░αññαÑìαñ»αÑçαñòαñ╛αñ▓αñ╛ αñ╕αñ«αñ╛αñ¿ αñ¡αñ╛αñù αñ«αñ┐αñ│αÑçαñ▓.',
+     'Seeds': 'αñ¼αñ┐αñ»αñ╛',
+     'Plates/Cups': 'αñ¬αÑìαñ▓αÑçαñƒ/αñòαñ¬',
++    // Implementation Tracker
++    'Implementation Tracker': 'αñàαñéαñ«αñ▓αñ¼αñ£αñ╛αñ╡αñúαÑÇ αñƒαÑìαñ░αÑàαñòαñ░',
++    'Track school-wise 90-minute cycle implementation and activity completion.': 'αñ╢αñ╛αñ│αñ╛αñ¿αñ┐αñ╣αñ╛αñ» αÑ»αÑª-αñ«αñ┐αñ¿αñ┐αñƒ αñÜαñòαÑìαñ░ αñàαñéαñ«αñ▓αñ¼αñ£αñ╛αñ╡αñúαÑÇ αñåαñúαñ┐ αñòαÑâαññαÑÇ αñ¬αÑéαñ░αÑìαñúαññαñ╛ αñƒαÑìαñ░αÑàαñò αñòαñ░αñ╛.',
++    '7 Days': 'αÑ¡ αñªαñ┐αñ╡αñ╕',
++    '30 Days': 'αÑ⌐αÑª αñªαñ┐αñ╡αñ╕',
++    'All Time': 'αñ╕αñéαñ¬αÑéαñ░αÑìαñú αñòαñ╛αñ│',
++    'Active Schools': 'αñ╕αñòαÑìαñ░αñ┐αñ» αñ╢αñ╛αñ│αñ╛',
++    'Total Sessions': 'αñÅαñòαÑéαñú αñ╕αññαÑìαñ░αÑç',
++    'Avg Duration': 'αñ╕αñ░αñ╛αñ╕αñ░αÑÇ αñòαñ╛αñ▓αñ╛αñ╡αñºαÑÇ',
++    'Avg Completion': 'αñ╕αñ░αñ╛αñ╕αñ░αÑÇ αñ¬αÑéαñ░αÑìαñúαññαñ╛',
++    'School-wise Implementation Status': 'αñ╢αñ╛αñ│αñ╛αñ¿αñ┐αñ╣αñ╛αñ» αñàαñéαñ«αñ▓αñ¼αñ£αñ╛αñ╡αñúαÑÇ αñ╕αÑìαñÑαñ┐αññαÑÇ',
++    'Sessions': 'αñ╕αññαÑìαñ░αÑç',
++    'Last Session': 'αñ╢αÑçαñ╡αñƒαñÜαÑç αñ╕αññαÑìαñ░',
++    'Completion': 'αñ¬αÑéαñ░αÑìαñúαññαñ╛',
++    'active': 'αñ╕αñòαÑìαñ░αñ┐αñ»',
++    'stale': 'αñ╢αñ┐αñ│αñ╛',
++    'inactive': 'αñ¿αñ┐αñ╖αÑìαñòαÑìαñ░αñ┐αñ»',
++    'Today': 'αñåαñ£',
++    'day ago': 'αñªαñ┐αñ╡αñ╕αñ╛αñ¬αÑéαñ░αÑìαñ╡αÑÇ',
++    'days ago': 'αñªαñ┐αñ╡αñ╕αñ╛αñéαñ¬αÑéαñ░αÑìαñ╡αÑÇ',
++    'Never': 'αñòαñºαÑÇαñÜ αñ¿αñ╛αñ╣αÑÇ',
++    'Activity Completion Rates': 'αñòαÑâαññαÑÇ αñ¬αÑéαñ░αÑìαñúαññαñ╛ αñªαñ░',
++    'Which activities are teachers completing vs skipping?': 'αñ╢αñ┐αñòαÑìαñ╖αñò αñòαÑïαñúαññαÑìαñ»αñ╛ αñòαÑâαññαÑÇ αñ¬αÑéαñ░αÑìαñú αñòαñ░αññ αñåαñ╣αÑçαññ αñåαñúαñ┐ αñòαÑïαñúαññαÑìαñ»αñ╛ αñ╕αÑïαñíαññ αñåαñ╣αÑçαññ?',
++    'No activity data yet': 'αñàαñ£αÑéαñ¿ αñòαÑâαññαÑÇ αñíαÑçαñƒαñ╛ αñ¿αñ╛αñ╣αÑÇ',
++    'Weekly Session Frequency': 'αñ╕αñ╛αñ¬αÑìαññαñ╛αñ╣αñ┐αñò αñ╕αññαÑìαñ░ αñ╡αñ╛αñ░αñéαñ╡αñ╛αñ░αññαñ╛',
++    'Sessions per week over the last 12 weeks': 'αñùαÑçαñ▓αÑìαñ»αñ╛ αÑºαÑ¿ αñåαñáαñ╡αñíαÑìαñ»αñ╛αñéαññ αñ¬αÑìαñ░αññαñ┐ αñåαñáαñ╡αñíαñ╛ αñ╕αññαÑìαñ░αÑç',
++    'No session data yet': 'αñàαñ£αÑéαñ¿ αñ╕αññαÑìαñ░ αñíαÑçαñƒαñ╛ αñ¿αñ╛αñ╣αÑÇ',
++    'No implementation sessions recorded yet.': 'αñàαñ£αÑéαñ¿ αñòαÑïαñúαññαÑçαñ╣αÑÇ αñàαñéαñ«αñ▓αñ¼αñ£αñ╛αñ╡αñúαÑÇ αñ╕αññαÑìαñ░ αñ¿αÑïαñéαñªαñ╡αñ▓αÑçαñ▓αÑç αñ¿αñ╛αñ╣αÑÇ.',
++    'Teachers can log sessions from the Implementation Corner.': 'αñ╢αñ┐αñòαÑìαñ╖αñò αñàαñéαñ«αñ▓αñ¼αñ£αñ╛αñ╡αñúαÑÇ αñòαÑïαñ¬αñ▒αÑìαñ»αñ╛αññαÑéαñ¿ αñ╕αññαÑìαñ░αÑç αñ¿αÑïαñéαñªαñ╡αÑé αñ╢αñòαññαñ╛αññ.',
++    'P.O. / Division': 'αñ¬.αñòαñ╛. / αñ╡αñ┐αñ¡αñ╛αñù',
+   }
+ };
+ 

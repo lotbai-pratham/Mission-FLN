@@ -3,10 +3,11 @@
 import { useState, useEffect, useTransition, Fragment } from "react";
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip,
-  ResponsiveContainer, Legend, Cell
+  ResponsiveContainer, Legend, Cell, AreaChart, Area, LineChart, Line
 } from 'recharts';
-import { BookOpen, Calculator, Users, School, Filter, TrendingUp, LayoutDashboard, Search, Sparkles, AlertCircle, TrendingDown, Trophy, Medal, Lightbulb, Gamepad2, Target } from 'lucide-react';
+import { BookOpen, Calculator, Users, School, Filter, TrendingUp, LayoutDashboard, Search, Sparkles, AlertCircle, TrendingDown, Trophy, Medal, Lightbulb, Gamepad2, Target, ClipboardList, Clock, CheckCircle2, Activity } from 'lucide-react';
 import { getDashboardStats, getStrugglingStudents, getGrowthVelocity, getInterventionPlan, getPORankings, getStudentLeaderboard } from "@/app/actions";
+import { getImplementationAnalytics } from "@/app/actions/implementation";
 import { useLanguage } from "@/context/LanguageContext";
 
 const LIT_LABELS = ['Beginner', 'Letter', 'Word', 'Paragraph', 'Story'];
@@ -24,7 +25,7 @@ export default function DashboardClient({ initialStats, hierarchy }: { initialSt
   const [poId, setPoId] = useState("");
   const [schoolId, setSchoolId] = useState("");
   const [term, setTerm] = useState("");
-  const [activeTab, setActiveTab] = useState<'overview' | 'trends' | 'ranking' | 'students'>('trends');
+  const [activeTab, setActiveTab] = useState<'overview' | 'trends' | 'ranking' | 'students' | 'implementation'>('trends');
   const [selectedClass, setSelectedClass] = useState<number | 'all'>('all');
   const [rankings, setRankings] = useState<any[]>([]);
   const [leaderboard, setLeaderboard] = useState<any[]>([]);
@@ -34,6 +35,8 @@ export default function DashboardClient({ initialStats, hierarchy }: { initialSt
   const [velocity, setVelocity] = useState<any>(null);
   const [plan, setPlan] = useState<any>(null);
   const [isGeneratingPlan, setIsGeneratingPlan] = useState(false);
+  const [implData, setImplData] = useState<any>(null);
+  const [implPeriod, setImplPeriod] = useState<'7d' | '30d' | 'all'>('30d');
 
   const activeDivision = hierarchy.find(d => d.id === divId);
   const pos = activeDivision ? activeDivision.projectOffices : [];
@@ -63,8 +66,16 @@ export default function DashboardClient({ initialStats, hierarchy }: { initialSt
         classNum: selectedClass
       });
       setLeaderboard(l);
+
+      const impl = await getImplementationAnalytics({
+        divisionId: divId || undefined,
+        projectOfficeId: poId || undefined,
+        schoolId: schoolId || undefined,
+        period: implPeriod,
+      });
+      setImplData(impl);
     });
-  }, [divId, poId, schoolId, term, selectedClass]);
+  }, [divId, poId, schoolId, term, selectedClass, implPeriod]);
 
   // --- Build chart data for the selected class + type ---
   function buildChartData(type: 'literacy' | 'numeracy') {
@@ -355,8 +366,9 @@ export default function DashboardClient({ initialStats, hierarchy }: { initialSt
         {([
           ['trends', t('Target Tracking') || 'Level Trends', TrendingUp],
           ['overview', t('Growth Over Time') || 'Term Overview', LayoutDashboard],
-          ['ranking', t('Division Rank') || 'P.O. Ranking', Trophy],
+          ['ranking', t('P.O. Rank') || 'P.O. Rank', Trophy],
           ['students', t('Student Leaderboard') || 'Student Leaderboard', Medal],
+          ['implementation', t('Implementation Tracker') || 'Implementation Tracker', ClipboardList],
         ] as const).map(([id, label, Icon]) => (
           <button key={id} onClick={() => setActiveTab(id as any)}
             className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold transition-all ${activeTab === id ? 'bg-white dark:bg-slate-700 text-blue-600 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}>
@@ -467,13 +479,13 @@ export default function DashboardClient({ initialStats, hierarchy }: { initialSt
               <div className="flex items-center justify-between mb-10">
                  <div>
                     <h2 className="text-3xl font-black text-slate-900 dark:text-white tracking-tight flex items-center gap-3">
-                       <Trophy className="w-8 h-8 text-yellow-500" /> Project Office Leaderboard (Endline Only)
+                       <Trophy className="w-8 h-8 text-yellow-500" /> {t('Project Office Leaderboard (Endline Only)') || 'Project Office Leaderboard (Endline Only)'}
                     </h2>
-                    <p className="text-slate-500 font-medium mt-1">Ranking based on student story reading and subtraction mastery rates in Endline assessments.</p>
+                    <p className="text-slate-500 font-medium mt-1">{t('Ranking based on student story reading and subtraction mastery rates in Endline assessments.')}</p>
                  </div>
                  <div className="hidden md:flex gap-2">
                     <div className="px-4 py-2 bg-blue-50 dark:bg-blue-900/30 rounded-xl text-[10px] font-black text-blue-600 uppercase tracking-widest border border-blue-100 dark:border-blue-800">
-                       Top Performer: {rankings[0]?.name || "N/A"}
+                       {t('Top Performer')}: {rankings[0]?.name || "N/A"}
                     </div>
                  </div>
               </div>
@@ -492,9 +504,12 @@ export default function DashboardClient({ initialStats, hierarchy }: { initialSt
 
                           <div className="flex-1 space-y-4">
                              <div className="flex items-center justify-between">
-                                <h3 className="text-xl font-black text-slate-800 dark:text-white">{po.name}</h3>
+                                <div className="flex items-center gap-3">
+                                   <h3 className="text-xl font-black text-slate-800 dark:text-white">{po.name}</h3>
+                                   <span className="px-3 py-1 bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 rounded-lg text-[10px] font-bold uppercase tracking-wider">{t('Project Office')}</span>
+                                </div>
                                 <div className="text-right">
-                                   <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Efficiency Score</p>
+                                   <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('Efficiency Score')}</p>
                                    <p className="text-2xl font-black text-blue-600">{po.score}%</p>
                                 </div>
                              </div>
@@ -503,7 +518,7 @@ export default function DashboardClient({ initialStats, hierarchy }: { initialSt
                                 {/* Story Progress */}
                                 <div className="space-y-2">
                                    <div className="flex justify-between text-[11px] font-bold">
-                                      <span className="text-slate-500 uppercase tracking-wider">Story Reading</span>
+                                      <span className="text-slate-500 uppercase tracking-wider">{t('Story Reading')}</span>
                                       <span className="text-slate-800 dark:text-slate-200">{po.storyPct}%</span>
                                    </div>
                                    <div className="h-2 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
@@ -513,7 +528,7 @@ export default function DashboardClient({ initialStats, hierarchy }: { initialSt
                                 {/* Subtraction Progress */}
                                 <div className="space-y-2">
                                    <div className="flex justify-between text-[11px] font-bold">
-                                      <span className="text-slate-500 uppercase tracking-wider">Subtraction Mastery</span>
+                                      <span className="text-slate-500 uppercase tracking-wider">{t('Subtraction Mastery')}</span>
                                       <span className="text-slate-800 dark:text-slate-200">{po.subtractionPct}%</span>
                                    </div>
                                    <div className="h-2 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
@@ -524,7 +539,7 @@ export default function DashboardClient({ initialStats, hierarchy }: { initialSt
                           </div>
 
                           <div className="shrink-0 text-center px-6 border-l border-slate-100 dark:border-slate-800 hidden lg:block">
-                             <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Assessed</p>
+                             <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">{t('Assessed')}</p>
                              <p className="text-xl font-black text-slate-800 dark:text-slate-100">{po.totalAssessed}</p>
                           </div>
                        </div>
@@ -536,7 +551,7 @@ export default function DashboardClient({ initialStats, hierarchy }: { initialSt
                        <div className="w-20 h-20 bg-slate-50 dark:bg-slate-800 rounded-full flex items-center justify-center mx-auto">
                           <AlertCircle className="w-10 h-10 text-slate-300" />
                        </div>
-                       <p className="text-slate-400 font-bold">No ranking data available for selected filters.</p>
+                       <p className="text-slate-400 font-bold">{t('No ranking data available for selected filters.')}</p>
                     </div>
                  )}
               </div>
@@ -694,6 +709,211 @@ export default function DashboardClient({ initialStats, hierarchy }: { initialSt
               </div>
             )}
           </div>
+        </div>
+      )}
+
+      {/* TAB: IMPLEMENTATION TRACKER */}
+      {activeTab === 'implementation' && (
+        <div className={`space-y-6 animate-in slide-in-from-bottom-4 duration-500 ${isPending ? 'opacity-50' : ''}`}>
+
+          {/* Period Toggle */}
+          <div className="flex items-center justify-between flex-wrap gap-3">
+            <div>
+              <h2 className="text-2xl font-black text-slate-900 dark:text-white tracking-tight flex items-center gap-3">
+                <ClipboardList className="w-7 h-7 text-indigo-500" />
+                {t('Implementation Tracker')}
+              </h2>
+              <p className="text-slate-500 font-medium mt-0.5 text-sm">{t('Track school-wise 90-minute cycle implementation and activity completion.')}</p>
+            </div>
+            <div className="flex p-1 bg-slate-100 dark:bg-slate-800 rounded-xl gap-1">
+              {(['7d', '30d', 'all'] as const).map(p => (
+                <button key={p} onClick={() => setImplPeriod(p)}
+                  className={`px-4 py-1.5 rounded-lg text-sm font-bold transition-all ${
+                    implPeriod === p ? 'bg-white dark:bg-slate-700 text-indigo-600 shadow-sm' : 'text-slate-500 hover:text-slate-700'
+                  }`}>
+                  {p === '7d' ? t('7 Days') : p === '30d' ? t('30 Days') : t('All Time')}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* KPI Cards */}
+          {implData && (
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+              <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 border border-slate-100 dark:border-slate-800 shadow-sm border-l-4 border-l-indigo-500">
+                <div className="flex items-center gap-2 mb-2 text-indigo-500"><School className="w-5 h-5" /></div>
+                <p className="text-sm font-semibold text-slate-500 mb-1">{t('Active Schools')}</p>
+                <h3 className="text-3xl font-black text-slate-800 dark:text-slate-100">{implData.kpis.activeSchools}<span className="text-base font-bold text-slate-400">/{implData.kpis.totalSchools}</span></h3>
+              </div>
+              <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 border border-slate-100 dark:border-slate-800 shadow-sm border-l-4 border-l-blue-500">
+                <div className="flex items-center gap-2 mb-2 text-blue-500"><Activity className="w-5 h-5" /></div>
+                <p className="text-sm font-semibold text-slate-500 mb-1">{t('Total Sessions')}</p>
+                <h3 className="text-3xl font-black text-slate-800 dark:text-slate-100">{implData.kpis.totalSessions}</h3>
+              </div>
+              <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 border border-slate-100 dark:border-slate-800 shadow-sm border-l-4 border-l-amber-500">
+                <div className="flex items-center gap-2 mb-2 text-amber-500"><Clock className="w-5 h-5" /></div>
+                <p className="text-sm font-semibold text-slate-500 mb-1">{t('Avg Duration')}</p>
+                <h3 className="text-3xl font-black text-slate-800 dark:text-slate-100">{implData.kpis.avgDuration}<span className="text-base font-bold text-slate-400"> min</span></h3>
+              </div>
+              <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 border border-slate-100 dark:border-slate-800 shadow-sm border-l-4 border-l-emerald-500">
+                <div className="flex items-center gap-2 mb-2 text-emerald-500"><CheckCircle2 className="w-5 h-5" /></div>
+                <p className="text-sm font-semibold text-slate-500 mb-1">{t('Avg Completion')}</p>
+                <h3 className="text-3xl font-black text-slate-800 dark:text-slate-100">{implData.kpis.avgCompletion}<span className="text-base font-bold text-slate-400">%</span></h3>
+              </div>
+            </div>
+          )}
+
+          {/* School-wise Heatmap Table */}
+          {implData && implData.schoolTable.length > 0 && (
+            <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
+              <div className="px-6 py-4 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
+                <h3 className="font-bold text-slate-700 dark:text-slate-200 text-sm flex items-center gap-2">
+                  <School className="w-4 h-4 text-indigo-500" /> {t('School-wise Implementation Status')}
+                </h3>
+                <span className="text-xs text-slate-400 font-medium">
+                  {implData.schoolTable.filter((s: any) => s.status === 'active').length} {t('active')} · {implData.schoolTable.filter((s: any) => s.status === 'stale').length} {t('stale')} · {implData.schoolTable.filter((s: any) => s.status === 'inactive').length} {t('inactive')}
+                </span>
+              </div>
+              <div className="overflow-x-auto">
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="bg-slate-50 dark:bg-slate-800/50 text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                      <th className="text-left px-6 py-3">{t('School')}</th>
+                      <th className="text-left px-4 py-3">{t('P.O. / Division')}</th>
+                      <th className="text-center px-4 py-3">{t('Sessions')}</th>
+                      <th className="text-center px-4 py-3">{t('Last Session')}</th>
+                      <th className="text-center px-4 py-3">{t('Avg Duration')}</th>
+                      <th className="text-center px-4 py-3">{t('Completion')}</th>
+                      <th className="text-center px-4 py-3">{t('Status')}</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+                    {implData.schoolTable.map((school: any) => {
+                      const statusColors: Record<string, string> = {
+                        active: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400',
+                        stale: 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400',
+                        inactive: 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400',
+                      };
+                      const statusIcons: Record<string, string> = { active: '🟢', stale: '🟡', inactive: '🔴' };
+                      const lastSessionText = school.lastSession
+                        ? (() => {
+                            const days = Math.floor((Date.now() - new Date(school.lastSession).getTime()) / (1000 * 60 * 60 * 24));
+                            if (days === 0) return t('Today');
+                            if (days === 1) return `1 ${t('day ago')}`;
+                            return `${days} ${t('days ago')}`;
+                          })()
+                        : t('Never');
+                      return (
+                        <tr key={school.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/30 transition-colors">
+                          <td className="px-6 py-3 font-semibold text-slate-700 dark:text-slate-200">{school.name}</td>
+                          <td className="px-4 py-3 text-xs text-slate-500">
+                            <div>{school.poName}</div>
+                            <div className="text-[10px] text-slate-400">{school.divName}</div>
+                          </td>
+                          <td className="px-4 py-3 text-center font-black text-slate-700 dark:text-slate-200">{school.totalSessions}</td>
+                          <td className="px-4 py-3 text-center text-xs text-slate-500">{lastSessionText}</td>
+                          <td className="px-4 py-3 text-center text-xs font-medium text-slate-600">{school.avgDuration > 0 ? `${school.avgDuration}m` : '—'}</td>
+                          <td className="px-4 py-3 text-center">
+                            {school.completionRate > 0 ? (
+                              <div className="flex items-center justify-center gap-2">
+                                <div className="w-16 h-1.5 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
+                                  <div className="h-full bg-emerald-500 transition-all" style={{ width: `${school.completionRate}%` }} />
+                                </div>
+                                <span className="text-xs font-bold text-slate-600">{school.completionRate}%</span>
+                              </div>
+                            ) : (
+                              <span className="text-xs text-slate-400">—</span>
+                            )}
+                          </td>
+                          <td className="px-4 py-3 text-center">
+                            <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider ${statusColors[school.status]}`}>
+                              {statusIcons[school.status]} {t(school.status)}
+                            </span>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+
+          {/* Charts Row: Activity Breakdown + Weekly Trend */}
+          {implData && (
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              {/* Activity Completion Breakdown */}
+              <div className="bg-white dark:bg-slate-900 rounded-3xl p-8 border border-slate-200 dark:border-slate-800 shadow-sm">
+                <h3 className="text-base font-bold text-slate-800 dark:text-slate-100 mb-1 flex items-center gap-2">
+                  <CheckCircle2 className="w-5 h-5 text-emerald-500" /> {t('Activity Completion Rates')}
+                </h3>
+                <p className="text-xs text-slate-400 mb-5">{t('Which activities are teachers completing vs skipping?')}</p>
+                {implData.activityBreakdown.length > 0 ? (
+                  <div className="space-y-3 max-h-[400px] overflow-y-auto pr-2">
+                    {implData.activityBreakdown.map((act: any) => (
+                      <div key={act.name} className="space-y-1">
+                        <div className="flex justify-between text-xs">
+                          <span className="font-bold text-slate-700 dark:text-slate-300 truncate max-w-[200px]">{act.name}</span>
+                          <span className="font-black text-slate-800 dark:text-slate-200 shrink-0 ml-2">{act.rate}%
+                            <span className="text-slate-400 font-normal ml-1">({act.completed}/{act.total})</span>
+                          </span>
+                        </div>
+                        <div className="h-2 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+                          <div className={`h-full rounded-full transition-all duration-700 ${
+                            act.rate >= 75 ? 'bg-emerald-500' : act.rate >= 50 ? 'bg-amber-500' : 'bg-red-500'
+                          }`} style={{ width: `${act.rate}%` }} />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="h-48 flex items-center justify-center text-slate-400 text-sm">{t('No activity data yet')}</div>
+                )}
+              </div>
+
+              {/* Weekly Trend */}
+              <div className="bg-white dark:bg-slate-900 rounded-3xl p-8 border border-slate-200 dark:border-slate-800 shadow-sm">
+                <h3 className="text-base font-bold text-slate-800 dark:text-slate-100 mb-1 flex items-center gap-2">
+                  <TrendingUp className="w-5 h-5 text-blue-500" /> {t('Weekly Session Frequency')}
+                </h3>
+                <p className="text-xs text-slate-400 mb-5">{t('Sessions per week over the last 12 weeks')}</p>
+                {implData.weeklyTrend.some((w: any) => w.sessions > 0) ? (
+                  <div className="h-64">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <AreaChart data={implData.weeklyTrend} margin={{ top: 5, right: 10, left: -20, bottom: 0 }}>
+                        <defs>
+                          <linearGradient id="implGrad" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="5%" stopColor="#6366f1" stopOpacity={0.3} />
+                            <stop offset="95%" stopColor="#6366f1" stopOpacity={0} />
+                          </linearGradient>
+                        </defs>
+                        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
+                        <XAxis dataKey="week" axisLine={false} tickLine={false} tick={{ fill: '#64748b', fontSize: 11 }} dy={8} />
+                        <YAxis axisLine={false} tickLine={false} tick={{ fill: '#64748b', fontSize: 11 }} allowDecimals={false} />
+                        <Tooltip
+                          contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)' }}
+                          formatter={(value: any) => [`${value} sessions`]} />
+                        <Area type="monotone" dataKey="sessions" stroke="#6366f1" strokeWidth={2.5} fill="url(#implGrad)" />
+                      </AreaChart>
+                    </ResponsiveContainer>
+                  </div>
+                ) : (
+                  <div className="h-48 flex items-center justify-center text-slate-400 text-sm">{t('No session data yet')}</div>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* Empty state */}
+          {(!implData || implData.kpis.totalSessions === 0) && (
+            <div className="bg-white dark:bg-slate-900 rounded-3xl p-20 border border-slate-100 dark:border-slate-800 shadow-sm text-center space-y-4">
+              <div className="w-20 h-20 bg-slate-50 dark:bg-slate-800 rounded-full flex items-center justify-center mx-auto">
+                <ClipboardList className="w-10 h-10 text-slate-300" />
+              </div>
+              <p className="text-slate-400 font-bold">{t('No implementation sessions recorded yet.')}</p>
+              <p className="text-sm text-slate-400">{t('Teachers can log sessions from the Implementation Corner.')}</p>
+            </div>
+          )}
         </div>
       )}
     </div>

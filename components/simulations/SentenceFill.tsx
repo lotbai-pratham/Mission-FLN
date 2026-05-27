@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import CompetitiveArena from './CompetitiveArena';
 import { recordBattleResult } from '@/app/actions';
+import { useNonRepeatingGenerator } from '@/lib/game-utils';
 
 const MARATHI_SENTENCES = [
   { sentence: 'सूर्य {blank} उगवतो.', correct: 'पूर्वेला', others: ['पश्चिमेला', 'उत्तरेला', 'दक्षिणेला'] },
@@ -14,15 +15,28 @@ const MARATHI_SENTENCES = [
   { sentence: 'मुले मैदानावर {blank} आहेत.', correct: 'खेळत', others: ['रडत', 'झोपत', 'बसून'] }
 ];
 
+function generateRandomSentenceRound() {
+  const correct = MARATHI_SENTENCES[Math.floor(Math.random() * MARATHI_SENTENCES.length)];
+  return {
+    correct,
+    options: [correct.correct, ...correct.others].sort(() => 0.5 - Math.random())
+  };
+}
+
 export default function SentenceFill({ player1, player2, schoolId, classNum, onClose }: any) {
   const [currentSentence, setCurrentSentence] = useState<any>(null);
   const [options, setOptions] = useState<string[]>([]);
   const [lastWinner, setLastWinner] = useState<'A' | 'B' | null>(null);
 
+  const { generateUnique } = useNonRepeatingGenerator(
+    generateRandomSentenceRound,
+    (res) => res.correct.sentence
+  );
+
   const generateRound = () => {
-    const item = MARATHI_SENTENCES[Math.floor(Math.random() * MARATHI_SENTENCES.length)];
-    setCurrentSentence(item);
-    setOptions([item.correct, ...item.others].sort(() => 0.5 - Math.random()));
+    const res = generateUnique();
+    setCurrentSentence(res.correct);
+    setOptions(res.options);
     setLastWinner(null);
   };
 

@@ -4,22 +4,36 @@ import { Binary, Zap } from 'lucide-react';
 import CompetitiveArena from './CompetitiveArena';
 import { cn } from "@/lib/utils";
 import { recordBattleResult } from '@/app/actions';
+import { useLanguage } from '@/context/LanguageContext';
+import { useNonRepeatingGenerator } from '@/lib/game-utils';
 
-type Problem = { q: string; a: number; options: number[] };
+type Problem = { q: string; n1: number; isAdd: boolean; n2: number; a: number; options: number[] };
 
-function generateProblem(): Problem {
+function createProblem(): Problem {
   const isAdd = Math.random() > 0.5;
   const n1 = Math.floor(Math.random() * 20) + 1;
   const n2 = Math.floor(Math.random() * 10) + 1;
   const a = isAdd ? n1 + n2 : n1 - n2;
   const q = `${n1} ${isAdd ? "+" : "-"} ${n2}`;
   const options = [a, a + 1, a - 1, a + 2].sort(() => 0.5 - Math.random());
-  return { q, a, options };
+  return { q, n1, isAdd, n2, a, options };
 }
 
 export default function MathSprint({ player1, player2, schoolId, classNum, onClose }: any) {
-  const [probA, setProbA] = useState<Problem>(generateProblem());
-  const [probB, setProbB] = useState<Problem>(generateProblem());
+  const { t, tNum } = useLanguage();
+
+  const { generateUnique: genA } = useNonRepeatingGenerator(
+    createProblem,
+    (item) => item.q
+  );
+
+  const { generateUnique: genB } = useNonRepeatingGenerator(
+    createProblem,
+    (item) => item.q
+  );
+
+  const [probA, setProbA] = useState<Problem>(() => genA());
+  const [probB, setProbB] = useState<Problem>(() => genB());
   const [feedbackA, setFeedbackA] = useState<'idle' | 'success' | 'error'>('idle');
   const [feedbackB, setFeedbackB] = useState<'idle' | 'success' | 'error'>('idle');
 
@@ -37,10 +51,24 @@ export default function MathSprint({ player1, player2, schoolId, classNum, onClo
     });
   };
 
+  const nextA = () => {
+    setProbA(genA());
+    setFeedbackA('idle');
+  };
+
+  const nextB = () => {
+    setProbB(genB());
+    setFeedbackB('idle');
+  };
+
+  const renderQuestion = (p: Problem) => {
+    return `${tNum(p.n1)} ${p.isAdd ? "+" : "-"} ${tNum(p.n2)}`;
+  };
+
   return (
     <CompetitiveArena
-      title="Flash Math Sprint"
-      description="2v2 Arithmetic Race: Solve addition and subtraction problems as fast as you can!"
+      title={t("Flash Math Sprint")}
+      description={t("2v2 Arithmetic Race: Solve addition and subtraction problems as fast as you can!")}
       icon={<Binary className="w-10 h-10 text-white" />}
       duration={60}
       player1={player1}
@@ -55,10 +83,10 @@ export default function MathSprint({ player1, player2, schoolId, classNum, onClo
           <div className={cn("flex-1 p-10 flex flex-col items-center justify-center space-y-12 transition-all", feedbackA === 'success' ? "bg-blue-600/10" : feedbackA === 'error' ? "bg-red-600/10" : "bg-slate-900/40")}>
             <div className="text-center space-y-4">
                <div className="inline-flex items-center gap-2 px-3 py-1 bg-blue-500/20 text-blue-400 rounded-full text-[10px] font-black uppercase tracking-widest">
-                  Team A Zone
+                  {t("Team A Zone")}
                </div>
                <div className="text-8xl font-black font-mono tracking-tighter text-blue-100">
-                  {probA.q}
+                  {renderQuestion(probA)}
                </div>
             </div>
 
@@ -70,16 +98,16 @@ export default function MathSprint({ player1, player2, schoolId, classNum, onClo
                      if (opt === probA.a) {
                        setFeedbackA('success');
                        addPoint('A');
-                       setTimeout(() => { setProbA(generateProblem()); setFeedbackA('idle'); }, 300);
+                       setTimeout(nextA, 300);
                      } else {
                        setFeedbackA('error');
                        setTimeout(() => setFeedbackA('idle'), 500);
                      }
                    }}
                    disabled={gameState !== 'running'}
-                   className="h-24 bg-white/5 border-2 border-white/10 rounded-3xl text-3xl font-black hover:bg-blue-600 hover:border-blue-500 transition-all active:scale-95"
+                   className="h-24 bg-white/5 border-2 border-white/10 rounded-3xl text-3xl font-black hover:bg-blue-600 hover:border-blue-500 transition-all active:scale-95 text-white"
                  >
-                   {opt}
+                   {tNum(opt)}
                  </button>
                ))}
             </div>
@@ -89,33 +117,33 @@ export default function MathSprint({ player1, player2, schoolId, classNum, onClo
           <div className={cn("flex-1 p-10 flex flex-col items-center justify-center space-y-12 transition-all", feedbackB === 'success' ? "bg-emerald-600/10" : feedbackB === 'error' ? "bg-red-600/10" : "bg-slate-900/40")}>
              <div className="text-center space-y-4">
                 <div className="inline-flex items-center gap-2 px-3 py-1 bg-emerald-500/20 text-emerald-400 rounded-full text-[10px] font-black uppercase tracking-widest">
-                   Team B Zone
+                   {t("Team B Zone")}
                 </div>
                 <div className="text-8xl font-black font-mono tracking-tighter text-emerald-100">
-                   {probB.q}
+                   {renderQuestion(probB)}
                 </div>
              </div>
 
              <div className="grid grid-cols-2 gap-4 w-full max-w-[340px]">
-               {probB.options.map((opt, i) => (
-                 <button
-                   key={`b-${i}-${opt}`}
-                   onClick={() => {
-                     if (opt === probB.a) {
-                       setFeedbackB('success');
-                       addPoint('B');
-                       setTimeout(() => { setProbB(generateProblem()); setFeedbackB('idle'); }, 300);
-                     } else {
-                       setFeedbackB('error');
-                       setTimeout(() => setFeedbackB('idle'), 500);
-                     }
-                   }}
-                   disabled={gameState !== 'running'}
-                   className="h-24 bg-white/5 border-2 border-white/10 rounded-3xl text-3xl font-black hover:bg-emerald-600 hover:border-emerald-500 transition-all active:scale-95"
-                 >
-                   {opt}
-                 </button>
-               ))}
+                {probB.options.map((opt, i) => (
+                  <button
+                    key={`b-${i}-${opt}`}
+                    onClick={() => {
+                      if (opt === probB.a) {
+                        setFeedbackB('success');
+                        addPoint('B');
+                        setTimeout(nextB, 300);
+                      } else {
+                        setFeedbackB('error');
+                        setTimeout(() => setFeedbackB('idle'), 500);
+                      }
+                    }}
+                    disabled={gameState !== 'running'}
+                    className="h-24 bg-white/5 border-2 border-white/10 rounded-3xl text-3xl font-black hover:bg-emerald-600 hover:border-emerald-500 transition-all active:scale-95 text-white"
+                  >
+                    {tNum(opt)}
+                  </button>
+                ))}
              </div>
           </div>
 
@@ -129,4 +157,3 @@ export default function MathSprint({ player1, player2, schoolId, classNum, onClo
     </CompetitiveArena>
   );
 }
-

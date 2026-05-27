@@ -236,9 +236,12 @@ export async function getDashboardStats(filters: { divisionId?: string, projectO
   const operations = allAssessments.reduce((acc: any, curr: any) => {
     if (!acc[curr.term]) acc[curr.term] = { addition: 0, subtraction: 0, division: 0, total: 0 };
     acc[curr.term].total += 1;
-    if (curr.addition) acc[curr.term].addition += 1;
-    if (curr.subtraction) acc[curr.term].subtraction += 1;
-    if (curr.division) acc[curr.term].division += 1;
+    const hasAdd = curr.addition || curr.numeracyLevel >= 3;
+    const hasSub = curr.subtraction || curr.numeracyLevel >= 4;
+    const hasDiv = curr.division || curr.numeracyLevel >= 6;
+    if (hasAdd) acc[curr.term].addition += 1;
+    if (hasSub) acc[curr.term].subtraction += 1;
+    if (hasDiv) acc[curr.term].division += 1;
     return acc;
   }, {});
 
@@ -395,9 +398,19 @@ export async function getCohortStats(filters: { divisionId?: string, projectOffi
       numTransitions[numKey] = (numTransitions[numKey] || 0) + 1;
 
       // Operations transitions
+      const hasAddStart = startAssessment.addition || startAssessment.numeracyLevel >= 3;
+      const hasAddEnd = endAssessment.addition || endAssessment.numeracyLevel >= 3;
+      const hasSubStart = startAssessment.subtraction || startAssessment.numeracyLevel >= 4;
+      const hasSubEnd = endAssessment.subtraction || endAssessment.numeracyLevel >= 4;
+      const hasDivStart = startAssessment.division || startAssessment.numeracyLevel >= 6;
+      const hasDivEnd = endAssessment.division || endAssessment.numeracyLevel >= 6;
+
+      const opStatesStart = { addition: hasAddStart, subtraction: hasSubStart, division: hasDivStart };
+      const opStatesEnd = { addition: hasAddEnd, subtraction: hasSubEnd, division: hasDivEnd };
+
       ['addition', 'subtraction', 'division'].forEach(op => {
-         const start = (startAssessment as any)[op];
-         const end = (endAssessment as any)[op];
+         const start = (opStatesStart as any)[op];
+         const end = (opStatesEnd as any)[op];
          if (!start && end) opsTransitions[op].gained++;
          else if (start && end) opsTransitions[op].maintained++;
          else if (start && !end) opsTransitions[op].regressed++;

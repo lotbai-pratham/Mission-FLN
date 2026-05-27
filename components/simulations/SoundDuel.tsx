@@ -5,6 +5,7 @@ import CompetitiveArena from './CompetitiveArena';
 import { cn } from "@/lib/utils";
 import { speakLetter } from '@/lib/speak';
 import { recordBattleResult } from '@/app/actions';
+import { useNonRepeatingGenerator } from '@/lib/game-utils';
 
 const MARATHI_LETTERS = [
   "क", "ख", "ग", "घ",
@@ -16,15 +17,29 @@ const MARATHI_LETTERS = [
   "श", "ष", "स", "ह", "ळ",
 ];
 
-function generateProblem(): { t: string; options: string[] } {
-  const t = MARATHI_LETTERS[Math.floor(Math.random() * MARATHI_LETTERS.length)];
-  const others = MARATHI_LETTERS.filter(x => x !== t).sort(() => 0.5 - Math.random()).slice(0, 3);
-  return { t, options: [t, ...others].sort(() => 0.5 - Math.random()) };
-}
-
 export default function SoundDuel({ player1, player2, schoolId, classNum, onClose }: any) {
-  const [probA, setProbA] = useState(generateProblem);
-  const [probB, setProbB] = useState(generateProblem);
+  const { generateUnique: genA } = useNonRepeatingGenerator(
+    () => MARATHI_LETTERS[Math.floor(Math.random() * MARATHI_LETTERS.length)],
+    (item) => item
+  );
+
+  const { generateUnique: genB } = useNonRepeatingGenerator(
+    () => MARATHI_LETTERS[Math.floor(Math.random() * MARATHI_LETTERS.length)],
+    (item) => item
+  );
+
+  const [probA, setProbA] = useState(() => {
+    const t = genA();
+    const others = MARATHI_LETTERS.filter(x => x !== t).sort(() => 0.5 - Math.random()).slice(0, 3);
+    return { t, options: [t, ...others].sort(() => 0.5 - Math.random()) };
+  });
+
+  const [probB, setProbB] = useState(() => {
+    const t = genB();
+    const others = MARATHI_LETTERS.filter(x => x !== t).sort(() => 0.5 - Math.random()).slice(0, 3);
+    return { t, options: [t, ...others].sort(() => 0.5 - Math.random()) };
+  });
+
   const [feedbackA, setFeedbackA] = useState<'idle' | 'success' | 'error'>('idle');
   const [feedbackB, setFeedbackB] = useState<'idle' | 'success' | 'error'>('idle');
   const [speakingA, setSpeakingA] = useState(false);
@@ -46,17 +61,21 @@ export default function SoundDuel({ player1, player2, schoolId, classNum, onClos
   };
 
   const nextA = () => {
-    const next = generateProblem();
-    setProbA(next);
+    const t = genA();
+    const others = MARATHI_LETTERS.filter(x => x !== t).sort(() => 0.5 - Math.random()).slice(0, 3);
+    const options = [t, ...others].sort(() => 0.5 - Math.random());
+    setProbA({ t, options });
     setFeedbackA('idle');
-    setTimeout(() => speakLetter(next.t), 200);
+    setTimeout(() => speakLetter(t), 200);
   };
 
   const nextB = () => {
-    const next = generateProblem();
-    setProbB(next);
+    const t = genB();
+    const others = MARATHI_LETTERS.filter(x => x !== t).sort(() => 0.5 - Math.random()).slice(0, 3);
+    const options = [t, ...others].sort(() => 0.5 - Math.random());
+    setProbB({ t, options });
     setFeedbackB('idle');
-    setTimeout(() => speakLetter(next.t), 200);
+    setTimeout(() => speakLetter(t), 200);
   };
 
   const handleEnd = async (winner: 'A' | 'B' | 'Draw', _scores: { a: number, b: number }) => {

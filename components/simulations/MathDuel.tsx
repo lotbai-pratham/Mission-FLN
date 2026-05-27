@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import CompetitiveArena from './CompetitiveArena';
 import { recordBattleResult } from '@/app/actions';
 import { useLanguage } from '@/context/LanguageContext';
+import { useNonRepeatingGenerator } from '@/lib/game-utils';
 
 export default function MathDuel({ player1, player2, schoolId, classNum, onClose }: any) {
   const { t, tNum } = useLanguage();
@@ -10,19 +11,29 @@ export default function MathDuel({ player1, player2, schoolId, classNum, onClose
   const [options, setOptions] = useState<number[]>([]);
   const [lastWinner, setLastWinner] = useState<'A' | 'B' | null>(null);
 
-  const generateRound = () => {
-    const isDivision = Math.random() > 0.5;
-    let a, b, answer;
+  const { generateUnique } = useNonRepeatingGenerator(
+    () => {
+      const isDivision = Math.random() > 0.5;
+      let a, b, answer;
 
-    if (isDivision) {
-      b = Math.floor(Math.random() * 9) + 1;
-      answer = Math.floor(Math.random() * 10) + 1;
-      a = b * answer;
-    } else {
-      a = Math.floor(Math.random() * 50) + 10;
-      b = Math.floor(Math.random() * a);
-      answer = a - b;
-    }
+      if (isDivision) {
+        b = Math.floor(Math.random() * 9) + 1;
+        answer = Math.floor(Math.random() * 10) + 1;
+        a = b * answer;
+      } else {
+        a = Math.floor(Math.random() * 50) + 10;
+        b = Math.floor(Math.random() * a);
+        answer = a - b;
+      }
+
+      return { a, b, op: isDivision ? '÷' : '-', answer };
+    },
+    (item) => `${item.a}${item.op}${item.b}`
+  );
+
+  const generateRound = () => {
+    const nextProblem = generateUnique();
+    const { answer } = nextProblem;
 
     const others = new Set<number>();
     while (others.size < 3) {
@@ -30,7 +41,7 @@ export default function MathDuel({ player1, player2, schoolId, classNum, onClose
       if (off !== 0 && (answer + off) >= 0) others.add(answer + off);
     }
 
-    setProblem({ a, b, op: isDivision ? '÷' : '-', answer });
+    setProblem(nextProblem);
     setOptions([answer, ...Array.from(others)].sort(() => 0.5 - Math.random()));
     setLastWinner(null);
   };

@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import CompetitiveArena from './CompetitiveArena';
 import { recordBattleResult } from '@/app/actions';
 import { useLanguage } from '@/context/LanguageContext';
+import { useNonRepeatingGenerator } from '@/lib/game-utils';
 
 export default function PlaceValueBattle({ player1, player2, schoolId, classNum, onClose }: any) {
   const { t, tNum } = useLanguage();
@@ -10,10 +11,18 @@ export default function PlaceValueBattle({ player1, player2, schoolId, classNum,
   const [options, setOptions] = useState<number[]>([]);
   const [lastWinner, setLastWinner] = useState<'A' | 'B' | null>(null);
 
+  const { generateUnique } = useNonRepeatingGenerator(
+    () => {
+      const h = Math.floor(Math.random() * 9) + 1;
+      const t = Math.floor(Math.random() * 10);
+      const o = Math.floor(Math.random() * 10);
+      return { h, t, o };
+    },
+    (item) => `${item.h}-${item.t}-${item.o}`
+  );
+
   const generateRound = () => {
-    const h = Math.floor(Math.random() * 9) + 1;
-    const t = Math.floor(Math.random() * 10);
-    const o = Math.floor(Math.random() * 10);
+    const { h, t, o } = generateUnique();
     const num = h * 100 + t * 10 + o;
     
     const others = new Set<number>();
@@ -22,8 +31,14 @@ export default function PlaceValueBattle({ player1, player2, schoolId, classNum,
                   (Math.floor(Math.random() * 3) - 1) * 10 + 
                   (Math.floor(Math.random() * 3) - 1);
       const val = num + off;
-      if (val !== num && val >= 100 && val <= 999) others.add(val);
-      else others.add(Math.floor(Math.random() * 900) + 100);
+      if (val !== num && val >= 100 && val <= 999) {
+        others.add(val);
+      } else {
+        const randVal = Math.floor(Math.random() * 900) + 100;
+        if (randVal !== num) {
+          others.add(randVal);
+        }
+      }
     }
     
     setTargetNumber({ h, t, o });

@@ -3,24 +3,38 @@ import { useState, useEffect } from 'react';
 import CompetitiveArena from './CompetitiveArena';
 import { recordBattleResult } from '@/app/actions';
 import { sfx } from '@/lib/sounds';
+import { useNonRepeatingGenerator } from '@/lib/game-utils';
 
 const MARATHI_LETTERS = [
   'अ', 'आ', 'इ', 'ई', 'उ', 'ऊ', 'ए', 'ऐ', 'ओ', 'औ', 'अं', 'अः',
   'क', 'ख', 'ग', 'घ', 'ङ', 'च', 'छ', 'ज', 'झ', 'ञ',
   'ट', 'ठ', 'ड', 'ढ', 'ण', 'त', 'थ', 'द', 'ध', 'न',
-  'प', 'ph', 'ब', 'भ', 'म', 'य', 'र', 'ल', 'व', 'श', 'ष', 'स', 'ह', 'ळ', 'क्ष', 'ज्ञ'
+  'प', 'फ', 'ब', 'भ', 'म', 'य', 'र', 'ल', 'व', 'श', 'ष', 'स', 'ह', 'ळ', 'क्ष', 'ज्ञ'
 ];
+
+function generateRandomLetterRound() {
+  const correct = MARATHI_LETTERS[Math.floor(Math.random() * MARATHI_LETTERS.length)];
+  const others = [...MARATHI_LETTERS].filter(l => l !== correct).sort(() => 0.5 - Math.random()).slice(0, 3);
+  return {
+    correct,
+    options: [correct, ...others].sort(() => 0.5 - Math.random())
+  };
+}
 
 export default function LetterFlash({ player1, player2, schoolId, classNum, onClose }: any) {
   const [currentLetter, setCurrentLetter] = useState('');
   const [options, setOptions] = useState<string[]>([]);
   const [lastWinner, setLastWinner] = useState<'A' | 'B' | null>(null);
 
+  const { generateUnique } = useNonRepeatingGenerator(
+    generateRandomLetterRound,
+    (res) => res.correct
+  );
+
   const generateRound = () => {
-    const correct = MARATHI_LETTERS[Math.floor(Math.random() * MARATHI_LETTERS.length)];
-    const others = [...MARATHI_LETTERS].filter(l => l !== correct).sort(() => 0.5 - Math.random()).slice(0, 3);
-    setCurrentLetter(correct);
-    setOptions([correct, ...others].sort(() => 0.5 - Math.random()));
+    const res = generateUnique();
+    setCurrentLetter(res.correct);
+    setOptions(res.options);
     setLastWinner(null);
   };
 
