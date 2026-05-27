@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/db';
 import * as xlsx from 'xlsx';
 import { auth } from '@/auth';
+import { hasRole } from '@/lib/checkAccess';
 
 // Helper to match column names case-insensitively and with fallback aliases
 function getRowValue(row: any, aliases: string[]): string {

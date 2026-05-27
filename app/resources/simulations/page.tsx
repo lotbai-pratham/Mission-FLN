@@ -33,7 +33,7 @@ const SECTIONS = [
 
 function SimulationsContent() {
   const { data: session } = useSession();
-  const isAdmin = session?.user?.role === 'admin';
+  const isAdmin = hasRole(session, "admin");
   const userSchoolId = (session?.user as any)?.schoolId ?? undefined;
   const { xp, level, badge, showLevelUp, newLevelReached, dismissLevelUp } = usePoints();
 

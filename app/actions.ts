@@ -129,13 +129,17 @@ export async function getDashboardStats(filters: { divisionId?: string, projectO
   const session = await auth();
   const scope = getScopeFilters(session);
   const whereFilter: any = {};
-  // Merge explicit admin filters if no scope (admin)
+  // Apply RBAC scope filters
   if (Object.keys(scope).length === 0) {
+    // admin – use explicit filters if provided
     if (filters.schoolId) whereFilter.schoolId = filters.schoolId;
     else if (filters.projectOfficeId) whereFilter.school = { projectOfficeId: filters.projectOfficeId };
     else if (filters.divisionId) whereFilter.school = { projectOffice: { divisionId: filters.divisionId } };
   } else {
-    Object.assign(whereFilter, scope);
+    // Non-admin: map scope to same shape as original logic
+    if (scope.schoolId) whereFilter.schoolId = scope.schoolId;
+    else if (scope.projectOfficeId) whereFilter.school = { projectOfficeId: scope.projectOfficeId };
+    else if (scope.divisionId) whereFilter.school = { projectOffice: { divisionId: scope.divisionId } };
   }
 
   if (filters.classNum && filters.classNum !== 'all') {

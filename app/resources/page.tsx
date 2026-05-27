@@ -22,6 +22,7 @@ import {
   GROUP_COLORS
 } from '@/lib/session_content';
 import { logImplementationSession } from '@/app/actions/implementation';
+import { hasRole } from '@/lib/checkAccess';
 
 // Simulations & Games Imports
 import BundleBuilder from "@/components/simulations/BundleBuilder";
@@ -160,7 +161,7 @@ function MissionControl() {
   const [logSuccess, setLogSuccess] = useState(false);
   const [allSchools, setAllSchools] = useState<any[]>([]);
 
-  const isAdmin = session?.user?.role === 'admin' || session?.user?.role === 'ADMIN';
+  const isAdmin = hasRole(session, "admin");
   // If teacher picked a specific group, treat as single-group session for that group only
   const activeGroupIdx = selectedGroupIdx ?? 0;
   const needsGroupPick = !!sessionPlan && sessionPlan.groups.length > 1;

@@ -4,10 +4,11 @@ import { auth, signOut } from '@/auth';
 import MobileMenu from '@/components/MobileMenu';
 import NavLinks from './NavLinks';
 import NavActions from './NavActions';
+import { hasRole } from '@/lib/checkAccess';
 
 export default async function Navbar() {
   const session = await auth();
-  const isAdmin = session?.user?.role === 'admin';
+  const isAdmin = hasRole(session, "admin");
 
   const handleSignOut = async () => {
     'use server';
