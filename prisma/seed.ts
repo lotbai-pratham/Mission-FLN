@@ -82,17 +82,22 @@ async function processFile(filename) {
       po = await prisma.projectOffice.create({ data: { name: poName, divisionId: division.id } });
     }
 
-    // 3. School (using schoolName as unqiue since udiseCode isn't provided directly, we'll fake UDISE)
-    const fakeUdise = `UDISE-${schoolName}-${po.id}`.substring(0, 50);
-    let school = await prisma.school.findUnique({ where: { udiseCode: fakeUdise } });
+    // 3. School (first try to find by name and PO to use master seeded schools, fallback to fake UDISE)
+    let school = await prisma.school.findFirst({
+      where: { name: schoolName, projectOfficeId: po.id }
+    });
     if (!school) {
-      school = await prisma.school.create({
-        data: {
-          name: schoolName,
-          udiseCode: fakeUdise,
-          projectOfficeId: po.id
-        }
-      });
+      const fakeUdise = `UDISE-${schoolName}-${po.id}`.substring(0, 50);
+      school = await prisma.school.findUnique({ where: { udiseCode: fakeUdise } });
+      if (!school) {
+        school = await prisma.school.create({
+          data: {
+            name: schoolName,
+            udiseCode: fakeUdise,
+            projectOfficeId: po.id
+          }
+        });
+      }
     }
 
     // 4. Student (Find by Name + School to avoid duplicates across baseline/midline)
