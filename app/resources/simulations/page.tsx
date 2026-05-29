@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils";
 import { usePoints } from "@/lib/points-store";
 import { useEffect, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
+import { hasRole } from "@/lib/checkAccess";
 
 import { SIMS, GAMES, ALL, Item } from "@/lib/sim-data";
 import BattleMatchmaker from "@/components/simulations/BattleMatchmaker";

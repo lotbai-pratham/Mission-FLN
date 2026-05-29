@@ -26,6 +26,10 @@ export default function DashboardClient({ initialStats, hierarchy }: { initialSt
   const [schoolId, setSchoolId] = useState("");
   const [term, setTerm] = useState("");
   const [activeTab, setActiveTab] = useState<'overview' | 'trends' | 'ranking' | 'students' | 'implementation'>('trends');
+  useEffect(() => {
+  // Clear struggling list whenever the Project Office changes to avoid stale critical alerts
+  setStruggling([]);
+}, [poId]);
   const [selectedClass, setSelectedClass] = useState<number | 'all'>('all');
   const [rankings, setRankings] = useState<any[]>([]);
   const [leaderboard, setLeaderboard] = useState<any[]>([]);
@@ -39,43 +43,54 @@ export default function DashboardClient({ initialStats, hierarchy }: { initialSt
   const [implPeriod, setImplPeriod] = useState<'7d' | '30d' | 'all'>('30d');
 
   const activeDivision = hierarchy.find(d => d.id === divId);
+
+  // Function to load all dashboard data based on current filters
+  const fetchData = async () => {
+
+        startTransition(async () => {
+          const newStats = await getDashboardStats({ divisionId: divId, projectOfficeId: poId, schoolId, term, classNum: selectedClass });
+          setStats(newStats);
+
+          const v = await getGrowthVelocity({ divisionId: divId, projectOfficeId: poId, schoolId, classNum: selectedClass });
+          setVelocity(v);
+
+          if (schoolId) {
+            const s = await getStrugglingStudents(schoolId, selectedClass);
+            setStruggling(s);
+          } else {
+            setStruggling([]);
+          }
+
+          const r = await getPORankings(divId || undefined, selectedClass);
+          setRankings(r);
+
+          const l = await getStudentLeaderboard({
+            divisionId: divId || undefined,
+            projectOfficeId: poId || undefined,
+            schoolId: schoolId || undefined,
+            classNum: selectedClass
+          });
+          setLeaderboard(l);
+
+          const impl = await getImplementationAnalytics({
+            divisionId: divId || undefined,
+            projectOfficeId: poId || undefined,
+            schoolId: schoolId || undefined,
+            period: implPeriod,
+          });
+          setImplData(impl);
+        });
+  };
   const pos = activeDivision ? activeDivision.projectOffices : [];
   const activePO = pos.find((p: any) => p.id === poId);
   const schools = activePO ? activePO.schools : [];
+  
 
   useEffect(() => {
-    startTransition(async () => {
-      const newStats = await getDashboardStats({ divisionId: divId, projectOfficeId: poId, schoolId, term, classNum: selectedClass });
-      setStats(newStats);
-      
-      const v = await getGrowthVelocity({ divisionId: divId, projectOfficeId: poId, schoolId, classNum: selectedClass });
-      setVelocity(v);
-
-      if (schoolId) {
-        const s = await getStrugglingStudents(schoolId, selectedClass);
-        setStruggling(s);
-      }
-
-      const r = await getPORankings(divId || undefined, selectedClass);
-      setRankings(r);
-
-      const l = await getStudentLeaderboard({
-        divisionId: divId || undefined,
-        projectOfficeId: poId || undefined,
-        schoolId: schoolId || undefined,
-        classNum: selectedClass
-      });
-      setLeaderboard(l);
-
-      const impl = await getImplementationAnalytics({
-        divisionId: divId || undefined,
-        projectOfficeId: poId || undefined,
-        schoolId: schoolId || undefined,
-        period: implPeriod,
-      });
-      setImplData(impl);
-    });
+    // Load data initially and whenever any filter changes
+    fetchData();
   }, [divId, poId, schoolId, term, selectedClass, implPeriod]);
+
 
   // --- Build chart data for the selected class + type ---
   function buildChartData(type: 'literacy' | 'numeracy') {
@@ -184,6 +199,13 @@ export default function DashboardClient({ initialStats, hierarchy }: { initialSt
 
       {/* Filters */}
       <div className="bg-white dark:bg-slate-900 rounded-3xl p-5 shadow-sm border border-slate-200 dark:border-slate-800 flex flex-col md:flex-row gap-3 items-center">
+          {/* Refresh Button */}
+          <button
+            onClick={fetchData}
+            className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl transition-colors"
+          >
+            Refresh
+          </button>
         <div className="flex items-center gap-2 text-slate-400 font-bold px-2 shrink-0">
           <Filter className="w-5 h-5" /><span className="hidden lg:inline text-sm">{t('Filters') || 'Filters'}:</span>
         </div>
@@ -191,11 +213,11 @@ export default function DashboardClient({ initialStats, hierarchy }: { initialSt
           <option value="">{t('All Terms') || 'All Terms'}</option>
           {TERMS.map(t => <option key={t} value={t}>{t}</option>)}
         </select>
-        <select value={divId} onChange={e => { setDivId(e.target.value); setPoId(""); setSchoolId(""); }} className="flex-1 bg-slate-50 dark:bg-slate-800 rounded-xl px-4 py-2.5 ring-1 ring-slate-200 focus:ring-2 focus:ring-blue-500 text-sm border-none">
+        <select value={divId} onChange={e => { setDivId(e.target.value); setPoId(""); setSchoolId(""); setStruggling([]); }} className="flex-1 bg-slate-50 dark:bg-slate-800 rounded-xl px-4 py-2.5 ring-1 ring-slate-200 focus:ring-2 focus:ring-blue-500 text-sm border-none">
           <option value="">{t('All Divisions')}</option>
           {hierarchy.map(d => <option key={d.id} value={d.id}>{d.name}</option>)}
         </select>
-        <select value={poId} onChange={e => { setPoId(e.target.value); setSchoolId(""); }} disabled={!divId} className="flex-1 bg-slate-50 dark:bg-slate-800 rounded-xl px-4 py-2.5 ring-1 ring-slate-200 focus:ring-2 focus:ring-blue-500 text-sm border-none disabled:opacity-50">
+        <select value={poId} onChange={e => { setPoId(e.target.value); setSchoolId(""); setStruggling([]); }} disabled={!divId} className="flex-1 bg-slate-50 dark:bg-slate-800 rounded-xl px-4 py-2.5 ring-1 ring-slate-200 focus:ring-2 focus:ring-blue-500 text-sm border-none disabled:opacity-50">
           <option value="">{t('All Project Offices')}</option>
           {pos.map((p: any) => <option key={p.id} value={p.id}>{p.name}</option>)}
         </select>
@@ -281,7 +303,7 @@ export default function DashboardClient({ initialStats, hierarchy }: { initialSt
       </div>
 
       {/* STRUGGLING STUDENTS ALERT */}
-      {struggling.length > 5 && (
+      {struggling.length > 0 && (
         <div className="animate-in slide-in-from-top-4 duration-500 my-8">
           <div className="bg-red-50 dark:bg-red-950/20 rounded-[40px] p-8 border border-red-100 dark:border-red-900/30 flex flex-col md:flex-row items-center gap-8 shadow-xl shadow-red-500/5">
              <div className="w-20 h-20 bg-red-500 rounded-[32px] flex items-center justify-center shadow-2xl shadow-red-500/20 shrink-0">
