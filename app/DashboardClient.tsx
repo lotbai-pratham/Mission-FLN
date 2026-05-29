@@ -33,6 +33,7 @@ export default function DashboardClient({ initialStats, hierarchy }: { initialSt
   const [selectedClass, setSelectedClass] = useState<number | 'all'>('all');
   const [rankings, setRankings] = useState<any[]>([]);
   const [leaderboard, setLeaderboard] = useState<any[]>([]);
+  const [leaderboardMode, setLeaderboardMode] = useState<'best' | 'help'>('best');
   const [trendType, setTrendType] = useState<'literacy' | 'numeracy'>('literacy');
   const [showPct, setShowPct] = useState(true);
   const [struggling, setStruggling] = useState<any[]>([]);
@@ -68,7 +69,8 @@ export default function DashboardClient({ initialStats, hierarchy }: { initialSt
             divisionId: divId || undefined,
             projectOfficeId: poId || undefined,
             schoolId: schoolId || undefined,
-            classNum: selectedClass
+            classNum: selectedClass,
+            sortBy: leaderboardMode
           });
           setLeaderboard(l);
 
@@ -89,7 +91,7 @@ export default function DashboardClient({ initialStats, hierarchy }: { initialSt
   useEffect(() => {
     // Load data initially and whenever any filter changes
     fetchData();
-  }, [divId, poId, schoolId, term, selectedClass, implPeriod]);
+  }, [divId, poId, schoolId, term, selectedClass, implPeriod, leaderboardMode]);
 
 
   // --- Build chart data for the selected class + type ---
@@ -588,11 +590,47 @@ export default function DashboardClient({ initialStats, hierarchy }: { initialSt
             <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-10">
               <div>
                 <h2 className="text-3xl font-black text-slate-900 dark:text-white tracking-tight flex items-center gap-3">
-                  <Medal className="w-8 h-8 text-yellow-500" /> {t('Best Performing Students')}
+                  {leaderboardMode === 'best' ? (
+                    <>
+                      <Medal className="w-8 h-8 text-yellow-500" /> {t('Best Performing Students')}
+                    </>
+                  ) : (
+                    <>
+                      <AlertCircle className="w-8 h-8 text-red-500 animate-pulse" /> {t('Students Needing Most Help')}
+                    </>
+                  )}
                 </h2>
                 <p className="text-slate-500 font-medium mt-1">
-                  {t('Based on FLN levels, game participation, and battle victories')}
+                  {leaderboardMode === 'best' 
+                    ? t('Based on FLN levels, game participation, and battle victories')
+                    : t('Students with the lowest progress or activity levels')}
                 </p>
+              </div>
+
+              {/* Floating-style pill toggle for Best vs Needs Help */}
+              <div className="flex bg-slate-100 dark:bg-slate-800/80 p-1.5 rounded-2xl border border-slate-200/50 dark:border-slate-700/30 shadow-sm shrink-0">
+                <button
+                  onClick={() => setLeaderboardMode('best')}
+                  className={`px-4 py-2 rounded-xl text-xs font-black transition-all flex items-center gap-2 ${
+                    leaderboardMode === 'best'
+                      ? 'bg-blue-600 text-white shadow-md'
+                      : 'text-slate-600 dark:text-slate-400 hover:text-slate-800'
+                  }`}
+                >
+                  <Trophy className="w-4 h-4" />
+                  {t('Best Performing') || 'Best Performing'}
+                </button>
+                <button
+                  onClick={() => setLeaderboardMode('help')}
+                  className={`px-4 py-2 rounded-xl text-xs font-black transition-all flex items-center gap-2 ${
+                    leaderboardMode === 'help'
+                      ? 'bg-red-600 text-white shadow-md'
+                      : 'text-slate-600 dark:text-slate-400 hover:text-slate-800'
+                  }`}
+                >
+                  <AlertCircle className="w-4 h-4" />
+                  {t('Needs Help') || 'Needs Help'}
+                </button>
               </div>
             </div>
 
@@ -600,12 +638,18 @@ export default function DashboardClient({ initialStats, hierarchy }: { initialSt
             {leaderboard.length > 0 && (
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
                 {leaderboard.slice(0, 3).map((stu, index) => {
-                  const medalColors = [
+                  const medalColors = leaderboardMode === 'best' ? [
                     'from-yellow-400 to-amber-500 text-yellow-950 border-amber-300', // Gold
                     'from-slate-300 to-slate-400 text-slate-900 border-slate-200',   // Silver
                     'from-orange-400 to-amber-600 text-orange-950 border-orange-300' // Bronze
+                  ] : [
+                    'from-red-500 to-rose-600 text-white border-red-400 shadow-red-500/10', // High Critical
+                    'from-orange-500 to-red-500 text-white border-orange-400 shadow-orange-500/10', // Medium Critical
+                    'from-amber-500 to-orange-500 text-white border-amber-400 shadow-amber-500/10'  // Low Critical
                   ];
-                  const podiumTitles = [t('1st Place') || '1st Place', t('2nd Place') || '2nd Place', t('3rd Place') || '3rd Place'];
+                  const podiumTitles = leaderboardMode === 'best'
+                    ? [t('1st Place') || '1st Place', t('2nd Place') || '2nd Place', t('3rd Place') || '3rd Place']
+                    : [t('Critical 1') || 'Critical 1', t('Critical 2') || 'Critical 2', t('Critical 3') || 'Critical 3'];
                   return (
                     <div key={stu.id} className="relative bg-slate-50 dark:bg-slate-850 hover:bg-white dark:hover:bg-slate-800 rounded-[32px] p-6 border border-slate-100 dark:border-slate-800 shadow-lg hover:shadow-xl transition-all hover:-translate-y-1 flex flex-col justify-between overflow-hidden">
                       {/* Decorative corner tag for Rank */}

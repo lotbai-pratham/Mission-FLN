@@ -1156,6 +1156,7 @@ export async function getStudentLeaderboard(filters: {
   projectOfficeId?: string;
   schoolId?: string;
   classNum?: number | 'all';
+  sortBy?: 'best' | 'help';
 } = {}) {
   const session = await auth();
   const userSchoolId = (session?.user as any)?.schoolId;
@@ -1249,8 +1250,12 @@ export async function getStudentLeaderboard(filters: {
     };
   });
 
-  // Sort by totalScore desc, then by name asc
+  const isHelp = filters.sortBy === 'help';
+  // Sort by totalScore desc (or asc if sortBy is 'help'), then by name asc
   return leaderboard
-    .sort((a, b) => b.totalScore - a.totalScore || a.name.localeCompare(b.name))
+    .sort((a, b) => isHelp
+      ? a.totalScore - b.totalScore || a.name.localeCompare(b.name)
+      : b.totalScore - a.totalScore || a.name.localeCompare(b.name)
+    )
     .slice(0, 100); // return top 100
 }
