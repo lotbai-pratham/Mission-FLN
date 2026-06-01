@@ -987,9 +987,11 @@ export async function getGrowthVelocity(filters: { divisionId?: string, projectO
     }
   }
 
-  // Respect the class filter if specified
+  // Respect the class filter if specified; default to Grade 4 only
   if (filters.classNum && filters.classNum !== 'all') {
     whereFilter.class = Number(filters.classNum);
+  } else {
+    whereFilter.class = 4;
   }
 
   const students = await prisma.student.findMany({
