@@ -987,8 +987,10 @@ export async function getGrowthVelocity(filters: { divisionId?: string, projectO
     }
   }
 
-  // Always evaluate Class 4 students
-  whereFilter.class = 4;
+  // Respect the class filter if specified
+  if (filters.classNum && filters.classNum !== 'all') {
+    whereFilter.class = Number(filters.classNum);
+  }
 
   const students = await prisma.student.findMany({
     where: whereFilter,
@@ -1003,8 +1005,22 @@ export async function getGrowthVelocity(filters: { divisionId?: string, projectO
     if (s.assessments.length > 0) {
       totalAssessed++;
       const latest = s.assessments[0];
-      const canReadStory = latest.literacyLevel === 4;
-      const canDoDivision = latest.division === true || latest.numeracyLevel >= 5;
+      
+      // Determine targets dynamically based on student's class (NIPUN Bharat targets)
+      let targetLit = 4; // Default/Grade 3+ target: Story (Level 4)
+      let targetNum = 6; // Default/Grade 3+ target: Division (Level 6 in DB)
+      
+      if (s.class === 1) {
+        targetLit = 2; // Word (Level 2)
+        targetNum = 2; // Number 10-99 (Level 2)
+      } else if (s.class === 2) {
+        targetLit = 3; // Paragraph (Level 3)
+        targetNum = 4; // Subtraction (Level 4 in DB)
+      }
+      
+      const canReadStory = latest.literacyLevel >= targetLit;
+      const canDoDivision = latest.division === true || latest.numeracyLevel >= targetNum;
+      
       if (canReadStory) {
         storyCount++;
       }
