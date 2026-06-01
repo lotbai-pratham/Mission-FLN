@@ -1007,14 +1007,14 @@ export async function getGrowthVelocity(filters: { divisionId?: string, projectO
       const latest = s.assessments[0];
       
       // Determine targets dynamically based on student's class (NIPUN Bharat targets)
-      let targetLit = 4; // Default/Grade 3+ target: Story (Level 4)
+      let targetLit = 4; // Default/Grade 2+ target: Story (Level 4)
       let targetNum = 6; // Default/Grade 3+ target: Division (Level 6 in DB)
       
       if (s.class === 1) {
-        targetLit = 2; // Word (Level 2)
-        targetNum = 2; // Number 10-99 (Level 2)
-      } else if (s.class === 2) {
         targetLit = 3; // Paragraph (Level 3)
+        targetNum = 3; // Addition (Level 3 in DB)
+      } else if (s.class === 2) {
+        targetLit = 4; // Story (Level 4)
         targetNum = 4; // Subtraction (Level 4 in DB)
       }
       
@@ -1231,8 +1231,49 @@ export async function getStudentLeaderboard(filters: {
     const litLevel = latestAssessment?.literacyLevel ?? 0;
     const numLevel = latestAssessment?.numeracyLevel ?? 0;
     
-    // FLN Level score: 20 points per level
-    const flnScore = (litLevel * 20) + (numLevel * 20);
+    // FLN Level score: dynamically calculated out of 200 (100 for literacy, 100 for numeracy) based on target schemas
+    let litMarks = 0;
+    if (student.class === 1) {
+      // Class 1 target: Paragraph (Level 3)
+      if (litLevel >= 3) {
+        litMarks = 100;
+      } else {
+        litMarks = Math.round((litLevel / 3) * 100);
+      }
+    } else {
+      // Class 2+ target: Story (Level 4)
+      if (litLevel >= 4) {
+        litMarks = 100;
+      } else {
+        litMarks = Math.round((litLevel / 4) * 100);
+      }
+    }
+
+    let numMarks = 0;
+    if (student.class === 1) {
+      // Class 1 target: Addition (Level 3 in DB)
+      if (numLevel >= 3) {
+        numMarks = 100;
+      } else {
+        numMarks = Math.round((numLevel / 3) * 100);
+      }
+    } else if (student.class === 2) {
+      // Class 2 target: Subtraction (Level 4 in DB)
+      if (numLevel >= 4) {
+        numMarks = 100;
+      } else {
+        numMarks = Math.round((numLevel / 4) * 100);
+      }
+    } else {
+      // Class 3+ target: Division (Level 6 in DB)
+      if (numLevel >= 6 || latestAssessment?.division === true) {
+        numMarks = 100;
+      } else {
+        numMarks = Math.round((numLevel / 6) * 100);
+      }
+    }
+
+    const flnScore = litMarks + numMarks;
     
     const battlesCount = student._count.battlesAsP1 + student._count.battlesAsP2;
     const singleGamesCount = student._count.singleGames;
