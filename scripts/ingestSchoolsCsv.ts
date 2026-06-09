@@ -1,29 +1,38 @@
 // scripts/ingestSchoolsCsv.ts
 import { fileURLToPath } from 'url';
+import * as path from 'path';
+import * as fs from 'fs';
+import pkg from 'xlsx';
+const { readFile, utils } = pkg;
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-import * as fs from 'fs';
-
-// Path to the CSV file (relative to project root)
-const csvPath = path.resolve(__dirname, '..', 'School & Student UID\'s', 'School with UDISE.csv');
+// Path to the XLSX file (relative to project root)
+const xlsxPath = path.resolve(__dirname, '..', 'School & Student UID\'s', 'School with UDISE.xlsx');
 
 // Output file that will export the schools array
 const outPath = path.resolve(__dirname, '..', 'prisma', 'schoolsFromCsv.ts');
 
-function parseCsv(content: string): { name: string; udise: string }[] {
-  const lines = content.split(/\r?\n/).filter(l => l.trim().length > 0);
-  // Assuming first line is header, columns: ?, ?, ?, Division, Project office, School name
-  // We'll attempt to locate the school name column (likely last) and udise code column (maybe second?)
-  // Based on sample rows: columns are: Index, UDISE?, ?, ?, ?, Division?, Project office?, School name?
-  // Observed line format: 1,27131003102,??????,?????,???????
-  // The second column appears to be UDISE code. The last column is school name (in Devanagari maybe). We'll treat column 2 as udise, last as name.
+function parseXlsx(): { name: string; udise: string }[] {
+  const workbook = readFile(xlsxPath);
+  const sheetName = workbook.SheetNames[0];
+  const sheet = workbook.Sheets[sheetName];
+  // Parse rows as raw array of arrays
+  const rows = utils.sheet_to_json<any[]>(sheet, { header: 1 });
+  
   const result: { name: string; udise: string }[] = [];
-  for (let i = 1; i < lines.length; i++) {
-    const parts = lines[i].split(',');
-    if (parts.length < 2) continue;
-    const udise = parts[1].trim();
-    const name = parts[parts.length - 1].trim();
+  
+  // Skip the header row
+  for (let i = 1; i < rows.length; i++) {
+    const row = rows[i];
+    if (!row || row.length < 5) continue;
+    
+    // Column index 1 is UDISE code (e.g. 27131003102)
+    // Column index 4 is School name (e.g. 'चिंधिचक')
+    const udise = String(row[1] || '').trim();
+    const name = String(row[4] || '').trim();
+    
     if (udise && name) {
       result.push({ name, udise });
     }
@@ -38,12 +47,11 @@ function generateTsFile(schools: { name: string; udise: string }[]) {
 }
 
 function main() {
-  if (!fs.existsSync(csvPath)) {
-    console.error('CSV file not found at', csvPath);
+  if (!fs.existsSync(xlsxPath)) {
+    console.error('XLSX file not found at', xlsxPath);
     process.exit(1);
   }
-  const csvContent = fs.readFileSync(csvPath, { encoding: 'utf8' });
-  const schools = parseCsv(csvContent);
+  const schools = parseXlsx();
   generateTsFile(schools);
 }
 
