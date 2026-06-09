@@ -1,8 +1,9 @@
 // @ts-nocheck
 import { PrismaClient } from '@prisma/client';
-import * as xlsx from 'xlsx';
+import { schoolsFromCsv } from '../prisma/schoolsFromCsv';
 
 const prisma = new PrismaClient();
+const udiseMap = new Map(schoolsFromCsv.map(s => [s.name, s.udise] as [string, string]));
 
 // Helper to convert English strings or Marathi string to levels
 function parseLiteracyLevel(val) {
@@ -82,23 +83,27 @@ async function processFile(filename) {
       po = await prisma.projectOffice.create({ data: { name: poName, divisionId: division.id } });
     }
 
-    // 3. School (first try to find by name and PO to use master seeded schools, fallback to fake UDISE)
-    let school = await prisma.school.findFirst({
-      where: { name: schoolName, projectOfficeId: po.id }
-    });
-    if (!school) {
-      const fakeUdise = `UDISE-${schoolName}-${po.id}`.substring(0, 50);
-      school = await prisma.school.findUnique({ where: { udiseCode: fakeUdise } });
-      if (!school) {
-        school = await prisma.school.create({
-          data: {
-            name: schoolName,
-            udiseCode: fakeUdise,
-            projectOfficeId: po.id
-          }
-        });
-      }
+  // 3. School (try to find by name within PO, else by UDISE from CSV, else create with generated UDISE)
+  let school = await prisma.school.findFirst({
+    where: { name: schoolName, projectOfficeId: po.id },
+  });
+  if (!school) {
+    const existingUdise = udiseMap.get(schoolName);
+    if (existingUdise) {
+      school = await prisma.school.findUnique({ where: { udiseCode: existingUdise } });
     }
+    if (!school) {
+      const generatedUdise = `UDISE-${schoolName}-${po.id}`.substring(0, 50);
+      school = await prisma.school.create({
+        data: {
+          name: schoolName,
+          udiseCode: existingUdise || generatedUdise,
+          projectOfficeId: po.id,
+        },
+      });
+    }
+  }
+// Legacy school lookup removed – now using UDISE map
 
     // 4. Student (Find by Name + School to avoid duplicates across baseline/midline)
     let student = await prisma.student.findFirst({

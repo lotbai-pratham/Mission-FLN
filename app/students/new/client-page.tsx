@@ -81,7 +81,7 @@ export default function AddStudentPage({ schools }: { schools: any[] }) {
                     className="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-800 border-none ring-1 ring-slate-200 dark:ring-slate-700 focus:ring-2 focus:ring-blue-500 transition-all text-sm outline-none appearance-none">
               <option value="" disabled selected>Select a school...</option>
               {schools.map((s: any) => (
-                <option key={s.id} value={s.id}>{s.name}</option>
+                <option key={s.id} value={s.id}>{s.name} ({s.udiseCode})</option>
               ))}
             </select>
           </div>

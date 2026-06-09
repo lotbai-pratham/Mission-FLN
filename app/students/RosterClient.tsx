@@ -71,7 +71,7 @@ export default function RosterClient({ hierarchy, initialData }: { hierarchy: an
                 className="flex-1 bg-slate-50 dark:bg-slate-800 rounded-xl px-4 py-3 border-none ring-1 ring-slate-200 focus:ring-2 focus:ring-blue-500 font-medium disabled:opacity-50">
           <option value="">{t('All Schools')}</option>
           {schools.map((s: any) => (
-            <option key={s.id} value={s.id}>{s.name}</option>
+            <option key={s.id} value={s.id}>{s.name} ({s.udiseCode})</option>
           ))}
         </select>
       </div>
