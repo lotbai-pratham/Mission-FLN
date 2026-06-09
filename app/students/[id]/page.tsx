@@ -141,7 +141,7 @@ export default async function StudentProfilePage({ params }: { params: Promise<{
                </div>
                <h1 className="text-3xl font-black text-slate-900 dark:text-white tracking-tight mt-2">{student.name}</h1>
                <div className="flex flex-wrap items-center justify-center sm:justify-start gap-4 mt-3 text-sm font-medium text-slate-500">
-                  <span className="flex items-center gap-1.5 bg-slate-100 dark:bg-slate-800 px-3 py-1 rounded-full"><MapPin className="w-4 h-4"/> {student.school.name}</span>
+                  <span className="flex items-center gap-1.5 bg-slate-100 dark:bg-slate-800 px-3 py-1 rounded-full"><MapPin className="w-4 h-4"/> {student.school.name} ({student.school.udiseCode})</span>
                   <span className="flex items-center gap-1.5 bg-slate-100 dark:bg-slate-800 px-3 py-1 rounded-full"><GraduationCap className="w-4 h-4"/> {t('Class')} {student.class}</span>
                   <span className="flex items-center gap-1.5 bg-slate-100 dark:bg-slate-800 px-3 py-1 rounded-full">{t('Gender')}: {t(student.gender)}</span>
                </div>

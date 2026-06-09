@@ -97,7 +97,7 @@ export default function RosterClient({ hierarchy, initialData }: { hierarchy: an
                      )}
                    </div>
                    <div className="flex items-center gap-3 text-xs text-slate-400 mt-1">
-                     <span className="flex items-center gap-1"><MapPin className="w-3 h-3"/> {student.school.name}</span>
+                     <span className="flex items-center gap-1"><MapPin className="w-3 h-3"/> {student.school.name} ({student.school.udiseCode})</span>
                      <span>•</span><span>{t('Class')} {student.class}</span><span>•</span><span>{t(student.gender) || student.gender}</span>
                    </div>
                   </div>
