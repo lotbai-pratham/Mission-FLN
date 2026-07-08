@@ -289,12 +289,30 @@ export default function LandingPage() {
                 alt="Pratham kids camp group" 
                 className="w-full h-48 object-cover rounded-2xl shadow-inner border border-white/5"
               />
-              <div className="space-y-4 text-center">
-                <h4 className="text-2xl font-black">2026-27 Target Progression</h4>
-                <div className="h-3 w-full bg-white/10 rounded-full overflow-hidden">
-                  <div className="h-full bg-gradient-to-r from-orange-500 to-amber-500 w-[76%]" />
+              <div className="space-y-5 text-left">
+                <h4 className="text-2xl font-black text-center mb-2">Current Learning Reach</h4>
+                
+                {/* Language Progress */}
+                <div className="space-y-2">
+                  <div className="flex justify-between items-center text-xs font-bold uppercase tracking-widest text-slate-300">
+                    <span>Language (L4 Story)</span>
+                    <span className="text-amber-400 font-black">57% Competent</span>
+                  </div>
+                  <div className="h-3 w-full bg-white/10 rounded-full overflow-hidden">
+                    <div className="h-full bg-gradient-to-r from-orange-500 to-amber-500 w-[57%]" />
+                  </div>
                 </div>
-                <p className="text-xs text-slate-400 font-bold uppercase tracking-widest">76% Division Progress Reached</p>
+
+                {/* Maths Progress */}
+                <div className="space-y-2">
+                  <div className="flex justify-between items-center text-xs font-bold uppercase tracking-widest text-slate-300">
+                    <span>Maths (L3 Division)</span>
+                    <span className="text-amber-400 font-black">29% Competent</span>
+                  </div>
+                  <div className="h-3 w-full bg-white/10 rounded-full overflow-hidden">
+                    <div className="h-full bg-gradient-to-r from-orange-500 to-amber-500 w-[29%]" />
+                  </div>
+                </div>
               </div>
             </div>
 
