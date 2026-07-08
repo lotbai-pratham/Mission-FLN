@@ -20,13 +20,14 @@ export default function LandingPage() {
       {/* Hero Section */}
       <section className="relative py-20 overflow-hidden bg-white dark:bg-slate-950">
         <div className="absolute top-0 right-0 -translate-y-12 translate-x-12 blur-3xl opacity-20 dark:opacity-10 pointer-events-none">
-          <div className="aspect-square w-[500px] rounded-full bg-gradient-to-br from-blue-600 to-indigo-600" />
+          <div className="aspect-square w-[500px] rounded-full bg-gradient-to-br from-orange-500 to-amber-500" />
         </div>
         
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="text-center max-w-3xl mx-auto">
+          <div className="text-center max-w-3xl mx-auto flex flex-col items-center">
+            <img src="/pratham-logo.png" alt="Pratham Logo" className="h-20 w-auto mb-6 object-contain" />
             <h1 className="text-5xl font-black tracking-tight text-slate-900 dark:text-white sm:text-6xl mb-6">
-              The <span className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">FLN Journey</span>
+              The <span className="bg-gradient-to-r from-orange-500 to-amber-500 bg-clip-text text-transparent">FLN Journey</span>
             </h1>
             <p className="mt-4 text-xl text-slate-600 dark:text-slate-400 leading-relaxed">
               Tracking the foundations of India's future. Foundational Literacy and Numeracy (FLN) is the most critical building block for every child's lifelong learning.

@@ -20,28 +20,28 @@
   --color-background: var(--background);
   --color-foreground: var(--foreground);
 
-  /* Overwrite blue and indigo to Pratham Royal Blue */
-  --color-blue-50: #f4f5fa;
-  --color-blue-100: #e6e7f4;
-  --color-blue-200: #cdcfea;
-  --color-blue-300: #a5a9da;
-  --color-blue-400: #747ac4;
-  --color-blue-500: var(--pratham-blue);
-  --color-blue-600: var(--pratham-blue);
-  --color-blue-700: #252775;
-  --color-blue-800: #1b1d57;
-  --color-blue-900: #12133a;
+  /* Overwrite blue and indigo to Teal */
+  --color-blue-50: #f0fdfa;
+  --color-blue-100: #ccfbf1;
+  --color-blue-200: #99f6e4;
+  --color-blue-300: #5eead4;
+  --color-blue-400: #2dd4bf;
+  --color-blue-500: #0d9488;
+  --color-blue-600: #0d9488;
+  --color-blue-700: #0f766e;
+  --color-blue-800: #115e59;
+  --color-blue-900: #134e4a;
 
-  --color-indigo-50: #f4f5fa;
-  --color-indigo-100: #e6e7f4;
-  --color-indigo-200: #cdcfea;
-  --color-indigo-300: #a5a9da;
-  --color-indigo-400: #747ac4;
-  --color-indigo-500: var(--pratham-blue);
-  --color-indigo-600: var(--pratham-blue);
-  --color-indigo-700: #252775;
-  --color-indigo-800: #1b1d57;
-  --color-indigo-900: #12133a;
+  --color-indigo-50: #fef5f2;
+  --color-indigo-100: #fdebe6;
+  --color-indigo-200: #fad2c3;
+  --color-indigo-300: #f6b399;
+  --color-indigo-400: #f18c66;
+  --color-indigo-500: var(--pratham-orange);
+  --color-indigo-600: var(--pratham-orange);
+  --color-indigo-700: #d64713;
+  --color-indigo-800: #812504;
+  --color-indigo-900: #551601;
 
   /* Overwrite emerald to Pratham Leaf Green */
   --color-emerald-50: #f7faf2;
