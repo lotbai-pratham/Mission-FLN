@@ -32,7 +32,7 @@ export default function LandingPage() {
           <div className="aspect-square w-[500px] rounded-full bg-gradient-to-br from-orange-500 to-amber-500" />
         </div>
         <div className="absolute bottom-0 left-0 translate-y-12 -translate-x-12 blur-3xl opacity-15 dark:opacity-10 pointer-events-none">
-          <div className="aspect-square w-[400px] rounded-full bg-gradient-to-br from-teal-500 to-emerald-400" />
+          <div className="aspect-square w-[400px] rounded-full bg-gradient-to-br from-orange-500 to-amber-500" />
         </div>
         
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
@@ -41,24 +41,24 @@ export default function LandingPage() {
             {/* Left side text */}
             <div className="lg:col-span-7 text-left flex flex-col items-start">
               {/* Mission FLN Badge */}
-              <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold bg-teal-50 dark:bg-teal-900/30 text-teal-600 dark:text-teal-400 border border-teal-100 dark:border-teal-850 mb-6">
-                <Sparkles className="w-3.5 h-3.5" /> Mission FLN
+              <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold bg-amber-50 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400 border border-amber-100 dark:border-amber-850/30 mb-6">
+                <Sparkles className="w-3.5 h-3.5 animate-pulse" /> Mission FLN
               </div>
 
               <h1 className="text-4xl font-black tracking-tight text-slate-900 dark:text-white sm:text-5xl lg:text-6xl mb-6 leading-tight">
                 Building <br />
-                <span className="bg-gradient-to-r from-orange-500 via-amber-500 to-teal-600 bg-clip-text text-transparent">Foundational Literacy and Numeracy</span>
+                <span className="bg-gradient-to-r from-orange-500 via-amber-500 to-amber-600 bg-clip-text text-transparent">Foundational Literacy and Numeracy</span>
               </h1>
 
-              <div className="text-sm font-bold uppercase tracking-wider text-teal-600 dark:text-teal-400 mb-8 flex items-center gap-2">
-                <span className="w-1.5 h-1.5 rounded-full bg-teal-500" />
+              <div className="text-sm font-bold uppercase tracking-wider text-amber-600 dark:text-amber-400 mb-8 flex items-center gap-2">
+                <span className="w-1.5 h-1.5 rounded-full bg-amber-500" />
                 Understanding the journey of the students of government tribal ashramshalas.
               </div>
 
               <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
                 <Link
                   href="/pedagogy"
-                  className="inline-flex items-center justify-center px-8 py-4 text-base font-bold text-white bg-teal-600 hover:bg-teal-700 rounded-2xl shadow-xl shadow-teal-600/20 transition-all hover:-translate-y-1 active:translate-y-0"
+                  className="inline-flex items-center justify-center px-8 py-4 text-base font-bold text-white bg-amber-500 hover:bg-amber-600 rounded-2xl shadow-xl shadow-amber-500/20 transition-all hover:-translate-y-1 active:translate-y-0"
                 >
                   The Pedagogy <BookOpen className="ml-2 w-5 h-5" />
                 </Link>
@@ -67,7 +67,7 @@ export default function LandingPage() {
 
             {/* Right side image */}
             <div className="lg:col-span-5 relative">
-              <div className="absolute -inset-2 rounded-[40px] bg-gradient-to-tr from-orange-500 to-teal-500 opacity-20 blur-xl animate-pulse pointer-events-none" />
+              <div className="absolute -inset-2 rounded-[40px] bg-gradient-to-tr from-orange-500 to-amber-500 opacity-20 blur-xl animate-pulse pointer-events-none" />
               <div className="relative rounded-[36px] overflow-hidden border-4 border-white dark:border-slate-900 shadow-2xl shadow-slate-200/50 dark:shadow-none bg-slate-100">
                 <img 
                   src="/ashramshala-students.png" 
@@ -75,7 +75,7 @@ export default function LandingPage() {
                   className="w-full h-auto aspect-[4/3] object-cover hover:scale-105 transition-all duration-500"
                 />
                 <div className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent p-6 text-white text-xs font-semibold">
-                  <span className="bg-teal-500 text-[10px] px-2.5 py-0.5 rounded-full uppercase mr-2 tracking-wider">Active Learning</span>
+                  <span className="bg-amber-500 text-[10px] px-2.5 py-0.5 rounded-full uppercase mr-2 tracking-wider">Active Learning</span>
                   Students smiling, learning, and performing activities in the classroom.
                 </div>
               </div>
@@ -89,7 +89,7 @@ export default function LandingPage() {
       <section className="py-24 bg-slate-50 dark:bg-slate-900/30">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-3xl mx-auto mb-16">
-            <h2 className="text-xs font-black uppercase tracking-widest text-teal-600 dark:text-teal-400 mb-2">Designed for the Ecosystem</h2>
+            <h2 className="text-xs font-black uppercase tracking-widest text-amber-600 dark:text-amber-400 mb-2">Designed for the Ecosystem</h2>
             <h3 className="text-3xl font-black text-slate-900 dark:text-white sm:text-4xl">Who Uses Mission FLN?</h3>
             <p className="mt-4 text-slate-500 dark:text-slate-400 font-medium">Connecting teachers, learners, and administrators to ensure no child is left behind.</p>
           </div>
@@ -99,7 +99,7 @@ export default function LandingPage() {
             {/* Card 1: Teachers */}
             <div className="bg-white dark:bg-slate-850 p-8 rounded-[32px] border border-slate-100 dark:border-slate-800 shadow-xl shadow-slate-100/50 dark:shadow-none flex flex-col justify-between hover:scale-[1.02] transition-all">
               <div className="space-y-6">
-                <div className="w-12 h-12 rounded-2xl bg-teal-50 dark:bg-teal-900/20 flex items-center justify-center text-teal-600 dark:text-teal-400">
+                <div className="w-12 h-12 rounded-2xl bg-amber-50 dark:bg-amber-900/20 flex items-center justify-center text-amber-600 dark:text-amber-400">
                   <GraduationCap className="w-6 h-6" />
                 </div>
                 <div>
@@ -110,7 +110,7 @@ export default function LandingPage() {
                 </div>
               </div>
               <div className="mt-8 pt-4 border-t border-slate-100 dark:border-slate-800/80">
-                <span className="text-xs font-bold text-teal-600 dark:text-teal-400 flex items-center gap-1">
+                <span className="text-xs font-bold text-amber-600 dark:text-amber-400 flex items-center gap-1">
                   Track classroom outcomes <ChevronRight className="w-3.5 h-3.5" />
                 </span>
               </div>
@@ -180,7 +180,7 @@ export default function LandingPage() {
                 
                 {/* Feature 1 */}
                 <div className="flex items-start gap-3">
-                  <div className="mt-1 p-1 rounded-lg bg-teal-50 dark:bg-teal-900/20 text-teal-600 dark:text-teal-400">
+                  <div className="mt-1 p-1 rounded-lg bg-amber-50 dark:bg-amber-900/20 text-amber-600 dark:text-amber-400">
                     <RefreshCw className="w-4 h-4" />
                   </div>
                   <div>
@@ -213,7 +213,7 @@ export default function LandingPage() {
 
                 {/* Feature 4 */}
                 <div className="flex items-start gap-3">
-                  <div className="mt-1 p-1 rounded-lg bg-teal-50 dark:bg-teal-900/20 text-teal-600 dark:text-teal-400">
+                  <div className="mt-1 p-1 rounded-lg bg-amber-50 dark:bg-amber-900/20 text-amber-600 dark:text-amber-400">
                     <LayoutDashboard className="w-4 h-4" />
                   </div>
                   <div>
@@ -227,7 +227,7 @@ export default function LandingPage() {
 
             {/* Real photo visual display */}
             <div className="relative">
-              <div className="absolute inset-0 bg-gradient-to-r from-orange-400 to-teal-500 rounded-3xl blur-2xl opacity-10 pointer-events-none animate-pulse" />
+              <div className="absolute inset-0 bg-gradient-to-r from-orange-400 to-amber-500 rounded-3xl blur-2xl opacity-10 pointer-events-none animate-pulse" />
               <div className="relative rounded-[36px] overflow-hidden border-4 border-white dark:border-slate-900 shadow-2xl bg-slate-100">
                 <img 
                   src="/students-activity.jpg" 
@@ -235,7 +235,7 @@ export default function LandingPage() {
                   className="w-full h-auto aspect-[4/3] object-cover hover:scale-105 transition-all duration-500"
                 />
                 <div className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent p-6 text-white text-xs font-semibold">
-                  <span className="bg-teal-500 text-[10px] px-2.5 py-0.5 rounded-full uppercase mr-2 tracking-wider">Assessment</span>
+                  <span className="bg-amber-500 text-[10px] px-2.5 py-0.5 rounded-full uppercase mr-2 tracking-wider">Assessment</span>
                   Students engaging in digital tablet group activities and peer duels.
                 </div>
               </div>
@@ -272,7 +272,7 @@ export default function LandingPage() {
                 
                 <div className="flex gap-5">
                   <div className="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center shrink-0">
-                    <MapPin className="w-6 h-6 text-teal-400" />
+                    <MapPin className="w-6 h-6 text-amber-400" />
                   </div>
                   <div>
                     <h4 className="text-lg font-bold mb-1">NIPUN Bharat: Clear Timelines</h4>
@@ -292,7 +292,7 @@ export default function LandingPage() {
               <div className="space-y-4 text-center">
                 <h4 className="text-2xl font-black">2026-27 Target Progression</h4>
                 <div className="h-3 w-full bg-white/10 rounded-full overflow-hidden">
-                  <div className="h-full bg-gradient-to-r from-orange-500 to-teal-500 w-[76%]" />
+                  <div className="h-full bg-gradient-to-r from-orange-500 to-amber-500 w-[76%]" />
                 </div>
                 <p className="text-xs text-slate-400 font-bold uppercase tracking-widest">76% Division Progress Reached</p>
               </div>
@@ -329,13 +329,13 @@ export default function LandingPage() {
             {/* Teacher portal */}
             <div className="p-8 rounded-[32px] bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-800/80 flex flex-col justify-between items-start space-y-8">
               <div className="space-y-4">
-                <div className="p-3 bg-teal-500/10 text-teal-600 rounded-xl inline-block">
+                <div className="p-3 bg-amber-500/10 text-amber-600 rounded-xl inline-block">
                   <LogIn className="w-6 h-6" />
                 </div>
                 <h4 className="text-xl font-bold text-slate-900 dark:text-white">Teacher Portal</h4>
                 <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">Sign in to perform assessments, record pupil scores, configure classroom settings, and check leaderboard lists.</p>
               </div>
-              <Link href="/signin" className="inline-flex items-center gap-2 px-5 py-3 bg-teal-600 hover:bg-teal-500 text-white font-bold rounded-xl text-xs transition-all w-full justify-center">
+              <Link href="/signin" className="inline-flex items-center gap-2 px-5 py-3 bg-amber-500 hover:bg-amber-600 text-white font-bold rounded-xl text-xs transition-all w-full justify-center">
                 Teacher Sign In <ArrowRight className="w-4 h-4" />
               </Link>
             </div>

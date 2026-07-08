@@ -25,7 +25,7 @@ export default function NavLinks({ isAdmin }: { isAdmin: boolean }) {
       
       {/* Dashboards */}
       <div className="group relative py-2">
-        <Link href="/dashboard" className="text-gray-500 dark:text-gray-300 hover:text-teal-600 dark:hover:text-teal-400 text-sm font-medium transition-colors">
+        <Link href="/dashboard" className="text-gray-500 dark:text-gray-300 hover:text-amber-600 dark:hover:text-amber-400 text-sm font-medium transition-colors">
           {t('Dashboards')}
         </Link>
         <NavTooltip 
@@ -36,7 +36,7 @@ export default function NavLinks({ isAdmin }: { isAdmin: boolean }) {
 
       {/* Implementation Corner */}
       <div className="group relative py-2">
-        <Link href="/resources" className="text-gray-500 dark:text-gray-300 hover:text-teal-600 dark:hover:text-teal-400 text-sm font-medium transition-colors flex items-center gap-1.5">
+        <Link href="/resources" className="text-gray-500 dark:text-gray-300 hover:text-amber-600 dark:hover:text-amber-400 text-sm font-medium transition-colors flex items-center gap-1.5">
           <GraduationCap className="w-4 h-4" /> {t('Implementation Corner')}
         </Link>
         <NavTooltip 
@@ -47,7 +47,7 @@ export default function NavLinks({ isAdmin }: { isAdmin: boolean }) {
 
       {/* Students */}
       <div className="group relative py-2">
-        <Link href="/students" className="text-gray-500 dark:text-gray-300 hover:text-teal-600 dark:hover:text-teal-400 text-sm font-medium transition-colors">
+        <Link href="/students" className="text-gray-500 dark:text-gray-300 hover:text-amber-600 dark:hover:text-amber-400 text-sm font-medium transition-colors">
           {t('Students')}
         </Link>
         <NavTooltip 
@@ -60,7 +60,7 @@ export default function NavLinks({ isAdmin }: { isAdmin: boolean }) {
         <>
           {/* Upload */}
           <div className="group relative py-2">
-            <Link href="/admin/upload" className="flex items-center gap-1 text-gray-400 hover:text-teal-600 text-sm font-medium transition-all">
+            <Link href="/admin/upload" className="flex items-center gap-1 text-gray-400 hover:text-amber-600 text-sm font-medium transition-all">
               <ShieldCheck className="w-4 h-4" /> {t('Upload')}
             </Link>
             <NavTooltip 
@@ -71,7 +71,7 @@ export default function NavLinks({ isAdmin }: { isAdmin: boolean }) {
 
           {/* Users */}
           <div className="group relative py-2">
-            <Link href="/admin/users" className="flex items-center gap-1 text-gray-400 hover:text-teal-600 text-sm font-medium transition-all">
+            <Link href="/admin/users" className="flex items-center gap-1 text-gray-400 hover:text-amber-600 text-sm font-medium transition-all">
               <Users className="w-4 h-4" /> {t('Users')}
             </Link>
             <NavTooltip 
@@ -82,7 +82,7 @@ export default function NavLinks({ isAdmin }: { isAdmin: boolean }) {
 
           {/* Data */}
           <div className="group relative py-2">
-            <Link href="/admin/data" className="flex items-center gap-1 text-gray-400 hover:text-teal-600 text-sm font-medium transition-all">
+            <Link href="/admin/data" className="flex items-center gap-1 text-gray-400 hover:text-amber-600 text-sm font-medium transition-all">
               <Database className="w-4 h-4" /> {t('Data')}
             </Link>
             <NavTooltip 
@@ -93,7 +93,7 @@ export default function NavLinks({ isAdmin }: { isAdmin: boolean }) {
 
           {/* Logins */}
           <div className="group relative py-2">
-            <Link href="/admin/logins" className="flex items-center gap-1 text-gray-400 hover:text-teal-600 text-sm font-medium transition-all">
+            <Link href="/admin/logins" className="flex items-center gap-1 text-gray-400 hover:text-amber-600 text-sm font-medium transition-all">
               <KeyRound className="w-4 h-4" /> {t('Logins')}
             </Link>
             <NavTooltip 
