@@ -49,10 +49,6 @@ export default function LandingPage() {
                 Building <br />
                 <span className="bg-gradient-to-r from-orange-500 via-amber-500 to-teal-600 bg-clip-text text-transparent">Foundational Literacy and Numeracy</span>
               </h1>
-              
-              <p className="text-lg text-slate-600 dark:text-slate-400 leading-relaxed font-medium mb-4">
-                Tracking the foundations of India's future. Foundational Literacy and Numeracy (FLN) is the most critical building block for every child's lifelong learning. Build classroom competency, run interactive math duels, and evaluate school performance indicators live.
-              </p>
 
               <div className="text-sm font-bold uppercase tracking-wider text-teal-600 dark:text-teal-400 mb-8 flex items-center gap-2">
                 <span className="w-1.5 h-1.5 rounded-full bg-teal-500" />
@@ -296,9 +292,9 @@ export default function LandingPage() {
               <div className="space-y-4 text-center">
                 <h4 className="text-2xl font-black">2026-27 Target Progression</h4>
                 <div className="h-3 w-full bg-white/10 rounded-full overflow-hidden">
-                  <div className="h-full bg-gradient-to-r from-orange-500 to-teal-500 w-[72%]" />
+                  <div className="h-full bg-gradient-to-r from-orange-500 to-teal-500 w-[76%]" />
                 </div>
-                <p className="text-xs text-slate-400 font-bold uppercase tracking-widest">72% Division Progress Reached</p>
+                <p className="text-xs text-slate-400 font-bold uppercase tracking-widest">76% Division Progress Reached</p>
               </div>
             </div>
 
