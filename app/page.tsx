@@ -39,11 +39,11 @@ export default function LandingPage() {
           <div className="text-center max-w-4xl mx-auto flex flex-col items-center">
             {/* Pratham Logo */}
             <div className="relative mb-6 animate-fade-in">
-              <div className="absolute -inset-1 rounded-full bg-gradient-to-r from-orange-500 to-teal-500 opacity-35 blur" />
+              <div className="absolute -inset-1 rounded-3xl bg-gradient-to-r from-orange-500 to-teal-500 opacity-35 blur" />
               <img 
                 src="/pratham-logo.png" 
                 alt="Pratham Logo" 
-                className="relative h-24 w-auto object-contain bg-white dark:bg-slate-900 px-6 py-3 rounded-full shadow-lg"
+                className="relative h-20 w-auto object-contain bg-white dark:bg-slate-900 px-8 py-4 rounded-3xl shadow-lg"
               />
             </div>
 
