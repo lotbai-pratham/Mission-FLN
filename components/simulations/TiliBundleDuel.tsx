@@ -138,7 +138,6 @@ export default function TiliBundleDuel({ player1, player2, schoolId, classNum, o
 
   const handleEnd = async (winner: 'A' | 'B' | 'Draw', _scores: any) => {
     if (!player1 || !player2 || !schoolId) return;
-    const { recordBattleResult } = await import('@/app/actions');
     await recordBattleResult({
       schoolId, classNum: classNum || 3, subject: 'numeracy', level: 2,
       gameSlug: 'tili-bundle-duel',

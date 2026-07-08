@@ -2,25 +2,94 @@
 
 :root {
   --background: #ffffff;
-  --foreground: #171717;
+  --foreground: #111827;
+  
+  /* Pratham Brand Palette */
+  --pratham-orange: #f15a24;
+  --pratham-red: #d93829;
+  --pratham-blue: #2e3192;
+  --pratham-green: #8dc63f;
+  --pratham-yellow: #ffc72c;
+  --pratham-yellow-light: #ffdf7e;
 }
 
-@theme inline {
+@theme {
+  --font-sans: var(--font-poppins), var(--font-geist-sans), sans-serif;
+  --font-mono: var(--font-geist-mono);
+  
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+
+  /* Overwrite blue and indigo to Pratham Royal Blue */
+  --color-blue-50: #f4f5fa;
+  --color-blue-100: #e6e7f4;
+  --color-blue-200: #cdcfea;
+  --color-blue-300: #a5a9da;
+  --color-blue-400: #747ac4;
+  --color-blue-500: var(--pratham-blue);
+  --color-blue-600: var(--pratham-blue);
+  --color-blue-700: #252775;
+  --color-blue-800: #1b1d57;
+  --color-blue-900: #12133a;
+
+  --color-indigo-50: #f4f5fa;
+  --color-indigo-100: #e6e7f4;
+  --color-indigo-200: #cdcfea;
+  --color-indigo-300: #a5a9da;
+  --color-indigo-400: #747ac4;
+  --color-indigo-500: var(--pratham-blue);
+  --color-indigo-600: var(--pratham-blue);
+  --color-indigo-700: #252775;
+  --color-indigo-800: #1b1d57;
+  --color-indigo-900: #12133a;
+
+  /* Overwrite emerald to Pratham Leaf Green */
+  --color-emerald-50: #f7faf2;
+  --color-emerald-100: #eef5e5;
+  --color-emerald-200: #dbebca;
+  --color-emerald-300: #c2dea2;
+  --color-emerald-400: #a4ce70;
+  --color-emerald-500: var(--pratham-green);
+  --color-emerald-600: #72a232;
+  --color-emerald-700: #577b26;
+  --color-emerald-800: #3c541b;
+  --color-emerald-900: #212e0f;
+
+  /* Overwrite orange to Pratham Vivid Orange */
+  --color-orange-50: #fef5f2;
+  --color-orange-100: #fdebe6;
+  --color-orange-200: #fad2c3;
+  --color-orange-300: #f6b399;
+  --color-orange-400: #f18c66;
+  --color-orange-500: var(--pratham-orange);
+  --color-orange-600: #d64713;
+  --color-orange-700: #ab3308;
+  --color-orange-800: #812504;
+  --color-orange-900: #551601;
+
+  /* Overwrite amber to Pratham Golden Yellow */
+  --color-amber-50: #fffcf2;
+  --color-amber-100: #fff8e6;
+  --color-amber-200: #ffedd0;
+  --color-amber-300: #ffdfa9;
+  --color-amber-400: #ffd076;
+  --color-amber-500: var(--pratham-yellow);
+  --color-amber-600: #e2ae20;
+  --color-amber-700: #b58913;
+  --color-amber-800: #886508;
+  --color-amber-900: #5b4202;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: #0b0c16;
+    --foreground: #f3f4f6;
   }
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans);
 }
+
