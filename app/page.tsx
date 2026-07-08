@@ -28,47 +28,63 @@ export default function LandingPage() {
       {/* Hero Section */}
       <section className="relative py-24 overflow-hidden bg-white dark:bg-slate-950 border-b border-slate-100 dark:border-slate-800">
         {/* Glow Decorations */}
-        <div className="absolute top-0 right-0 -translate-y-12 translate-x-12 blur-3xl opacity-25 dark:opacity-10 pointer-events-none">
+        <div className="absolute top-0 right-0 -translate-y-12 translate-x-12 blur-3xl opacity-20 dark:opacity-10 pointer-events-none">
           <div className="aspect-square w-[500px] rounded-full bg-gradient-to-br from-orange-500 to-amber-500" />
         </div>
-        <div className="absolute bottom-0 left-0 translate-y-12 -translate-x-12 blur-3xl opacity-20 dark:opacity-10 pointer-events-none">
+        <div className="absolute bottom-0 left-0 translate-y-12 -translate-x-12 blur-3xl opacity-15 dark:opacity-10 pointer-events-none">
           <div className="aspect-square w-[400px] rounded-full bg-gradient-to-br from-teal-500 to-emerald-400" />
         </div>
         
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="text-center max-w-4xl mx-auto flex flex-col items-center">
-            {/* Pratham Logo */}
-            <div className="relative mb-6 animate-fade-in">
-              <div className="absolute -inset-1 rounded-3xl bg-gradient-to-r from-orange-500 to-teal-500 opacity-35 blur" />
-              <img 
-                src="/pratham-logo.png" 
-                alt="Pratham Logo" 
-                className="relative h-20 w-auto object-contain bg-white dark:bg-slate-900 px-8 py-4 rounded-3xl shadow-lg"
-              />
-            </div>
-
-            <h1 className="text-5xl font-black tracking-tight text-slate-900 dark:text-white sm:text-6xl mb-6">
-              The <span className="bg-gradient-to-r from-orange-500 via-amber-500 to-teal-600 bg-clip-text text-transparent">FLN Journey</span>
-            </h1>
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
             
-            <p className="mt-4 text-xl text-slate-600 dark:text-slate-400 leading-relaxed font-medium">
-              Tracking the foundations of India's future. Foundational Literacy and Numeracy (FLN) is the most critical building block for every child's lifelong learning.
-            </p>
+            {/* Left side text */}
+            <div className="lg:col-span-7 text-left flex flex-col items-start">
+              {/* Mission FLN Badge */}
+              <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold bg-teal-50 dark:bg-teal-900/30 text-teal-600 dark:text-teal-400 border border-teal-100 dark:border-teal-850 mb-6">
+                <Sparkles className="w-3.5 h-3.5" /> Mission FLN
+              </div>
 
-            <div className="mt-10 flex flex-col sm:flex-row gap-4 justify-center w-full sm:w-auto">
-              <Link
-                href="/resources"
-                className="inline-flex items-center justify-center px-8 py-4 text-lg font-bold text-white bg-orange-500 hover:bg-orange-600 rounded-2xl shadow-xl shadow-orange-500/20 transition-all hover:-translate-y-1 active:translate-y-0"
-              >
-                Implementation Corner <ClipboardPlus className="ml-2 w-5 h-5" />
-              </Link>
-              <Link
-                href="/dashboard"
-                className="inline-flex items-center justify-center px-8 py-4 text-lg font-bold text-slate-700 dark:text-slate-200 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-2xl shadow-sm transition-all hover:-translate-y-1 active:translate-y-0"
-              >
-                Go to Dashboard <LayoutDashboard className="ml-2 w-5 h-5" />
-              </Link>
+              <h1 className="text-4xl font-black tracking-tight text-slate-900 dark:text-white sm:text-5xl lg:text-6xl mb-6 leading-tight">
+                Building <br />
+                <span className="bg-gradient-to-r from-orange-500 via-amber-500 to-teal-600 bg-clip-text text-transparent">Foundational Literacy and Numeracy</span>
+              </h1>
+              
+              <p className="text-lg text-slate-600 dark:text-slate-400 leading-relaxed font-medium mb-4">
+                Tracking the foundations of India's future. Foundational Literacy and Numeracy (FLN) is the most critical building block for every child's lifelong learning. Build classroom competency, run interactive math duels, and evaluate school performance indicators live.
+              </p>
+
+              <div className="text-sm font-bold uppercase tracking-wider text-teal-600 dark:text-teal-400 mb-8 flex items-center gap-2">
+                <span className="w-1.5 h-1.5 rounded-full bg-teal-500" />
+                Understanding the journey of the students of government tribal ashramshalas.
+              </div>
+
+              <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
+                <Link
+                  href="/pedagogy"
+                  className="inline-flex items-center justify-center px-8 py-4 text-base font-bold text-white bg-teal-600 hover:bg-teal-700 rounded-2xl shadow-xl shadow-teal-600/20 transition-all hover:-translate-y-1 active:translate-y-0"
+                >
+                  The Pedagogy <BookOpen className="ml-2 w-5 h-5" />
+                </Link>
+              </div>
             </div>
+
+            {/* Right side image */}
+            <div className="lg:col-span-5 relative">
+              <div className="absolute -inset-2 rounded-[40px] bg-gradient-to-tr from-orange-500 to-teal-500 opacity-20 blur-xl animate-pulse pointer-events-none" />
+              <div className="relative rounded-[36px] overflow-hidden border-4 border-white dark:border-slate-900 shadow-2xl shadow-slate-200/50 dark:shadow-none bg-slate-100">
+                <img 
+                  src="/ashramshala-students.png" 
+                  alt="Students learning activity" 
+                  className="w-full h-auto aspect-[4/3] object-cover hover:scale-105 transition-all duration-500"
+                />
+                <div className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent p-6 text-white text-xs font-semibold">
+                  <span className="bg-teal-500 text-[10px] px-2.5 py-0.5 rounded-full uppercase mr-2 tracking-wider">Active Learning</span>
+                  Students smiling, learning, and performing activities in the classroom.
+                </div>
+              </div>
+            </div>
+
           </div>
         </div>
       </section>
@@ -213,39 +229,18 @@ export default function LandingPage() {
               </div>
             </div>
 
-            {/* Feature visual display */}
+            {/* Real photo visual display */}
             <div className="relative">
-              <div className="absolute inset-0 bg-gradient-to-r from-orange-400 to-teal-500 rounded-3xl blur-2xl opacity-10 animate-pulse pointer-events-none" />
-              <div className="relative border border-slate-200 dark:border-slate-800 bg-slate-950 text-white rounded-[32px] p-8 space-y-6 shadow-2xl">
-                <div className="flex justify-between items-center pb-4 border-b border-white/10">
-                  <div className="flex items-center gap-2">
-                    <span className="w-3 h-3 rounded-full bg-orange-500" />
-                    <span className="text-xs font-bold uppercase tracking-wider text-slate-400">Diagnostic Preview</span>
-                  </div>
-                  <span className="text-[10px] font-black uppercase text-teal-400 bg-teal-500/10 px-2 py-0.5 rounded-full">Universal Target</span>
-                </div>
-                <div className="space-y-4">
-                  <div>
-                    <div className="flex justify-between text-xs font-bold mb-1">
-                      <span>Literacy Proficiency</span>
-                      <span className="text-orange-400">82%</span>
-                    </div>
-                    <div className="h-2 w-full bg-white/10 rounded-full overflow-hidden">
-                      <div className="h-full bg-orange-500 rounded-full w-[82%]" />
-                    </div>
-                  </div>
-                  <div>
-                    <div className="flex justify-between text-xs font-bold mb-1">
-                      <span>Numeracy Proficiency</span>
-                      <span className="text-teal-400">65%</span>
-                    </div>
-                    <div className="h-2 w-full bg-white/10 rounded-full overflow-hidden">
-                      <div className="h-full bg-teal-500 rounded-full w-[65%]" />
-                    </div>
-                  </div>
-                </div>
-                <div className="bg-white/5 rounded-2xl p-4 border border-white/5 text-xs text-slate-400 italic">
-                  "If a child doesn't learn to read and compute by Grade 3, they are often left behind for life. Mission FLN acts as a safety net to prevent this."
+              <div className="absolute inset-0 bg-gradient-to-r from-orange-400 to-teal-500 rounded-3xl blur-2xl opacity-10 pointer-events-none animate-pulse" />
+              <div className="relative rounded-[36px] overflow-hidden border-4 border-white dark:border-slate-900 shadow-2xl bg-slate-100">
+                <img 
+                  src="/students-activity.jpg" 
+                  alt="Students learning activity" 
+                  className="w-full h-auto aspect-[4/3] object-cover hover:scale-105 transition-all duration-500"
+                />
+                <div className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent p-6 text-white text-xs font-semibold">
+                  <span className="bg-teal-500 text-[10px] px-2.5 py-0.5 rounded-full uppercase mr-2 tracking-wider">Assessment</span>
+                  Students engaging in digital tablet group activities and peer duels.
                 </div>
               </div>
             </div>
@@ -262,6 +257,7 @@ export default function LandingPage() {
         
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="grid lg:grid-cols-2 gap-16 items-center">
+            
             <div>
               <h3 className="text-4xl font-black mb-8 leading-tight">
                 NIPUN Bharat & <br />
@@ -290,14 +286,22 @@ export default function LandingPage() {
               </div>
             </div>
 
-            <div className="bg-white/5 border border-white/10 rounded-[32px] p-8 text-center space-y-6">
-              <Trophy className="w-16 h-16 text-amber-400 mx-auto drop-shadow-lg" />
-              <h4 className="text-2xl font-black">2026-27 Target Progression</h4>
-              <div className="h-3 w-full bg-white/10 rounded-full overflow-hidden">
-                <div className="h-full bg-gradient-to-r from-orange-500 to-teal-500 w-[72%]" />
+            {/* Timelines and Kids Image Block */}
+            <div className="relative rounded-[36px] overflow-hidden border border-white/10 bg-white/5 backdrop-blur-md p-6 space-y-6">
+              <img 
+                src="/camp-kids.jpg" 
+                alt="Pratham kids camp group" 
+                className="w-full h-48 object-cover rounded-2xl shadow-inner border border-white/5"
+              />
+              <div className="space-y-4 text-center">
+                <h4 className="text-2xl font-black">2026-27 Target Progression</h4>
+                <div className="h-3 w-full bg-white/10 rounded-full overflow-hidden">
+                  <div className="h-full bg-gradient-to-r from-orange-500 to-teal-500 w-[72%]" />
+                </div>
+                <p className="text-xs text-slate-400 font-bold uppercase tracking-widest">72% Division Progress Reached</p>
               </div>
-              <p className="text-xs text-slate-400 font-bold uppercase tracking-widest">72% Division Progress Reached</p>
             </div>
+
           </div>
         </div>
       </section>
