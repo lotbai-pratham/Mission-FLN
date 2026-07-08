@@ -16,10 +16,11 @@ import {
   TrendingUp,
   Sparkles,
   Search,
-  BookOpenCheck
+  BookOpenCheck,
+  Globe
 } from "lucide-react";
 
-type TabId = "philosophy" | "levels" | "flow" | "activities" | "materials" | "role";
+type TabId = "philosophy" | "levels" | "flow" | "activities" | "materials" | "role" | "presence";
 
 export default function PedagogyPage() {
   const [activeTab, setActiveTab] = useState<TabId>("philosophy");
@@ -32,6 +33,7 @@ export default function PedagogyPage() {
     { id: "activities", label: "Classroom Activities", icon: Users },
     { id: "materials", label: "Manipulatives Map", icon: Wrench },
     { id: "role", label: "Teacher & Assessment", icon: GraduationCap },
+    { id: "presence", label: "Geographical Presence", icon: Globe },
   ];
 
   return (
@@ -41,7 +43,7 @@ export default function PedagogyPage() {
       <div className="mb-8">
         <Link 
           href="/" 
-          className="inline-flex items-center gap-2 text-xs font-bold text-teal-600 dark:text-teal-400 hover:text-teal-700 transition-colors mb-4"
+          className="inline-flex items-center gap-2 text-xs font-bold text-amber-600 dark:text-amber-400 hover:text-amber-700 transition-colors mb-4"
         >
           <ArrowLeft className="w-4 h-4" /> Back to home
         </Link>
@@ -54,8 +56,8 @@ export default function PedagogyPage() {
               Teaching at the Right Level (TaRL) methodology, manuals, and instructional framework.
             </p>
           </div>
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-2xl bg-teal-50 dark:bg-teal-950/20 text-teal-600 dark:text-teal-400 border border-teal-100 dark:border-teal-900/50 self-start md:self-auto text-xs font-bold shadow-sm">
-            <Sparkles className="w-4 h-4" /> Pratham India Partner Guide
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-2xl bg-amber-50 dark:bg-amber-950/20 text-amber-600 dark:text-amber-400 border border-amber-100 dark:border-amber-900/50 self-start md:self-auto text-xs font-bold shadow-sm">
+            <Sparkles className="w-4 h-4" /> Pratham Education Foundation
           </div>
         </div>
       </div>
@@ -64,8 +66,13 @@ export default function PedagogyPage() {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
         
         {/* Navigation Sidebar (lg:col-span-3) */}
-        <div className="lg:col-span-3 lg:sticky lg:top-24 space-y-2 bg-white dark:bg-slate-950 p-4 rounded-3xl border border-slate-100 dark:border-slate-800 shadow-xl shadow-slate-100/30 dark:shadow-none">
-          <p className="text-[10px] font-extrabold uppercase tracking-widest text-slate-400 dark:text-slate-500 px-3 mb-2">Pedagogy Outline</p>
+        <div className="lg:col-span-3 lg:sticky lg:top-24 space-y-4 bg-white dark:bg-slate-950 p-4 rounded-3xl border border-slate-100 dark:border-slate-800 shadow-xl shadow-slate-100/30 dark:shadow-none">
+          <div className="space-y-3 px-3 mb-2">
+            <p className="text-[10px] font-extrabold uppercase tracking-widest text-slate-400 dark:text-slate-500">Pedagogy Outline</p>
+            <div className="p-3 rounded-xl bg-amber-50 dark:bg-amber-950/20 text-amber-600 dark:text-amber-400 border border-amber-100/30 dark:border-amber-900/30 text-[10px] font-bold uppercase tracking-wider">
+              TaRL is Practiced Globally across India, Zambia, Nigeria, and beyond.
+            </div>
+          </div>
           <nav className="flex flex-row lg:flex-col overflow-x-auto lg:overflow-x-visible gap-1 pb-2 lg:pb-0 scrollbar-none">
             {tabs.map((tab) => {
               const Icon = tab.icon;
@@ -76,7 +83,7 @@ export default function PedagogyPage() {
                   onClick={() => setActiveTab(tab.id as TabId)}
                   className={`flex items-center gap-3 px-4 py-3 rounded-2xl text-xs font-bold transition-all shrink-0 text-left w-full ${
                     isActive 
-                      ? "bg-teal-600 text-white shadow-lg shadow-teal-600/20" 
+                      ? "bg-amber-500 text-white shadow-lg shadow-amber-500/20" 
                       : "text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-900 hover:text-slate-900"
                   }`}
                 >
@@ -115,7 +122,7 @@ export default function PedagogyPage() {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-8">
                   <div className="p-5 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-800 flex gap-4">
-                    <div className="w-10 h-10 rounded-xl bg-teal-500/10 text-teal-600 flex items-center justify-center shrink-0 font-bold">1</div>
+                    <div className="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-600 flex items-center justify-center shrink-0 font-bold">1</div>
                     <div>
                       <h4 className="font-extrabold text-slate-900 dark:text-white text-sm">Assess Learning Levels</h4>
                       <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">Determine where each child actually stands using rapid, one-on-one ASER assessment tools.</p>
@@ -139,7 +146,7 @@ export default function PedagogyPage() {
                   </div>
 
                   <div className="p-5 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-800 flex gap-4">
-                    <div className="w-10 h-10 rounded-xl bg-teal-500/10 text-teal-600 flex items-center justify-center shrink-0 font-bold">4</div>
+                    <div className="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-600 flex items-center justify-center shrink-0 font-bold">4</div>
                     <div>
                       <h4 className="font-extrabold text-slate-900 dark:text-white text-sm">Continuous Progression</h4>
                       <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">Move children forward to higher learning groups as soon as they master the target competency.</p>
@@ -150,9 +157,9 @@ export default function PedagogyPage() {
 
               {/* COVID context card */}
               <div className="bg-slate-900 text-white p-8 rounded-[32px] border border-white/5 shadow-xl relative overflow-hidden">
-                <div className="absolute top-0 right-0 translate-x-12 -translate-y-12 blur-2xl opacity-15 aspect-square w-72 rounded-full bg-teal-500" />
-                <h3 className="text-lg font-extrabold mb-3 flex items-center gap-2 text-teal-400">
-                  <Info className="w-5 h-5 text-teal-400" /> Post-COVID Intervention Context
+                <div className="absolute top-0 right-0 translate-x-12 -translate-y-12 blur-2xl opacity-15 aspect-square w-72 rounded-full bg-amber-500" />
+                <h3 className="text-lg font-extrabold mb-3 flex items-center gap-2 text-amber-400">
+                  <Info className="w-5 h-5 text-amber-400" /> Post-COVID Intervention Context
                 </h3>
                 <p className="text-xs text-slate-300 leading-relaxed font-medium">
                   The disruption from the COVID-19 pandemic significantly widened learning gaps, especially in tribal ashramshalas. Children moved up grades without consolidating foundational reading and math skills. TaRL addresses this head-on by bypasssing traditional grade level boundaries to repair foundations first.
@@ -204,7 +211,7 @@ export default function PedagogyPage() {
                 </div>
 
                 <div className="mt-6 p-4 rounded-2xl bg-slate-50 dark:bg-slate-900/50 border border-slate-100 dark:border-slate-800 flex items-start gap-3">
-                  <Info className="w-4 h-4 text-teal-600 dark:text-teal-400 shrink-0 mt-0.5" />
+                  <Info className="w-4 h-4 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
                   <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
                     <strong>Reading = Decoding + Comprehension.</strong> The TaRL framework explicitly states that fluent reading is only the first step. True reading capability requires understanding the content, relating it to personal context, and discussing it.
                   </p>
@@ -214,7 +221,7 @@ export default function PedagogyPage() {
               {/* Numeracy Levels */}
               <div className="bg-white dark:bg-slate-950 p-8 rounded-[32px] border border-slate-100 dark:border-slate-800 shadow-xl shadow-slate-100/30 dark:shadow-none">
                 <div className="flex items-center gap-3 mb-6">
-                  <div className="p-2.5 rounded-xl bg-teal-50 dark:bg-teal-950/20 text-teal-600 dark:text-teal-400">
+                  <div className="p-2.5 rounded-xl bg-amber-50 dark:bg-amber-950/20 text-amber-600 dark:text-amber-400">
                     <TrendingUp className="w-6 h-6" />
                   </div>
                   <div>
@@ -242,7 +249,7 @@ export default function PedagogyPage() {
                       ].map((row) => (
                         <tr key={row.level} className="hover:bg-slate-50/50 dark:hover:bg-slate-900/30">
                           <td className="py-4 pr-4 font-black text-slate-900 dark:text-white"><span className="inline-block px-2.5 py-1 bg-slate-100 dark:bg-slate-800 rounded-lg">{row.level}</span></td>
-                          <td className="py-4 px-4 font-black text-teal-650">{row.label}</td>
+                          <td className="py-4 px-4 font-black text-amber-605 text-amber-600">{row.label}</td>
                           <td className="py-4 px-4 text-slate-500 dark:text-slate-400 leading-normal">{row.desc}</td>
                         </tr>
                       ))}
@@ -293,10 +300,10 @@ export default function PedagogyPage() {
 
                 {/* Numeracy timeline */}
                 <div>
-                  <h4 className="text-sm font-extrabold text-teal-600 mb-6 uppercase tracking-wider flex items-center gap-2">
+                  <h4 className="text-sm font-extrabold text-amber-600 mb-6 uppercase tracking-wider flex items-center gap-2">
                     <TrendingUp className="w-4 h-4" /> Numeracy Block (45 Minutes)
                   </h4>
-                  <div className="space-y-6 border-l-2 border-teal-200 dark:border-teal-950/80 ml-3 pl-6">
+                  <div className="space-y-6 border-l-2 border-amber-200 dark:border-amber-950/80 ml-3 pl-6">
                     {[
                       { time: "10 mins", title: "Daily Life Math Talk", desc: "Discussing real-world story problems (e.g., buying toys, household budgeting) to develop estimation skills." },
                       { time: "10 mins", title: "Number Games & Chanting", desc: "Skip-counting drills (powers of 10, times-tables) and Number Diary games for digit recognition." },
@@ -304,9 +311,9 @@ export default function PedagogyPage() {
                       { time: "10 mins", title: "Small Group Tasks", desc: "Authentic tasks like household grocery billing, fraction sharing drawings, or measuring classroom objects." }
                     ].map((step, idx) => (
                       <div key={idx} className="relative">
-                        <div className="absolute -left-[31px] top-1 w-4 h-4 rounded-full bg-teal-500 border-2 border-white dark:border-slate-950" />
+                        <div className="absolute -left-[31px] top-1 w-4 h-4 rounded-full bg-amber-500 border-2 border-white dark:border-slate-950" />
                         <div className="flex items-center gap-2">
-                          <span className="text-[10px] font-black uppercase text-teal-600 px-2 py-0.5 rounded bg-teal-50 dark:bg-teal-950/20">{step.time}</span>
+                          <span className="text-[10px] font-black uppercase text-amber-600 px-2 py-0.5 rounded bg-amber-50 dark:bg-amber-950/20">{step.time}</span>
                           <h5 className="font-extrabold text-slate-900 dark:text-white text-sm">{step.title}</h5>
                         </div>
                         <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 leading-relaxed font-medium">{step.desc}</p>
@@ -458,7 +465,7 @@ export default function PedagogyPage() {
                       </div>
                       <div className="pt-3 border-t border-slate-100 dark:border-slate-850 flex items-center justify-between text-[11px]">
                         <span className="text-slate-400 dark:text-slate-500 font-bold">DigitalTwin:</span>
-                        <span className="inline-flex items-center gap-1 font-black text-teal-650">
+                        <span className="inline-flex items-center gap-1 font-black text-amber-600">
                           {mat.twin} <ChevronRight className="w-3 h-3" />
                         </span>
                       </div>
@@ -534,6 +541,99 @@ export default function PedagogyPage() {
               </div>
             </div>
           )}
+
+          {/* TAB: Presence */}
+          {activeTab === "presence" && (
+            <div className="space-y-6 animate-fade-in">
+              <div className="bg-white dark:bg-slate-950 p-8 rounded-[32px] border border-slate-100 dark:border-slate-800 shadow-xl shadow-slate-100/30 dark:shadow-none">
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="p-2.5 rounded-xl bg-amber-50 dark:bg-amber-900/20 text-amber-600 dark:text-amber-400">
+                    <Globe className="w-6 h-6" />
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-black text-slate-900 dark:text-white">Geographical Presence</h3>
+                    <p className="text-xs text-slate-500 dark:text-slate-400">Where Teaching at the Right Level (TaRL) is practiced and scaled globally</p>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {/* Presence card 1: India */}
+                  <div className="p-6 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-800 space-y-4">
+                    <div className="flex items-center gap-2">
+                      <span className="text-xl">🇮🇳</span>
+                      <h4 className="font-extrabold text-slate-900 dark:text-white text-sm">India (Pratham programs)</h4>
+                    </div>
+                    <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed font-medium">
+                      Pioneered by Pratham, TaRL is active in states including Maharashtra (specifically within tribal ashramshalas), Bihar, Uttar Pradesh, Rajasthan, and Madhya Pradesh, reaching millions of children through direct and partnership programs.
+                    </p>
+                    <div className="text-[11px] font-bold text-amber-600 dark:text-amber-400">
+                      Scale: 20+ States & UTs
+                    </div>
+                  </div>
+
+                  {/* Presence card 2: Africa */}
+                  <div className="p-6 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-800 space-y-4">
+                    <div className="flex items-center gap-2">
+                      <span className="text-xl">🇿🇲</span>
+                      <h4 className="font-extrabold text-slate-900 dark:text-white text-sm">Zambia ("Catch Up")</h4>
+                    </div>
+                    <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed font-medium">
+                      Adopted by the Ministry of General Education in Zambia as the "Catch Up" program, scaling to over 3,000 schools nationally to support children who have fallen behind in grades 3-5.
+                    </p>
+                    <div className="text-[11px] font-bold text-amber-600 dark:text-amber-400">
+                      Scale: National Integration
+                    </div>
+                  </div>
+
+                  {/* Presence card 3: Nigeria & West Africa */}
+                  <div className="p-6 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-800 space-y-4">
+                    <div className="flex items-center gap-2">
+                      <span className="text-xl">🇳🇬</span>
+                      <h4 className="font-extrabold text-slate-900 dark:text-white text-sm">Nigeria & West Africa</h4>
+                    </div>
+                    <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed font-medium">
+                      Implemented in multiple northern states of Nigeria, and expanded into countries like Ghana, Côte d'Ivoire, and Madagascar to build core foundational literacy and numeracy.
+                    </p>
+                    <div className="text-[11px] font-bold text-amber-600 dark:text-amber-400">
+                      Scale: 5+ West African Nations
+                    </div>
+                  </div>
+
+                  {/* Presence card 4: Global Partnerships */}
+                  <div className="p-6 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-800 space-y-4">
+                    <div className="flex items-center gap-2">
+                      <span className="text-xl">🌍</span>
+                      <h4 className="font-extrabold text-slate-900 dark:text-white text-sm">Global Adaptations</h4>
+                    </div>
+                    <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed font-medium">
+                      TaRL is studied and adapted by partners internationally in Latin America and Southeast Asia, supported by Abdul Latif Jameel Poverty Action Lab (J-PAL) research demonstrating its robust evidence base.
+                    </p>
+                    <div className="text-[11px] font-bold text-amber-600 dark:text-amber-400">
+                      Research Backed: J-PAL / Pratham
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Bottom CTA Card */}
+          <div className="p-8 rounded-[32px] bg-gradient-to-r from-amber-500 to-orange-600 text-white border border-orange-500/20 shadow-xl shadow-orange-500/10 flex flex-col sm:flex-row items-center justify-between gap-6 hover:scale-[1.01] transition-all mt-8">
+            <div className="space-y-2 text-center sm:text-left">
+              <h3 className="text-xl font-black flex items-center justify-center sm:justify-start gap-2">
+                <BookOpenCheck className="w-6 h-6 animate-bounce" /> Start Practicing TaRL Today
+              </h3>
+              <p className="text-xs text-orange-50 font-medium max-w-xl">
+                Access our digital interactive arcade, launch multiplayer student simulations, and record real-time progress using offline-first sync.
+              </p>
+            </div>
+            <Link 
+              href="/resources" 
+              className="px-6 py-4 bg-white text-orange-600 font-bold rounded-2xl hover:bg-orange-50 transition-all text-xs shrink-0 shadow-lg"
+            >
+              Start Practicing TaRL
+            </Link>
+          </div>
 
         </div>
       </div>

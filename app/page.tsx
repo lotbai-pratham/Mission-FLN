@@ -230,7 +230,7 @@ export default function LandingPage() {
               <div className="absolute inset-0 bg-gradient-to-r from-orange-400 to-amber-500 rounded-3xl blur-2xl opacity-10 pointer-events-none animate-pulse" />
               <div className="relative rounded-[36px] overflow-hidden border-4 border-white dark:border-slate-900 shadow-2xl bg-slate-100">
                 <img 
-                  src="/students-activity.jpg" 
+                  src="/digital-classroom.png" 
                   alt="Students learning activity" 
                   className="w-full h-auto aspect-[4/3] object-cover hover:scale-105 transition-all duration-500"
                 />
