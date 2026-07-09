@@ -325,6 +325,12 @@ function MissionControl() {
               )}>
                 {step === 'setup' ? "Configure Today's Plan" : `Class ${classNum}${subject ? ` — ${subject === 'maths' ? 'Maths' : 'Language'}` : ''}${selectedGroupIdx !== null && sessionPlan ? ` · ${sessionPlan.groups[selectedGroupIdx].name}` : ''}`}
               </h1>
+              {step === 'setup' && (
+                <div className="mt-2.5 p-3 rounded-2xl bg-slate-800/80 border border-slate-700/80 text-[11px] sm:text-xs text-slate-300 flex items-center gap-2.5 max-w-xl animate-in fade-in slide-in-from-top-1 duration-300">
+                  <Info className="w-4 h-4 text-amber-500 shrink-0" />
+                  <span>Choose your classroom level below to start the step-by-step 90-minute daily flow.</span>
+                </div>
+              )}
             </div>
           </div>
           {step !== 'setup' && (
@@ -1259,7 +1265,7 @@ export default function ResourcesPage() {
           {/* Tags Filter Bar */}
           <div className="flex flex-wrap items-center gap-2 bg-slate-50 dark:bg-slate-850 p-4 rounded-3xl border border-slate-100 dark:border-slate-800/40">
             <span className="text-xs font-black text-slate-400 dark:text-slate-500 mr-2 uppercase tracking-wider">{t("Filter by Tag") || "Filter by Tag"}:</span>
-            {["All", "Literacy", "Numeracy", "Manual", "Worksheets", "Cards", "Games"].map((tag) => (
+            {["All", "Literacy", "Numeracy", "Holistic development manuals", "Worksheets", "Cards", "Games"].map((tag) => (
                <button
                   key={tag}
                   onClick={() => setSelectedTag(tag === "All" ? null : tag)}
@@ -1279,7 +1285,7 @@ export default function ResourcesPage() {
              {MANUALS.filter(m => {
                const matchesSearch = m.title.toLowerCase().includes(searchTerm.toLowerCase()) || 
                                      m.description.toLowerCase().includes(searchTerm.toLowerCase());
-               const matchesTag = !selectedTag || m.tags.includes(selectedTag);
+               const matchesTag = !selectedTag || m.tags.includes(selectedTag === "Holistic development manuals" ? "Manual" : selectedTag);
                return matchesSearch && matchesTag;
              }).map((art, i) => (
                <div key={i} className="group bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-[40px] p-8 shadow-sm hover:shadow-xl hover:shadow-amber-500/5 transition-all space-y-6 flex flex-col justify-between">
