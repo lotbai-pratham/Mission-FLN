@@ -1,7 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import { useSession } from "next-auth/react";
-import { ArrowLeft, Zap, Trophy, Gamepad2, ChevronRight, Eye, EyeOff, X, RefreshCw, Share2, Check } from "lucide-react";
+import { ArrowLeft, Zap, Trophy, Gamepad2, ChevronRight, Eye, EyeOff, X, RefreshCw, Share2, Check, ShoppingBag } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { usePoints } from "@/lib/points-store";
@@ -16,6 +16,7 @@ import GameWrapper from "@/components/games/GameWrapper";
 import LevelUpModal from "@/components/games/LevelUpModal";
 import StudentTrackerOverlay from "@/components/simulations/StudentTrackerOverlay";
 import GameDetailPanel from "@/components/simulations/GameDetailPanel";
+import AvatarStoreModal from "@/components/AvatarStoreModal";
 
 const SECTIONS = [
   // Language Pathways
@@ -38,7 +39,7 @@ function SimulationsContent() {
   const { data: session } = useSession();
   const isAdmin = hasRole(session, "admin");
   const userSchoolId = (session?.user as any)?.schoolId ?? undefined;
-  const { xp, level, badge, showLevelUp, newLevelReached, dismissLevelUp } = usePoints();
+  const { xp, level, badge, showLevelUp, newLevelReached, dismissLevelUp, coins } = usePoints();
   const { t } = useLanguage();
 
   const [activeId, setActiveId] = useState<string | null>(null);
@@ -49,6 +50,7 @@ function SimulationsContent() {
   const [hiddenIds, setHiddenIds] = useState<string[]>([]);
   const [isPortrait, setIsPortrait] = useState(false);
   const [copiedId, setCopiedId] = useState<string | null>(null);
+  const [showStore, setShowStore] = useState(false);
 
   const handleShare = (id: string, e: React.MouseEvent) => {
     e.stopPropagation();
@@ -194,7 +196,14 @@ function SimulationsContent() {
             <StatBadge icon="⚡" label={t("Your XP")} value={xp} color="from-amber-400 to-orange-500" shadow="shadow-orange-500/40" />
             <StatBadge icon="🆙" label={t("Level")} value={level} color="from-indigo-500 to-blue-600" shadow="shadow-indigo-500/40" />
             <StatBadge icon={badge.emoji} label={t("Badge")} value={badge.name} color={badge.color} shadow="shadow-indigo-500/40" />
-            <StatBadge icon="🎮" label={t("Tools")} value={ALL.length} color="from-slate-700 to-slate-800" />
+            <StatBadge icon="🪙" label={t("Coins")} value={coins} color="from-yellow-400 to-amber-500" shadow="shadow-yellow-500/40" />
+            <button 
+              onClick={() => setShowStore(true)}
+              className="flex items-center gap-2 px-4 py-3 rounded-2xl bg-white/10 hover:bg-white/20 text-white transition-all shadow-lg border border-white/10"
+            >
+              <ShoppingBag className="w-5 h-5 text-amber-400" />
+              <span className="text-sm font-bold tracking-wide">Avatar Store</span>
+            </button>
           </div>
         </div>
       </div>
@@ -445,6 +454,7 @@ function SimulationsContent() {
           />
         </div>
       )}
+      <AvatarStoreModal isOpen={showStore} onClose={() => setShowStore(false)} />
       <LevelUpModal
         isOpen={showLevelUp && !activeId}
         level={newLevelReached}

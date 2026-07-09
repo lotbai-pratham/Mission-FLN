@@ -7,6 +7,9 @@ const STREAK_KEY = 'fln_hub_daily_streak';
 const LAST_DATE_KEY = 'fln_hub_last_active';
 const NOTIFIED_LEVEL_KEY = 'fln_hub_notified_level';
 const XP_UPDATE_EVENT = 'fln_hub_xp_update';
+const COINS_KEY = 'fln_hub_coins';
+const OWNED_ITEMS_KEY = 'fln_hub_owned_items';
+const EQUIPPED_ITEMS_KEY = 'fln_hub_equipped_items';
 
 export interface Badge {
   name: string;
@@ -41,15 +44,21 @@ export function usePoints() {
   const [level, setLevel] = useState<number>(1);
   const [showLevelUp, setShowLevelUp] = useState<boolean>(false);
   const [newLevelReached, setNewLevelReached] = useState<number>(1);
+  const [coins, setCoins] = useState<number>(0);
+  const [ownedItems, setOwnedItems] = useState<string[]>(['color_amber']);
+  const [equippedItems, setEquippedItems] = useState<Record<string, string>>({ color: 'color_amber' });
 
   // Sync state across multiple tabs or hook instances in the same tab
   useEffect(() => {
     const handleXpUpdate = (e: Event) => {
       const customEvent = e as CustomEvent;
       if (customEvent.detail) {
-        const { xp: updatedXp, level: updatedLevel, showLevelUp: triggerLevelUp, newLevelReached: newLvl } = customEvent.detail;
-        setXp(updatedXp);
-        setLevel(updatedLevel);
+        const { xp: updatedXp, level: updatedLevel, showLevelUp: triggerLevelUp, newLevelReached: newLvl, coins: c, ownedItems: o, equippedItems: eq } = customEvent.detail;
+        if (updatedXp !== undefined) setXp(updatedXp);
+        if (updatedLevel !== undefined) setLevel(updatedLevel);
+        if (c !== undefined) setCoins(c);
+        if (o !== undefined) setOwnedItems(o);
+        if (eq !== undefined) setEquippedItems(eq);
         if (triggerLevelUp) {
           setNewLevelReached(newLvl);
           setShowLevelUp(true);
@@ -83,6 +92,15 @@ export function usePoints() {
 
     if (savedStreak) setStreak(parseInt(savedStreak, 10));
 
+    const savedCoins = localStorage.getItem(COINS_KEY);
+    if (savedCoins) setCoins(parseInt(savedCoins, 10));
+
+    const savedOwned = localStorage.getItem(OWNED_ITEMS_KEY);
+    if (savedOwned) setOwnedItems(JSON.parse(savedOwned));
+
+    const savedEquipped = localStorage.getItem(EQUIPPED_ITEMS_KEY);
+    if (savedEquipped) setEquippedItems(JSON.parse(savedEquipped));
+
     // Handle Streak Logic
     const today = new Date().toDateString();
     if (lastDate !== today) {
@@ -110,8 +128,14 @@ export function usePoints() {
     const currentXp = savedXp ? parseInt(savedXp, 10) : 0;
     const newXp = currentXp + amount;
     
+    const savedCoins = localStorage.getItem(COINS_KEY);
+    const currentCoins = savedCoins ? parseInt(savedCoins, 10) : 0;
+    const newCoins = currentCoins + amount; // 1 XP = 1 Coin
+
     localStorage.setItem(XP_KEY, newXp.toString());
+    localStorage.setItem(COINS_KEY, newCoins.toString());
     setXp(newXp);
+    setCoins(newCoins);
     
     // Update Level
     const newLevel = Math.floor(Math.sqrt(newXp / 100)) + 1;
@@ -131,10 +155,40 @@ export function usePoints() {
           xp: newXp,
           level: newLevel,
           showLevelUp: levelUpTriggered,
-          newLevelReached: newLevel
+          newLevelReached: newLevel,
+          coins: newCoins
         }
       })
     );
+  };
+
+  const buyItem = (itemId: string, cost: number) => {
+    if (coins >= cost && !ownedItems.includes(itemId)) {
+      const newCoins = coins - cost;
+      const newOwned = [...ownedItems, itemId];
+      setCoins(newCoins);
+      setOwnedItems(newOwned);
+      localStorage.setItem(COINS_KEY, newCoins.toString());
+      localStorage.setItem(OWNED_ITEMS_KEY, JSON.stringify(newOwned));
+      
+      window.dispatchEvent(new CustomEvent(XP_UPDATE_EVENT, {
+        detail: { coins: newCoins, ownedItems: newOwned }
+      }));
+      return true;
+    }
+    return false;
+  };
+
+  const equipItem = (category: string, itemId: string) => {
+    if (ownedItems.includes(itemId)) {
+      const newEquipped = { ...equippedItems, [category]: itemId };
+      setEquippedItems(newEquipped);
+      localStorage.setItem(EQUIPPED_ITEMS_KEY, JSON.stringify(newEquipped));
+      
+      window.dispatchEvent(new CustomEvent(XP_UPDATE_EVENT, {
+        detail: { equippedItems: newEquipped }
+      }));
+    }
   };
 
   const dismissLevelUp = () => {
@@ -158,6 +212,11 @@ export function usePoints() {
     showLevelUp,
     newLevelReached,
     dismissLevelUp,
-    progress: calculateProgressToNextLevel()
+    progress: calculateProgressToNextLevel(),
+    coins,
+    ownedItems,
+    equippedItems,
+    buyItem,
+    equipItem
   };
 }

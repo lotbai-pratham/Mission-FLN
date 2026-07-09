@@ -3,70 +3,13 @@
 import { useState, useRef, useEffect } from "react";
 import { Send, X } from "lucide-react";
 import { askPratham } from "@/app/actions/chat";
+import RobotAvatar from "./RobotAvatar";
 
 type Message = { role: "user" | "assistant"; content: string };
 
 function PrathamAvatar({ size = 40, className = "" }: { size?: number; className?: string }) {
   return (
-    <svg width={size} height={size} viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
-      <defs>
-        <linearGradient id="botHead" x1="16" y1="10" x2="48" y2="42" gradientUnits="userSpaceOnUse">
-          <stop offset="0%" stopColor="#FFE082" />
-          <stop offset="100%" stopColor="#FF8F00" />
-        </linearGradient>
-        <linearGradient id="botFace" x1="20" y1="18" x2="44" y2="38" gradientUnits="userSpaceOnUse">
-          <stop offset="0%" stopColor="#FFFEE0" />
-          <stop offset="100%" stopColor="#FFF9C4" />
-        </linearGradient>
-        <linearGradient id="botBody" x1="20" y1="44" x2="44" y2="60" gradientUnits="userSpaceOnUse">
-          <stop offset="0%" stopColor="#FFB300" />
-          <stop offset="100%" stopColor="#E65100" />
-        </linearGradient>
-        <linearGradient id="eyeGrad" x1="0" y1="0" x2="0" y2="1" gradientUnits="objectBoundingBox">
-          <stop offset="0%" stopColor="#1E293B" />
-          <stop offset="100%" stopColor="#0F172A" />
-        </linearGradient>
-        <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
-          <feDropShadow dx="0" dy="2" stdDeviation="1.5" floodColor="#000" floodOpacity="0.15" />
-        </filter>
-      </defs>
-
-      {/* Body (Sleek robot torso) */}
-      <path d="M20 46 C20 46 22 58 32 58 C42 58 44 46 44 46 Z" fill="url(#botBody)" filter="url(#shadow)" />
-      {/* Red Glowing Chest Core (Pratham Red Circle) */}
-      <circle cx="32" cy="51" r="4.5" fill="#E8232A" />
-      <circle cx="32" cy="51" r="2.5" fill="#FF5252" className="animate-pulse" />
-
-      {/* Antennas/Ears (Easel board handle concept but high-tech) */}
-      <rect x="21" y="9" width="4" height="8" rx="2" fill="#E65100" />
-      <circle cx="23" cy="8" r="2.5" fill="#FFE082" />
-      
-      <rect x="39" y="9" width="4" height="8" rx="2" fill="#E65100" />
-      <circle cx="41" cy="8" r="2.5" fill="#FFE082" />
-
-      {/* Head (Rounded easel shape - humanoid) */}
-      <rect x="16" y="14" width="32" height="28" rx="10" fill="url(#botHead)" filter="url(#shadow)" stroke="#E65100" strokeWidth="1" />
-
-      {/* Face Screen */}
-      <rect x="20" y="18" width="24" height="20" rx="6" fill="url(#botFace)" stroke="#FFF" strokeWidth="0.5" />
-
-      {/* Cute glowing blush on cheeks */}
-      <circle cx="23.5" cy="29" r="2.2" fill="#FF8A80" opacity="0.6" />
-      <circle cx="40.5" cy="29" r="2.2" fill="#FF8A80" opacity="0.6" />
-
-      {/* Eyes (Friendly glowing circles with pupil details) */}
-      <g>
-        <circle cx="27" cy="25" r="3.2" fill="url(#eyeGrad)" />
-        <circle cx="28" cy="24" r="0.9" fill="#FFF" />
-      </g>
-      <g>
-        <circle cx="37" cy="25" r="3.2" fill="url(#eyeGrad)" />
-        <circle cx="38" cy="24" r="0.9" fill="#FFF" />
-      </g>
-
-      {/* Happy Smile */}
-      <path d="M27.5 30.5 Q32 34 36.5 30.5" stroke="#1E293B" strokeWidth="2.2" strokeLinecap="round" fill="none" />
-    </svg>
+    <RobotAvatar size={size} className={className} />
   );
 }
 
