@@ -10,46 +10,62 @@ function PrathamAvatar({ size = 40, className = "" }: { size?: number; className
   return (
     <svg width={size} height={size} viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
       <defs>
-        <linearGradient id="pratham-head" x1="14" y1="10" x2="50" y2="44" gradientUnits="userSpaceOnUse">
-          <stop offset="0%" stopColor="#FFD65C" />
-          <stop offset="100%" stopColor="#FDBF15" />
+        <linearGradient id="botHead" x1="16" y1="10" x2="48" y2="42" gradientUnits="userSpaceOnUse">
+          <stop offset="0%" stopColor="#FFE082" />
+          <stop offset="100%" stopColor="#FF8F00" />
         </linearGradient>
-        <linearGradient id="pratham-body" x1="18" y1="46" x2="46" y2="60" gradientUnits="userSpaceOnUse">
-          <stop offset="0%" stopColor="#FDBF15" />
-          <stop offset="100%" stopColor="#F5A300" />
+        <linearGradient id="botFace" x1="20" y1="18" x2="44" y2="38" gradientUnits="userSpaceOnUse">
+          <stop offset="0%" stopColor="#FFFEE0" />
+          <stop offset="100%" stopColor="#FFF9C4" />
         </linearGradient>
+        <linearGradient id="botBody" x1="20" y1="44" x2="44" y2="60" gradientUnits="userSpaceOnUse">
+          <stop offset="0%" stopColor="#FFB300" />
+          <stop offset="100%" stopColor="#E65100" />
+        </linearGradient>
+        <linearGradient id="eyeGrad" x1="0" y1="0" x2="0" y2="1" gradientUnits="objectBoundingBox">
+          <stop offset="0%" stopColor="#1E293B" />
+          <stop offset="100%" stopColor="#0F172A" />
+        </linearGradient>
+        <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
+          <feDropShadow dx="0" dy="2" stdDeviation="1.5" floodColor="#000" floodOpacity="0.15" />
+        </filter>
       </defs>
 
-      {/* Shoulders / body */}
-      <path d="M18 47 C18 58 24 60 32 60 C40 60 46 58 46 47 C46 44.5 43.5 43 32 43 C20.5 43 18 44.5 18 47 Z" fill="url(#pratham-body)" stroke="#1E293B" strokeWidth="2.5" strokeLinejoin="round" />
-      {/* Chest badge */}
-      <circle cx="32" cy="51" r="3.2" fill="#E8232A" />
+      {/* Body (Sleek robot torso) */}
+      <path d="M20 46 C20 46 22 58 32 58 C42 58 44 46 44 46 Z" fill="url(#botBody)" filter="url(#shadow)" />
+      {/* Red Glowing Chest Core (Pratham Red Circle) */}
+      <circle cx="32" cy="51" r="4.5" fill="#E8232A" />
+      <circle cx="32" cy="51" r="2.5" fill="#FF5252" className="animate-pulse" />
 
-      {/* Antennae */}
-      <path d="M23 13 L21 7" stroke="#1E293B" strokeWidth="2.5" strokeLinecap="round" />
-      <path d="M41 13 L43 7" stroke="#1E293B" strokeWidth="2.5" strokeLinecap="round" />
-      <circle cx="21" cy="6" r="2.6" fill="#E8232A" stroke="#1E293B" strokeWidth="1.5" />
-      <circle cx="43" cy="6" r="2.6" fill="#E8232A" stroke="#1E293B" strokeWidth="1.5" />
+      {/* Antennas/Ears (Easel board handle concept but high-tech) */}
+      <rect x="21" y="9" width="4" height="8" rx="2" fill="#E65100" />
+      <circle cx="23" cy="8" r="2.5" fill="#FFE082" />
+      
+      <rect x="39" y="9" width="4" height="8" rx="2" fill="#E65100" />
+      <circle cx="41" cy="8" r="2.5" fill="#FFE082" />
 
-      {/* Head (rounded, humanoid) */}
-      <rect x="13" y="11" width="38" height="34" rx="15" fill="url(#pratham-head)" stroke="#1E293B" strokeWidth="2.5" />
+      {/* Head (Rounded easel shape - humanoid) */}
+      <rect x="16" y="14" width="32" height="28" rx="10" fill="url(#botHead)" filter="url(#shadow)" stroke="#E65100" strokeWidth="1" />
 
-      {/* Ears */}
-      <circle cx="13.5" cy="28" r="3.5" fill="#FDBF15" stroke="#1E293B" strokeWidth="2" />
-      <circle cx="50.5" cy="28" r="3.5" fill="#FDBF15" stroke="#1E293B" strokeWidth="2" />
+      {/* Face Screen */}
+      <rect x="20" y="18" width="24" height="20" rx="6" fill="url(#botFace)" stroke="#FFF" strokeWidth="0.5" />
 
-      {/* Blush */}
-      <circle cx="20.5" cy="31" r="3" fill="#E8232A" opacity="0.35" />
-      <circle cx="43.5" cy="31" r="3" fill="#E8232A" opacity="0.35" />
+      {/* Cute glowing blush on cheeks */}
+      <circle cx="23.5" cy="29" r="2.2" fill="#FF8A80" opacity="0.6" />
+      <circle cx="40.5" cy="29" r="2.2" fill="#FF8A80" opacity="0.6" />
 
-      {/* Eyes */}
-      <circle cx="24.5" cy="26" r="3.4" fill="#1E293B" />
-      <circle cx="25.6" cy="24.8" r="1.1" fill="#FFFFFF" />
-      <circle cx="39.5" cy="26" r="3.4" fill="#1E293B" />
-      <circle cx="40.6" cy="24.8" r="1.1" fill="#FFFFFF" />
+      {/* Eyes (Friendly glowing circles with pupil details) */}
+      <g>
+        <circle cx="27" cy="25" r="3.2" fill="url(#eyeGrad)" />
+        <circle cx="28" cy="24" r="0.9" fill="#FFF" />
+      </g>
+      <g>
+        <circle cx="37" cy="25" r="3.2" fill="url(#eyeGrad)" />
+        <circle cx="38" cy="24" r="0.9" fill="#FFF" />
+      </g>
 
-      {/* Warm smile */}
-      <path d="M23.5 33.5 Q32 40 40.5 33.5" stroke="#1E293B" strokeWidth="2.8" strokeLinecap="round" fill="none" />
+      {/* Happy Smile */}
+      <path d="M27.5 30.5 Q32 34 36.5 30.5" stroke="#1E293B" strokeWidth="2.2" strokeLinecap="round" fill="none" />
     </svg>
   );
 }

@@ -15,6 +15,7 @@ import BattleMatchmaker from "@/components/simulations/BattleMatchmaker";
 import GameWrapper from "@/components/games/GameWrapper";
 import LevelUpModal from "@/components/games/LevelUpModal";
 import StudentTrackerOverlay from "@/components/simulations/StudentTrackerOverlay";
+import GameDetailPanel from "@/components/simulations/GameDetailPanel";
 
 const SECTIONS = [
   // Language Pathways
@@ -41,6 +42,8 @@ function SimulationsContent() {
   const { t } = useLanguage();
 
   const [activeId, setActiveId] = useState<string | null>(null);
+  const [previewId, setPreviewId] = useState<string | null>(null);
+  const [startedFromPanel, setStartedFromPanel] = useState(false);
   const [showMatchmaker, setShowMatchmaker] = useState(false);
   const [battleContext, setBattleContext] = useState<any>(null);
   const [hiddenIds, setHiddenIds] = useState<string[]>([]);
@@ -140,6 +143,7 @@ function SimulationsContent() {
     setActiveId(null);
     setBattleContext(null);
     setShowMatchmaker(false);
+    setStartedFromPanel(false);
     updateUrl(null);
     window.scrollTo({ top: 0, behavior: 'smooth' });
     setDismissPortraitWarning(false);
@@ -147,6 +151,13 @@ function SimulationsContent() {
     if (screen.orientation && (screen.orientation as any).unlock) {
       (screen.orientation as any).unlock();
     }
+  };
+
+  const handleStartFromPanel = () => {
+    if (!previewId) return;
+    setStartedFromPanel(true);
+    handleSimSelect(previewId);
+    setPreviewId(null);
   };
 
   const closeArena = () => {
@@ -190,6 +201,7 @@ function SimulationsContent() {
 
       {!active ? (
         /* ================= LIBRARY VIEW ================= */
+        <>
         <div className="space-y-12 animate-in fade-in zoom-in-95 duration-300">
           {SECTIONS.map(section => {
             const items = ALL.filter(section.filter).filter(i => isAdmin || !hiddenIds.includes(i.id));
@@ -211,11 +223,12 @@ function SimulationsContent() {
                     const isHidden = hiddenIds.includes(item.id);
                     return (
                       <div key={item.id} className="relative group h-full">
-                        <button 
-                          onClick={() => handleSimSelect(item.id)}
+                        <button
+                          onClick={() => setPreviewId(item.id)}
                           className={cn(
                             "w-full h-full flex flex-col p-4 rounded-2xl border-2 transition-all duration-300 text-left bg-white dark:bg-slate-800/80 hover:-translate-y-1 hover:shadow-xl",
-                            isHidden ? "opacity-50 grayscale border-slate-200" : `border-transparent hover:${section.ring} hover:border-transparent focus:ring-2 focus:${section.ring}`
+                            isHidden ? "opacity-50 grayscale border-slate-200" : `border-transparent hover:${section.ring} hover:border-transparent focus:ring-2 focus:${section.ring}`,
+                            previewId === item.id && `ring-2 ${section.ring} -translate-y-1 shadow-xl`
                           )}
                         >
                           <div className={`w-12 h-12 rounded-xl mb-3 flex items-center justify-center text-3xl shadow-inner bg-gradient-to-br ${section.accent} text-white`}>
@@ -268,6 +281,14 @@ function SimulationsContent() {
             );
           })}
         </div>
+
+        <GameDetailPanel
+          item={previewId ? (ALL.find(i => i.id === previewId) ?? null) : null}
+          accent={previewId ? SECTIONS.find(s => s.filter(ALL.find(i => i.id === previewId)!)) : undefined}
+          onStart={handleStartFromPanel}
+          onClose={() => setPreviewId(null)}
+        />
+        </>
       ) : (
         /* ================= ACTIVE GAME VIEW ================= */
         <div className="space-y-6 animate-in slide-in-from-right-8 duration-500">
@@ -395,6 +416,7 @@ function SimulationsContent() {
                 emoji={active.emoji}
                 instructions={active.instructions}
                 accentColor={active.accentColor as any}
+                skipIntro={startedFromPanel}
               >
                 {active.component({ 
                   player1: battleContext?.p1, 

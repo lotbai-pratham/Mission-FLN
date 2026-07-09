@@ -23,6 +23,8 @@ import {
 } from '@/lib/session_content';
 import { logImplementationSession } from '@/app/actions/implementation';
 import { hasRole } from '@/lib/checkAccess';
+import ScrollReveal from "@/components/ScrollReveal";
+import { DoodleStar, DoodleSquiggle, DoodleSun, DoodleLoop, DoodleTribalFigure, DoodleCloud } from "@/components/Doodles";
 
 // Simulations & Games Imports
 import BundleBuilder from "@/components/simulations/BundleBuilder";
@@ -1092,30 +1094,7 @@ const MANUALS = [
   }
 ];
 
-// --- Playful Vector Doodles (Hand-drawn style) ---
-const DoodleStar = ({ className }: { className?: string }) => (
-  <svg className={cn("animate-pulse duration-1000 select-none pointer-events-none", className)} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M12 2c.2 1.8 1.5 3.1 3.3 3.3.2 0 .5 0 .7.1-1.8.2-3.1 1.5-3.3 3.3 0 .2 0 .5-.1.7-.2-1.8-1.5-3.1-3.3-3.3 0 0 0 0 0 0 1.8-.2 3.1-1.5 3.3-3.3v-.1z" />
-  </svg>
-);
 
-const DoodleSquiggle = ({ className }: { className?: string }) => (
-  <svg className={cn("select-none pointer-events-none animate-bounce duration-3000", className)} viewBox="0 0 60 20" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
-    <path d="M5 10c8-8 12 8 20 0s12-8 20 0 10 8 10 0" />
-  </svg>
-);
-
-const DoodleLoop = ({ className }: { className?: string }) => (
-  <svg className={cn("select-none pointer-events-none animate-spin duration-[10s] linear infinite", className)} viewBox="0 0 30 30" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
-    <path d="M15 5c5 0 10 5 10 10s-5 10-10 10-10-5-10-10 3-8 7-9l3-1" />
-  </svg>
-);
-
-const DoodleCloud = ({ className }: { className?: string }) => (
-  <svg className={cn("select-none pointer-events-none opacity-30 animate-pulse duration-3000", className)} viewBox="0 0 40 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M10 18a6 6 0 0 1 0-12 8 8 0 0 1 15-2 6 6 0 0 1 5 10h-2" />
-  </svg>
-);
 
 // --- Main Resources Page Component (Implementation Corner) ---
 export default function ResourcesPage() {
@@ -1148,9 +1127,13 @@ export default function ResourcesPage() {
         <h1 className="text-3xl sm:text-5xl font-black text-slate-900 dark:text-white tracking-tight leading-tight">
           Classroom <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-500 to-orange-600 underline decoration-amber-500/30">Implementation</span>
         </h1>
-        <p className="text-sm sm:text-base text-slate-500 dark:text-slate-400 leading-relaxed font-medium">
+        <p className="text-sm sm:text-base text-slate-500 dark:text-slate-400 leading-relaxed font-medium relative z-10">
           The primary hub for teachers and coaches conducting TaRL learning camps. This implementation portal provides access to guided session planning, training videos, printable diagnostic resources, and student games.
         </p>
+
+        {/* Doodles for Header */}
+        <DoodleLoop className="top-10 right-20 text-slate-300 dark:text-slate-700/50" delay="0s" />
+        <DoodleStar className="bottom-10 left-10 text-amber-300 dark:text-amber-500/40" delay="1s" />
       </div>
 
       {/* Tabs Controller */}
@@ -1236,7 +1219,9 @@ export default function ResourcesPage() {
 
       {/* Tab Content: VIDEOS */}
       {activeTab === "videos" && (
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+        <ScrollReveal animation="fade-up">
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 animate-in fade-in slide-in-from-bottom-4 duration-500 relative">
+          <DoodleSquiggle className="-top-10 right-0 text-orange-200 dark:text-orange-500/30" delay="0s" />
           {VIDEOS.filter(v => v.title.toLowerCase().includes(searchTerm.toLowerCase())).map((v, i) => (
             <div key={i} className="space-y-4 group">
                <div className="relative aspect-video rounded-[32px] overflow-hidden border border-slate-100 dark:border-slate-800 shadow-xl shadow-amber-500/5">
@@ -1258,11 +1243,15 @@ export default function ResourcesPage() {
             </div>
           ))}
         </div>
+        </ScrollReveal>
       )}
 
       {/* Tab Content: ARTICLES (TaRL Help Manuals) */}
       {activeTab === "articles" && (
-        <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+        <ScrollReveal animation="fade-up">
+        <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500 relative">
+          
+          <DoodleTribalFigure className="bottom-20 right-10 text-slate-200 dark:text-slate-800" delay="2s" />
           
           {/* Tags Filter Bar */}
           <div className="flex flex-wrap items-center gap-2 bg-slate-50 dark:bg-slate-850 p-4 rounded-3xl border border-slate-100 dark:border-slate-800/40">
@@ -1283,7 +1272,7 @@ export default function ResourcesPage() {
             ))}
           </div>
 
-          <div className="grid lg:grid-cols-2 gap-8">
+          <div className="grid lg:grid-cols-2 gap-8 relative z-10">
              {MANUALS.filter(m => {
                const matchesSearch = m.title.toLowerCase().includes(searchTerm.toLowerCase()) || 
                                      m.description.toLowerCase().includes(searchTerm.toLowerCase());
@@ -1318,6 +1307,7 @@ export default function ResourcesPage() {
              ))}
           </div>
         </div>
+        </ScrollReveal>
       )}
 
       {/* Tab Content: SIMULATIONS */}
@@ -1349,7 +1339,12 @@ export default function ResourcesPage() {
       )}
 
       {/* Classroom Guide / Offline Section */}
-      <div className="bg-slate-900 rounded-[48px] p-12 relative overflow-hidden text-center lg:text-left shadow-2xl shadow-orange-900/20">
+      <ScrollReveal animation="fade-up" delay={150}>
+      <div className="bg-slate-900 rounded-[48px] p-12 relative overflow-hidden text-center lg:text-left shadow-2xl shadow-orange-900/20 mt-12">
+          {/* Doodles inside the dark section */}
+          <DoodleSun className="bottom-10 left-10 text-white/5" delay="0s" />
+          <DoodleLoop className="top-10 left-1/2 text-orange-400/10" delay="2s" />
+          
           <div className="absolute top-0 right-0 w-96 h-96 bg-amber-500/10 rounded-full blur-3xl -mr-20 -mt-20"></div>
           <div className="relative z-10 flex flex-col lg:flex-row items-center gap-12">
              <div className="flex-1 space-y-6">
@@ -1389,6 +1384,7 @@ export default function ResourcesPage() {
              </div>
           </div>
       </div>
+      </ScrollReveal>
     </div>
   );
 }

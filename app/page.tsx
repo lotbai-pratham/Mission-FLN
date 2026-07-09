@@ -21,6 +21,8 @@ import {
   ArrowRight
 } from "lucide-react";
 import WarliBorder from "@/components/warli/WarliBorder";
+import ScrollReveal from "@/components/ScrollReveal";
+import { DoodleStar, DoodleSquiggle, DoodleSun, DoodleLoop, DoodleTribalFigure } from "@/components/Doodles";
 
 export default function LandingPage() {
   return (
@@ -36,8 +38,14 @@ export default function LandingPage() {
           <div className="aspect-square w-[400px] rounded-full bg-gradient-to-br from-orange-500 to-amber-500" />
         </div>
 
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+        {/* Doodles */}
+        <DoodleStar className="top-24 left-10 text-amber-300 dark:text-amber-500" delay="0s" />
+        <DoodleSquiggle className="top-40 right-20 text-orange-200 dark:text-orange-500/50" delay="1s" />
+        <DoodleTribalFigure className="bottom-20 left-32 text-amber-200 dark:text-amber-500/50" delay="2s" />
+
+        <ScrollReveal animation="fade-up">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
             
             {/* Left side text */}
             <div className="lg:col-span-7 text-left flex flex-col items-start">
@@ -84,11 +92,17 @@ export default function LandingPage() {
 
           </div>
         </div>
+        </ScrollReveal>
       </section>
 
       {/* Target Audience Section ("Whom is it for?") */}
-      <section className="py-24 bg-slate-50 dark:bg-slate-900/30">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="relative py-24 bg-slate-50 dark:bg-slate-900/30 overflow-hidden">
+        {/* Doodles */}
+        <DoodleLoop className="top-10 right-32 text-slate-300 dark:text-slate-600" delay="1.5s" />
+        <DoodleSun className="bottom-24 left-10 text-amber-200 dark:text-amber-700/30" delay="0s" />
+
+        <ScrollReveal animation="fade-up" delay={100}>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="text-center max-w-3xl mx-auto mb-16">
             <h2 className="text-xs font-black uppercase tracking-widest text-amber-600 dark:text-amber-400 mb-2">Designed for the Ecosystem</h2>
             <h3 className="text-3xl font-black text-slate-900 dark:text-white sm:text-4xl">Who Uses Mission FLN?</h3>
@@ -159,11 +173,17 @@ export default function LandingPage() {
 
           </div>
         </div>
+        </ScrollReveal>
       </section>
 
       {/* Core Platform Capabilities Section */}
-      <section className="py-24 bg-white dark:bg-slate-950 border-t border-b border-slate-100 dark:border-slate-800">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="relative py-24 bg-white dark:bg-slate-950 border-t border-b border-slate-100 dark:border-slate-800 overflow-hidden">
+        {/* Doodles */}
+        <DoodleSquiggle className="top-24 right-10 text-orange-200 dark:text-orange-500/30" delay="0s" />
+        <DoodleTribalFigure className="bottom-10 left-10 text-amber-200 dark:text-amber-500/30" delay="1s" />
+
+        <ScrollReveal animation="fade-up" delay={200}>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="grid lg:grid-cols-2 gap-16 items-center">
             
             <div>
@@ -244,14 +264,20 @@ export default function LandingPage() {
 
           </div>
         </div>
+        </ScrollReveal>
       </section>
 
       {/* Target Timelines */}
       <section className="py-24 bg-slate-900 text-white relative overflow-hidden">
+        {/* Doodles */}
+        <DoodleStar className="top-16 left-1/2 text-orange-400/30" delay="0s" />
+        <DoodleLoop className="bottom-16 right-20 text-amber-500/30" delay="2s" />
+
         <div className="absolute top-0 right-0 -translate-y-12 translate-x-12 blur-3xl opacity-20 pointer-events-none">
           <div className="aspect-square w-[500px] rounded-full bg-orange-500" />
         </div>
         
+        <ScrollReveal animation="fade-up" delay={200}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="grid lg:grid-cols-2 gap-16 items-center">
             
@@ -319,11 +345,17 @@ export default function LandingPage() {
 
           </div>
         </div>
+        </ScrollReveal>
       </section>
 
       {/* Target Action Portals */}
-      <section className="py-24 bg-white dark:bg-slate-950">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="relative py-24 bg-white dark:bg-slate-950 overflow-hidden">
+        {/* Doodles */}
+        <DoodleSun className="top-10 left-20 text-orange-100 dark:text-orange-900/30" delay="0s" />
+        <DoodleTribalFigure className="bottom-20 right-10 text-amber-100 dark:text-amber-900/30" delay="1.5s" />
+
+        <ScrollReveal animation="fade-up" delay={100}>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="text-center max-w-2xl mx-auto mb-16">
             <h3 className="text-3xl font-black text-slate-900 dark:text-white">Access Your Mission FLN Portal</h3>
             <p className="mt-3 text-slate-500 dark:text-slate-400 text-sm">Select your section to log in or start classroom assessments.</p>
@@ -375,6 +407,7 @@ export default function LandingPage() {
 
           </div>
         </div>
+        </ScrollReveal>
       </section>
 
       {/* Footer */}

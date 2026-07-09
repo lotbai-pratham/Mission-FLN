@@ -8,16 +8,19 @@ interface GameWrapperProps {
   emoji: string;
   instructions: string[];
   accentColor?: "emerald" | "orange" | "blue" | "rose" | "violet" | "amber";
+  /** Skip the intro screen — use when the caller already showed this info (e.g. the game detail panel). */
+  skipIntro?: boolean;
 }
 
-export default function GameWrapper({ 
-  children, 
-  title, 
-  emoji, 
-  instructions, 
-  accentColor = "blue" 
+export default function GameWrapper({
+  children,
+  title,
+  emoji,
+  instructions,
+  accentColor = "blue",
+  skipIntro = false,
 }: GameWrapperProps) {
-  const [hasStarted, setHasStarted] = useState(false);
+  const [hasStarted, setHasStarted] = useState(skipIntro);
 
   if (!hasStarted) {
     return (
