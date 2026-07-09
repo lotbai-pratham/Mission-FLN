@@ -977,7 +977,7 @@ export default function DashboardClient({ initialStats, hierarchy }: { initialSt
                 <ClipboardList className="w-10 h-10 text-slate-300" />
               </div>
               <p className="text-slate-400 font-bold">{t('No implementation sessions recorded yet.')}</p>
-              <p className="text-sm text-slate-400">{t('Teachers can log sessions from the Implementation Corner.')}</p>
+              <p className="text-sm text-slate-400">{t('Teachers can log sessions from the Classroom Implementation.')}</p>
             </div>
           )}
         </div>

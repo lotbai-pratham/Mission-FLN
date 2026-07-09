@@ -6,7 +6,7 @@ import {
   SpellCheck, Binary, Search, ClipboardPlus,
   Clock, CheckCircle2, Swords,
   Book, Calculator,
-  Maximize2, Minimize2
+  Maximize2, Minimize2, Info
 } from "lucide-react";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
@@ -923,32 +923,191 @@ function MissionControl() {
   );
 }
 
+// --- TaRL Help Manuals & PDFs Dataset ---
+const MANUALS = [
+  {
+    title: "Aao Gayen Sune Banayen (Std. 1-2)",
+    description: "Activity handbook containing stories, songs, and conversational prompts for Class 1 and 2 Hindi.",
+    size: "176.6 MB · PDF",
+    link: "/manuals/Aao Gayen Sune Banayen Std. 1-2_HG_2022-23.pdf",
+    tags: ["Literacy", "Manual"]
+  },
+  {
+    title: "Aao Khele (Let's Play)",
+    description: "Compendium of physical and conversational learning games designed for camp warm-ups and group play.",
+    size: "6.3 MB · PDF",
+    link: "/manuals/Aao Khele (2).pdf",
+    tags: ["Games", "Manual"]
+  },
+  {
+    title: "Anuched Pustika (Paragraph Booklet)",
+    description: "Structured compilation of paragraphs and simple texts for student decoding practice and progress checks.",
+    size: "44.2 MB · PDF",
+    link: "/manuals/Anuched Pustika.pdf",
+    tags: ["Literacy", "Manual"]
+  },
+  {
+    title: "Bal Library Worksheets",
+    description: "Interactive worksheets for library reading activities and language building.",
+    size: "100.3 MB · PDF",
+    link: "/manuals/Bal Library Worksheet.pdf",
+    tags: ["Literacy", "Worksheets"]
+  },
+  {
+    title: "Basic Stories - Level 1",
+    description: "Set of entry-level graded stories designed for students transitioning from word decoding to paragraph reading.",
+    size: "42.4 MB · PDF",
+    link: "/manuals/Basic Stories  1.pdf",
+    tags: ["Literacy", "Cards"]
+  },
+  {
+    title: "Basic Stories - Level 2",
+    description: "Graded storybook set containing level-appropriate narratives and comprehension check questions.",
+    size: "58.4 MB · PDF",
+    link: "/manuals/Basic Stories  2.pdf",
+    tags: ["Literacy", "Cards"]
+  },
+  {
+    title: "Basic Stories - Level 3",
+    description: "Advanced graded story booklets containing longer narratives to build reading speed and full comprehension.",
+    size: "39.6 MB · PDF",
+    link: "/manuals/Basic Stories  3.pdf",
+    tags: ["Literacy", "Cards"]
+  },
+  {
+    title: "Chitra Card (Picture Cards)",
+    description: "Illustrated picture cards used for oral vocabulary, sentence construction, and storytelling activities.",
+    size: "15.1 MB · PDF",
+    link: "/manuals/Chitra Card.pdf",
+    tags: ["Literacy", "Cards"]
+  },
+  {
+    title: "Class 3-5 Level 1 Math Worksheets (Alternate)",
+    description: "Alternative set of foundational math worksheets covering number recognition (1-99) and simple operations for Class 3-5.",
+    size: "8.0 MB · PDF",
+    link: "/manuals/Class 3-5, Level 1, Math Worksheet (1).pdf",
+    tags: ["Numeracy", "Worksheets"]
+  },
+  {
+    title: "Class 3-5 Level 1 Math Worksheets",
+    description: "Foundational math worksheets covering number recognition (1-99) and simple operations for Class 3-5.",
+    size: "8.0 MB · PDF",
+    link: "/manuals/Class 3-5, Level 1, Math Worksheet.pdf",
+    tags: ["Numeracy", "Worksheets"]
+  },
+  {
+    title: "Class 3-5 Level 2 Math Worksheets",
+    description: "Intermediate worksheets targeting subtraction with borrowing and basic multiplication for Class 3-5.",
+    size: "93.8 MB · PDF",
+    link: "/manuals/Class 3-5, Level 2, Math Worksheet.pdf",
+    tags: ["Numeracy", "Worksheets"]
+  },
+  {
+    title: "Class 3-5 Word Problem Cards",
+    description: "Cards containing real-world word problems for group math discussions and estimation practices.",
+    size: "1.9 MB · PDF",
+    link: "/manuals/Class 3-5, Word Problem Card.pdf",
+    tags: ["Numeracy", "Cards"]
+  },
+  {
+    title: "Gatividhi Chart (Activity Chart)",
+    description: "Large-format activity roadmap mapping daily tasks and teaching steps across ASER levels.",
+    size: "57.6 MB · PDF",
+    link: "/manuals/Gatividhi Chart.pdf",
+    tags: ["Literacy", "Numeracy", "Manual"]
+  },
+  {
+    title: "Level 1 Marathi Language Manual",
+    description: "Comprehensive pedagogical guide for teaching foundational Marathi letters, words, and simple sentences.",
+    size: "15.3 MB · PDF",
+    link: "/manuals/Level 1, MAR Language.pdf",
+    tags: ["Literacy", "Manual"]
+  },
+  {
+    title: "Level 1 Marathi Math Manual",
+    description: "Teacher manual outlining sticks-and-bundles methods and place value charts in Marathi.",
+    size: "31.5 MB · PDF",
+    link: "/manuals/Level 1, MAR Math Manual.pdf",
+    tags: ["Numeracy", "Manual"]
+  },
+  {
+    title: "Level 2 Hindi Language & Math Manual",
+    description: "Integrated manual for advanced Hindi reading comprehension and intermediate mathematical operations.",
+    size: "1.8 MB · PDF",
+    link: "/manuals/Level 2, HIN Language & Math.pdf",
+    tags: ["Literacy", "Numeracy", "Manual"]
+  },
+  {
+    title: "Level 2 Marathi Language & Math Manual",
+    description: "Integrated manual for Class 3-5 Marathi reading camp sessions and operations.",
+    size: "15.3 MB · PDF",
+    link: "/manuals/Level 2, MAR Language & Math.pdf",
+    tags: ["Literacy", "Numeracy", "Manual"]
+  },
+  {
+    title: "Linking Cards (Shabda Jod Card)",
+    description: "Printable linking cards for word-building activities and sentence construction games.",
+    size: "73.3 MB · PDF",
+    link: "/manuals/Linking Card.pdf",
+    tags: ["Literacy", "Cards"]
+  },
+  {
+    title: "Number Flash Cards (1-100)",
+    description: "Flashcards from 1 to 100 for daily number recognition, ordering, and comparison games.",
+    size: "403 KB · PDF",
+    link: "/manuals/Number Flash Card.pdf",
+    tags: ["Numeracy", "Cards"]
+  },
+  {
+    title: "Paragraphs & 2-Line Stories",
+    description: "Printable cards with double-line stories for early paragraph-level reading interventions.",
+    size: "1.6 MB · PDF",
+    link: "/manuals/Paragraph 2 Line Stories.pdf",
+    tags: ["Literacy", "Cards"]
+  },
+  {
+    title: "Picture Cards Collection",
+    description: "Large collection of pictorial sheets for oral expression and vocabulary mind-mapping.",
+    size: "103.6 MB · PDF",
+    link: "/manuals/Picture Cards.pdf",
+    tags: ["Literacy", "Cards"]
+  },
+  {
+    title: "Word Problem Cards (General)",
+    description: "General math operations card pack covering estimation and H-T-U division problems.",
+    size: "1.9 MB · PDF",
+    link: "/manuals/Word Problem Card.pdf",
+    tags: ["Numeracy", "Cards"]
+  }
+];
+
 // --- Main Resources Page Component (Implementation Corner) ---
 export default function ResourcesPage() {
   const { t } = useLanguage();
   const [activeTab, setActiveTab] = useState<"mission" | "videos" | "articles" | "simulations">("mission");
   const [searchTerm, setSearchTerm] = useState("");
+  const [selectedTag, setSelectedTag] = useState<string | null>(null);
 
-  const TABS = [
-    { id: "mission", label: t("Session Planner") || "Mission Mode", icon: <ClipboardPlus className="w-5 h-5" /> },
-    { id: "videos", label: t("Pedagogy Videos") || "Training Videos", icon: <MonitorPlay className="w-5 h-5" /> },
-    { id: "articles", label: t("Articles") || "Coaching Articles", icon: <BookOpen className="w-5 h-5" /> },
-    { id: "simulations", label: t("Interactive Simulations") || "Level Simulations", icon: <Gamepad2 className="w-5 h-5" /> },
-  ] as const;
+  const TABS = useMemo(() => [
+    { id: "mission", label: t("Session Planner"), icon: <ClipboardPlus className="w-5 h-5" /> },
+    { id: "videos", label: t("Pedagogy Videos"), icon: <MonitorPlay className="w-5 h-5" /> },
+    { id: "articles", label: t("Articles"), icon: <BookOpen className="w-5 h-5" /> },
+    { id: "simulations", label: t("Interactive Simulations"), icon: <Gamepad2 className="w-5 h-5" /> },
+  ], [t]);
 
   return (
-    <div className="max-w-6xl mx-auto px-4 py-12 space-y-12 animate-in fade-in duration-700">
+    <div className="max-w-6xl mx-auto px-4 py-12 space-y-8 animate-in fade-in duration-700">
       
       {/* Hero Section */}
       <div className="text-center space-y-4 max-w-3xl mx-auto">
-        <div className="inline-flex items-center gap-2 px-4 py-2 bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-full text-[10px] font-black uppercase tracking-widest">
-          <GraduationCap className="w-4 h-4" /> {t('Implementation Corner')}
+        <div className="inline-flex items-center gap-2 px-4 py-2 bg-amber-50 dark:bg-amber-950/20 text-amber-600 dark:text-amber-400 rounded-full text-[10px] font-black uppercase tracking-widest">
+          <GraduationCap className="w-4 h-4" /> {t('Implementation Corner') || 'Implementation Corner'}
         </div>
         <h1 className="text-3xl sm:text-5xl font-black text-slate-900 dark:text-white tracking-tight leading-tight">
-          Classroom <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600 underline decoration-blue-500/30">Action Hub</span>
+          Classroom <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-500 to-orange-600 underline decoration-amber-500/30">Implementation</span>
         </h1>
-        <p className="text-lg text-slate-500 dark:text-slate-400 leading-relaxed">
-          {t('Interactive Simulations') ? t('Hands-on simulations, games and learning pathways to master FLN concepts.') : 'The ultimate engine for FLN training and pedagogical execution. Run your 90-minute daily missions or sharpen your skills with our library.'}
+        <p className="text-sm sm:text-base text-slate-500 dark:text-slate-400 leading-relaxed font-medium">
+          The primary hub for teachers and coaches conducting TaRL learning camps. This implementation portal provides access to guided session planning, training videos, printable diagnostic resources, and student games.
         </p>
       </div>
 
@@ -958,11 +1117,15 @@ export default function ResourcesPage() {
           {TABS.map((tab) => (
             <button
               key={tab.id}
-              onClick={() => setActiveTab(tab.id as any)}
+              onClick={() => {
+                setActiveTab(tab.id as any);
+                setSearchTerm("");
+                setSelectedTag(null);
+              }}
               className={cn(
                 "flex items-center gap-1.5 sm:gap-2 px-3 sm:px-6 py-2 sm:py-2.5 rounded-xl text-xs sm:text-sm font-black transition-all whitespace-nowrap",
                 activeTab === tab.id 
-                  ? "bg-white dark:bg-slate-700 text-blue-600 dark:text-blue-400 shadow-md shadow-blue-900/5" 
+                  ? "bg-white dark:bg-slate-700 text-amber-600 dark:text-amber-400 shadow-md shadow-amber-900/5" 
                   : "text-slate-500 hover:text-slate-700 dark:hover:text-slate-300"
               )}
             >
@@ -976,13 +1139,54 @@ export default function ResourcesPage() {
               <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
               <input 
                  type="text" 
-                 placeholder="Search resource..." 
+                 placeholder={t("Search resource...") || "Search resource..."}
                  value={searchTerm}
                  onChange={(e) => setSearchTerm(e.target.value)}
-                 className="w-full pl-11 pr-4 py-3 bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-2xl text-xs font-medium focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+                 className="w-full pl-11 pr-4 py-3 bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-2xl text-xs font-medium focus:ring-2 focus:ring-amber-500 outline-none transition-all"
               />
            </div>
         )}
+      </div>
+
+      {/* Active Tab Explanation Banner */}
+      <div className="p-6 rounded-3xl bg-amber-50/70 dark:bg-amber-950/10 border border-amber-100/50 dark:border-amber-900/30 text-xs text-slate-650 dark:text-slate-355 leading-relaxed flex gap-4 shadow-sm animate-in fade-in duration-300">
+        <div className="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-600 flex items-center justify-center shrink-0">
+          <Info className="w-5 h-5" />
+        </div>
+        <div>
+          {activeTab === "mission" && (
+            <div>
+              <strong className="text-slate-900 dark:text-white font-extrabold text-sm block mb-1">📋 Session Planner</strong>
+              <p className="text-slate-600 dark:text-slate-400 leading-relaxed font-medium">
+                The **Session Planner** guides teachers through the structured 90-minute daily teaching flow. Specify the classroom range, group students dynamically based on their actual learning levels (rather than grade or age), view step-by-step teaching guidelines, track session timing, and record final results directly to the backend.
+              </p>
+            </div>
+          )}
+          {activeTab === "videos" && (
+            <div>
+              <strong className="text-slate-900 dark:text-white font-extrabold text-sm block mb-1">🎥 Pedagogy Videos</strong>
+              <p className="text-slate-600 dark:text-slate-400 leading-relaxed font-medium">
+                The **Pedagogy Videos** section contains recorded classroom demonstrations, teacher instructions, and pedagogical tips. Watch seasoned coaches deploy sticks and bundles for math recognition or guide children through reading comprehension exercises.
+              </p>
+            </div>
+          )}
+          {activeTab === "articles" && (
+            <div>
+              <strong className="text-slate-900 dark:text-white font-extrabold text-sm block mb-1">📚 TaRL Help Manuals</strong>
+              <p className="text-slate-600 dark:text-slate-400 leading-relaxed font-medium">
+                The **TaRL Help Manuals** section provides printable instruction booklets, activity worksheets, and ASER assessment key packs. Download these PDF files directly to your mobile device or tablet to run offline classrooms in remote locations.
+              </p>
+            </div>
+          )}
+          {activeTab === "simulations" && (
+            <div>
+              <strong className="text-slate-900 dark:text-white font-extrabold text-sm block mb-1">🎮 FLN Games</strong>
+              <p className="text-slate-600 dark:text-slate-400 leading-relaxed font-medium">
+                The **FLN Games** library holds interactive digital twins. Use shared tablets in the classroom to let children build letters, play skip-counting train games, or compete in 2v2 multiplayer addition battles to make foundational learning engaging and gamified.
+              </p>
+            </div>
+          )}
+        </div>
       </div>
 
       {/* MISSION MODE - The Integrated Component */}
@@ -993,7 +1197,7 @@ export default function ResourcesPage() {
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
           {VIDEOS.filter(v => v.title.toLowerCase().includes(searchTerm.toLowerCase())).map((v, i) => (
             <div key={i} className="space-y-4 group">
-               <div className="relative aspect-video rounded-[32px] overflow-hidden border border-slate-100 dark:border-slate-800 shadow-xl shadow-blue-500/5">
+               <div className="relative aspect-video rounded-[32px] overflow-hidden border border-slate-100 dark:border-slate-800 shadow-xl shadow-amber-500/5">
                   <iframe 
                      src={`https://www.youtube.com/embed/${v.id}`}
                      className="absolute inset-0 w-full h-full"
@@ -1002,11 +1206,11 @@ export default function ResourcesPage() {
                </div>
                <div className="px-2 space-y-2">
                   <div className="flex items-center gap-2">
-                    <span className="text-[10px] font-black uppercase tracking-widest bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 px-2 py-0.5 rounded-md">
+                    <span className="text-[10px] font-black uppercase tracking-widest bg-amber-50 dark:bg-amber-950/20 text-amber-600 dark:text-amber-400 px-2 py-0.5 rounded-md">
                        Level: {v.level || "General"}
                     </span>
                   </div>
-                  <h4 className="font-bold text-slate-800 dark:text-white group-hover:text-blue-600 transition-colors leading-tight">{v.title}</h4>
+                  <h4 className="font-bold text-slate-800 dark:text-white group-hover:text-amber-600 transition-colors leading-tight">{v.title}</h4>
                   <p className="text-xs text-slate-400 font-medium leading-relaxed">{v.description}</p>
                </div>
             </div>
@@ -1014,51 +1218,86 @@ export default function ResourcesPage() {
         </div>
       )}
 
-      {/* Tab Content: ARTICLES */}
+      {/* Tab Content: ARTICLES (TaRL Help Manuals) */}
       {activeTab === "articles" && (
-        <div className="grid lg:grid-cols-2 gap-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
-           {ARTICLES.filter(art => art.title.toLowerCase().includes(searchTerm.toLowerCase())).map((art, i) => (
-             <div key={i} className="group bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-[40px] p-8 shadow-sm hover:shadow-xl hover:shadow-blue-500/5 transition-all space-y-6">
-                <div className="inline-flex items-center gap-2 px-3 py-1 bg-orange-50 dark:bg-orange-900/30 text-orange-600 dark:text-orange-400 rounded-full text-[10px] font-black uppercase tracking-widest">
-                   <BookOpen className="w-3 h-3" /> Teacher Insights
-                </div>
-                <div className="space-y-3">
-                   <h3 className="text-3xl font-black text-slate-900 dark:text-white group-hover:text-blue-600 transition-all">{art.title}</h3>
-                   <p className="text-slate-500 dark:text-slate-400 leading-relaxed">{art.description}</p>
-                </div>
-                <div className="flex flex-wrap gap-2">
-                   {art.tags?.map(t => <span key={t} className="text-[10px] font-bold text-slate-400 bg-slate-50 dark:bg-slate-800 px-3 py-1 rounded-full">#{t}</span>)}
-                </div>
-                <button className="flex items-center gap-2 text-sm font-black text-blue-600 hover:text-blue-700 transition-colors">
-                   Read Full Article <ChevronRight className="w-4 h-4" />
-                </button>
-             </div>
-           ))}
+        <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+          
+          {/* Tags Filter Bar */}
+          <div className="flex flex-wrap items-center gap-2 bg-slate-50 dark:bg-slate-850 p-4 rounded-3xl border border-slate-100 dark:border-slate-800/40">
+            <span className="text-xs font-black text-slate-400 dark:text-slate-500 mr-2 uppercase tracking-wider">{t("Filter by Tag") || "Filter by Tag"}:</span>
+            {["All", "Literacy", "Numeracy", "Manual", "Worksheets", "Cards", "Games"].map((tag) => (
+               <button
+                  key={tag}
+                  onClick={() => setSelectedTag(tag === "All" ? null : tag)}
+                  className={cn(
+                     "px-4 py-2 rounded-xl text-xs font-black transition-all border",
+                     (tag === "All" ? !selectedTag : selectedTag === tag)
+                        ? "bg-amber-500 text-white border-transparent shadow-md shadow-amber-500/10"
+                        : "bg-white dark:bg-slate-900 text-slate-650 dark:text-slate-300 border-slate-100 dark:border-slate-850 hover:bg-slate-50 dark:hover:bg-slate-800"
+                  )}
+               >
+                  {t(tag) || tag}
+               </button>
+            ))}
+          </div>
+
+          <div className="grid lg:grid-cols-2 gap-8">
+             {MANUALS.filter(m => {
+               const matchesSearch = m.title.toLowerCase().includes(searchTerm.toLowerCase()) || 
+                                     m.description.toLowerCase().includes(searchTerm.toLowerCase());
+               const matchesTag = !selectedTag || m.tags.includes(selectedTag);
+               return matchesSearch && matchesTag;
+             }).map((art, i) => (
+               <div key={i} className="group bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-[40px] p-8 shadow-sm hover:shadow-xl hover:shadow-amber-500/5 transition-all space-y-6 flex flex-col justify-between">
+                  <div className="space-y-4">
+                    <div className="inline-flex items-center gap-2 px-3 py-1 bg-amber-50 dark:bg-amber-950/20 text-amber-600 dark:text-amber-400 rounded-full text-[10px] font-black uppercase tracking-widest">
+                       <BookOpen className="w-3 h-3" /> {art.size}
+                    </div>
+                    <div className="space-y-3">
+                       <h3 className="text-2xl font-black text-slate-900 dark:text-white group-hover:text-amber-600 transition-all leading-tight">{art.title}</h3>
+                       <p className="text-slate-500 dark:text-slate-400 text-sm leading-relaxed">{art.description}</p>
+                    </div>
+                  </div>
+                  <div className="space-y-4 pt-4 border-t border-slate-100 dark:border-slate-800">
+                    <div className="flex flex-wrap gap-2">
+                       {art.tags?.map(t => <span key={t} className="text-[10px] font-bold text-slate-400 bg-slate-50 dark:bg-slate-850 px-3 py-1 rounded-full">#{t}</span>)}
+                    </div>
+                    <a 
+                      href={art.link}
+                      download
+                      className="inline-flex items-center gap-2 px-5 py-3 bg-amber-500 hover:bg-amber-600 text-white font-black text-xs rounded-xl shadow-md transition-all self-start"
+                    >
+                       <Download className="w-4 h-4" /> Download Manual (PDF)
+                    </a>
+                  </div>
+               </div>
+             ))}
+          </div>
         </div>
       )}
 
       {/* Tab Content: SIMULATIONS */}
       {activeTab === "simulations" && (
-        <div className="bg-gradient-to-br from-slate-900 to-indigo-950 rounded-[48px] p-10 sm:p-16 text-center shadow-2xl relative overflow-hidden animate-in fade-in zoom-in-95 duration-500">
+        <div className="bg-gradient-to-br from-slate-900 to-orange-950/30 rounded-[48px] p-10 sm:p-16 text-center shadow-2xl relative overflow-hidden animate-in fade-in zoom-in-95 duration-500">
            <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'radial-gradient(circle, #fff 1px, transparent 1px)', backgroundSize: '28px 28px' }} />
            
            <div className="relative z-10 max-w-3xl mx-auto space-y-8">
-             <div className="w-24 h-24 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-3xl mx-auto flex items-center justify-center shadow-xl shadow-blue-500/20">
+             <div className="w-24 h-24 bg-gradient-to-br from-amber-500 to-orange-600 rounded-3xl mx-auto flex items-center justify-center shadow-xl shadow-orange-500/20">
                <Gamepad2 className="w-12 h-12 text-white" />
              </div>
              
              <div className="space-y-4">
                <h2 className="text-4xl sm:text-6xl font-black text-white leading-tight tracking-tight">
-                 Enter the <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-400">Simulation Arcade</span>
+                 Enter the <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-orange-400">FLN Games Arcade</span>
                </h2>
-               <p className="text-lg sm:text-xl text-blue-100/70 max-w-2xl mx-auto leading-relaxed">
-                 We've upgraded our simulations! Browse all 35+ interactive games, 2v2 battle arenas, and level-wise pedagogical tools in our brand new, dedicated full-screen library.
+               <p className="text-lg sm:text-xl text-orange-100/70 max-w-2xl mx-auto leading-relaxed">
+                 Practice math and reading through 35+ gamified simulations! Play multiplayer math duels, build words, spin the matra wheel, and explore level-wise interactive tools.
                </p>
              </div>
              
              <div className="pt-6">
-               <Link href="/resources/simulations" className="inline-flex items-center gap-3 px-8 py-5 bg-white text-indigo-900 hover:bg-slate-100 hover:scale-105 active:scale-95 transition-all rounded-[24px] font-black text-lg shadow-xl shadow-white/10">
-                 OPEN LIBRARY <ChevronRight className="w-6 h-6" />
+               <Link href="/resources/simulations" className="inline-flex items-center gap-3 px-8 py-5 bg-white text-orange-900 hover:bg-amber-50 hover:scale-105 active:scale-95 transition-all rounded-[24px] font-black text-lg shadow-xl shadow-white/10">
+                 OPEN GAMES LIBRARY <ChevronRight className="w-6 h-6" />
                </Link>
              </div>
            </div>
@@ -1066,19 +1305,19 @@ export default function ResourcesPage() {
       )}
 
       {/* Classroom Guide / Offline Section */}
-      <div className="bg-slate-900 rounded-[48px] p-12 relative overflow-hidden text-center lg:text-left shadow-2xl shadow-blue-900/20">
-          <div className="absolute top-0 right-0 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl -mr-20 -mt-20"></div>
+      <div className="bg-slate-900 rounded-[48px] p-12 relative overflow-hidden text-center lg:text-left shadow-2xl shadow-orange-900/20">
+          <div className="absolute top-0 right-0 w-96 h-96 bg-amber-500/10 rounded-full blur-3xl -mr-20 -mt-20"></div>
           <div className="relative z-10 flex flex-col lg:flex-row items-center gap-12">
              <div className="flex-1 space-y-6">
-                <div className="inline-flex items-center gap-2 px-4 py-2 bg-blue-500/10 text-blue-400 rounded-full text-[10px] font-black tracking-widest uppercase">
+                <div className="inline-flex items-center gap-2 px-4 py-2 bg-amber-500/10 text-amber-400 rounded-full text-[10px] font-black tracking-widest uppercase">
                    <Lightbulb className="w-4 h-4" /> Pro Teacher Tip
                 </div>
-                <h2 className="text-4xl font-black text-white leading-tight underline decoration-blue-500/30 decoration-8 underline-offset-4">Need a quick refresher <br/>for tomorrow&apos;s Class?</h2>
+                <h2 className="text-4xl font-black text-white leading-tight underline decoration-amber-500/30 decoration-8 underline-offset-4">Need a quick refresher <br/>for tomorrow&apos;s Class?</h2>
                 <p className="text-slate-400 text-lg leading-relaxed max-w-xl">
                    Download our level-specific &ldquo;Pedagogical Cheat-Sheets&rdquo; for at-a-glance grouping rules and activity targets.
                 </p>
                 <div className="flex flex-wrap items-center gap-4 pt-4">
-                   <button className="px-8 py-4 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-2xl transition-all shadow-lg shadow-blue-600/20 flex items-center gap-2">
+                   <button className="px-8 py-4 bg-orange-500 hover:bg-orange-600 text-white font-bold rounded-2xl transition-all shadow-lg shadow-orange-600/20 flex items-center gap-2">
                       <Download className="w-5 h-5"/> Download PDF Pack
                    </button>
                    <button className="px-8 py-4 bg-white/5 hover:bg-white/10 text-white font-bold rounded-2xl transition-all border border-white/10 flex items-center gap-2">
@@ -1088,11 +1327,11 @@ export default function ResourcesPage() {
              </div>
              <div className="hidden lg:grid grid-cols-2 gap-4 w-1/3 opacity-30">
                 <div className="aspect-square bg-white shadow-xl rounded-3xl p-6 flex flex-col items-center justify-center space-y-2">
-                   <SpellCheck className="w-8 h-8 text-blue-600" />
+                   <SpellCheck className="w-8 h-8 text-amber-600" />
                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Literacy</span>
                 </div>
                 <div className="aspect-square bg-white shadow-xl rounded-3xl p-6 flex flex-col items-center justify-center space-y-2 translate-y-6">
-                   <Binary className="w-8 h-8 text-indigo-600" />
+                   <Binary className="w-8 h-8 text-orange-600" />
                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Math</span>
                 </div>
              </div>

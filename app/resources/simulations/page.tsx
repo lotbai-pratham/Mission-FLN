@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils";
 import { usePoints } from "@/lib/points-store";
 import { useEffect, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
+import { useLanguage } from "@/context/LanguageContext";
 import { hasRole } from "@/lib/checkAccess";
 
 import { SIMS, GAMES, ALL, Item } from "@/lib/sim-data";
@@ -37,6 +38,7 @@ function SimulationsContent() {
   const isAdmin = hasRole(session, "admin");
   const userSchoolId = (session?.user as any)?.schoolId ?? undefined;
   const { xp, level, badge, showLevelUp, newLevelReached, dismissLevelUp } = usePoints();
+  const { t } = useLanguage();
 
   const [activeId, setActiveId] = useState<string | null>(null);
   const [showMatchmaker, setShowMatchmaker] = useState(false);
@@ -165,23 +167,23 @@ function SimulationsContent() {
         <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div className="space-y-3">
             <Link href="/resources" className="inline-flex items-center gap-2 text-xs font-bold text-slate-400 hover:text-white transition-colors">
-              <ArrowLeft className="w-3 h-3" /> Back to Implementation Corner
+              <ArrowLeft className="w-3 h-3" /> {t('Back to Classroom Implementation')}
             </Link>
             <div className="flex items-center gap-3">
               <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-yellow-400 to-orange-500 flex items-center justify-center shadow-lg shadow-orange-500/40">
                 <Gamepad2 className="w-7 h-7 text-white" />
               </div>
               <div>
-                <h1 className="text-3xl font-black text-white tracking-tight">Simulations & Games</h1>
-                <p className="text-slate-400 text-sm font-medium">Level-wise interactive tools for students & teachers</p>
+                <h1 className="text-3xl font-black text-white tracking-tight">{t('Simulations & Games') || 'Simulations & Games'}</h1>
+                <p className="text-slate-400 text-sm font-medium">{t('Level-wise interactive tools for students & teachers') || 'Level-wise interactive tools for students & teachers'}</p>
               </div>
             </div>
           </div>
           <div className="flex gap-3 flex-wrap">
-            <StatBadge icon="⚡" label="Your XP" value={xp} color="from-amber-400 to-orange-500" shadow="shadow-orange-500/40" />
-            <StatBadge icon="🆙" label="Level" value={level} color="from-indigo-500 to-blue-600" shadow="shadow-indigo-500/40" />
-            <StatBadge icon={badge.emoji} label="Badge" value={badge.name} color={badge.color} shadow="shadow-indigo-500/40" />
-            <StatBadge icon="🎮" label="Tools" value={ALL.length} color="from-slate-700 to-slate-800" />
+            <StatBadge icon="⚡" label={t("Your XP")} value={xp} color="from-amber-400 to-orange-500" shadow="shadow-orange-500/40" />
+            <StatBadge icon="🆙" label={t("Level")} value={level} color="from-indigo-500 to-blue-600" shadow="shadow-indigo-500/40" />
+            <StatBadge icon={badge.emoji} label={t("Badge")} value={badge.name} color={badge.color} shadow="shadow-indigo-500/40" />
+            <StatBadge icon="🎮" label={t("Tools")} value={ALL.length} color="from-slate-700 to-slate-800" />
           </div>
         </div>
       </div>
@@ -274,7 +276,7 @@ function SimulationsContent() {
             onClick={handleBackToLibrary}
             className="flex items-center gap-2 text-slate-500 hover:text-slate-800 dark:hover:text-white text-sm font-bold bg-slate-100 dark:bg-slate-800 px-4 py-2 rounded-xl hover:shadow-md transition-all w-fit"
           >
-            <ArrowLeft className="w-4 h-4" /> Back to Library
+            <ArrowLeft className="w-4 h-4" /> {t('Back to Library') || 'Back to Library'}
           </button>
           
           {/* Active game header label */}

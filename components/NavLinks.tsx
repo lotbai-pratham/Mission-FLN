@@ -34,14 +34,14 @@ export default function NavLinks({ isAdmin }: { isAdmin: boolean }) {
         />
       </div>
 
-      {/* Implementation Corner */}
+      {/* Classroom Implementation */}
       <div className="group relative py-2">
         <Link href="/resources" className="text-gray-500 dark:text-gray-300 hover:text-amber-600 dark:hover:text-amber-400 text-sm font-medium transition-colors flex items-center gap-1.5">
-          <GraduationCap className="w-4 h-4" /> {t('Implementation Corner')}
+          <GraduationCap className="w-4 h-4" /> {t('Classroom Implementation')}
         </Link>
         <NavTooltip 
-          title="Implementation Corner" 
-          description="Interactive game arcade containing 2v2 multiplayer simulations for students to practice literacy and numeracy." 
+          title={t('Classroom Implementation')} 
+          description="Interactive hub for teachers to run lessons, plan sessions, view training videos, download manuals, and launch FLN games." 
         />
       </div>
 

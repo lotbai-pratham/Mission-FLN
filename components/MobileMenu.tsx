@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 import { signOut } from "next-auth/react";
 import { cn } from "@/lib/utils";
+import { useLanguage } from "@/context/LanguageContext";
 
 interface Props {
   isAdmin: boolean;
@@ -19,13 +20,13 @@ interface Props {
 
 const NAV_LINKS = [
   { href: "/dashboard", label: "Dashboards", icon: BarChart3 },
-  { href: "/resources", label: "Implementation Corner", icon: GraduationCap },
+  { href: "/resources", label: "Classroom Implementation", icon: GraduationCap },
   { href: "/students", label: "Students", icon: Users },
   { href: "/assessments/live", label: "Record Score", icon: ClipboardPlus, highlight: true },
 ];
 
 const ADMIN_LINKS = [
-  { href: "/admin/upload", label: "Upload Data", icon: ShieldCheck },
+  { href: "/admin/upload", label: "Upload", icon: ShieldCheck },
   { href: "/admin/users", label: "Users", icon: Users },
   { href: "/admin/data", label: "Data", icon: Database },
   { href: "/admin/logins", label: "Logins", icon: KeyRound },
@@ -34,6 +35,7 @@ const ADMIN_LINKS = [
 export default function MobileMenu({ isAdmin, userName, userImage, isLoggedIn }: Props) {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
+  const { t } = useLanguage();
 
   function close() { setOpen(false); }
 
@@ -101,7 +103,7 @@ export default function MobileMenu({ isAdmin, userName, userImage, isLoggedIn }:
               )}
             >
               <Icon className="w-4 h-4 shrink-0" />
-              {label}
+              {t(label)}
             </Link>
           ))}
 
@@ -109,7 +111,7 @@ export default function MobileMenu({ isAdmin, userName, userImage, isLoggedIn }:
           {isAdmin && (
             <>
               <div className="pt-2 pb-1 px-3">
-                <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Admin</span>
+                <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('Admin')}</span>
               </div>
               {ADMIN_LINKS.map(({ href, label, icon: Icon }) => (
                 <Link
@@ -124,7 +126,7 @@ export default function MobileMenu({ isAdmin, userName, userImage, isLoggedIn }:
                   )}
                 >
                   <Icon className="w-4 h-4 shrink-0" />
-                  {label}
+                  {t(label)}
                 </Link>
               ))}
             </>
