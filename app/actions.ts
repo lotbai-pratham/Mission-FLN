@@ -1318,3 +1318,86 @@ export async function getStudentLeaderboard(filters: {
     )
     .slice(0, 100); // return top 100
 }
+
+export async function getSchoolRankings(divisionId?: string, projectOfficeId?: string, classNum?: number | 'all') {
+  const where: any = {};
+  if (divisionId) where.projectOffice = { divisionId };
+  if (projectOfficeId) where.projectOfficeId = projectOfficeId;
+
+  const studentWhere: any = {};
+  if (classNum && classNum !== 'all') {
+    studentWhere.class = Number(classNum);
+  }
+
+  const schools = await prisma.school.findMany({
+    where,
+    include: {
+      students: {
+        where: studentWhere,
+        include: {
+          assessments: {
+            where: { term: 'Endline' },
+            orderBy: { date: 'desc' },
+            take: 1
+          }
+        }
+      }
+    }
+  });
+
+  const rankings = schools.map(school => {
+    let totalAssessed = 0;
+    let storyReaders = 0;
+    let subtractionMasters = 0;
+
+    school.students.forEach(student => {
+      const latest = student.assessments[0];
+      if (latest) {
+        totalAssessed++;
+        if (latest.literacyLevel === 4) storyReaders++;
+        if (latest.subtraction === true || latest.numeracyLevel >= 4) subtractionMasters++;
+      }
+    });
+
+    return {
+      id: school.id,
+      name: school.name,
+      totalAssessed,
+      storyPct: totalAssessed > 0 ? Math.round((storyReaders / totalAssessed) * 100) : 0,
+      subtractionPct: totalAssessed > 0 ? Math.round((subtractionMasters / totalAssessed) * 100) : 0,
+      score: totalAssessed > 0 ? Math.round(((storyReaders + subtractionMasters) / (totalAssessed * 2)) * 100) : 0
+    };
+  });
+
+  return rankings.sort((a, b) => b.score - a.score);
+}
+
+export async function getSchoolStudentsDetails(schoolId: string, classNum?: number | 'all') {
+  const where: any = { schoolId };
+  if (classNum && classNum !== 'all') {
+    where.class = Number(classNum);
+  }
+
+  const students = await prisma.student.findMany({
+    where,
+    include: {
+      assessments: {
+        where: { term: 'Endline' },
+        orderBy: { date: 'desc' },
+        take: 1
+      }
+    },
+    orderBy: { name: 'asc' }
+  });
+
+  return students.map(s => {
+    const latest = s.assessments[0];
+    return {
+      id: s.id,
+      name: s.name,
+      classNum: s.class,
+      litLevel: latest?.literacyLevel ?? 0,
+      numLevel: latest?.numeracyLevel ?? 0,
+    };
+  });
+}

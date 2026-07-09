@@ -5,8 +5,8 @@ import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip,
   ResponsiveContainer, Legend, Cell, AreaChart, Area, LineChart, Line
 } from 'recharts';
-import { BookOpen, Calculator, Users, School, Filter, TrendingUp, LayoutDashboard, Search, Sparkles, AlertCircle, TrendingDown, Trophy, Medal, Lightbulb, Gamepad2, Target, ClipboardList, Clock, CheckCircle2, Activity } from 'lucide-react';
-import { getDashboardStats, getStrugglingStudents, getGrowthVelocity, getInterventionPlan, getPORankings, getStudentLeaderboard } from "@/app/actions";
+import { BookOpen, Calculator, Users, School, Filter, TrendingUp, LayoutDashboard, Search, Sparkles, AlertCircle, TrendingDown, Trophy, Medal, Lightbulb, Gamepad2, Target, ClipboardList, Clock, CheckCircle2, Activity, X } from 'lucide-react';
+import { getDashboardStats, getStrugglingStudents, getGrowthVelocity, getInterventionPlan, getPORankings, getStudentLeaderboard, getSchoolRankings, getSchoolStudentsDetails } from "@/app/actions";
 import { getImplementationAnalytics } from "@/app/actions/implementation";
 import { useLanguage } from "@/context/LanguageContext";
 
@@ -25,7 +25,7 @@ export default function DashboardClient({ initialStats, hierarchy }: { initialSt
   const [poId, setPoId] = useState("");
   const [schoolId, setSchoolId] = useState("");
   const [term, setTerm] = useState("");
-  const [activeTab, setActiveTab] = useState<'overview' | 'trends' | 'ranking' | 'students' | 'implementation'>('trends');
+  const [activeTab, setActiveTab] = useState<'overview' | 'trends' | 'ranking' | 'school-ranking' | 'students' | 'implementation'>('trends');
   useEffect(() => {
   // Clear struggling list whenever the Project Office changes to avoid stale critical alerts
   setStruggling([]);
@@ -42,6 +42,10 @@ export default function DashboardClient({ initialStats, hierarchy }: { initialSt
   const [isGeneratingPlan, setIsGeneratingPlan] = useState(false);
   const [implData, setImplData] = useState<any>(null);
   const [implPeriod, setImplPeriod] = useState<'7d' | '30d' | 'all'>('30d');
+  const [schoolRankings, setSchoolRankings] = useState<any[]>([]);
+  const [selectedSchoolForDetails, setSelectedSchoolForDetails] = useState<any>(null);
+  const [schoolStudentsDetails, setSchoolStudentsDetails] = useState<any[]>([]);
+  const [isLoadingStudents, setIsLoadingStudents] = useState(false);
 
   const activeDivision = hierarchy.find(d => d.id === divId);
 
@@ -64,6 +68,9 @@ export default function DashboardClient({ initialStats, hierarchy }: { initialSt
 
           const r = await getPORankings(divId || undefined, selectedClass);
           setRankings(r);
+
+          const sr = await getSchoolRankings(divId || undefined, poId || undefined, selectedClass);
+          setSchoolRankings(sr);
 
           const l = await getStudentLeaderboard({
             divisionId: divId || undefined,
@@ -391,6 +398,7 @@ export default function DashboardClient({ initialStats, hierarchy }: { initialSt
           ['trends', t('Target Tracking') || 'Level Trends', TrendingUp],
           ['overview', t('Growth Over Time') || 'Term Overview', LayoutDashboard],
           ['ranking', t('P.O. Rank') || 'P.O. Rank', Trophy],
+          ['school-ranking', t('School Rank') || 'School Rank', School],
           ['students', t('Student Leaderboard') || 'Student Leaderboard', Medal],
           ['implementation', t('Implementation Tracker') || 'Implementation Tracker', ClipboardList],
         ] as const).map(([id, label, Icon]) => (
@@ -576,6 +584,103 @@ export default function DashboardClient({ initialStats, hierarchy }: { initialSt
                           <AlertCircle className="w-10 h-10 text-slate-300" />
                        </div>
                        <p className="text-slate-400 font-bold">{t('No ranking data available for selected filters.')}</p>
+                    </div>
+                 )}
+               </div>
+            </div>
+         </div>
+      )}
+
+      {/* TAB: SCHOOL RANKING */}
+      {activeTab === 'school-ranking' && (
+        <div className={`space-y-6 animate-in slide-in-from-bottom-4 duration-500 ${isPending ? 'opacity-50' : ''}`}>
+           <div className="bg-white dark:bg-slate-900 rounded-[48px] p-10 border border-slate-100 dark:border-slate-800 shadow-2xl">
+              <div className="flex items-center justify-between mb-10">
+                 <div>
+                    <h2 className="text-3xl font-black text-slate-900 dark:text-white tracking-tight flex items-center gap-3">
+                       <School className="w-8 h-8 text-blue-500" /> {t('School FLN Leaderboard') || 'School FLN Leaderboard'}
+                    </h2>
+                    <p className="text-slate-500 font-medium mt-1">{t('Ranking based on student story reading and subtraction mastery rates. Click on a school to view student details.')}</p>
+                 </div>
+                 <div className="hidden md:flex gap-2">
+                    <div className="px-4 py-2 bg-blue-50 dark:bg-blue-900/30 rounded-xl text-[10px] font-black text-blue-600 uppercase tracking-widest border border-blue-100 dark:border-blue-800">
+                       {t('Top School')}: {schoolRankings[0]?.name || "N/A"}
+                    </div>
+                 </div>
+              </div>
+
+              <div className="space-y-4">
+                 {schoolRankings.map((school, index) => (
+                    <div 
+                      key={school.id} 
+                      onClick={async () => {
+                        setIsLoadingStudents(true);
+                        setSelectedSchoolForDetails(school);
+                        const students = await getSchoolStudentsDetails(school.id, selectedClass);
+                        setSchoolStudentsDetails(students);
+                        setIsLoadingStudents(false);
+                      }}
+                      className="group relative bg-slate-50 dark:bg-slate-800/40 hover:bg-white dark:hover:bg-slate-800 rounded-[32px] p-6 border border-slate-100 dark:border-slate-800 transition-all hover:shadow-xl hover:-translate-y-1 cursor-pointer"
+                    >
+                       <div className="flex flex-col md:flex-row items-center gap-8">
+                          {/* Rank */}
+                          <div className="flex items-center justify-center w-16 h-16 rounded-2xl bg-white dark:bg-slate-900 shadow-sm border border-slate-100 dark:border-slate-800">
+                             {index === 0 && <Medal className="w-8 h-8 text-yellow-500" />}
+                             {index === 1 && <Medal className="w-8 h-8 text-slate-400" />}
+                             {index === 2 && <Medal className="w-8 h-8 text-orange-400" />}
+                             {index > 2 && <span className="text-xl font-black text-slate-300">#{index + 1}</span>}
+                          </div>
+
+                          <div className="flex-1 space-y-4 w-full">
+                             <div className="flex items-center justify-between">
+                                <div className="flex items-center gap-3">
+                                   <h3 className="text-xl font-black text-slate-800 dark:text-white group-hover:text-blue-600 transition-colors">{school.name}</h3>
+                                   <span className="px-3 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-lg text-[10px] font-bold uppercase tracking-wider">School</span>
+                                </div>
+                                <div className="text-right">
+                                   <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('Score')}</p>
+                                   <p className="text-2xl font-black text-blue-600">{school.score}%</p>
+                                </div>
+                             </div>
+
+                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                {/* Story Progress */}
+                                <div className="space-y-2">
+                                   <div className="flex justify-between text-[11px] font-bold">
+                                      <span className="text-slate-500 uppercase tracking-wider">{t('Story Reading')}</span>
+                                      <span className="text-slate-800 dark:text-slate-200">{school.storyPct}%</span>
+                                   </div>
+                                   <div className="h-2 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
+                                      <div className="h-full bg-blue-500 transition-all duration-1000" style={{ width: `${school.storyPct}%` }} />
+                                   </div>
+                                </div>
+                                {/* Subtraction Progress */}
+                                <div className="space-y-2">
+                                   <div className="flex justify-between text-[11px] font-bold">
+                                      <span className="text-slate-500 uppercase tracking-wider">{t('Subtraction Mastery')}</span>
+                                      <span className="text-slate-800 dark:text-slate-200">{school.subtractionPct}%</span>
+                                   </div>
+                                   <div className="h-2 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
+                                      <div className="h-full bg-emerald-500 transition-all duration-1000" style={{ width: `${school.subtractionPct}%` }} />
+                                   </div>
+                                </div>
+                             </div>
+                          </div>
+
+                          <div className="shrink-0 text-center px-6 border-l border-slate-100 dark:border-slate-800 hidden lg:block">
+                             <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">{t('Total Assessed')}</p>
+                             <p className="text-xl font-black text-slate-800 dark:text-slate-100">{school.totalAssessed}</p>
+                          </div>
+                       </div>
+                    </div>
+                 ))}
+
+                 {schoolRankings.length === 0 && (
+                    <div className="py-20 text-center space-y-4">
+                       <div className="w-20 h-20 bg-slate-50 dark:bg-slate-800 rounded-full flex items-center justify-center mx-auto">
+                          <AlertCircle className="w-10 h-10 text-slate-300" />
+                       </div>
+                       <p className="text-slate-400 font-bold">{t('No school ranking data available for selected filters.')}</p>
                     </div>
                  )}
               </div>
@@ -982,6 +1087,75 @@ export default function DashboardClient({ initialStats, hierarchy }: { initialSt
           )}
         </div>
       )}
+
+      {/* STUDENT DETAILS POPUP */}
+      {selectedSchoolForDetails && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-in fade-in duration-200">
+          <div className="bg-white dark:bg-slate-900 rounded-3xl w-full max-w-3xl max-h-[85vh] flex flex-col shadow-2xl overflow-hidden animate-in zoom-in-95 duration-300">
+            {/* Header */}
+            <div className="p-6 border-b border-slate-200 dark:border-slate-800 flex justify-between items-center bg-slate-50 dark:bg-slate-800/50">
+              <div>
+                <h3 className="text-2xl font-black text-slate-800 dark:text-white flex items-center gap-3">
+                  <School className="w-6 h-6 text-blue-500" />
+                  {selectedSchoolForDetails.name}
+                </h3>
+                <p className="text-slate-500 text-sm font-medium mt-1">
+                  Total Assessed: <span className="font-bold text-slate-700 dark:text-slate-300">{selectedSchoolForDetails.totalAssessed}</span> | 
+                  Score: <span className="font-bold text-blue-600">{selectedSchoolForDetails.score}%</span>
+                </p>
+              </div>
+              <button 
+                onClick={() => setSelectedSchoolForDetails(null)}
+                className="w-10 h-10 rounded-full bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 flex items-center justify-center text-slate-600 dark:text-slate-300 transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            
+            {/* Body */}
+            <div className="p-6 overflow-y-auto flex-1 bg-slate-50/50 dark:bg-slate-900/50">
+              {isLoadingStudents ? (
+                <div className="flex flex-col items-center justify-center py-20 space-y-4">
+                  <div className="w-12 h-12 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin"></div>
+                  <p className="text-slate-500 font-medium animate-pulse">Loading student data...</p>
+                </div>
+              ) : schoolStudentsDetails.length === 0 ? (
+                <div className="flex flex-col items-center justify-center py-20 space-y-4 text-center">
+                  <div className="w-16 h-16 bg-slate-100 dark:bg-slate-800 rounded-full flex items-center justify-center">
+                    <AlertCircle className="w-8 h-8 text-slate-400" />
+                  </div>
+                  <p className="text-slate-500 font-bold">No students found with endline data in this school.</p>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {schoolStudentsDetails.map((s: any) => (
+                    <div key={s.id} className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl p-4 shadow-sm hover:shadow-md transition-shadow">
+                      <div className="flex justify-between items-start mb-3">
+                        <div className="font-bold text-slate-800 dark:text-slate-200">{s.name}</div>
+                        <div className="text-xs font-bold px-2 py-1 bg-slate-100 dark:bg-slate-700 text-slate-500 rounded-md">Grade {s.classNum}</div>
+                      </div>
+                      <div className="flex justify-between items-center text-sm mt-2">
+                        <div className="flex items-center gap-1.5 font-medium">
+                           <BookOpen className="w-4 h-4 text-blue-500" />
+                           <span className={s.litLevel >= 4 ? 'text-green-600 font-bold' : 'text-slate-600 dark:text-slate-400'}>
+                             {LIT_LABELS[s.litLevel] || 'Beginner'}
+                           </span>
+                        </div>
+                        <div className="flex items-center gap-1.5 font-medium">
+                           <Calculator className="w-4 h-4 text-emerald-500" />
+                           <span className={s.numLevel >= 4 ? 'text-green-600 font-bold' : 'text-slate-600 dark:text-slate-400'}>
+                             {NUM_LABELS[s.numLevel] || 'Beginner'}
+                           </span>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -1045,6 +1219,7 @@ function SummaryTable({ type, selectedClass, overallBreakdown, classBreakdown }:
           </tbody>
         </table>
       </div>
+
     </div>
   );
 }
