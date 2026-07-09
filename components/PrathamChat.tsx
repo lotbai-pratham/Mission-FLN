@@ -9,27 +9,47 @@ type Message = { role: "user" | "assistant"; content: string };
 function PrathamAvatar({ size = 40, className = "" }: { size?: number; className?: string }) {
   return (
     <svg width={size} height={size} viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
-      {/* Easel Legs & Cross-bar */}
-      <path d="M24 42 L20 58" stroke="#1E293B" strokeWidth="3.5" strokeLinecap="round" />
-      <path d="M40 42 L44 58" stroke="#1E293B" strokeWidth="3.5" strokeLinecap="round" />
-      <path d="M32 42 L32 54" stroke="#1E293B" strokeWidth="3" strokeLinecap="round" />
-      <path d="M22 50 L42 50" stroke="#1E293B" strokeWidth="3" strokeLinecap="round" />
-      
-      {/* Board Ears/Handles on top */}
-      <rect x="22" y="7" width="6" height="5" rx="1.5" fill="#FDBF15" stroke="#1E293B" strokeWidth="3" />
-      <rect x="36" y="7" width="6" height="5" rx="1.5" fill="#FDBF15" stroke="#1E293B" strokeWidth="3" />
-      
-      {/* Easel Board Body (Trapezoid) */}
-      <path d="M19 11 L45 11 L49 42 L15 42 Z" fill="#FDBF15" stroke="#1E293B" strokeWidth="3.5" strokeLinejoin="round" />
-      
+      <defs>
+        <linearGradient id="pratham-head" x1="14" y1="10" x2="50" y2="44" gradientUnits="userSpaceOnUse">
+          <stop offset="0%" stopColor="#FFD65C" />
+          <stop offset="100%" stopColor="#FDBF15" />
+        </linearGradient>
+        <linearGradient id="pratham-body" x1="18" y1="46" x2="46" y2="60" gradientUnits="userSpaceOnUse">
+          <stop offset="0%" stopColor="#FDBF15" />
+          <stop offset="100%" stopColor="#F5A300" />
+        </linearGradient>
+      </defs>
+
+      {/* Shoulders / body */}
+      <path d="M18 47 C18 58 24 60 32 60 C40 60 46 58 46 47 C46 44.5 43.5 43 32 43 C20.5 43 18 44.5 18 47 Z" fill="url(#pratham-body)" stroke="#1E293B" strokeWidth="2.5" strokeLinejoin="round" />
+      {/* Chest badge */}
+      <circle cx="32" cy="51" r="3.2" fill="#E8232A" />
+
+      {/* Antennae */}
+      <path d="M23 13 L21 7" stroke="#1E293B" strokeWidth="2.5" strokeLinecap="round" />
+      <path d="M41 13 L43 7" stroke="#1E293B" strokeWidth="2.5" strokeLinecap="round" />
+      <circle cx="21" cy="6" r="2.6" fill="#E8232A" stroke="#1E293B" strokeWidth="1.5" />
+      <circle cx="43" cy="6" r="2.6" fill="#E8232A" stroke="#1E293B" strokeWidth="1.5" />
+
+      {/* Head (rounded, humanoid) */}
+      <rect x="13" y="11" width="38" height="34" rx="15" fill="url(#pratham-head)" stroke="#1E293B" strokeWidth="2.5" />
+
+      {/* Ears */}
+      <circle cx="13.5" cy="28" r="3.5" fill="#FDBF15" stroke="#1E293B" strokeWidth="2" />
+      <circle cx="50.5" cy="28" r="3.5" fill="#FDBF15" stroke="#1E293B" strokeWidth="2" />
+
+      {/* Blush */}
+      <circle cx="20.5" cy="31" r="3" fill="#E8232A" opacity="0.35" />
+      <circle cx="43.5" cy="31" r="3" fill="#E8232A" opacity="0.35" />
+
       {/* Eyes */}
-      <circle cx="27" cy="22" r="2.8" fill="#1E293B" />
-      <circle cx="37" cy="22" r="2.8" fill="#1E293B" />
-      
-      {/* Smiling mouth */}
-      <path d="M23 29 Q32 37 41 29" stroke="#1E293B" strokeWidth="3.2" strokeLinecap="round" fill="none" />
-      <path d="M21 28 Q22.5 30 24 29" stroke="#1E293B" strokeWidth="2.8" strokeLinecap="round" fill="none" />
-      <path d="M43 28 Q41.5 30 40 29" stroke="#1E293B" strokeWidth="2.8" strokeLinecap="round" fill="none" />
+      <circle cx="24.5" cy="26" r="3.4" fill="#1E293B" />
+      <circle cx="25.6" cy="24.8" r="1.1" fill="#FFFFFF" />
+      <circle cx="39.5" cy="26" r="3.4" fill="#1E293B" />
+      <circle cx="40.6" cy="24.8" r="1.1" fill="#FFFFFF" />
+
+      {/* Warm smile */}
+      <path d="M23.5 33.5 Q32 40 40.5 33.5" stroke="#1E293B" strokeWidth="2.8" strokeLinecap="round" fill="none" />
     </svg>
   );
 }
