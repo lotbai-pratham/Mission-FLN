@@ -1332,6 +1332,11 @@ export async function getSchoolRankings(divisionId?: string, projectOfficeId?: s
   const schools = await prisma.school.findMany({
     where,
     include: {
+      projectOffice: {
+        include: {
+          division: true
+        }
+      },
       students: {
         where: studentWhere,
         include: {
@@ -1362,6 +1367,9 @@ export async function getSchoolRankings(divisionId?: string, projectOfficeId?: s
     return {
       id: school.id,
       name: school.name,
+      udiseCode: school.udiseCode,
+      poName: school.projectOffice.name,
+      divName: school.projectOffice.division.name,
       totalAssessed,
       storyPct: totalAssessed > 0 ? Math.round((storyReaders / totalAssessed) * 100) : 0,
       subtractionPct: totalAssessed > 0 ? Math.round((subtractionMasters / totalAssessed) * 100) : 0,

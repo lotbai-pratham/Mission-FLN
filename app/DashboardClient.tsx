@@ -633,9 +633,15 @@ export default function DashboardClient({ initialStats, hierarchy }: { initialSt
 
                           <div className="flex-1 space-y-4 w-full">
                              <div className="flex items-center justify-between">
-                                <div className="flex items-center gap-3">
-                                   <h3 className="text-xl font-black text-slate-800 dark:text-white group-hover:text-blue-600 transition-colors">{school.name}</h3>
-                                   <span className="px-3 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-lg text-[10px] font-bold uppercase tracking-wider">School</span>
+                                <div>
+                                   <div className="flex items-center gap-3">
+                                      <h3 className="text-xl font-black text-slate-800 dark:text-white group-hover:text-blue-600 transition-colors">{school.name}</h3>
+                                      <span className="px-3 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-lg text-[10px] font-bold uppercase tracking-wider">School</span>
+                                   </div>
+                                   <div className="flex flex-wrap items-center gap-2 mt-1.5">
+                                      <span className="text-xs font-bold text-slate-600 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded shadow-sm border border-slate-200 dark:border-slate-700">UDISE: {school.udiseCode}</span>
+                                      <span className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">{school.poName} • {school.divName}</span>
+                                   </div>
                                 </div>
                                 <div className="text-right">
                                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('Score')}</p>
@@ -1099,6 +1105,10 @@ export default function DashboardClient({ initialStats, hierarchy }: { initialSt
                   <School className="w-6 h-6 text-blue-500" />
                   {selectedSchoolForDetails.name}
                 </h3>
+                <div className="flex flex-wrap items-center gap-2 mt-2 mb-2">
+                  <span className="text-xs font-bold text-slate-600 dark:text-slate-400 bg-slate-200/50 dark:bg-slate-700/50 px-2 py-0.5 rounded shadow-sm">UDISE: {selectedSchoolForDetails.udiseCode}</span>
+                  <span className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">{selectedSchoolForDetails.poName} • {selectedSchoolForDetails.divName}</span>
+                </div>
                 <p className="text-slate-500 text-sm font-medium mt-1">
                   Total Assessed: <span className="font-bold text-slate-700 dark:text-slate-300">{selectedSchoolForDetails.totalAssessed}</span> | 
                   Score: <span className="font-bold text-blue-600">{selectedSchoolForDetails.score}%</span>
