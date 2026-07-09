@@ -319,8 +319,11 @@ function MissionControl() {
                 <span className="px-2 sm:px-3 py-0.5 sm:py-1 bg-blue-500/10 text-blue-400 rounded-full text-[9px] sm:text-[10px] font-black uppercase tracking-widest">Daily Mission Flow</span>
                 {isTimerRunning && <span className="flex h-2 w-2 rounded-full bg-orange-500 animate-ping" />}
               </div>
-              <h1 className={cn("font-black text-white tracking-tighter truncate", isFocusMode ? "text-base sm:text-xl" : "text-xl sm:text-4xl")}>
-                {step === 'setup' ? "Ready for Action?" : `Class ${classNum}${subject ? ` — ${subject === 'maths' ? 'Maths' : 'Language'}` : ''}${selectedGroupIdx !== null && sessionPlan ? ` · ${sessionPlan.groups[selectedGroupIdx].name}` : ''}`}
+              <h1 className={cn(
+                "font-black text-white tracking-tighter truncate", 
+                isFocusMode ? "text-base sm:text-xl" : (step === 'setup' ? "text-lg sm:text-2xl" : "text-xl sm:text-4xl")
+              )}>
+                {step === 'setup' ? "Configure Today's Plan" : `Class ${classNum}${subject ? ` — ${subject === 'maths' ? 'Maths' : 'Language'}` : ''}${selectedGroupIdx !== null && sessionPlan ? ` · ${sessionPlan.groups[selectedGroupIdx].name}` : ''}`}
               </h1>
             </div>
           </div>
@@ -1189,7 +1192,7 @@ export default function ResourcesPage() {
             <div>
               <strong className="text-slate-900 dark:text-white font-extrabold text-sm block mb-1">📋 Session Planner</strong>
               <p className="text-slate-600 dark:text-slate-400 leading-relaxed font-medium">
-                The **Session Planner** guides teachers through the structured 90-minute daily teaching flow. Specify the classroom range, group students dynamically based on their actual learning levels (rather than grade or age), view step-by-step teaching guidelines, track session timing, and record final results directly to the backend.
+                The Session Planner guides teachers through the structured 90-minute daily teaching flow. Specify the classroom range, group students dynamically based on their actual learning levels (rather than grade or age), view step-by-step teaching guidelines, track session timing, and record final results directly to the backend.
               </p>
             </div>
           )}
@@ -1197,7 +1200,7 @@ export default function ResourcesPage() {
             <div>
               <strong className="text-slate-900 dark:text-white font-extrabold text-sm block mb-1">🎥 Pedagogy Videos</strong>
               <p className="text-slate-600 dark:text-slate-400 leading-relaxed font-medium">
-                The **Pedagogy Videos** section contains recorded classroom demonstrations, teacher instructions, and pedagogical tips. Watch seasoned coaches deploy sticks and bundles for math recognition or guide children through reading comprehension exercises.
+                The Pedagogy Videos section contains recorded classroom demonstrations, teacher instructions, and pedagogical tips. Watch seasoned coaches deploy sticks and bundles for math recognition or guide children through reading comprehension exercises.
               </p>
             </div>
           )}
@@ -1205,7 +1208,7 @@ export default function ResourcesPage() {
             <div>
               <strong className="text-slate-900 dark:text-white font-extrabold text-sm block mb-1">📚 TaRL Help Manuals</strong>
               <p className="text-slate-600 dark:text-slate-400 leading-relaxed font-medium">
-                The **TaRL Help Manuals** section provides printable instruction booklets, activity worksheets, and ASER assessment key packs. Download these PDF files directly to your mobile device or tablet to run offline classrooms in remote locations.
+                The TaRL Help Manuals section provides printable instruction booklets, activity worksheets, and ASER assessment key packs. Download these PDF files directly to your mobile device or tablet to run offline classrooms in remote locations.
               </p>
             </div>
           )}
@@ -1213,7 +1216,7 @@ export default function ResourcesPage() {
             <div>
               <strong className="text-slate-900 dark:text-white font-extrabold text-sm block mb-1">🎮 FLN Games</strong>
               <p className="text-slate-600 dark:text-slate-400 leading-relaxed font-medium">
-                The **FLN Games** library holds interactive digital twins. Use shared tablets in the classroom to let children build letters, play skip-counting train games, or compete in 2v2 multiplayer addition battles to make foundational learning engaging and gamified.
+                The FLN Games library holds interactive digital twins. Use shared tablets in the classroom to let children build letters, play skip-counting train games, or compete in 2v2 multiplayer addition battles to make foundational learning engaging and gamified.
               </p>
             </div>
           )}

@@ -9,21 +9,27 @@ type Message = { role: "user" | "assistant"; content: string };
 function PrathamAvatar({ size = 40, className = "" }: { size?: number; className?: string }) {
   return (
     <svg width={size} height={size} viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
-      <ellipse cx="32" cy="52" rx="14" ry="9" fill="#E8232A" />
-      <path d="M24 46 Q32 50 40 46 L38 53 Q32 56 26 53 Z" fill="#c41e24" />
-      <circle cx="32" cy="26" r="15" fill="#FDBCB4" />
-      <path d="M17 24 Q17 10 32 11 Q47 10 47 24 Q47 16 32 15 Q17 16 17 24Z" fill="#2D1B00" />
-      <circle cx="27" cy="25" r="2.2" fill="#1a1a1a" />
-      <circle cx="37" cy="25" r="2.2" fill="#1a1a1a" />
-      <circle cx="27.8" cy="24.2" r="0.7" fill="white" />
-      <circle cx="37.8" cy="24.2" r="0.7" fill="white" />
-      <path d="M26 31 Q32 36 38 31" stroke="#c0736a" strokeWidth="1.8" strokeLinecap="round" fill="none" />
-      <rect x="20" y="44" width="11" height="8" rx="1.5" fill="#F97316" />
-      <rect x="20.5" y="44.5" width="10" height="7" rx="1" fill="#FED7AA" />
-      <line x1="26" y1="44.5" x2="26" y2="51.5" stroke="#F97316" strokeWidth="0.8" />
-      <line x1="22" y1="47" x2="25" y2="47" stroke="#F97316" strokeWidth="0.7" />
-      <line x1="22" y1="49" x2="25" y2="49" stroke="#F97316" strokeWidth="0.7" />
-      <path d="M49 10 L50.2 13.6 L54 13.6 L51 15.8 L52.2 19.4 L49 17.2 L45.8 19.4 L47 15.8 L44 13.6 L47.8 13.6 Z" fill="#F97316" />
+      {/* Easel Legs & Cross-bar */}
+      <path d="M24 42 L20 58" stroke="#1E293B" strokeWidth="3.5" strokeLinecap="round" />
+      <path d="M40 42 L44 58" stroke="#1E293B" strokeWidth="3.5" strokeLinecap="round" />
+      <path d="M32 42 L32 54" stroke="#1E293B" strokeWidth="3" strokeLinecap="round" />
+      <path d="M22 50 L42 50" stroke="#1E293B" strokeWidth="3" strokeLinecap="round" />
+      
+      {/* Board Ears/Handles on top */}
+      <rect x="22" y="7" width="6" height="5" rx="1.5" fill="#FDBF15" stroke="#1E293B" strokeWidth="3" />
+      <rect x="36" y="7" width="6" height="5" rx="1.5" fill="#FDBF15" stroke="#1E293B" strokeWidth="3" />
+      
+      {/* Easel Board Body (Trapezoid) */}
+      <path d="M19 11 L45 11 L49 42 L15 42 Z" fill="#FDBF15" stroke="#1E293B" strokeWidth="3.5" strokeLinejoin="round" />
+      
+      {/* Eyes */}
+      <circle cx="27" cy="22" r="2.8" fill="#1E293B" />
+      <circle cx="37" cy="22" r="2.8" fill="#1E293B" />
+      
+      {/* Smiling mouth */}
+      <path d="M23 29 Q32 37 41 29" stroke="#1E293B" strokeWidth="3.2" strokeLinecap="round" fill="none" />
+      <path d="M21 28 Q22.5 30 24 29" stroke="#1E293B" strokeWidth="2.8" strokeLinecap="round" fill="none" />
+      <path d="M43 28 Q41.5 30 40 29" stroke="#1E293B" strokeWidth="2.8" strokeLinecap="round" fill="none" />
     </svg>
   );
 }
