@@ -14,31 +14,32 @@ export type Resource = {
 
 export const VIDEOS: Resource[] = [
   {
-    title: "TaRL Classroom Demo (Level-1)",
+    title: "आधारशिला: खेळ आधारित शिक्षण (आठवडा १)",
     category: "Video",
-    level: "1-9",
-    description: "Real-world demonstration of grouping students and handling Level-1 (Number 1-9) activities.",
+    level: "Letter",
+    description: "अंगणवाडीतील मुलांच्या स्वागताची तयारी आणि प्राथमिक खेळ (Week 1 play-based routines and warm-up).",
     id: "S6vX_2A-n_8",
   },
   {
-    title: "Language Activity: Story Level",
+    title: "आधारशिला: खेळ आधारित शिक्षण (आठवडा ८)",
     category: "Video",
-    level: "Para/Story",
-    description: "Advanced literacy coaching: How to help students move from comprehension to storytelling.",
+    level: "Word",
+    description: "चित्र वाचन आणि शब्दांच्या खेळांचे सादरीकरण (Week 8 active picture narration and word games).",
     id: "m6E6A2Y77I4",
   },
   {
-    title: "Math Activity: Number Recognition",
+    title: "आधारशिला: खेळ आधारित शिक्षण (आठवडा १२)",
     category: "Video",
-    level: "10-99",
-    description: "Using the sticks and bundles method in a physical classroom setting.",
+    level: "1-9",
+    description: "अंक ओळख आणि बियांच्या मदतीने गणितीय गट पाडणे (Week 12 number recognition and seed counting play).",
     id: "S9oE66E2E88",
   },
   {
-    title: "Teacher Grouping Strategies",
+    title: "आधारशिला: खेळ आधारित शिक्षण (आठवडा २२)",
     category: "Video",
-    description: "The core of TaRL: How to effectively group 30+ students by their level.",
-    id: "9G6j9W_0z0E",
+    level: "Para/Story",
+    description: "जोडाक्षरे आणि प्रगत गोष्टींची ओळख (Week 22 compound letters and advanced storytelling).",
+    id: "LmtpWTPA6GM",
   }
 ];
 

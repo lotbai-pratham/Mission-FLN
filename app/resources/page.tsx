@@ -1310,19 +1310,29 @@ export default function ResourcesPage() {
           <div className="relative z-10 flex flex-col lg:flex-row items-center gap-12">
              <div className="flex-1 space-y-6">
                 <div className="inline-flex items-center gap-2 px-4 py-2 bg-amber-500/10 text-amber-400 rounded-full text-[10px] font-black tracking-widest uppercase">
-                   <Lightbulb className="w-4 h-4" /> Pro Teacher Tip
+                   <Lightbulb className="w-4 h-4" /> {t('TLM Guide') || 'TLM Guide'}
                 </div>
-                <h2 className="text-4xl font-black text-white leading-tight underline decoration-amber-500/30 decoration-8 underline-offset-4">Need a quick refresher <br/>for tomorrow&apos;s Class?</h2>
+                <h2 className="text-4xl font-black text-white leading-tight underline decoration-amber-500/30 decoration-8 underline-offset-4">{t('Maximize Learning with TLM') || 'Maximize Learning with TLM'}</h2>
                 <p className="text-slate-400 text-lg leading-relaxed max-w-xl">
-                   Download our level-specific &ldquo;Pedagogical Cheat-Sheets&rdquo; for at-a-glance grouping rules and activity targets.
+                   <strong>Fact:</strong> Integrating physical Teaching Learning Materials (TLM) in foundational classrooms increases student concept retention by up to <strong>80%</strong> and significantly speeds up level transition times.
                 </p>
                 <div className="flex flex-wrap items-center gap-4 pt-4">
-                   <button className="px-8 py-4 bg-orange-500 hover:bg-orange-600 text-white font-bold rounded-2xl transition-all shadow-lg shadow-orange-600/20 flex items-center gap-2">
-                      <Download className="w-5 h-5"/> Download PDF Pack
-                   </button>
-                   <button className="px-8 py-4 bg-white/5 hover:bg-white/10 text-white font-bold rounded-2xl transition-all border border-white/10 flex items-center gap-2">
-                       <ExternalLink className="w-5 h-5"/> Visit ASER Portal
-                   </button>
+                   <a 
+                      href="https://heyzine.com/flip-book/3086ea2f63.html" 
+                      target="_blank" 
+                      rel="noopener noreferrer" 
+                      className="px-8 py-4 bg-orange-500 hover:bg-orange-600 text-white font-bold rounded-2xl transition-all shadow-lg shadow-orange-600/20 flex items-center gap-2"
+                   >
+                      <BookOpen className="w-5 h-5"/> {t('Read TLM Manual') || 'Read TLM Manual'}
+                   </a>
+                   <a 
+                      href="https://www.youtube.com/playlist?list=PL3qns3Ur1ve3FzhebDIU1P63vIIndd5bz" 
+                      target="_blank" 
+                      rel="noopener noreferrer" 
+                      className="px-8 py-4 bg-white/5 hover:bg-white/10 text-white font-bold rounded-2xl transition-all border border-white/10 flex items-center gap-2"
+                   >
+                       <MonitorPlay className="w-5 h-5"/> {t('TLM Support Videos') || 'TLM Support Videos'}
+                   </a>
                 </div>
              </div>
              <div className="hidden lg:grid grid-cols-2 gap-4 w-1/3 opacity-30">
