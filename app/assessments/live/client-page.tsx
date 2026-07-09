@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useTransition, useEffect } from "react";
-import { School, User, CheckCircle2, Navigation, Check, X, FileText, UserPlus, WifiOff, Sparkles } from "lucide-react";
+import { useState, useTransition, useEffect, useRef, useCallback } from "react";
+import { School, User, CheckCircle2, Navigation, Check, X, FileText, UserPlus, WifiOff, Sparkles, Mic, MicOff, AlertCircle } from "lucide-react";
 import { createAssessment, createStudent, getStudentsBySchool } from "@/app/actions";
 import { useRouter } from "next/navigation";
 import { addToQueue, saveHierarchyCache, getHierarchyCache } from "@/lib/offline-queue";
@@ -84,6 +84,102 @@ export default function LiveTrackerClient({ hierarchy: serverHierarchy, settings
   const [numNode, setNumNode] = useState<'2-digit' | '1-digit' | '3-digit'>('2-digit');
   const [currentOp, setCurrentOp] = useState<'add' | 'sub' | 'div'>('add');
 
+  // Voice AI
+  const [isListening, setIsListening] = useState(false);
+  const [transcript, setTranscript] = useState("");
+  const [fluencyScore, setFluencyScore] = useState<number | null>(null);
+  const [browserSupportError, setBrowserSupportError] = useState("");
+  const recognitionRef = useRef<any>(null);
+
+  // Setup Speech Recognition
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+      if (SpeechRecognition) {
+        recognitionRef.current = new SpeechRecognition();
+        recognitionRef.current.continuous = true;
+        recognitionRef.current.interimResults = true;
+        recognitionRef.current.lang = 'mr-IN'; // Default to Marathi/Hindi
+
+        recognitionRef.current.onresult = (event: any) => {
+          let finalTranscript = "";
+          let interimTranscript = "";
+          for (let i = 0; i < event.results.length; i++) {
+            if (event.results[i].isFinal) {
+              finalTranscript += event.results[i][0].transcript + " ";
+            } else {
+              interimTranscript += event.results[i][0].transcript + " ";
+            }
+          }
+          setTranscript((finalTranscript + interimTranscript).trim());
+        };
+
+        recognitionRef.current.onerror = (event: any) => {
+          console.error("Speech recognition error", event.error);
+          setIsListening(false);
+        };
+
+        recognitionRef.current.onend = () => {
+          setIsListening(false);
+        };
+      } else {
+        setBrowserSupportError("Voice assessment is not supported on this browser.");
+      }
+    }
+  }, []);
+
+  const toggleListening = () => {
+    if (!recognitionRef.current) return;
+    if (isListening) {
+      recognitionRef.current.stop();
+      setIsListening(false);
+    } else {
+      setTranscript("");
+      setFluencyScore(null);
+      recognitionRef.current.start();
+      setIsListening(true);
+    }
+  };
+
+  // Calculate Fluency
+  useEffect(() => {
+    if (step === 'literacy' && transcript.length > 0) {
+      const targetText = getAsset(litNode);
+      if (typeof targetText === 'string') {
+        const targetWords = targetText.replace(/[.,!?]/g, '').split(/\s+/).filter(Boolean);
+        const spokenWords = transcript.replace(/[.,!?]/g, '').split(/\s+/).filter(Boolean);
+        
+        let matches = 0;
+        targetWords.forEach(tw => {
+          if (spokenWords.some(sw => sw.toLowerCase() === tw.toLowerCase())) {
+            matches++;
+          }
+        });
+        
+        const score = Math.round((matches / targetWords.length) * 100);
+        setFluencyScore(score);
+      }
+    }
+  }, [transcript, litNode]);
+
+  const renderHighlightedText = () => {
+    const targetText = getAsset(litNode) as string;
+    if (!transcript) return targetText;
+    
+    const targetWords = targetText.split(/\s+/);
+    const spokenWords = transcript.replace(/[.,!?]/g, '').split(/\s+/).map(w => w.toLowerCase());
+    
+    return targetWords.map((word, idx) => {
+      const cleanWord = word.replace(/[.,!?]/g, '').toLowerCase();
+      const isMatched = spokenWords.includes(cleanWord);
+      return (
+        <span key={idx} className={isMatched ? "text-green-600 bg-green-100 px-1 rounded transition-colors" : "text-slate-800"}>
+          {word}{" "}
+        </span>
+      );
+    });
+  };
+
   const fetchStudents = async (sId: string) => {
     setSchoolId(sId);
     setStudentId("");
@@ -98,10 +194,16 @@ export default function LiveTrackerClient({ hierarchy: serverHierarchy, settings
   const handleSetupNext = () => {
     if (!studentId || !assessorName) return;
     if (studentId === "NEW" && !newStudentName.trim()) return alert("Enter the new student's name!");
+    setTranscript("");
+    setFluencyScore(null);
+    if (isListening && recognitionRef.current) recognitionRef.current.stop();
     setStep('literacy');
   };
 
   const handleLitAnswer = (pass: boolean) => {
+    setTranscript("");
+    setFluencyScore(null);
+    if (isListening && recognitionRef.current) recognitionRef.current.stop();
     if (funMode) { trigger(pass); if (pass) setStarsEarned(s => Math.min(s + 1, TOTAL_STARS)); }
     switch (litNode) {
       case 'Paragraph':
@@ -299,18 +401,60 @@ export default function LiveTrackerClient({ hierarchy: serverHierarchy, settings
               {!funMode && <p className="mt-2 font-medium">Stage: <span className="font-bold underline">{litNode.toUpperCase()}</span></p>}
             </div>
             <div className="flex-1 p-8 flex flex-col items-center justify-center text-center space-y-6 animate-in slide-in-from-right duration-300">
-              {funMode && <Mascot mood="think" />}
+              {funMode && <Mascot mood={isListening ? "happy" : "think"} />}
+              
+              {/* Transcript Debug & Voice Control */}
+              {(litNode === 'Story' || litNode === 'Paragraph') && (
+                <div className="w-full max-w-xl flex items-center justify-between gap-4">
+                  <button 
+                    onClick={toggleListening}
+                    disabled={!!browserSupportError}
+                    className={`flex items-center gap-2 px-6 py-3 rounded-full font-bold text-white transition-all shadow-lg ${isListening ? 'bg-red-500 animate-pulse' : 'bg-blue-600 hover:bg-blue-700'} disabled:opacity-50`}
+                  >
+                    {isListening ? <MicOff className="w-5 h-5" /> : <Mic className="w-5 h-5" />}
+                    {isListening ? 'Stop Listening' : 'AI Voice Assess'}
+                  </button>
+                  
+                  {fluencyScore !== null && (
+                    <div className="flex items-center gap-2 bg-slate-100 dark:bg-slate-800 px-4 py-2 rounded-xl">
+                      <span className="text-sm font-bold text-slate-500">Fluency:</span>
+                      <span className={`text-2xl font-black ${fluencyScore >= 80 ? 'text-green-500' : 'text-orange-500'}`}>
+                        {fluencyScore}%
+                      </span>
+                    </div>
+                  )}
+                </div>
+              )}
+              {browserSupportError && (
+                <p className="text-sm text-red-500 flex items-center gap-1"><AlertCircle className="w-4 h-4" /> {browserSupportError}</p>
+              )}
+
               <div className={`w-full p-8 rounded-3xl border-2 shadow-inner min-h-[160px] flex items-center justify-center ${funMode ? 'bg-white border-orange-200' : 'bg-orange-50 dark:bg-slate-800 border-orange-100 dark:border-slate-700'}`}>
                  <p className={`text-slate-800 font-medium ${litNode === 'Story' || litNode === 'Paragraph' ? 'text-2xl leading-relaxed' : 'text-5xl tracking-widest'}`}>
-                    {litNode === 'Story' && getAsset('Story')}
-                    {litNode === 'Paragraph' && getAsset('Paragraph')}
-                    {litNode === 'Words' && getAsset('Words')}
-                    {litNode === 'Letters' && getAsset('Letters')}
+                    {(litNode === 'Story' || litNode === 'Paragraph') 
+                      ? renderHighlightedText() 
+                      : (litNode === 'Words' ? getAsset('Words') : getAsset('Letters'))}
                  </p>
               </div>
+
+              {isListening && transcript && (
+                <div className="w-full max-w-2xl bg-slate-50 dark:bg-slate-800/50 p-4 rounded-xl border border-slate-200 dark:border-slate-700 text-left">
+                  <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Live Transcript</p>
+                  <p className="text-slate-600 dark:text-slate-300 text-sm italic">{transcript}</p>
+                </div>
+              )}
+
               <p className="text-slate-500 font-semibold text-lg flex items-center gap-2">
                 {funMode ? '🌟 Can this superstar read it?' : <><FileText className="w-5 h-5"/> Did the child read this fluently?</>}
               </p>
+
+              {/* Auto-scoring suggestion highlight */}
+              {fluencyScore !== null && fluencyScore >= 80 && (
+                <div className="bg-green-100 text-green-700 px-4 py-2 rounded-xl text-sm font-bold animate-bounce">
+                  ✨ AI Suggests: Pass!
+                </div>
+              )}
+
               <div className="flex gap-4 w-full max-w-md">
                 <button onClick={() => handleLitAnswer(true)} className={`flex-1 py-4 rounded-xl font-bold text-xl flex items-center justify-center gap-2 transition-all border-2 ${funMode ? 'bg-green-400 border-green-500 text-white hover:bg-green-500 text-2xl' : 'bg-white border-slate-200 hover:border-green-500 hover:bg-green-50 text-slate-700 hover:text-green-700'}`}>
                   {funMode ? '⭐ YES!' : <><Check className="w-6 h-6"/> YES</>}
