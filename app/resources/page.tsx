@@ -1081,6 +1081,31 @@ const MANUALS = [
   }
 ];
 
+// --- Playful Vector Doodles (Hand-drawn style) ---
+const DoodleStar = ({ className }: { className?: string }) => (
+  <svg className={cn("animate-pulse duration-1000 select-none pointer-events-none", className)} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M12 2c.2 1.8 1.5 3.1 3.3 3.3.2 0 .5 0 .7.1-1.8.2-3.1 1.5-3.3 3.3 0 .2 0 .5-.1.7-.2-1.8-1.5-3.1-3.3-3.3 0 0 0 0 0 0 1.8-.2 3.1-1.5 3.3-3.3v-.1z" />
+  </svg>
+);
+
+const DoodleSquiggle = ({ className }: { className?: string }) => (
+  <svg className={cn("select-none pointer-events-none animate-bounce duration-3000", className)} viewBox="0 0 60 20" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+    <path d="M5 10c8-8 12 8 20 0s12-8 20 0 10 8 10 0" />
+  </svg>
+);
+
+const DoodleLoop = ({ className }: { className?: string }) => (
+  <svg className={cn("select-none pointer-events-none animate-spin duration-[10s] linear infinite", className)} viewBox="0 0 30 30" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+    <path d="M15 5c5 0 10 5 10 10s-5 10-10 10-10-5-10-10 3-8 7-9l3-1" />
+  </svg>
+);
+
+const DoodleCloud = ({ className }: { className?: string }) => (
+  <svg className={cn("select-none pointer-events-none opacity-30 animate-pulse duration-3000", className)} viewBox="0 0 40 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M10 18a6 6 0 0 1 0-12 8 8 0 0 1 15-2 6 6 0 0 1 5 10h-2" />
+  </svg>
+);
+
 // --- Main Resources Page Component (Implementation Corner) ---
 export default function ResourcesPage() {
   const { t } = useLanguage();
@@ -1096,7 +1121,13 @@ export default function ResourcesPage() {
   ], [t]);
 
   return (
-    <div className="max-w-6xl mx-auto px-4 py-12 space-y-8 animate-in fade-in duration-700">
+    <div className="max-w-6xl mx-auto px-4 py-12 space-y-8 animate-in fade-in duration-700 relative overflow-hidden">
+      {/* Floating Playful Doodles */}
+      <DoodleStar className="absolute top-10 right-10 w-8 h-8 text-amber-500/30 hidden md:block" />
+      <DoodleStar className="absolute top-44 left-12 w-6 h-6 text-orange-500/20 hidden lg:block" />
+      <DoodleSquiggle className="absolute top-[350px] right-4 w-12 h-6 text-orange-500/20 hidden xl:block" />
+      <DoodleLoop className="absolute bottom-[200px] left-6 w-8 h-8 text-amber-500/25 hidden xl:block" />
+      <DoodleCloud className="absolute top-1/3 left-10 w-16 h-10 text-blue-500/10 hidden xl:block" />
       
       {/* Hero Section */}
       <div className="text-center space-y-4 max-w-3xl mx-auto">
@@ -1263,8 +1294,10 @@ export default function ResourcesPage() {
                        {art.tags?.map(t => <span key={t} className="text-[10px] font-bold text-slate-400 bg-slate-50 dark:bg-slate-850 px-3 py-1 rounded-full">#{t}</span>)}
                     </div>
                     <a 
-                      href={art.link}
+                      href={`https://github.com/lotbai-pratham/Mission-FLN/raw/main/public${art.link}`}
                       download
+                      target="_blank"
+                      rel="noopener noreferrer"
                       className="inline-flex items-center gap-2 px-5 py-3 bg-amber-500 hover:bg-amber-600 text-white font-black text-xs rounded-xl shadow-md transition-all self-start"
                     >
                        <Download className="w-4 h-4" /> Download Manual (PDF)
@@ -1335,15 +1368,13 @@ export default function ResourcesPage() {
                    </a>
                 </div>
              </div>
-             <div className="hidden lg:grid grid-cols-2 gap-4 w-1/3 opacity-30">
-                <div className="aspect-square bg-white shadow-xl rounded-3xl p-6 flex flex-col items-center justify-center space-y-2">
-                   <SpellCheck className="w-8 h-8 text-amber-600" />
-                   <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Literacy</span>
-                </div>
-                <div className="aspect-square bg-white shadow-xl rounded-3xl p-6 flex flex-col items-center justify-center space-y-2 translate-y-6">
-                   <Binary className="w-8 h-8 text-orange-600" />
-                   <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Math</span>
-                </div>
+             <div className="hidden lg:block w-1/3 aspect-[4/3] relative rounded-[32px] overflow-hidden shadow-2xl border-4 border-slate-800 hover:scale-102 hover:border-amber-500/50 transition-all duration-500 group/image">
+                <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent z-10 opacity-65 group-hover/image:opacity-40 transition-all duration-500" />
+                <img 
+                   src="/ashramshala-students.png" 
+                   alt="Students using TLM" 
+                   className="object-cover w-full h-full transform group-hover/image:scale-105 transition-all duration-700"
+                />
              </div>
           </div>
       </div>
