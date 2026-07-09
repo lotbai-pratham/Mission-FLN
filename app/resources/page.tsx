@@ -393,164 +393,166 @@ function MissionControl() {
             <h2 className="text-3xl sm:text-5xl font-black text-slate-900 dark:text-white leading-[1.1] tracking-tighter">Initiate Today&apos;s 90-Minute Flow</h2>
             <p className="text-slate-500 text-base sm:text-xl font-medium">Select your class and subject to begin the guided pedagogical sequence.</p>
           </div>
-          <div className="bg-white dark:bg-slate-900 p-5 sm:p-10 rounded-[28px] sm:rounded-[48px] shadow-2xl border border-slate-100 dark:border-slate-800 w-full max-w-2xl space-y-6 sm:space-y-8">
-            {/* School + Teacher */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pb-6 sm:pb-8 border-b border-slate-100 dark:border-slate-800">
-              <div className="space-y-3">
-                <p className="text-[11px] font-black text-slate-400 uppercase tracking-[4px]">School Name</p>
-                {isAdmin ? (
-                  <div className="relative">
-                    <input type="text" value={schoolName} onChange={e => setSchoolName(e.target.value)}
-                      placeholder="Type to search schools..."
-                      className="w-full h-14 bg-slate-50 dark:bg-slate-800 border-none rounded-2xl px-6 font-bold text-slate-700 dark:text-white focus:ring-2 focus:ring-blue-500 transition-all" />
-                    {schoolName && !allSchools.find(s => s.name === schoolName) && allSchools.filter(s => s.name.toLowerCase().includes(schoolName.toLowerCase())).length > 0 && (
-                      <div className="absolute top-full left-0 right-0 z-50 mt-2 bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-2xl shadow-xl overflow-hidden max-h-48 overflow-y-auto">
-                        {allSchools.filter(s => s.name.toLowerCase().includes(schoolName.toLowerCase())).map(s => (
-                          <button key={s.id} onClick={() => { setSchoolName(s.name); setSchoolId(s.id); }}
-                            className="w-full px-6 py-3 text-left hover:bg-slate-50 dark:hover:bg-slate-800 text-sm font-medium transition-colors border-b border-slate-50 dark:border-slate-800 last:border-none">
-                            {s.name}
-                          </button>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                ) : (
-                  <input type="text" value={schoolName} readOnly placeholder="Loading school..."
-                    className="w-full h-14 bg-slate-100 dark:bg-slate-800/50 border-none rounded-2xl px-6 font-bold text-slate-500 dark:text-slate-400 cursor-not-allowed" />
-                )}
-              </div>
-              <div className="space-y-3">
-                <p className="text-[11px] font-black text-slate-400 uppercase tracking-[4px]">Teacher Name</p>
-                <input type="text" value={teacherName} onChange={e => setTeacherName(e.target.value)}
-                  className="w-full h-14 bg-slate-50 dark:bg-slate-800 border-none rounded-2xl px-6 font-bold text-slate-700 dark:text-white focus:ring-2 focus:ring-blue-500 transition-all" />
-              </div>
-            </div>
-
-            {/* Class 1–4 */}
-            <div className="space-y-3">
-              <p className="text-[11px] font-black text-slate-400 uppercase tracking-[4px]">Classroom</p>
-              <div className="grid grid-cols-4 gap-2 sm:gap-3">
-                {[1,2,3,4].map(n => (
-                  <button key={n} onClick={() => { setClassNum(n); setSubject(null); }}
-                    className={cn("h-12 sm:h-14 rounded-2xl font-black text-lg sm:text-xl transition-all",
-                      classNum === n ? "bg-blue-600 text-white shadow-xl scale-105" : "bg-slate-50 dark:bg-slate-800 text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700")}>
-                    {n}
-                  </button>
-                ))}
-              </div>
-              {classNum && classNum >= 3 && (
-                <p className="text-xs text-slate-400 font-medium">Class {classNum} runs two simultaneous level groups — select subject below.</p>
-              )}
-            </div>
-
-            {/* Subject (Class 3+) */}
-            {classNum && classNum >= 3 && (
-              <div className="space-y-3 animate-in fade-in slide-in-from-bottom-2">
-                <p className="text-[11px] font-black text-slate-400 uppercase tracking-[4px]">Subject</p>
-                <div className="grid grid-cols-2 gap-3">
-                  <button onClick={() => setSubject('language')}
-                    className={cn("h-14 rounded-2xl font-black flex items-center justify-center gap-2 transition-all",
-                      subject === 'language' ? "bg-indigo-600 text-white" : "bg-slate-50 dark:bg-slate-800 text-slate-500 hover:bg-slate-100")}>
-                    <Book className="w-5 h-5" /> Language
-                  </button>
-                  <button onClick={() => setSubject('maths')}
-                    className={cn("h-14 rounded-2xl font-black flex items-center justify-center gap-2 transition-all",
-                      subject === 'maths' ? "bg-emerald-600 text-white" : "bg-slate-50 dark:bg-slate-800 text-slate-500 hover:bg-slate-100")}>
-                    <Calculator className="w-5 h-5" /> Maths
-                  </button>
+          <div className="w-full max-w-2xl p-3 sm:p-6 bg-slate-50 dark:bg-slate-950/40 rounded-[36px] sm:rounded-[56px] border border-slate-200/60 dark:border-slate-800/80 shadow-inner">
+            <div className="bg-white dark:bg-slate-900 p-5 sm:p-10 rounded-[28px] sm:rounded-[48px] shadow-xl border border-slate-100 dark:border-slate-800/60 w-full space-y-6 sm:space-y-8">
+              {/* School + Teacher */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pb-6 sm:pb-8 border-b border-slate-100 dark:border-slate-800">
+                <div className="space-y-3">
+                  <p className="text-[11px] font-black text-slate-400 uppercase tracking-[4px]">School Name</p>
+                  {isAdmin ? (
+                    <div className="relative">
+                      <input type="text" value={schoolName} onChange={e => setSchoolName(e.target.value)}
+                        placeholder="Type to search schools..."
+                        className="w-full h-14 bg-slate-50 dark:bg-slate-800 border-none rounded-2xl px-6 font-bold text-slate-700 dark:text-white focus:ring-2 focus:ring-blue-500 transition-all" />
+                      {schoolName && !allSchools.find(s => s.name === schoolName) && allSchools.filter(s => s.name.toLowerCase().includes(schoolName.toLowerCase())).length > 0 && (
+                        <div className="absolute top-full left-0 right-0 z-50 mt-2 bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-2xl shadow-xl overflow-hidden max-h-48 overflow-y-auto">
+                          {allSchools.filter(s => s.name.toLowerCase().includes(schoolName.toLowerCase())).map(s => (
+                            <button key={s.id} onClick={() => { setSchoolName(s.name); setSchoolId(s.id); }}
+                              className="w-full px-6 py-3 text-left hover:bg-slate-50 dark:hover:bg-slate-800 text-sm font-medium transition-colors border-b border-slate-50 dark:border-slate-800 last:border-none">
+                              {s.name}
+                            </button>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  ) : (
+                    <input type="text" value={schoolName} readOnly placeholder="Loading school..."
+                      className="w-full h-14 bg-slate-100 dark:bg-slate-800/50 border-none rounded-2xl px-6 font-bold text-slate-500 dark:text-slate-400 cursor-not-allowed" />
+                  )}
+                </div>
+                <div className="space-y-3">
+                  <p className="text-[11px] font-black text-slate-400 uppercase tracking-[4px]">Teacher Name</p>
+                  <input type="text" value={teacherName} onChange={e => setTeacherName(e.target.value)}
+                    className="w-full h-14 bg-slate-50 dark:bg-slate-800 border-none rounded-2xl px-6 font-bold text-slate-700 dark:text-white focus:ring-2 focus:ring-blue-500 transition-all" />
                 </div>
               </div>
-            )}
 
-            {/* Group Selection (Class 3+) */}
-            {needsGroupPick && sessionPlan && (
-              <div className="space-y-3 animate-in fade-in slide-in-from-bottom-2">
-                <p className="text-[11px] font-black text-slate-400 uppercase tracking-[4px]">Which Group Will You Conduct?</p>
-                <div className="grid grid-cols-1 gap-3">
-                  {sessionPlan.groups.map((g, gi) => {
-                    const clr = GROUP_COLORS[g.color] || GROUP_COLORS.blue;
-                    const isSelected = selectedGroupIdx === gi;
-                    return (
-                      <button key={gi} onClick={() => { setSelectedGroupIdx(gi); setSelectedDetail(null); }}
-                        className={cn(
-                          "p-4 rounded-2xl border-2 text-left transition-all flex items-center justify-between gap-4",
-                          isSelected
-                            ? `${clr.bg} ${clr.border} shadow-lg scale-[1.01]`
-                            : "bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 hover:border-slate-300"
-                        )}>
-                        <div className="flex items-center gap-3">
-                          <div className={cn("w-3 h-3 rounded-full shrink-0", isSelected ? clr.badge : "bg-slate-300")} />
-                          <div>
-                            <p className={cn("font-black text-sm", isSelected ? clr.text : "text-slate-700 dark:text-slate-200")}>{g.name}</p>
-                            {g.marathiName && <p className="text-xs text-slate-400">{g.marathiName}</p>}
-                            <p className="text-xs text-slate-400 mt-0.5">{g.subtitle}</p>
-                          </div>
-                        </div>
-                        <div className="text-right shrink-0">
-                          <p className={cn("font-black text-sm", isSelected ? clr.text : "text-slate-500")}>{g.totalTime}m</p>
-                          <p className="text-xs text-slate-400">{g.activities.length} activities</p>
-                        </div>
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-            )}
-
-            {/* Day toggle (Pushpagandh only) */}
-            {hasDayToggle && (
-              <div className="space-y-3 animate-in fade-in">
-                <p className="text-[11px] font-black text-slate-400 uppercase tracking-[4px]">Day in Story Cycle (Pushpagandh)</p>
-                <div className="grid grid-cols-2 gap-3">
-                  {([1, 2] as const).map(d => (
-                    <button key={d} onClick={() => setDayNum(d)}
-                      className={cn("h-12 rounded-2xl font-black transition-all",
-                        dayNum === d ? "bg-violet-600 text-white" : "bg-slate-50 dark:bg-slate-800 text-slate-500 hover:bg-slate-100")}>
-                      Day {d}
+              {/* Class 1–4 */}
+              <div className="space-y-3">
+                <p className="text-[11px] font-black text-slate-400 uppercase tracking-[4px]">Classroom</p>
+                <div className="grid grid-cols-4 gap-2 sm:gap-3">
+                  {[1,2,3,4].map(n => (
+                    <button key={n} onClick={() => { setClassNum(n); setSubject(null); }}
+                      className={cn("h-12 sm:h-14 rounded-2xl font-black text-lg sm:text-xl transition-all",
+                        classNum === n ? "bg-blue-600 text-white shadow-xl scale-105" : "bg-slate-50 dark:bg-slate-800 text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700")}>
+                      {n}
                     </button>
                   ))}
                 </div>
-                <p className="text-xs text-slate-400">Day 1 = new story introduced. Day 2 = continuation and comprehension.</p>
+                {classNum && classNum >= 3 && (
+                  <p className="text-xs text-slate-400 font-medium">Class {classNum} runs two simultaneous level groups — select subject below.</p>
+                )}
               </div>
-            )}
 
-            {/* Plan preview */}
-            {sessionPlan && !needsGroupPick && (
-              <div className="space-y-2 animate-in fade-in">
-                <p className="text-[11px] font-black text-slate-400 uppercase tracking-[4px]">Today&apos;s Groups</p>
-                <div className="space-y-2">
-                  {sessionPlan.groups.map((g, gi) => {
-                    const clr = GROUP_COLORS[g.color] || GROUP_COLORS.blue;
-                    const visible = getVisibleActivities(g);
-                    return (
-                      <div key={gi} className={cn("p-4 rounded-2xl border flex items-center justify-between", clr.bg, clr.border)}>
-                        <div>
-                          <p className={cn("font-black text-sm", clr.text)}>{g.name}</p>
-                          {g.marathiName && <p className="text-xs text-slate-500">{g.marathiName}</p>}
-                          <p className="text-xs text-slate-500 mt-0.5">{g.subtitle}</p>
-                        </div>
-                        <div className="text-right">
-                          <p className={cn("font-black", clr.text)}>{g.totalTime}m</p>
-                          <p className="text-xs text-slate-500">{visible.length} activities</p>
-                        </div>
-                      </div>
-                    );
-                  })}
-                  {sessionPlan.note && <p className="text-xs text-slate-400 italic px-1">{sessionPlan.note}</p>}
+              {/* Subject (Class 3+) */}
+              {classNum && classNum >= 3 && (
+                <div className="space-y-3 animate-in fade-in slide-in-from-bottom-2">
+                  <p className="text-[11px] font-black text-slate-400 uppercase tracking-[4px]">Subject</p>
+                  <div className="grid grid-cols-2 gap-3">
+                    <button onClick={() => setSubject('language')}
+                      className={cn("h-14 rounded-2xl font-black flex items-center justify-center gap-2 transition-all",
+                        subject === 'language' ? "bg-indigo-600 text-white" : "bg-slate-50 dark:bg-slate-800 text-slate-500 hover:bg-slate-100")}>
+                      <Book className="w-5 h-5" /> Language
+                    </button>
+                    <button onClick={() => setSubject('maths')}
+                      className={cn("h-14 rounded-2xl font-black flex items-center justify-center gap-2 transition-all",
+                        subject === 'maths' ? "bg-emerald-600 text-white" : "bg-slate-50 dark:bg-slate-800 text-slate-500 hover:bg-slate-100")}>
+                      <Calculator className="w-5 h-5" /> Maths
+                    </button>
+                  </div>
                 </div>
-              </div>
-            )}
+              )}
 
-            <button
-              onClick={() => {
-                setStep('session');
-                setIsTimerRunning(true);
-                if (sessionPlan) setSelectedDetail({ groupIdx: activeGroupIdx, actIdx: 0 });
-              }}
-              disabled={!classNum || (classNum >= 3 && !subject) || !teacherName || !schoolName || !sessionPlan || (needsGroupPick && selectedGroupIdx === null)}
-              className="w-full py-4 sm:py-6 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-black rounded-2xl sm:rounded-3xl text-lg sm:text-2xl shadow-2xl flex items-center justify-center gap-3 sm:gap-4 group transition-all transform hover:scale-105 disabled:opacity-40 disabled:scale-100">
-              {needsGroupPick && selectedGroupIdx === null ? 'SELECT A GROUP ABOVE' : 'INITIATE SESSION'} <Play className="w-6 h-6 sm:w-8 sm:h-8 fill-current group-hover:scale-110 transition-transform" />
-            </button>
+              {/* Group Selection (Class 3+) */}
+              {needsGroupPick && sessionPlan && (
+                <div className="space-y-3 animate-in fade-in slide-in-from-bottom-2">
+                  <p className="text-[11px] font-black text-slate-400 uppercase tracking-[4px]">Which Group Will You Conduct?</p>
+                  <div className="grid grid-cols-1 gap-3">
+                    {sessionPlan.groups.map((g, gi) => {
+                      const clr = GROUP_COLORS[g.color] || GROUP_COLORS.blue;
+                      const isSelected = selectedGroupIdx === gi;
+                      return (
+                        <button key={gi} onClick={() => { setSelectedGroupIdx(gi); setSelectedDetail(null); }}
+                          className={cn(
+                            "p-4 rounded-2xl border-2 text-left transition-all flex items-center justify-between gap-4",
+                            isSelected
+                              ? `${clr.bg} ${clr.border} shadow-lg scale-[1.01]`
+                              : "bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 hover:border-slate-300"
+                          )}>
+                          <div className="flex items-center gap-3">
+                            <div className={cn("w-3 h-3 rounded-full shrink-0", isSelected ? clr.badge : "bg-slate-300")} />
+                            <div>
+                              <p className={cn("font-black text-sm", isSelected ? clr.text : "text-slate-700 dark:text-slate-200")}>{g.name}</p>
+                              {g.marathiName && <p className="text-xs text-slate-400">{g.marathiName}</p>}
+                              <p className="text-xs text-slate-400 mt-0.5">{g.subtitle}</p>
+                            </div>
+                          </div>
+                          <div className="text-right shrink-0">
+                            <p className={cn("font-black text-sm", isSelected ? clr.text : "text-slate-500")}>{g.totalTime}m</p>
+                            <p className="text-xs text-slate-400">{g.activities.length} activities</p>
+                          </div>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+
+              {/* Day toggle (Pushpagandh only) */}
+              {hasDayToggle && (
+                <div className="space-y-3 animate-in fade-in">
+                  <p className="text-[11px] font-black text-slate-400 uppercase tracking-[4px]">Day in Story Cycle (Pushpagandh)</p>
+                  <div className="grid grid-cols-2 gap-3">
+                    {([1, 2] as const).map(d => (
+                      <button key={d} onClick={() => setDayNum(d)}
+                        className={cn("h-12 rounded-2xl font-black transition-all",
+                          dayNum === d ? "bg-violet-600 text-white" : "bg-slate-50 dark:bg-slate-800 text-slate-500 hover:bg-slate-100")}>
+                        Day {d}
+                      </button>
+                    ))}
+                  </div>
+                  <p className="text-xs text-slate-400">Day 1 = new story introduced. Day 2 = continuation and comprehension.</p>
+                </div>
+              )}
+
+              {/* Plan preview */}
+              {sessionPlan && !needsGroupPick && (
+                <div className="space-y-2 animate-in fade-in">
+                  <p className="text-[11px] font-black text-slate-400 uppercase tracking-[4px]">Today's Groups</p>
+                  <div className="space-y-2">
+                    {sessionPlan.groups.map((g, gi) => {
+                      const clr = GROUP_COLORS[g.color] || GROUP_COLORS.blue;
+                      const visible = getVisibleActivities(g);
+                      return (
+                        <div key={gi} className={cn("p-4 rounded-2xl border flex items-center justify-between", clr.bg, clr.border)}>
+                          <div>
+                            <p className={cn("font-black text-sm", clr.text)}>{g.name}</p>
+                            {g.marathiName && <p className="text-xs text-slate-500">{g.marathiName}</p>}
+                            <p className="text-xs text-slate-500 mt-0.5">{g.subtitle}</p>
+                          </div>
+                          <div className="text-right">
+                            <p className={cn("font-black", clr.text)}>{g.totalTime}m</p>
+                            <p className="text-xs text-slate-500">{visible.length} activities</p>
+                          </div>
+                        </div>
+                      );
+                    })}
+                    {sessionPlan.note && <p className="text-xs text-slate-400 italic px-1">{sessionPlan.note}</p>}
+                  </div>
+                </div>
+              )}
+
+              <button
+                onClick={() => {
+                  setStep('session');
+                  setIsTimerRunning(true);
+                  if (sessionPlan) setSelectedDetail({ groupIdx: activeGroupIdx, actIdx: 0 });
+                }}
+                disabled={!classNum || (classNum >= 3 && !subject) || !teacherName || !schoolName || !sessionPlan || (needsGroupPick && selectedGroupIdx === null)}
+                className="w-full py-4 sm:py-6 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-black rounded-2xl sm:rounded-3xl text-lg sm:text-2xl shadow-2xl flex items-center justify-center gap-3 sm:gap-4 group transition-all transform hover:scale-105 disabled:opacity-40 disabled:scale-100">
+                {needsGroupPick && selectedGroupIdx === null ? 'SELECT A GROUP ABOVE' : 'INITIATE SESSION'} <Play className="w-6 h-6 sm:w-8 sm:h-8 fill-current group-hover:scale-110 transition-transform" />
+              </button>
+            </div>
           </div>
         </div>
       )}
