@@ -1,5 +1,6 @@
 "use client";
 import { useState } from 'react';
+import WarliMotif from '@/components/warli/WarliMotif';
 
 // Original 6
 import WeightMatcher from '@/components/games/WeightMatcher';
@@ -200,7 +201,11 @@ export default function PlayPage() {
   return (
     <div className="max-w-5xl mx-auto space-y-8 pb-16 animate-in fade-in duration-500">
       <div className="text-center space-y-2 pt-4">
-        <div className="text-5xl">🎮</div>
+        <div className="flex items-center justify-center gap-3">
+          <WarliMotif variant="dancer" size={38} className="warli-ink opacity-80" />
+          <div className="text-5xl">🎮</div>
+          <WarliMotif variant="dancer" size={38} className="warli-ink opacity-80 -scale-x-100" />
+        </div>
         <h1 className="text-4xl font-extrabold text-slate-900 dark:text-white">Learning Games</h1>
         <p className="text-slate-500 text-lg">Fun activities to practise reading and maths!</p>
       </div>

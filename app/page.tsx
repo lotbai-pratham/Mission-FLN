@@ -20,6 +20,7 @@ import {
   LogIn,
   ArrowRight
 } from "lucide-react";
+import WarliBorder from "@/components/warli/WarliBorder";
 
 export default function LandingPage() {
   return (
@@ -34,7 +35,7 @@ export default function LandingPage() {
         <div className="absolute bottom-0 left-0 translate-y-12 -translate-x-12 blur-3xl opacity-15 dark:opacity-10 pointer-events-none">
           <div className="aspect-square w-[400px] rounded-full bg-gradient-to-br from-orange-500 to-amber-500" />
         </div>
-        
+
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
             
@@ -377,7 +378,8 @@ export default function LandingPage() {
       </section>
 
       {/* Footer */}
-      <footer className="py-12 border-t border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-950">
+      <footer className="pt-0 pb-12 bg-white dark:bg-slate-950">
+        <WarliBorder height={32} className="warli-ink mb-8" />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-slate-400 text-xs italic">
           Mission FLN © 2026 — Developed in partnership with the Pratham Education Foundation.
         </div>

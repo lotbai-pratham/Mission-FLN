@@ -5,6 +5,7 @@ import Link from "next/link";
 import { User, Search, MapPin, ChevronLeft, ChevronRight, Filter } from "lucide-react";
 import { getStudentsList } from "@/app/actions";
 import { useLanguage } from "@/context/LanguageContext";
+import WarliMotif from "@/components/warli/WarliMotif";
 
 export default function RosterClient({ hierarchy, initialData }: { hierarchy: any[], initialData: any }) {
   const { t } = useLanguage();
@@ -37,9 +38,12 @@ export default function RosterClient({ hierarchy, initialData }: { hierarchy: an
     <div className="max-w-5xl mx-auto mt-8 animate-in fade-in flex flex-col gap-6 pb-16">
       
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <div>
-          <h1 className="text-3xl font-extrabold text-slate-900 dark:text-white">{t('Active Students') || 'Student Roster'}</h1>
-          <p className="text-slate-500 mt-1">{t('List of all registered students and their status.') || 'Select a student to view their TaRL learning recommendations.'}</p>
+        <div className="flex items-center gap-3">
+          <WarliMotif variant="dancer" size={34} className="warli-ink opacity-80 shrink-0" />
+          <div>
+            <h1 className="text-3xl font-extrabold text-slate-900 dark:text-white">{t('Active Students') || 'Student Roster'}</h1>
+            <p className="text-slate-500 mt-1">{t('List of all registered students and their status.') || 'Select a student to view their TaRL learning recommendations.'}</p>
+          </div>
         </div>
         
         <div className="relative w-full sm:w-auto">
@@ -109,7 +113,7 @@ export default function RosterClient({ hierarchy, initialData }: { hierarchy: an
           ))}
           {data.students.length === 0 && (
              <div className="py-16 flex flex-col items-center justify-center text-center text-slate-400 font-medium space-y-3">
-               <Search className="w-10 h-10 text-slate-200 dark:text-slate-700" />
+               <WarliMotif variant="deer" size={56} className="warli-ink opacity-60" />
                <p>{t('No students found.')}</p>
              </div>
           )}

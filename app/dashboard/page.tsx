@@ -3,6 +3,7 @@ import { getDashboardStats, getHierarchy } from "@/app/actions";
 import DashboardClient from "../DashboardClient"; // Adjusted relative path
 import Link from "next/link";
 import { UserPlus, ClipboardPlus } from "lucide-react";
+import WarliMotif from "@/components/warli/WarliMotif";
 
 export default async function DashboardPage() {
   const stats = await getDashboardStats();
@@ -12,13 +13,16 @@ export default async function DashboardPage() {
     <div className="space-y-10">
       {/* Header section with CTAs */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 pb-6 border-b border-slate-200 dark:border-slate-800">
-        <div>
-          <h1 className="text-3xl font-extrabold tracking-tight text-slate-900 dark:text-white">
-            Overview Dashboard
-          </h1>
-          <p className="text-slate-500 dark:text-slate-400 mt-2">
-            Real-time analytics for your ASER Foundational Literacy and Numeracy program.
-          </p>
+        <div className="flex items-center gap-3">
+          <WarliMotif variant="sun" size={34} className="warli-ink opacity-80 shrink-0" />
+          <div>
+            <h1 className="text-3xl font-extrabold tracking-tight text-slate-900 dark:text-white">
+              Overview Dashboard
+            </h1>
+            <p className="text-slate-500 dark:text-slate-400 mt-2">
+              Real-time analytics for your ASER Foundational Literacy and Numeracy program.
+            </p>
+          </div>
         </div>
         
         <div className="flex gap-3 w-full sm:w-auto">

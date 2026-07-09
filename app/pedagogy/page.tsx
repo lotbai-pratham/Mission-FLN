@@ -19,6 +19,7 @@ import {
   BookOpenCheck,
   Globe
 } from "lucide-react";
+import WarliMotif from "@/components/warli/WarliMotif";
 
 type TabId = "philosophy" | "levels" | "flow" | "activities" | "materials" | "role" | "presence";
 
@@ -48,13 +49,16 @@ export default function PedagogyPage() {
           <ArrowLeft className="w-4 h-4" /> Back to home
         </Link>
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-100 dark:border-slate-800 pb-6">
-          <div>
-            <h1 className="text-3xl font-black tracking-tight text-slate-900 dark:text-white sm:text-4xl">
-              TaRL Pedagogy Hub
-            </h1>
-            <p className="text-sm text-slate-500 dark:text-slate-400 font-medium mt-1">
-              Teaching at the Right Level (TaRL) methodology, manuals, and instructional framework.
-            </p>
+          <div className="flex items-center gap-3">
+            <WarliMotif variant="tree" size={36} className="warli-ink opacity-80 shrink-0" />
+            <div>
+              <h1 className="text-3xl font-black tracking-tight text-slate-900 dark:text-white sm:text-4xl">
+                TaRL Pedagogy Hub
+              </h1>
+              <p className="text-sm text-slate-500 dark:text-slate-400 font-medium mt-1">
+                Teaching at the Right Level (TaRL) methodology, manuals, and instructional framework.
+              </p>
+            </div>
           </div>
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-2xl bg-amber-50 dark:bg-amber-950/20 text-amber-600 dark:text-amber-400 border border-amber-100 dark:border-amber-900/50 self-start md:self-auto text-xs font-bold shadow-sm">
             <Sparkles className="w-4 h-4" /> Pratham Education Foundation

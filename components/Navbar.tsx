@@ -5,6 +5,7 @@ import MobileMenu from '@/components/MobileMenu';
 import NavLinks from './NavLinks';
 import NavActions from './NavActions';
 import { hasRole } from '@/lib/checkAccess';
+import WarliBorder from '@/components/warli/WarliBorder';
 
 export default async function Navbar() {
   const session = await auth();
@@ -16,7 +17,12 @@ export default async function Navbar() {
   };
 
   return (
-    <nav className="sticky top-0 z-50 backdrop-blur-xl bg-white/75 border-b border-gray-100 shadow-sm supports-[backdrop-filter]:bg-white/60 transition-all dark:bg-slate-900/80 dark:border-slate-800">
+    <nav className="relative sticky top-0 z-50 backdrop-blur-xl bg-white/75 shadow-sm supports-[backdrop-filter]:bg-white/60 transition-all dark:bg-slate-900/80">
+      <WarliBorder
+        height={9}
+        variant="zigzag"
+        className="warli-ink absolute left-0 right-0 top-full opacity-90"
+      />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16 items-center">
 

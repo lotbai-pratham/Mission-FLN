@@ -11,6 +11,9 @@
   --pratham-green: #8dc63f;
   --pratham-yellow: #ffc72c;
   --pratham-yellow-light: #ffdf7e;
+
+  /* Warli tribal-art accent ink (used by WarliBorder / WarliMotif + body texture) */
+  --warli-ink: #3e2415;
 }
 
 @theme {
@@ -84,12 +87,31 @@
   :root {
     --background: #0b0c16;
     --foreground: #f3f4f6;
+    --warli-ink: #c9905e;
   }
 }
 
+/* Site-wide Warli-inspired texture (triangle-tree + dot), tiled. Deliberately
+   faint — it sits directly behind page titles/body copy on several screens
+   (no card between it and the text), so boldness lives in the contained
+   accents (nav strips, footer frieze, header icons) instead of here. */
 body {
-  background: var(--background);
+  background-color: var(--background);
+  background-image: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='56'%20height='56'%20viewBox='0%200%2056%2056'%3E%3Cg%20fill='none'%20stroke='%233e2415'%20stroke-width='1.2'%20stroke-linecap='round'%20opacity='0.055'%3E%3Cpath%20d='M9%2040%20L19%2021%20L29%2040%20Z'/%3E%3Ccircle%20cx='42'%20cy='14'%20r='1.8'%20fill='%233e2415'%20stroke='none'/%3E%3C/g%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 56px 56px;
   color: var(--foreground);
   font-family: var(--font-sans);
+}
+
+@media (prefers-color-scheme: dark) {
+  body {
+    background-image: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='56'%20height='56'%20viewBox='0%200%2056%2056'%3E%3Cg%20fill='none'%20stroke='%23c9905e'%20stroke-width='1.2'%20stroke-linecap='round'%20opacity='0.065'%3E%3Cpath%20d='M9%2040%20L19%2021%20L29%2040%20Z'/%3E%3Ccircle%20cx='42'%20cy='14'%20r='1.8'%20fill='%23c9905e'%20stroke='none'/%3E%3C/g%3E%3C/svg%3E");
+  }
+}
+
+/* Utility to color decorative Warli SVGs by the shared ink token. */
+.warli-ink {
+  color: var(--warli-ink);
 }
 
