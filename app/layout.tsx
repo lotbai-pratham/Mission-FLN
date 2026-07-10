@@ -59,7 +59,7 @@ export default function RootLayout({
     >
       <body className="min-h-full flex flex-col font-sans text-slate-900 dark:text-slate-100 selection:bg-blue-200 dark:selection:bg-blue-900">
         <div 
-          className="fixed inset-0 pointer-events-none opacity-[0.08] dark:opacity-[0.12] dark:invert mix-blend-multiply dark:mix-blend-screen"
+          className="fixed inset-0 pointer-events-none opacity-[0.04] dark:opacity-[0.06] dark:invert mix-blend-multiply dark:mix-blend-screen"
           style={{ 
             backgroundImage: "url('/warli_pattern.png')", 
             backgroundRepeat: "repeat",
