@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import { RotateCcw, Star, Divide } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { usePoints } from '@/lib/points-store';
 
 const ITEMS = ['🍎', '⭐', '🟡', '🔵', '🍬', '🌸', '🎯', '🍕'];
 
@@ -15,6 +16,7 @@ function newProblem() {
 }
 
 export default function DivisionSim() {
+  const { addXP } = usePoints();
   const [prob, setProb] = useState(newProblem);
   const [groups, setGroups] = useState<string[][]>([]);
   const [answer, setAnswer] = useState('');
@@ -45,6 +47,7 @@ export default function DivisionSim() {
       if (allEqual) {
         setFeedback('success');
         setScore(s => s + 1);
+        addXP(10); // 10 XP for equal sharing success
         setTimeout(() => { const p = newProblem(); setProb(p); setGroups(Array.from({ length: p.divisor }, () => [])); setAnswer(''); setFeedback('idle'); setInitialized(true); }, 1800);
       } else {
         setFeedback('error');

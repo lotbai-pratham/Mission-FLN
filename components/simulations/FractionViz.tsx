@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import { RotateCcw, Star, PieChart } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { usePoints } from '@/lib/points-store';
 
 // Fractions we cover: halves, thirds, quarters, fifths
 const FRACTIONS = [
@@ -90,6 +91,7 @@ function BarModel({ numerator, denominator, color }: { numerator: number; denomi
 }
 
 export default function FractionViz() {
+  const { addXP } = usePoints();
   const [round, setRound] = useState(newRound);
   const [mode, setMode] = useState<'learn' | 'quiz'>('learn');
   const [chosen, setChosen] = useState<string | null>(null);
@@ -106,7 +108,10 @@ export default function FractionViz() {
     const correct = f.num === frac.num && f.den === frac.den;
     setChosen(`${f.num}/${f.den}`);
     setFeedback(correct ? 'success' : 'error');
-    if (correct) setScore(s => s + 1);
+    if (correct) {
+      setScore(s => s + 1);
+      addXP(5); // 5 XP for correct fraction identification
+    }
     setTimeout(() => {
       setRound(newRound());
       setChosen(null);

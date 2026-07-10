@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import { RotateCcw, Star, Users } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { usePoints } from '@/lib/points-store';
 
 // Meaningful real-world sharing scenarios
 const SCENARIOS = [
@@ -49,6 +50,7 @@ function newRound() {
 }
 
 export default function EqualSharing() {
+  const { addXP } = usePoints();
   const [prob, setProb] = useState(newRound);
   const [baskets, setBaskets] = useState<number[]>(() => new Array(prob.divisor).fill(0));
   const [feedback, setFeedback] = useState<'idle' | 'success' | 'error'>('idle');
@@ -73,6 +75,7 @@ export default function EqualSharing() {
       if (allEqual) {
         setFeedback('success');
         setScore(s => s + 1);
+        addXP(10); // 10 XP for equal sharing success
         setTimeout(() => {
           const p = newRound();
           setProb(p);
