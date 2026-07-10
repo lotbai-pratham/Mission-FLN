@@ -9,6 +9,7 @@ import {
   Maximize2, Minimize2, Info
 } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 import { useSession } from "next-auth/react";
 import { useLanguage } from "@/context/LanguageContext";
 import { VIDEOS, ARTICLES, SIMULATIONS } from "@/lib/resource_data";
@@ -1294,7 +1295,7 @@ export default function ResourcesPage() {
                return (
                <div key={i} className="group bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-[40px] p-8 shadow-sm hover:shadow-xl hover:shadow-amber-500/5 transition-all space-y-6 flex flex-col justify-between relative overflow-hidden">
                   <div className="absolute bottom-0 right-0 w-32 h-32 md:w-48 md:h-48 opacity-60 dark:opacity-40 group-hover:opacity-90 dark:group-hover:opacity-70 transition-opacity duration-500 pointer-events-none rounded-tl-full overflow-hidden border-t-8 border-l-8 border-white/50 dark:border-slate-900/50 mix-blend-multiply dark:mix-blend-screen">
-                     <img src={imgSrc} alt="Illustration" className="w-full h-full object-cover" />
+                     <Image src={imgSrc} alt="Illustration" width={256} height={256} className="w-full h-full object-cover" />
                   </div>
                   <div className="space-y-4 relative z-10">
                     <div className="inline-flex items-center gap-2 px-3 py-1 bg-amber-50 dark:bg-amber-950/20 text-amber-600 dark:text-amber-400 rounded-full text-[10px] font-black uppercase tracking-widest">
