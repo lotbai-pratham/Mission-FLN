@@ -1288,7 +1288,7 @@ export default function ResourcesPage() {
 
                return (
                <div key={i} className="group bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-[40px] p-8 shadow-sm hover:shadow-xl hover:shadow-amber-500/5 transition-all space-y-6 flex flex-col justify-between relative overflow-hidden">
-                  <Doodle className={`absolute top-1/2 -translate-y-1/2 -right-4 lg:right-0 w-48 h-48 md:w-64 md:h-64 transition-colors duration-500 pointer-events-none ${doodleColor}`} delay={`${i * 0.1}s`} />
+                  <Doodle className={`absolute bottom-0 right-0 w-40 h-40 md:w-56 md:h-56 translate-x-4 translate-y-4 transition-colors duration-500 pointer-events-none ${doodleColor}`} delay={`${i * 0.1}s`} />
                   <div className="space-y-4 relative z-10">
                     <div className="inline-flex items-center gap-2 px-3 py-1 bg-amber-50 dark:bg-amber-950/20 text-amber-600 dark:text-amber-400 rounded-full text-[10px] font-black uppercase tracking-widest">
                        <BookOpen className="w-3 h-3" /> {art.size}
