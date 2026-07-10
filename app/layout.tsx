@@ -58,7 +58,17 @@ export default function RootLayout({
       className={`${poppins.variable} ${geistSans.variable} ${geistMono.variable} h-full antialiased bg-zinc-50 dark:bg-slate-950`}
     >
       <body className="min-h-full flex flex-col font-sans text-slate-900 dark:text-slate-100 selection:bg-blue-200 dark:selection:bg-blue-900">
-        <SessionWrapper>
+        <div 
+          className="fixed inset-0 pointer-events-none opacity-[0.08] dark:opacity-[0.12] dark:invert mix-blend-multiply dark:mix-blend-screen"
+          style={{ 
+            backgroundImage: "url('/warli_pattern.png')", 
+            backgroundRepeat: "repeat",
+            backgroundSize: "300px",
+            zIndex: 0 
+          }}
+        />
+        <div className="relative z-10 flex flex-col min-h-screen">
+          <SessionWrapper>
           <LanguageProvider>
             <Navbar />
             <div className="fixed bottom-4 right-4 z-50">
@@ -71,6 +81,7 @@ export default function RootLayout({
             <PrathamChat />
           </LanguageProvider>
         </SessionWrapper>
+        </div>
       </body>
     </html>
   );
