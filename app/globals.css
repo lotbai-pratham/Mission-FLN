@@ -96,7 +96,7 @@
    (no card between it and the text), so boldness lives in the contained
    accents (nav strips, footer frieze, header icons) instead of here. */
 body {
-  background-color: var(--background);
+  background-color: transparent;
   color: var(--foreground);
   font-family: var(--font-sans);
   position: relative;
@@ -111,19 +111,18 @@ body::before {
   height: 100vh;
   background-image: url("/warli_pattern.png");
   background-repeat: repeat;
-  background-size: 400px;
-  opacity: 0.04;
+  background-size: 300px;
+  opacity: 0.08;
   pointer-events: none;
   z-index: -1;
-  /* Use luminosity blending to keep the pattern but inherit the background color */
-  mix-blend-mode: luminosity;
+  mix-blend-mode: multiply;
 }
 
 @media (prefers-color-scheme: dark) {
   body::before {
-    opacity: 0.06;
+    opacity: 0.12;
     mix-blend-mode: screen;
-    filter: grayscale(100%);
+    filter: grayscale(100%) invert(1);
   }
 }
 
