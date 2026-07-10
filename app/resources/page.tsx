@@ -1279,10 +1279,17 @@ export default function ResourcesPage() {
                const matchesTag = !selectedTag || m.tags.includes(selectedTag === "Holistic development manuals" ? "Manual" : selectedTag);
                return matchesSearch && matchesTag;
              }).map((art, i) => {
-               let imgSrc = "/img_manual.png";
-               if (art.tags?.includes("Literacy")) { imgSrc = "/img_literacy.png"; }
-               else if (art.tags?.includes("Numeracy")) { imgSrc = "/img_numeracy.png"; }
-               else if (art.tags?.includes("Worksheets") || art.tags?.includes("Cards")) { imgSrc = "/img_games.png"; }
+               const prathamImages = [
+                 "/img_literacy.png",
+                 "/img_numeracy.png",
+                 "/img_games.png",
+                 "/img_manual.png",
+                 "/img_pratham_5.png",
+                 "/img_pratham_6.png",
+                 "/img_pratham_7.png",
+                 "/img_pratham_8.png"
+               ];
+               let imgSrc = prathamImages[i % prathamImages.length];
 
                return (
                <div key={i} className="group bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-[40px] p-8 shadow-sm hover:shadow-xl hover:shadow-amber-500/5 transition-all space-y-6 flex flex-col justify-between relative overflow-hidden">
