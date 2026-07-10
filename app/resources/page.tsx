@@ -1279,16 +1279,16 @@ export default function ResourcesPage() {
                const matchesTag = !selectedTag || m.tags.includes(selectedTag === "Holistic development manuals" ? "Manual" : selectedTag);
                return matchesSearch && matchesTag;
              }).map((art, i) => {
-               let Doodle = DoodleTribalFigure;
-               let doodleColor = "text-amber-500/15 group-hover:text-amber-500/25 dark:text-amber-500/20 dark:group-hover:text-amber-500/30";
-               if (art.tags?.includes("Literacy")) { Doodle = DoodleWarliTree; doodleColor = "text-rose-500/15 group-hover:text-rose-500/25 dark:text-rose-500/20 dark:group-hover:text-rose-500/30"; }
-               else if (art.tags?.includes("Numeracy")) { Doodle = DoodleWarliAnimal; doodleColor = "text-blue-500/15 group-hover:text-blue-500/25 dark:text-blue-500/20 dark:group-hover:text-blue-500/30"; }
-               else if (art.tags?.includes("Worksheets") || art.tags?.includes("Cards")) { Doodle = DoodleWarliSun; doodleColor = "text-purple-500/15 group-hover:text-purple-500/25 dark:text-purple-500/20 dark:group-hover:text-purple-500/30"; }
-               else if (art.tags?.includes("Manual")) { Doodle = DoodleWarliHut; doodleColor = "text-green-500/15 group-hover:text-green-500/25 dark:text-green-500/20 dark:group-hover:text-green-500/30"; }
+               let imgSrc = "/img_manual.png";
+               if (art.tags?.includes("Literacy")) { imgSrc = "/img_literacy.png"; }
+               else if (art.tags?.includes("Numeracy")) { imgSrc = "/img_numeracy.png"; }
+               else if (art.tags?.includes("Worksheets") || art.tags?.includes("Cards")) { imgSrc = "/img_games.png"; }
 
                return (
                <div key={i} className="group bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-[40px] p-8 shadow-sm hover:shadow-xl hover:shadow-amber-500/5 transition-all space-y-6 flex flex-col justify-between relative overflow-hidden">
-                  <Doodle className={`absolute bottom-0 right-0 w-40 h-40 md:w-56 md:h-56 translate-x-4 translate-y-4 transition-colors duration-500 pointer-events-none ${doodleColor}`} delay={`${i * 0.1}s`} />
+                  <div className="absolute bottom-0 right-0 w-32 h-32 md:w-48 md:h-48 opacity-60 dark:opacity-40 group-hover:opacity-90 dark:group-hover:opacity-70 transition-opacity duration-500 pointer-events-none rounded-tl-full overflow-hidden border-t-8 border-l-8 border-white/50 dark:border-slate-900/50 mix-blend-multiply dark:mix-blend-screen">
+                     <img src={imgSrc} alt="Illustration" className="w-full h-full object-cover" />
+                  </div>
                   <div className="space-y-4 relative z-10">
                     <div className="inline-flex items-center gap-2 px-3 py-1 bg-amber-50 dark:bg-amber-950/20 text-amber-600 dark:text-amber-400 rounded-full text-[10px] font-black uppercase tracking-widest">
                        <BookOpen className="w-3 h-3" /> {art.size}
