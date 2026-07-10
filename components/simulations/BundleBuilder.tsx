@@ -12,14 +12,17 @@ export default function BundleBuilder() {
   const [showTieHint, setShowTieHint] = useState(false);
 
   const addStick = () => {
+    if (showTieHint) return;
     if (sticks < 9) {
       setSticks(prev => prev + 1);
-    } else {
-      setShowTieHint(true);
+    } else if (sticks === 9) {
+      setSticks(10);
+      setTimeout(() => setShowTieHint(true), 300);
     }
   };
 
   const removeStick = () => {
+    if (showTieHint) return;
     if (sticks > 0) setSticks(prev => prev - 1);
   };
 
@@ -27,7 +30,15 @@ export default function BundleBuilder() {
     setBundles(prev => prev + 1);
     setSticks(0);
     setShowTieHint(false);
-    addXP(10); // 10 XP per bundle tied
+    addXP(10); // Automatically adds 10 XP and 10 Coins
+  };
+
+  const untieBundle = () => {
+    if (bundles > 0 && sticks === 0 && !showTieHint) {
+      setBundles(prev => prev - 1);
+      setSticks(10);
+      setTimeout(() => setShowTieHint(true), 300);
+    }
   };
 
   const reset = () => {
@@ -55,6 +66,7 @@ export default function BundleBuilder() {
         <button 
            onClick={reset}
            className="p-4 bg-slate-50 dark:bg-slate-800 text-slate-400 hover:text-blue-600 rounded-2xl transition-all active:scale-90"
+           title="Reset"
         >
            <RotateCcw className="w-5 h-5" />
         </button>
@@ -82,7 +94,7 @@ export default function BundleBuilder() {
                  <div className="absolute inset-0 bg-blue-600/95 backdrop-blur-sm z-10 flex flex-col items-center justify-center p-8 text-center animate-in fade-in duration-300 rounded-[30px]">
                     <CheckCircle2 className="w-16 h-16 text-white mb-4 animate-bounce" />
                     <h3 className="text-2xl font-black text-white mb-2">You have 10 sticks!</h3>
-                    <p className="text-blue-100 mb-8 font-medium">In TaRL, 10 sticks must be tied into 1 bundle.</p>
+                    <p className="text-blue-100 mb-8 font-medium">In TaRL, 10 loose sticks must be tied into 1 bundle.</p>
                     <button 
                        onClick={tieBundle}
                        className="px-8 py-4 bg-white text-blue-600 font-black rounded-2xl shadow-xl shadow-blue-900/40 active:scale-95 transition-all flex items-center gap-2"
@@ -97,13 +109,15 @@ export default function BundleBuilder() {
             <div className="flex items-center gap-4">
                <button 
                   onClick={addStick}
-                  className="flex-1 h-20 bg-blue-600 hover:bg-blue-700 text-white font-black rounded-3xl shadow-lg shadow-blue-600/20 active:scale-95 transition-all text-xl flex items-center justify-center gap-3"
+                  disabled={showTieHint || sticks >= 10}
+                  className="flex-1 h-20 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed text-white font-black rounded-3xl shadow-lg shadow-blue-600/20 active:scale-95 transition-all text-xl flex items-center justify-center gap-3"
                >
                   <Plus className="w-6 h-6" /> ADD STICK
                </button>
                <button 
                   onClick={removeStick}
-                  className="w-20 h-20 bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 text-slate-400 hover:text-red-500 font-black rounded-3xl active:scale-95 transition-all flex items-center justify-center"
+                  disabled={showTieHint || sticks === 0}
+                  className="w-20 h-20 bg-white dark:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed border border-slate-100 dark:border-slate-700 text-slate-400 hover:text-red-500 font-black rounded-3xl active:scale-95 transition-all flex items-center justify-center"
                >
                   <Minus className="w-6 h-6" />
                </button>
@@ -117,11 +131,11 @@ export default function BundleBuilder() {
                <span className="bg-blue-600 text-white font-black px-4 py-1 rounded-full text-sm shadow-md">{bundles}</span>
             </div>
 
-            <div className="bg-blue-50 dark:bg-blue-900/20 rounded-[32px] p-8 min-h-[300px] flex flex-wrap gap-6 items-start content-start border border-blue-100 dark:border-blue-800">
+            <div className="bg-blue-50 dark:bg-blue-900/20 rounded-[32px] p-8 min-h-[300px] flex flex-wrap gap-6 items-start content-start border border-blue-100 dark:border-blue-800 relative">
                {Array.from({ length: bundles }).map((_, i) => (
                  <div key={i} className="relative group animate-in slide-in-from-right-8 duration-500">
                     {/* The Bundle Visual */}
-                    <div className="w-14 h-24 bg-orange-300 dark:bg-orange-800 border-x-4 border-orange-500 dark:border-orange-600 rounded-lg relative flex items-center justify-center shadow-lg">
+                    <div className="w-14 h-24 bg-orange-300 dark:bg-orange-800 border-x-4 border-orange-500 dark:border-orange-600 rounded-lg relative flex items-center justify-center shadow-lg transition-transform group-hover:-translate-y-2">
                        <div className="absolute inset-y-0 w-1 bg-orange-400/30 left-2"></div>
                        <div className="absolute inset-y-0 w-1 bg-orange-400/30 right-2"></div>
                        <div className="w-full h-2 bg-blue-600/80 absolute top-1/2 -translate-y-1/2 shadow-sm border-y border-blue-500"></div>
@@ -130,6 +144,15 @@ export default function BundleBuilder() {
                  </div>
                ))}
                {bundles === 0 && <p className="text-blue-500/40 font-black text-xs uppercase tracking-widest mt-4">Empty Storage</p>}
+
+               {bundles > 0 && sticks === 0 && !showTieHint && (
+                 <button 
+                   onClick={untieBundle}
+                   className="absolute bottom-4 right-4 bg-white dark:bg-slate-800 text-slate-500 hover:text-orange-500 shadow-md px-4 py-2 rounded-xl text-xs font-bold transition-all active:scale-95 flex items-center gap-2 border border-slate-200 dark:border-slate-700"
+                 >
+                   <RotateCcw className="w-3 h-3" /> UNTIE ONE
+                 </button>
+               )}
             </div>
 
             {/* Instruction Card */}
