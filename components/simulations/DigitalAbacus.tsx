@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import { RotateCcw, Star, Calculator } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { usePoints } from '@/lib/points-store';
 
 // 3 rows: Hundreds, Tens, Ones — each 0–9 beads
 const ROW_CONFIG = [
@@ -11,6 +12,7 @@ const ROW_CONFIG = [
 ];
 
 export default function DigitalAbacus() {
+  const { addXP } = usePoints();
   const [beads, setBeads] = useState([0, 0, 0]); // hundreds, tens, ones
   const [target, setTarget] = useState<number | null>(null);
   const [feedback, setFeedback] = useState<'idle' | 'success' | 'error'>('idle');
@@ -32,6 +34,7 @@ export default function DigitalAbacus() {
     if (total === target) {
       setFeedback('success');
       setScore(s => s + 1);
+      addXP(5); // 5 XP for correct abacus challenge
       setTimeout(() => newChallenge(), 1500);
     } else {
       setFeedback('error');

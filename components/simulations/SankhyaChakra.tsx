@@ -2,12 +2,14 @@
 import { useState } from 'react';
 import { RotateCcw, Star, Hash } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { usePoints } from '@/lib/points-store';
 
 function randomNumber(max = 999) {
   return Math.floor(Math.random() * max) + 1;
 }
 
 export default function SankhyaChakra() {
+  const { addXP } = usePoints();
   const [target, setTarget] = useState(() => randomNumber(999));
   const [hundreds, setHundreds] = useState<number | null>(null);
   const [tens, setTens] = useState<number | null>(null);
@@ -25,6 +27,7 @@ export default function SankhyaChakra() {
     if (h === t_h && t === t_t && o === t_o) {
       setFeedback('success');
       setScore(s => s + 1);
+      addXP(5); // 5 XP for correct place value identification
       setTimeout(() => {
         setTarget(randomNumber(999));
         setHundreds(null); setTens(null); setOnes(null);

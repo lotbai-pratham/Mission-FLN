@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import { RotateCcw, Star, Grid3x3 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { usePoints } from '@/lib/points-store';
 
 function newProblem() {
   const a = Math.floor(Math.random() * 9) + 2; // 2–10
@@ -10,6 +11,7 @@ function newProblem() {
 }
 
 export default function MultiplicationSim() {
+  const { addXP } = usePoints();
   const [prob, setProb] = useState(newProblem);
   const [answer, setAnswer] = useState('');
   const [feedback, setFeedback] = useState<'idle' | 'success' | 'error'>('idle');
@@ -25,6 +27,7 @@ export default function MultiplicationSim() {
     if (parseInt(answer) === correct) {
       setFeedback('success');
       setScore(s => s + 1);
+      addXP(10); // 10 XP for correct multiplication
       setTimeout(() => { setProb(newProblem()); setAnswer(''); setFeedback('idle'); setRevealed(false); }, 1500);
     } else {
       setFeedback('error');

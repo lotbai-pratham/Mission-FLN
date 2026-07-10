@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import { RotateCcw, Star, Plus } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { usePoints } from '@/lib/points-store';
 
 const GROUP_EMOJIS = ['🍎', '⭐', '🟡', '🔵', '🍬', '🌸', '🎯', '🍊', '🐟', '🌻'];
 
@@ -13,6 +14,7 @@ function newProblem() {
 }
 
 export default function RepeatedAddition() {
+  const { addXP } = usePoints();
   const [prob, setProb] = useState(newProblem);
   const [revealed, setRevealed] = useState(0); // how many groups shown so far
   const [answer, setAnswer] = useState('');
@@ -33,6 +35,7 @@ export default function RepeatedAddition() {
     if (parseInt(answer) === correct) {
       setFeedback('success');
       setScore(s => s + 1);
+      addXP(10); // 10 XP for correct repeated addition
       setTimeout(() => {
         setProb(newProblem());
         setRevealed(0);
