@@ -24,7 +24,7 @@ import {
 import { logImplementationSession } from '@/app/actions/implementation';
 import { hasRole } from '@/lib/checkAccess';
 import ScrollReveal from "@/components/ScrollReveal";
-import { DoodleStar, DoodleSquiggle, DoodleSun, DoodleLoop, DoodleTribalFigure, DoodleCloud } from "@/components/Doodles";
+import { DoodleStar, DoodleSquiggle, DoodleSun, DoodleLoop, DoodleTribalFigure, DoodleCloud, DoodleWarliTree, DoodleWarliAnimal, DoodleWarliHut, DoodleWarliSun } from "@/components/Doodles";
 
 // Simulations & Games Imports
 import BundleBuilder from "@/components/simulations/BundleBuilder";
@@ -1280,11 +1280,11 @@ export default function ResourcesPage() {
                return matchesSearch && matchesTag;
              }).map((art, i) => {
                let Doodle = DoodleTribalFigure;
-               let doodleColor = "text-amber-500/10 group-hover:text-amber-500/20 dark:text-amber-500/15 dark:group-hover:text-amber-500/25";
-               if (art.tags?.includes("Literacy")) { Doodle = DoodleSquiggle; doodleColor = "text-rose-500/10 group-hover:text-rose-500/20 dark:text-rose-500/15 dark:group-hover:text-rose-500/25"; }
-               else if (art.tags?.includes("Numeracy")) { Doodle = DoodleStar; doodleColor = "text-blue-500/10 group-hover:text-blue-500/20 dark:text-blue-500/15 dark:group-hover:text-blue-500/25"; }
-               else if (art.tags?.includes("Worksheets") || art.tags?.includes("Cards")) { Doodle = DoodleLoop; doodleColor = "text-purple-500/10 group-hover:text-purple-500/20 dark:text-purple-500/15 dark:group-hover:text-purple-500/25"; }
-               else if (art.tags?.includes("Manual")) { Doodle = DoodleSun; doodleColor = "text-green-500/10 group-hover:text-green-500/20 dark:text-green-500/15 dark:group-hover:text-green-500/25"; }
+               let doodleColor = "text-amber-500/15 group-hover:text-amber-500/25 dark:text-amber-500/20 dark:group-hover:text-amber-500/30";
+               if (art.tags?.includes("Literacy")) { Doodle = DoodleWarliTree; doodleColor = "text-rose-500/15 group-hover:text-rose-500/25 dark:text-rose-500/20 dark:group-hover:text-rose-500/30"; }
+               else if (art.tags?.includes("Numeracy")) { Doodle = DoodleWarliAnimal; doodleColor = "text-blue-500/15 group-hover:text-blue-500/25 dark:text-blue-500/20 dark:group-hover:text-blue-500/30"; }
+               else if (art.tags?.includes("Worksheets") || art.tags?.includes("Cards")) { Doodle = DoodleWarliSun; doodleColor = "text-purple-500/15 group-hover:text-purple-500/25 dark:text-purple-500/20 dark:group-hover:text-purple-500/30"; }
+               else if (art.tags?.includes("Manual")) { Doodle = DoodleWarliHut; doodleColor = "text-green-500/15 group-hover:text-green-500/25 dark:text-green-500/20 dark:group-hover:text-green-500/30"; }
 
                return (
                <div key={i} className="group bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-[40px] p-8 shadow-sm hover:shadow-xl hover:shadow-amber-500/5 transition-all space-y-6 flex flex-col justify-between relative overflow-hidden">
