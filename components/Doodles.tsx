@@ -72,89 +72,111 @@ export function DoodleCloud({ className, delay = "0s" }: { className?: string, d
   );
 }
 
-// Tribal figure (Warli inspired)
+// Authentic Warli Tribal Figure (Human)
 export function DoodleTribalFigure({ className, delay = "0s" }: { className?: string, delay?: string }) {
   return (
     <svg 
       className={cn("absolute pointer-events-none", className)} 
       style={{ animationDelay: delay }}
-      width="48" height="64" viewBox="0 0 60 100" fill="none" xmlns="http://www.w3.org/2000/svg"
+      width="100" height="120" viewBox="0 0 100 120" fill="none" xmlns="http://www.w3.org/2000/svg"
     >
       {/* Head */}
-      <circle cx="30" cy="15" r="8" fill="none" stroke="currentColor" strokeWidth="3" />
-      {/* Body Triangles */}
-      <path d="M30 25 L15 50 L45 50 Z" fill="none" stroke="currentColor" strokeWidth="3" strokeLinejoin="round" />
-      <path d="M30 75 L15 50 L45 50 Z" fill="none" stroke="currentColor" strokeWidth="3" strokeLinejoin="round" />
-      {/* Arms */}
-      <path d="M15 50 L5 30 M45 50 L55 30" stroke="currentColor" strokeWidth="3" strokeLinecap="round" />
-      {/* Legs */}
-      <path d="M25 75 L15 95 M35 75 L45 95" stroke="currentColor" strokeWidth="3" strokeLinecap="round" />
+      <circle cx="50" cy="20" r="12" fill="currentColor" />
+      {/* Upper Triangle (Torso) */}
+      <path d="M25,40 L75,40 L50,65 Z" fill="currentColor" stroke="currentColor" strokeWidth="2" strokeLinejoin="round" />
+      {/* Lower Triangle (Pelvis) */}
+      <path d="M50,65 L25,90 L75,90 Z" fill="currentColor" stroke="currentColor" strokeWidth="2" strokeLinejoin="round" />
+      {/* Arms (dancing/bent) */}
+      <path d="M25,40 L10,55 L25,75 M75,40 L90,55 L75,75" stroke="currentColor" strokeWidth="5" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+      {/* Legs (bent in motion) */}
+      <path d="M35,90 L25,115 M65,90 L75,115" stroke="currentColor" strokeWidth="5" strokeLinecap="round" fill="none" />
     </svg>
   );
 }
 
-// Warli Tree
+// Authentic Warli Tree (Triangle stack)
 export function DoodleWarliTree({ className, delay = "0s" }: { className?: string, delay?: string }) {
   return (
     <svg 
       className={cn("absolute pointer-events-none", className)} 
       style={{ animationDelay: delay }}
-      width="60" height="100" viewBox="0 0 60 100" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"
+      width="100" height="100" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg"
     >
-      <path d="M30 100 L30 20" />
-      <path d="M30 20 L10 50 L50 50 Z" />
-      <path d="M30 50 L5 80 L55 80 Z" />
-      <circle cx="30" cy="15" r="5" />
+      {/* Trunk */}
+      <path d="M50,95 L50,5" stroke="currentColor" strokeWidth="5" strokeLinecap="round" />
+      {/* Leaves as stacked triangles */}
+      <path d="M50,5 L30,35 L70,35 Z" fill="currentColor" stroke="currentColor" strokeWidth="2" strokeLinejoin="round" />
+      <path d="M50,25 L15,60 L85,60 Z" fill="currentColor" stroke="currentColor" strokeWidth="2" strokeLinejoin="round" />
+      <path d="M50,50 L5,85 L95,85 Z" fill="currentColor" stroke="currentColor" strokeWidth="2" strokeLinejoin="round" />
     </svg>
   );
 }
 
-// Warli Animal (Horse)
+// Authentic Warli Animal (Horse/Deer)
 export function DoodleWarliAnimal({ className, delay = "0s" }: { className?: string, delay?: string }) {
   return (
     <svg 
       className={cn("absolute pointer-events-none", className)} 
       style={{ animationDelay: delay }}
-      width="80" height="60" viewBox="0 0 80 60" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"
+      width="100" height="100" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg"
     >
-      <path d="M40 20 L20 40 L60 40 Z" />
-      <path d="M40 40 L20 20 L60 20 Z" />
-      <path d="M20 40 L20 55" />
-      <path d="M60 40 L60 55" />
-      <path d="M25 40 L25 55" />
-      <path d="M55 40 L55 55" />
-      <path d="M60 20 L75 10 L80 15" />
-      <path d="M20 20 L5 30" />
+      {/* Body: Two horizontal triangles joined at the tips */}
+      <path d="M15,40 L45,55 L15,70 Z" fill="currentColor" stroke="currentColor" strokeWidth="2" strokeLinejoin="round" />
+      <path d="M75,40 L45,55 L75,70 Z" fill="currentColor" stroke="currentColor" strokeWidth="2" strokeLinejoin="round" />
+      {/* Legs */}
+      <path d="M25,70 L25,95 M15,70 L5,95 M65,70 L65,95 M75,70 L85,95" stroke="currentColor" strokeWidth="5" strokeLinecap="round" />
+      {/* Neck and Head */}
+      <path d="M75,40 L85,15" stroke="currentColor" strokeWidth="5" strokeLinecap="round" />
+      <circle cx="85" cy="15" r="8" fill="currentColor" />
+      {/* Horns/Ears */}
+      <path d="M83,7 L75,-5 M87,7 L95,-5" stroke="currentColor" strokeWidth="4" strokeLinecap="round" />
+      {/* Tail */}
+      <path d="M15,40 Q5,30 2,50" stroke="currentColor" strokeWidth="5" fill="none" strokeLinecap="round" />
     </svg>
   );
 }
 
-// Warli Hut
+// Authentic Warli Hut
 export function DoodleWarliHut({ className, delay = "0s" }: { className?: string, delay?: string }) {
   return (
     <svg 
       className={cn("absolute pointer-events-none", className)} 
       style={{ animationDelay: delay }}
-      width="80" height="80" viewBox="0 0 80 80" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"
+      width="100" height="100" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg"
     >
-      <path d="M10 40 L40 10 L70 40 Z" />
-      <path d="M15 40 L15 70 L65 70 L65 40" />
-      <path d="M30 70 L30 50 L50 50 L50 70" />
+      {/* Roof (Triangle) */}
+      <path d="M50,10 L10,50 L90,50 Z" fill="none" stroke="currentColor" strokeWidth="5" strokeLinejoin="round" />
+      {/* Roof thatch lines */}
+      <path d="M40,20 L30,50 M60,20 L70,50 M50,10 L50,50 M30,30 L20,50 M70,30 L80,50" stroke="currentColor" strokeWidth="3.5" strokeLinecap="round" />
+      {/* Walls */}
+      <path d="M20,50 L20,95 L80,95 L80,50" fill="none" stroke="currentColor" strokeWidth="5" strokeLinejoin="round" />
+      {/* Door */}
+      <path d="M40,95 L40,65 L60,65 L60,95" fill="none" stroke="currentColor" strokeWidth="5" strokeLinejoin="round" />
+      {/* Inner wall patterns (dots) */}
+      <circle cx="30" cy="70" r="3" fill="currentColor" />
+      <circle cx="70" cy="70" r="3" fill="currentColor" />
+      <circle cx="30" cy="85" r="3" fill="currentColor" />
+      <circle cx="70" cy="85" r="3" fill="currentColor" />
     </svg>
   );
 }
 
-// Warli Sun
+// Authentic Warli Sun (Mandala/Circle)
 export function DoodleWarliSun({ className, delay = "0s" }: { className?: string, delay?: string }) {
   return (
     <svg 
-      className={cn("absolute pointer-events-none animate-spin", className)} 
-      style={{ animationDelay: delay, animationDuration: '30s' }}
-      width="80" height="80" viewBox="0 0 80 80" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"
+      className={cn("absolute pointer-events-none animate-[spin_40s_linear_infinite]", className)} 
+      style={{ animationDelay: delay }}
+      width="100" height="100" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg"
     >
-      <circle cx="40" cy="40" r="20" strokeDasharray="4 4" />
-      <circle cx="40" cy="40" r="30" />
-      <path d="M40 0 L40 10 M40 70 L40 80 M0 40 L10 40 M70 40 L80 40 M12 12 L19 19 M61 61 L68 68 M12 68 L19 61 M61 19 L68 12" />
+      {/* Inner solid circle */}
+      <circle cx="50" cy="50" r="15" fill="currentColor" />
+      {/* Outer rings */}
+      <circle cx="50" cy="50" r="28" stroke="currentColor" strokeWidth="3" strokeDasharray="6 6" />
+      <circle cx="50" cy="50" r="36" stroke="currentColor" strokeWidth="3" />
+      {/* Sun rays */}
+      <path d="M50,0 L50,10 M50,90 L50,100 M0,50 L10,50 M90,50 L100,50 M15,15 L25,25 M75,75 L85,85 M15,85 L25,75 M75,25 L85,15" stroke="currentColor" strokeWidth="4" strokeLinecap="round" />
+      <path d="M30,5 L38,13 M70,5 L62,13 M30,95 L38,87 M70,95 L62,87 M5,30 L13,38 M5,70 L13,62 M95,30 L87,38 M95,70 L87,62" stroke="currentColor" strokeWidth="3" strokeLinecap="round" />
     </svg>
   );
 }
