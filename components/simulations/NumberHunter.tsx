@@ -2,8 +2,10 @@
 import { useState, useEffect } from 'react';
 import { CheckCircle2, XCircle, RotateCcw, HelpCircle, Trophy } from 'lucide-react';
 import { cn } from "@/lib/utils";
+import { usePoints } from '@/lib/points-store';
 
 export default function NumberHunter() {
+  const { addXP } = usePoints();
   const [target, setTarget] = useState(0);
   const [score, setScore] = useState(0);
   const [feedback, setFeedback] = useState<'idle' | 'success' | 'error'>('idle');
@@ -21,6 +23,7 @@ export default function NumberHunter() {
     if (num === target) {
       setFeedback('success');
       setScore(prev => prev + 1);
+      addXP(5); // 5 XP per correct guess
       setTimeout(generateNew, 1500);
     } else {
       setFeedback('error');

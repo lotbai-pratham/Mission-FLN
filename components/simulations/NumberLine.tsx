@@ -3,6 +3,7 @@ import { useState, useRef, useEffect } from 'react';
 import { Plus, Minus, RotateCcw, Volume2, ArrowRight } from 'lucide-react';
 import { speakLetter } from '@/lib/speak';
 import { cn } from '@/lib/utils';
+import { usePoints } from '@/lib/points-store';
 
 type Range = '0-10' | '0-20' | '0-100';
 
@@ -127,6 +128,7 @@ function NumberLineSVG({
 
 // ── Addition Mode ─────────────────────────────────────────────────────────────
 function AdditionMode({ range }: { range: Range }) {
+  const { addXP } = usePoints();
   const { max, step } = RANGE_CONFIG[range];
   const [start, setStart] = useState(0);
   const [addend, setAddend] = useState(0);
@@ -201,7 +203,7 @@ function AdditionMode({ range }: { range: Range }) {
 
       <div className="flex gap-3 justify-center">
         <button
-          onClick={() => { setShow(true); speak(result); }}
+          onClick={() => { if (!show) addXP(5); setShow(true); speak(result); }}
           className="flex items-center gap-2 px-6 py-3 bg-[#E8232A] hover:bg-[#c41e24] text-white font-black rounded-2xl shadow-md active:scale-95 transition-all"
         >
           <ArrowRight className="w-4 h-4" />

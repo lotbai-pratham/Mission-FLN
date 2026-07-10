@@ -47,6 +47,10 @@ export default function AdditionMaster() {
     setStep('add_tens');
   };
 
+  const skipRebundle = () => {
+    setStep('add_tens');
+  };
+
   const finalize = () => {
     setCombinedTens(prev => prev + num1.tens + num2.tens);
     setStep('completed');
@@ -162,7 +166,7 @@ export default function AdditionMaster() {
                            TIE 10 STICKS <Package className="w-4 h-4" />
                         </button>
                      ) : (
-                        <button onClick={finalize} className="w-full py-4 bg-slate-800 text-white font-black rounded-2xl flex items-center justify-center gap-2 active:scale-95 transition-all">
+                        <button onClick={skipRebundle} className="w-full py-4 bg-slate-800 text-white font-black rounded-2xl flex items-center justify-center gap-2 active:scale-95 transition-all">
                            NO CARRY-OVER <ChevronRight className="w-4 h-4" />
                         </button>
                      )
