@@ -6,6 +6,7 @@ import {
 } from 'lucide-react';
 import { speakLetter } from '@/lib/speak';
 import { cn } from '@/lib/utils';
+import { usePoints } from '@/lib/points-store';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 type WC = 'violet' | 'blue' | 'emerald' | 'amber';
@@ -499,6 +500,7 @@ function FinalResult({ pearls, correct, total, worldStars, onRestart }: {
 
 // ── Main Component ─────────────────────────────────────────────────────────────
 export default function VachanPravas() {
+  const { addXP } = usePoints();
   const [phase, setPhase] = useState<Phase>('map');
   const [pearls, setPearls] = useState(0);
   const [correct, setCorrect] = useState(0);
@@ -527,6 +529,7 @@ export default function VachanPravas() {
       setPearls(p => p + earned);
       setWorldCorrect(c => c + 1);
       setWorldPearls(p => p + earned);
+      addXP(reward);
     }
 
     const world = WORLDS.find(w => w.id === activeWorldId)!;

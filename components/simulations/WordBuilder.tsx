@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import { SpellCheck, CheckCircle2, RotateCcw, Star } from 'lucide-react';
 import { cn } from "@/lib/utils";
+import { usePoints } from '@/lib/points-store';
 
 // Simple Marathi CVC words — no matras, suitable for Level 2 literacy
 const WORDS = [
@@ -19,6 +20,7 @@ const WORDS = [
 const DISTRACTORS = ["ट", "ब", "च", "त", "ह", "स", "ख", "फ", "ड", "य"];
 
 export default function WordBuilder() {
+  const { addXP } = usePoints();
   const [idx, setIdx] = useState(0);
   const [currentWord, setCurrentWord] = useState<string[]>([]);
   const [letterBank, setLetterBank] = useState<string[]>([]);
@@ -51,6 +53,7 @@ export default function WordBuilder() {
       if (newWord.join("") === target.word) {
         setFeedback('success');
         setScore(prev => prev + 1);
+        addXP(10); // 10 XP for building a word
         setTimeout(() => setIdx(i => i + 1), 2000);
       } else {
         setFeedback('error');

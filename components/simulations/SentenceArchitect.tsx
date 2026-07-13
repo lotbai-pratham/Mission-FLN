@@ -1,6 +1,7 @@
 'use client';
 import { useState, useEffect } from 'react';
 import { Sparkles, Send, Brain } from 'lucide-react';
+import { usePoints } from '@/lib/points-store';
 
 const PROBLEMS = [
   { emoji: "🍎 + 😋", options: ["मी सफरचंद खातो", "मला आंबा आवडतो", "ते घर आहे"], answer: 0 },
@@ -10,7 +11,8 @@ const PROBLEMS = [
   { emoji: "🌦️ + 🌈", options: ["आकाशात इंद्रधनुष्य आहे", "पाऊस पडत आहे", "खूप वारा सुटला आहे"], answer: 0 },
 ];
 
-export default function SentenceArchitect({ onScore, isBattle, player }: { onScore: (s: number) => void; isBattle?: boolean; player?: 1 | 2 }) {
+export default function SentenceArchitect({ onScore, isBattle, player }: { onScore?: (s: number) => void; isBattle?: boolean; player?: 1 | 2 }) {
+  const { addXP } = usePoints();
   const [index, setIndex] = useState(0);
   const [feedback, setFeedback] = useState<'correct' | 'wrong' | null>(null);
 
@@ -18,7 +20,11 @@ export default function SentenceArchitect({ onScore, isBattle, player }: { onSco
     if (feedback) return;
     if (idx === PROBLEMS[index].answer) {
       setFeedback('correct');
-      onScore(10);
+      if (onScore) {
+        onScore(10);
+      } else {
+        addXP(10);
+      }
       setTimeout(() => {
         setFeedback(null);
         setIndex((index + 1) % PROBLEMS.length);
