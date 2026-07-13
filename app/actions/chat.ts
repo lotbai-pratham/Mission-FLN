@@ -3,6 +3,7 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { TARL_PEDAGOGY_KNOWLEDGE } from "@/lib/tarl_pedagogy";
 import { getDashboardStats, getPORankings } from "@/app/actions";
+import { unstable_cache } from "next/cache";
 
 const genAI = new GoogleGenerativeAI(process.env.GOOGLE_GENERATIVE_AI_API_KEY || "");
 
@@ -130,6 +131,14 @@ ALWAYS:
 
 `;
 
+const getCachedMissionContext = unstable_cache(
+  async () => {
+    return await buildMissionContext();
+  },
+  ['mission-context-cache'],
+  { revalidate: 3600 } // cache for 1 hour
+);
+
 export async function askPratham(
   query: string,
   history: { role: "user" | "assistant"; content: string }[] = []
@@ -139,8 +148,8 @@ export async function askPratham(
     return { content: "AI is not configured. Please add GOOGLE_GENERATIVE_AI_API_KEY to environment variables." };
   }
 
-  // Build full context: mission data + TaRL knowledge base
-  const [missionContext] = await Promise.all([buildMissionContext()]);
+  // Fetch full context from cache
+  const [missionContext] = await Promise.all([getCachedMissionContext()]);
 
   const systemInstruction =
     BASE_SYSTEM_PROMPT +
@@ -167,10 +176,23 @@ export async function askPratham(
           history: geminiHistory,
           generationConfig: { temperature: 0.7, maxOutputTokens: 1024 },
         });
-        const result = await chat.sendMessage(query);
+
+        // 8 second timeout per model attempt
+        const timeoutPromise = new Promise<never>((_, reject) => 
+          setTimeout(() => reject(new Error("Model timeout")), 8000)
+        );
+        
+        const result = await Promise.race([
+          chat.sendMessage(query),
+          timeoutPromise
+        ]);
+        
         text = result.response.text().trim();
         if (text) break;
-      } catch (_) { continue; }
+      } catch (err) {
+        console.warn(`Model ${modelName} failed or timed out, trying next...`);
+        continue; 
+      }
     }
 
     if (!text) throw new Error("All models returned empty");

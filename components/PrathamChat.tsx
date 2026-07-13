@@ -146,7 +146,8 @@ export default function PrathamChat() {
                 <div className="grid grid-cols-1 gap-1.5">
                   {SUGGESTED_QUESTIONS.map(({ q, icon }) => (
                     <button key={q} onClick={() => send(q)}
-                      className="text-left px-3 py-2.5 bg-slate-50 dark:bg-slate-800 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-xl text-[11px] font-semibold text-slate-500 hover:text-[#E8232A] transition-all border border-slate-100 dark:border-slate-700 flex items-center gap-2">
+                      disabled={loading}
+                      className={`text-left px-3 py-2.5 bg-slate-50 dark:bg-slate-800 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-xl text-[11px] font-semibold text-slate-500 hover:text-[#E8232A] transition-all border border-slate-100 dark:border-slate-700 flex items-center gap-2 ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}>
                       <span className="text-base shrink-0">{icon}</span>
                       <span>{q}</span>
                     </button>
@@ -197,7 +198,8 @@ export default function PrathamChat() {
           <div className="px-4 pb-4 pt-3 border-t border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 shrink-0">
             {messages.length > 0 && (
               <button onClick={() => setMessages([])}
-                className="w-full mb-2 py-1 text-[10px] font-bold text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 uppercase tracking-widest transition-all">
+                disabled={loading}
+                className="w-full mb-2 py-1 text-[10px] font-bold text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 uppercase tracking-widest transition-all disabled:opacity-50">
                 Clear conversation
               </button>
             )}
