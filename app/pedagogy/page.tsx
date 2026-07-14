@@ -38,7 +38,7 @@ export default function PedagogyPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-900/10 py-6">
+    <div className="w-full pb-10">
       
       {/* Header section */}
       <div className="mb-8">

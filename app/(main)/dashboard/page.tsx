@@ -1,6 +1,6 @@
 export const dynamic = 'force-dynamic';
 import { getDashboardStats, getHierarchy } from "@/app/actions";
-import DashboardClient from "../DashboardClient"; // Adjusted relative path
+import DashboardClient from "@/app/DashboardClient";
 import Link from "next/link";
 import { UserPlus, ClipboardPlus } from "lucide-react";
 import WarliMotif from "@/components/warli/WarliMotif";

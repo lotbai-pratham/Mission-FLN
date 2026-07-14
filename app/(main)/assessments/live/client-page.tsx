@@ -1,8 +1,8 @@
 "use client";
 
 import { useState, useTransition, useEffect, useRef, useCallback } from "react";
-import { School, User, CheckCircle2, Navigation, Check, X, FileText, UserPlus, WifiOff, Sparkles, Mic, MicOff, AlertCircle } from "lucide-react";
-import { createAssessment, createStudent, getStudentsBySchool } from "@/app/actions";
+import { School, User, CheckCircle2, Navigation, Check, X, FileText, UserPlus, WifiOff, Sparkles, Mic, MicOff, AlertCircle, Settings, Edit3, Save } from "lucide-react";
+import { createAssessment, createStudent, getStudentsBySchool, saveSettings } from "@/app/actions";
 import { useRouter } from "next/navigation";
 import { addToQueue, saveHierarchyCache, getHierarchyCache } from "@/lib/offline-queue";
 import { Mascot, StarBurst, StarProgress, useStarBurst } from "@/components/FunMode";
@@ -21,8 +21,13 @@ const DEFAULT_ASSETS = {
   DivProblem: "84 ÷ 4 = ?"
 };
 
-export default function LiveTrackerClient({ hierarchy: serverHierarchy, settings }: { hierarchy: any[], settings: Record<string, string> }) {
+export default function LiveTrackerClient({ hierarchy: serverHierarchy, settings: initialSettings, isAdmin = false }: { hierarchy: any[], settings: Record<string, string>, isAdmin?: boolean }) {
   const router = useRouter();
+  const [settings, setSettings] = useState(initialSettings);
+  const [selectedSample, setSelectedSample] = useState<number>(1);
+  const [isEditingAdmin, setIsEditingAdmin] = useState(false);
+  const [adminSettingsForm, setAdminSettingsForm] = useState<Record<string, string>>({});
+  const [isSavingAdmin, setIsSavingAdmin] = useState(false);
   const [isPending, startTransition] = useTransition();
   const [isOnline, setIsOnline] = useState(true);
   const [hierarchy, setHierarchy] = useState(serverHierarchy);
@@ -45,7 +50,10 @@ export default function LiveTrackerClient({ hierarchy: serverHierarchy, settings
     return () => { window.removeEventListener("online", up); window.removeEventListener("offline", down); };
   }, [serverHierarchy]);
 
-  const getAsset = (key: keyof typeof DEFAULT_ASSETS) => settings[key] || DEFAULT_ASSETS[key];
+  const getAsset = (key: keyof typeof DEFAULT_ASSETS) => {
+    const sampleKey = `${key}_${selectedSample}`;
+    return settings[sampleKey] || settings[key] || DEFAULT_ASSETS[key];
+  };
 
   const [step, setStep] = useState<'setup' | 'literacy' | 'numeracyRecog' | 'numeracyOps' | 'submitting'>('setup');
   
@@ -291,6 +299,20 @@ export default function LiveTrackerClient({ hierarchy: serverHierarchy, settings
     });
   };
 
+  const handleSaveSettingsAdmin = async () => {
+    setIsSavingAdmin(true);
+    try {
+      await saveSettings(adminSettingsForm);
+      setSettings((prev: any) => ({ ...prev, ...adminSettingsForm }));
+      setIsEditingAdmin(false);
+      alert("Settings saved successfully!");
+    } catch(e) {
+      console.error(e);
+      alert("Failed to save settings.");
+    }
+    setIsSavingAdmin(false);
+  };
+
   return (
     <div className="max-w-3xl mx-auto mt-8 animate-in fade-in slide-in-from-bottom-8 duration-500 pb-16">
       
@@ -382,6 +404,38 @@ export default function LiveTrackerClient({ hierarchy: serverHierarchy, settings
                 <span className={`absolute top-0.5 w-5 h-5 bg-white rounded-full shadow transition-all ${funMode ? 'left-6' : 'left-0.5'}`}/>
               </button>
             </div>
+
+            {/* Sample Selector */}
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-blue-50 dark:bg-slate-800 p-5 rounded-2xl border border-blue-100 dark:border-slate-700">
+              <div>
+                <p className="font-bold text-blue-900 dark:text-blue-200 text-sm flex items-center gap-2"><FileText className="w-4 h-4" /> Assessment Sample</p>
+                <p className="text-xs text-blue-600/70 dark:text-blue-400">Select different material for repeated assessments.</p>
+              </div>
+              <div className="flex gap-2">
+                {[1, 2, 3, 4].map(num => (
+                  <button key={num} onClick={() => setSelectedSample(num)} className={`w-10 h-10 rounded-xl font-bold transition-all ${selectedSample === num ? 'bg-blue-600 text-white shadow-md' : 'bg-white text-blue-600 hover:bg-blue-100'}`}>
+                    {num}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Admin Assessment Edit Button */}
+            {isAdmin && (
+              <button onClick={() => {
+                 const current: Record<string, string> = {};
+                 Object.keys(DEFAULT_ASSETS).forEach(key => {
+                   [1, 2, 3, 4].forEach(n => {
+                     const k = `${key}_${n}`;
+                     current[k] = settings[k] || settings[key] || DEFAULT_ASSETS[key as keyof typeof DEFAULT_ASSETS];
+                   });
+                 });
+                 setAdminSettingsForm(current);
+                 setIsEditingAdmin(true);
+              }} className="w-full py-3 rounded-xl border-2 border-dashed border-slate-300 dark:border-slate-700 text-slate-500 font-bold hover:bg-slate-50 hover:text-slate-700 flex items-center justify-center gap-2">
+                <Settings className="w-4 h-4" /> Edit Assessment Material (Admin)
+              </button>
+            )}
 
             <button onClick={handleSetupNext} disabled={!studentId || !assessorName}
                     className="w-full py-4 text-white font-bold rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 transition-all hover:opacity-90 hover:scale-[1.01] hover:shadow-md disabled:opacity-50 mt-6 flex justify-center items-center gap-2">
@@ -554,6 +608,58 @@ export default function LiveTrackerClient({ hierarchy: serverHierarchy, settings
         )}
 
       </div>
+
+      {/* Admin Settings Modal */}
+      {isEditingAdmin && (
+        <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 overflow-y-auto">
+          <div className="bg-white dark:bg-slate-900 w-full max-w-4xl rounded-3xl shadow-2xl p-6 sm:p-8 relative max-h-[90vh] overflow-y-auto flex flex-col">
+            <button onClick={() => setIsEditingAdmin(false)} className="absolute top-6 right-6 p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"><X className="w-6 h-6 text-slate-500" /></button>
+            <h2 className="text-2xl font-bold text-slate-800 dark:text-slate-100 mb-6 flex items-center gap-2"><Settings className="w-6 h-6 text-blue-600" /> Edit Assessment Materials</h2>
+            
+            <div className="space-y-8 flex-1">
+              {[1, 2, 3, 4].map(sampleNum => (
+                <div key={sampleNum} className="bg-slate-50 dark:bg-slate-800/50 p-6 rounded-2xl border border-slate-200 dark:border-slate-700">
+                  <h3 className="text-xl font-bold text-slate-700 dark:text-slate-200 mb-4 flex items-center gap-2">
+                    <span className="bg-blue-600 text-white w-8 h-8 rounded-full flex items-center justify-center text-sm">{sampleNum}</span>
+                    Sample {sampleNum}
+                  </h3>
+                  <div className="grid sm:grid-cols-2 gap-4">
+                    {Object.keys(DEFAULT_ASSETS).map(key => {
+                      const formKey = `${key}_${sampleNum}`;
+                      return (
+                        <div key={formKey}>
+                          <label className="block text-xs font-bold text-slate-500 uppercase mb-1">{key}</label>
+                          {key === 'Story' || key === 'Paragraph' ? (
+                            <textarea
+                              value={adminSettingsForm[formKey] || ''}
+                              onChange={(e) => setAdminSettingsForm(prev => ({ ...prev, [formKey]: e.target.value }))}
+                              className="w-full bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-500 h-24 resize-none"
+                            />
+                          ) : (
+                            <input
+                              type="text"
+                              value={adminSettingsForm[formKey] || ''}
+                              onChange={(e) => setAdminSettingsForm(prev => ({ ...prev, [formKey]: e.target.value }))}
+                              className="w-full bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-500"
+                            />
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div className="mt-8 pt-6 border-t border-slate-200 dark:border-slate-700 flex justify-end gap-4">
+              <button onClick={() => setIsEditingAdmin(false)} className="px-6 py-3 rounded-xl font-bold text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">Cancel</button>
+              <button onClick={handleSaveSettingsAdmin} disabled={isSavingAdmin} className="px-8 py-3 rounded-xl font-bold text-white bg-blue-600 hover:bg-blue-700 transition-colors shadow-md disabled:opacity-50 flex items-center gap-2">
+                {isSavingAdmin ? 'Saving...' : <><Save className="w-5 h-5"/> Save Changes</>}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
