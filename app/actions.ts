@@ -454,7 +454,7 @@ export async function createStudent(data: {
   });
   
   revalidatePath('/students/new');
-  revalidatePath('/');
+  revalidatePath('/', 'layout');
   return student;
 }
 
@@ -473,7 +473,7 @@ export async function createAssessment(data: { studentId: string, assessorName: 
   });
 
   revalidatePath('/assessments/new');
-  revalidatePath('/');
+  revalidatePath('/', 'layout');
   return assessment;
 }
 
@@ -582,21 +582,19 @@ export async function updateAssessment(id: string, data: {
 }) {
   await requireAdmin();
   await prisma.assessment.update({ where: { id }, data });
-  revalidatePath("/admin/data");
+  revalidatePath('/', 'layout');
 }
 
 export async function deleteAssessment(id: string) {
   await requireAdmin();
   await prisma.assessment.delete({ where: { id } });
-  revalidatePath("/admin/data");
-  revalidatePath("/");
+  revalidatePath('/', 'layout');
 }
 
 export async function clearAllAssessments(term?: string) {
   await requireAdmin();
   await prisma.assessment.deleteMany(term ? { where: { term } } : undefined);
-  revalidatePath("/admin/data");
-  revalidatePath("/");
+  revalidatePath('/', 'layout');
 }
 
 export async function clearAllData() {
@@ -607,9 +605,7 @@ export async function clearAllData() {
   await prisma.school.deleteMany();
   await prisma.projectOffice.deleteMany();
   await prisma.division.deleteMany();
-  revalidatePath("/admin/data");
-  revalidatePath("/");
-  revalidatePath("/students");
+  revalidatePath('/', 'layout');
 }
 
 export async function seedHierarchy() {
@@ -657,8 +653,7 @@ export async function seedHierarchy() {
     }
   }
 
-  revalidatePath("/");
-  revalidatePath("/admin/upload");
+  revalidatePath('/', 'layout');
   return { divCount, poCount, schoolCount };
 }
 
@@ -688,7 +683,7 @@ export async function cleanupSchools() {
   await prisma.student.deleteMany({ where: { schoolId: { in: invalidSchoolIds } } });
   const result = await prisma.school.deleteMany({ where: { id: { in: invalidSchoolIds } } });
 
-  revalidatePath("/");
+  revalidatePath('/', 'layout');
   return { count: result.count };
 }
 

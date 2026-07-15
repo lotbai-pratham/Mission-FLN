@@ -308,8 +308,9 @@ export default function DashboardClient({ initialStats, hierarchy }: { initialSt
       </div>
 
       {/* KPIs */}
-      <div className={`grid grid-cols-2 lg:grid-cols-3 gap-4 transition-opacity ${isPending ? 'opacity-50' : ''}`}>
+      <div className={`grid grid-cols-2 lg:grid-cols-4 gap-4 transition-opacity ${isPending ? 'opacity-50' : ''}`}>
         <KPI label={t("Total Students")} value={stats.totalStudents} icon={<Users className="w-5 h-5" />} color="blue" />
+        <KPI label={t("Total Schools") || "Total Schools"} value={stats.totalSchools} icon={<School className="w-5 h-5" />} color="emerald" />
         <KPI label={t("Arena Engagement")} value={stats.totalArenaBattles ?? 0} icon={<Sparkles className="w-5 h-5" />} color="blue" suffix={` ${t('Arena Engagement') !== 'Arena Engagement' ? '' : 'Battles'}`} />
         <KPI label={t("Single Games")} value={stats.totalSingleGames ?? 0} icon={<Gamepad2 className="w-5 h-5" />} color="orange" suffix={` ${t('Single Games') !== 'Single Games' ? '' : 'Games'}`} />
       </div>
