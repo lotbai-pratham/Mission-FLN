@@ -22,6 +22,20 @@ export async function getSchools() {
   }
 }
 
+export async function getDivisions() {
+  return await prisma.division.findMany({
+    orderBy: { name: 'asc' }
+  });
+}
+
+export async function getProjectOffices() {
+  return await prisma.projectOffice.findMany({
+    orderBy: { name: 'asc' },
+    include: { division: true }
+  });
+}
+
+
 export async function getStudentsBySchool(schoolId: string) {
   return await prisma.student.findMany({
     where: { schoolId },
@@ -530,7 +544,7 @@ export async function getUsers(): Promise<any[]> {
   }
 }
 
-export async function setUserRole(userId: string, role: "user" | "admin") {
+export async function setUserRole(userId: string, role: "user" | "admin" | "division" | "project_office") {
   await requireAdmin();
   try {
     const res = await fetch(`${API_BASE}/api/users/role`, {
@@ -546,21 +560,34 @@ export async function setUserRole(userId: string, role: "user" | "admin") {
   revalidatePath("/admin/users");
 }
 
-export async function assignUserSchool(userId: string, schoolId: string | null) {
+export async function assignUserScope(
+  userId: string, 
+  scopeType: 'school' | 'project_office' | 'division' | null, 
+  scopeId: string | null
+) {
   await requireAdmin();
   try {
-    const res = await fetch(`${API_BASE}/api/users/school`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ userId, schoolId })
-    });
-    if (!res.ok) throw new Error("Failed to assign school via backend");
-  } catch (err) {
-    console.error("Falling back to direct DB", err);
+    let updateData: any = {
+      schoolId: null,
+      projectOfficeId: null,
+      divisionId: null
+    };
+
+    if (scopeType === 'school' && scopeId) {
+      updateData.schoolId = scopeId;
+    } else if (scopeType === 'project_office' && scopeId) {
+      updateData.projectOfficeId = scopeId;
+    } else if (scopeType === 'division' && scopeId) {
+      updateData.divisionId = scopeId;
+    }
+
     await (prisma as any).user.update({
       where: { id: userId },
-      data: { schoolId: schoolId || null },
+      data: updateData,
     });
+  } catch (err) {
+    console.error("Failed to assign scope", err);
+    throw new Error("Failed to assign user scope");
   }
   revalidatePath("/admin/users");
 }

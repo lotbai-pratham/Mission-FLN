@@ -1,10 +1,15 @@
 export const dynamic = 'force-dynamic';
-import { getUsers, getSchools } from '@/app/actions';
+import { getUsers, getSchools, getDivisions, getProjectOffices } from '@/app/actions';
 import { School } from 'lucide-react';
 import UsersClient from './UsersClient';
 
 export default async function AdminUsersPage() {
-  const [users, schools] = await Promise.all([getUsers(), getSchools()]);
+  const [users, schools, divisions, projectOffices] = await Promise.all([
+    getUsers(), 
+    getSchools(),
+    getDivisions(),
+    getProjectOffices()
+  ]);
 
   return (
     <div className="max-w-6xl mx-auto space-y-6 pb-12 animate-in fade-in duration-500">
@@ -13,7 +18,12 @@ export default async function AdminUsersPage() {
         <p className="text-slate-500 mt-1">Manage roles and assign teachers to their schools for scoped access.</p>
       </div>
 
-      <UsersClient initialUsers={users} schools={schools} />
+      <UsersClient 
+        initialUsers={users} 
+        schools={schools} 
+        divisions={divisions}
+        projectOffices={projectOffices}
+      />
 
       <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-100 dark:border-blue-800 rounded-2xl px-6 py-4 text-sm text-blue-700 dark:text-blue-300 flex items-start gap-3">
         <School className="w-5 h-5 mt-0.5 shrink-0" />

@@ -1,19 +1,28 @@
 "use client";
 
-import { ShieldCheck, User, Clock, Activity, School, Save } from 'lucide-react';
+import { ShieldCheck, User, Clock, Activity, School, Building2, Map } from 'lucide-react';
 import { useState } from 'react';
-import { setUserRole, assignUserSchool } from '@/app/actions';
+import { setUserRole, assignUserScope } from '@/app/actions';
 import { cn } from '@/lib/utils';
 
-export default function UsersClient({ initialUsers, schools }: { initialUsers: any[], schools: any[] }) {
+export default function UsersClient({ 
+  initialUsers, 
+  schools,
+  divisions,
+  projectOffices 
+}: { 
+  initialUsers: any[], 
+  schools: any[],
+  divisions: any[],
+  projectOffices: any[]
+}) {
   const [users, setUsers] = useState(initialUsers);
   const [loadingId, setLoadingId] = useState<string | null>(null);
 
-  const handleRoleToggle = async (userId: string, currentRole: string) => {
+  const handleRoleChange = async (userId: string, newRole: string) => {
     setLoadingId(userId);
     try {
-      const newRole = currentRole === 'admin' ? 'user' : 'admin';
-      await setUserRole(userId, newRole);
+      await setUserRole(userId, newRole as any);
       setUsers(prev => prev.map(u => u.id === userId ? { ...u, role: newRole } : u));
     } catch (e) {
       alert("Failed to update role");
@@ -22,13 +31,23 @@ export default function UsersClient({ initialUsers, schools }: { initialUsers: a
     }
   };
 
-  const handleSchoolAssign = async (userId: string, schoolId: string | null) => {
+  const handleScopeAssign = async (userId: string, scopeType: 'school' | 'project_office' | 'division' | null, scopeId: string | null) => {
     setLoadingId(userId);
     try {
-      await assignUserSchool(userId, schoolId);
-      setUsers(prev => prev.map(u => u.id === userId ? { ...u, schoolId } : u));
+      await assignUserScope(userId, scopeType, scopeId);
+      setUsers(prev => prev.map(u => {
+        if (u.id === userId) {
+          return {
+            ...u,
+            schoolId: scopeType === 'school' ? scopeId : null,
+            projectOfficeId: scopeType === 'project_office' ? scopeId : null,
+            divisionId: scopeType === 'division' ? scopeId : null,
+          };
+        }
+        return u;
+      }));
     } catch (e) {
-      alert("Failed to assign school");
+      alert("Failed to assign scope");
     } finally {
       setLoadingId(null);
     }
@@ -36,18 +55,18 @@ export default function UsersClient({ initialUsers, schools }: { initialUsers: a
 
   return (
     <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-100 dark:border-slate-800 shadow-sm overflow-hidden">
-      <div className="grid grid-cols-5 bg-slate-50 dark:bg-slate-800/50 text-slate-500 text-xs font-semibold uppercase tracking-wider px-6 py-3 border-b border-slate-100 dark:border-slate-800">
+      <div className="grid grid-cols-[3fr_2fr_1fr_2fr_3fr] bg-slate-50 dark:bg-slate-800/50 text-slate-500 text-xs font-semibold uppercase tracking-wider px-6 py-3 border-b border-slate-100 dark:border-slate-800 gap-4">
         <span>User</span>
         <span className="flex items-center gap-1"><Clock className="w-3 h-3" /> Last Login</span>
-        <span className="flex items-center gap-1"><Activity className="w-3 h-3" /> Sessions</span>
-        <span className="flex items-center gap-1"><School className="w-3 h-3" /> Assigned School</span>
+        <span className="flex items-center gap-1"><Activity className="w-3 h-3" /> Sess.</span>
         <span>Role</span>
+        <span>Scope Assignment</span>
       </div>
 
       <div className="divide-y divide-slate-100 dark:divide-slate-800">
         {users.map((user: any) => (
           <div key={user.id} className={cn(
-            "grid grid-cols-5 items-center px-6 py-4 hover:bg-slate-50 dark:hover:bg-slate-800/30 transition-colors gap-3",
+            "grid grid-cols-[3fr_2fr_1fr_2fr_3fr] items-center px-6 py-4 hover:bg-slate-50 dark:hover:bg-slate-800/30 transition-colors gap-4",
             loadingId === user.id && "opacity-50 pointer-events-none"
           )}>
             {/* User */}
@@ -77,44 +96,76 @@ export default function UsersClient({ initialUsers, schools }: { initialUsers: a
               {user._count?.sessions ?? 0}
             </div>
 
-            {/* School assignment */}
+            {/* Role */}
             <div>
               <select
-                value={user.schoolId ?? ''}
-                onChange={e => handleSchoolAssign(user.id, e.target.value || null)}
-                className="text-xs rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 px-2 py-1.5 w-full max-w-[200px] focus:outline-none focus:ring-2 focus:ring-blue-400"
+                value={user.role}
+                onChange={e => handleRoleChange(user.id, e.target.value)}
+                className={cn(
+                  "text-xs font-bold rounded-xl border px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-blue-400 w-full",
+                  user.role === 'admin' 
+                    ? "border-violet-200 bg-violet-50 text-violet-700 dark:border-violet-800/50 dark:bg-violet-900/20 dark:text-violet-300" 
+                    : "border-slate-200 bg-white text-slate-700 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300"
+                )}
               >
-                <option value="">— No school —</option>
-                {schools.map((s: any) => (
-                  <option key={s.id} value={s.id}>{s.name}</option>
-                ))}
+                <option value="user">School User</option>
+                <option value="project_office">Project Office</option>
+                <option value="division">Division Manager</option>
+                <option value="admin">System Admin</option>
               </select>
             </div>
 
-            {/* Role */}
-            <div className="flex items-center gap-3">
-              <span className={cn(
-                "inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold",
-                user.role === 'admin'
-                  ? 'bg-violet-100 text-violet-700 dark:bg-violet-900/40 dark:text-violet-300'
-                  : 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400'
-              )}>
-                {user.role === 'admin' && <ShieldCheck className="w-3 h-3" />}
-                {user.role}
-              </span>
-
-              <button 
-                onClick={() => handleRoleToggle(user.id, user.role)}
-                className={cn(
-                  "text-xs font-semibold px-3 py-1.5 rounded-lg transition-all",
-                  user.role === 'admin'
-                    ? 'text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20'
-                    : 'text-violet-600 hover:bg-violet-50 dark:hover:bg-violet-900/20'
-                )}
-              >
-                {user.role === 'admin' ? 'Revoke Admin' : 'Make Admin'}
-              </button>
+            {/* Scope assignment */}
+            <div className="flex items-center gap-2">
+              {user.role === 'admin' ? (
+                <div className="flex items-center gap-1.5 text-xs font-bold text-violet-600 dark:text-violet-400">
+                  <ShieldCheck className="w-4 h-4" /> Full System Access
+                </div>
+              ) : user.role === 'division' ? (
+                <>
+                  <Map className="w-4 h-4 text-emerald-500 shrink-0" />
+                  <select
+                    value={user.divisionId ?? ''}
+                    onChange={e => handleScopeAssign(user.id, 'division', e.target.value || null)}
+                    className="text-xs rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 px-2 py-1.5 w-full focus:outline-none focus:ring-2 focus:ring-emerald-400"
+                  >
+                    <option value="">— Select Division —</option>
+                    {divisions.map((d: any) => (
+                      <option key={d.id} value={d.id}>{d.name}</option>
+                    ))}
+                  </select>
+                </>
+              ) : user.role === 'project_office' ? (
+                <>
+                  <Building2 className="w-4 h-4 text-orange-500 shrink-0" />
+                  <select
+                    value={user.projectOfficeId ?? ''}
+                    onChange={e => handleScopeAssign(user.id, 'project_office', e.target.value || null)}
+                    className="text-xs rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 px-2 py-1.5 w-full focus:outline-none focus:ring-2 focus:ring-orange-400"
+                  >
+                    <option value="">— Select Project Office —</option>
+                    {projectOffices.map((po: any) => (
+                      <option key={po.id} value={po.id}>{po.name} ({po.division?.name})</option>
+                    ))}
+                  </select>
+                </>
+              ) : (
+                <>
+                  <School className="w-4 h-4 text-blue-500 shrink-0" />
+                  <select
+                    value={user.schoolId ?? ''}
+                    onChange={e => handleScopeAssign(user.id, 'school', e.target.value || null)}
+                    className="text-xs rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 px-2 py-1.5 w-full focus:outline-none focus:ring-2 focus:ring-blue-400"
+                  >
+                    <option value="">— Select School —</option>
+                    {schools.map((s: any) => (
+                      <option key={s.id} value={s.id}>{s.name}</option>
+                    ))}
+                  </select>
+                </>
+              )}
             </div>
+
           </div>
         ))}
 
