@@ -18,15 +18,8 @@ export default async function AdminUsersPage() {
         <p className="text-slate-500 mt-1">Manage roles and assign teachers to their schools for scoped access.</p>
       </div>
 
-      <UsersClient 
-        initialUsers={users} 
-        schools={schools} 
-        divisions={divisions}
-        projectOffices={projectOffices}
-      />
-
       {/* Permissions Matrix */}
-      <div className="bg-white dark:bg-slate-900 rounded-3xl p-8 border border-slate-100 dark:border-slate-800 shadow-sm mt-8">
+      <div className="bg-white dark:bg-slate-900 rounded-3xl p-8 border border-slate-100 dark:border-slate-800 shadow-sm mt-8 mb-8">
         <div className="flex items-center gap-3 mb-6">
           <Shield className="w-6 h-6 text-indigo-500" />
           <h2 className="text-xl font-bold text-slate-800 dark:text-slate-100">Role Permissions Matrix</h2>
@@ -105,6 +98,14 @@ export default async function AdminUsersPage() {
           </table>
         </div>
       </div>
+
+      <UsersClient 
+        initialUsers={users} 
+        schools={schools} 
+        divisions={divisions}
+        projectOffices={projectOffices}
+      />
+
     </div>
   );
 }
