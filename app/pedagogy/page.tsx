@@ -34,7 +34,6 @@ export default function PedagogyPage() {
     { id: "activities", label: "Classroom Activities", icon: Users },
     { id: "materials", label: "Manipulatives Map", icon: Wrench },
     { id: "role", label: "Teacher & Assessment", icon: GraduationCap },
-    { id: "presence", label: "Geographical Presence", icon: Globe },
   ];
 
   return (
@@ -53,10 +52,10 @@ export default function PedagogyPage() {
             <WarliMotif variant="tree" size={36} className="warli-ink opacity-80 shrink-0" />
             <div>
               <h1 className="text-3xl font-black tracking-tight text-slate-900 dark:text-white sm:text-4xl">
-                pedagogy Hub
+                About Pedagogy
               </h1>
               <p className="text-sm text-slate-500 dark:text-slate-400 font-medium mt-1">
-                Teaching at the Right Level (Pedagogy) methodology, manuals, and instructional framework.
+                Level-wise grouping methodology, manuals, and instructional framework.
               </p>
             </div>
           </div>
@@ -74,7 +73,7 @@ export default function PedagogyPage() {
           <div className="space-y-3 px-3 mb-2">
             <p className="text-[10px] font-extrabold uppercase tracking-widest text-slate-400 dark:text-slate-500">Pedagogy Outline</p>
             <div className="p-3 rounded-xl bg-amber-50 dark:bg-amber-950/20 text-amber-600 dark:text-amber-400 border border-amber-100/30 dark:border-amber-900/30 text-[10px] font-bold uppercase tracking-wider">
-              Pedagogy is Practiced Globally across India, Zambia, Nigeria, and beyond.
+              Focuses on grouping children by their current learning level rather than their grade.
             </div>
           </div>
           <nav className="flex flex-row lg:flex-col overflow-x-auto lg:overflow-x-visible gap-1 pb-2 lg:pb-0 scrollbar-none">
@@ -546,80 +545,6 @@ export default function PedagogyPage() {
             </div>
           )}
 
-          {/* TAB: Presence */}
-          {activeTab === "presence" && (
-            <div className="space-y-6 animate-fade-in">
-              <div className="bg-white dark:bg-slate-950 p-8 rounded-[32px] border border-slate-100 dark:border-slate-800 shadow-xl shadow-slate-100/30 dark:shadow-none">
-                <div className="flex items-center gap-3 mb-6">
-                  <div className="p-2.5 rounded-xl bg-amber-50 dark:bg-amber-900/20 text-amber-600 dark:text-amber-400">
-                    <Globe className="w-6 h-6" />
-                  </div>
-                  <div>
-                    <h3 className="text-xl font-black text-slate-900 dark:text-white">Geographical Presence</h3>
-                    <p className="text-xs text-slate-500 dark:text-slate-400">Where Teaching at the Right Level (Pedagogy) is practiced and scaled globally</p>
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {/* Presence card 1: India */}
-                  <div className="p-6 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-800 space-y-4">
-                    <div className="flex items-center gap-2">
-                      <span className="text-xl">🇮🇳</span>
-                      <h4 className="font-extrabold text-slate-900 dark:text-white text-sm">India (Pratham programs)</h4>
-                    </div>
-                    <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed font-medium">
-                      Pioneered by Pratham, Pedagogy is active in states including Maharashtra (specifically within tribal ashramshalas), Bihar, Uttar Pradesh, Rajasthan, and Madhya Pradesh, reaching millions of children through direct and partnership programs.
-                    </p>
-                    <div className="text-[11px] font-bold text-amber-600 dark:text-amber-400">
-                      Scale: 20+ States & UTs
-                    </div>
-                  </div>
-
-                  {/* Presence card 2: Africa */}
-                  <div className="p-6 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-800 space-y-4">
-                    <div className="flex items-center gap-2">
-                      <span className="text-xl">🇿🇲</span>
-                      <h4 className="font-extrabold text-slate-900 dark:text-white text-sm">Zambia ("Catch Up")</h4>
-                    </div>
-                    <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed font-medium">
-                      Adopted by the Ministry of General Education in Zambia as the "Catch Up" program, scaling to over 3,000 schools nationally to support children who have fallen behind in grades 3-5.
-                    </p>
-                    <div className="text-[11px] font-bold text-amber-600 dark:text-amber-400">
-                      Scale: National Integration
-                    </div>
-                  </div>
-
-                  {/* Presence card 3: Nigeria & West Africa */}
-                  <div className="p-6 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-800 space-y-4">
-                    <div className="flex items-center gap-2">
-                      <span className="text-xl">🇳🇬</span>
-                      <h4 className="font-extrabold text-slate-900 dark:text-white text-sm">Nigeria & West Africa</h4>
-                    </div>
-                    <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed font-medium">
-                      Implemented in multiple northern states of Nigeria, and expanded into countries like Ghana, Côte d'Ivoire, and Madagascar to build core foundational literacy and numeracy.
-                    </p>
-                    <div className="text-[11px] font-bold text-amber-600 dark:text-amber-400">
-                      Scale: 5+ West African Nations
-                    </div>
-                  </div>
-
-                  {/* Presence card 4: Global Partnerships */}
-                  <div className="p-6 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-800 space-y-4">
-                    <div className="flex items-center gap-2">
-                      <span className="text-xl">🌍</span>
-                      <h4 className="font-extrabold text-slate-900 dark:text-white text-sm">Global Adaptations</h4>
-                    </div>
-                    <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed font-medium">
-                      Pedagogy is studied and adapted by partners internationally in Latin America and Southeast Asia, supported by Abdul Latif Jameel Poverty Action Lab (J-PAL) research demonstrating its robust evidence base.
-                    </p>
-                    <div className="text-[11px] font-bold text-amber-600 dark:text-amber-400">
-                      Research Backed: J-PAL / Pratham
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
 
           {/* Bottom CTA Card */}
           <div className="p-8 rounded-[32px] bg-gradient-to-r from-amber-500 to-orange-600 text-white border border-orange-500/20 shadow-xl shadow-orange-500/10 flex flex-col sm:flex-row items-center justify-between gap-6 hover:scale-[1.01] transition-all mt-8">

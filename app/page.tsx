@@ -317,7 +317,8 @@ export default function LandingPage() {
                 className="w-full h-48 object-cover rounded-2xl shadow-inner border border-white/5"
               />
               <div className="space-y-5 text-left">
-                <h4 className="text-2xl font-black text-center mb-2">Current Learning Reach</h4>
+                <h4 className="text-2xl font-black text-center mb-0">Current Learning Reach</h4>
+                <p className="text-center text-xs text-slate-300 mb-2">Based on assessments of Class 4 students</p>
                 
                 {/* Language Progress */}
                 <div className="space-y-2">

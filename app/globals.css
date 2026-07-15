@@ -70,17 +70,17 @@
   --color-orange-800: #812504;
   --color-orange-900: #551601;
 
-  /* Overwrite amber to Pratham Golden Yellow */
-  --color-amber-50: #fffcf2;
-  --color-amber-100: #fff8e6;
-  --color-amber-200: #ffedd0;
-  --color-amber-300: #ffdfa9;
-  --color-amber-400: #ffd076;
-  --color-amber-500: var(--pratham-yellow);
-  --color-amber-600: #e2ae20;
-  --color-amber-700: #b58913;
-  --color-amber-800: #886508;
-  --color-amber-900: #5b4202;
+  /* Overwrite amber to Pratham Red */
+  --color-amber-50: #fef2f2;
+  --color-amber-100: #fee2e2;
+  --color-amber-200: #fecaca;
+  --color-amber-300: #fca5a5;
+  --color-amber-400: #f87171;
+  --color-amber-500: var(--pratham-red);
+  --color-amber-600: #dc2626;
+  --color-amber-700: #b91c1c;
+  --color-amber-800: #991b1b;
+  --color-amber-900: #7f1d1d;
 }
 
 @media (prefers-color-scheme: dark) {
