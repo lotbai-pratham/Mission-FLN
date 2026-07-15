@@ -128,38 +128,43 @@ export default function DashboardClient({ initialStats, hierarchy }: { initialSt
   }
 
   // For the overview term charts — returns % normalised within each term
-  const [yoyTerm, setYoyTerm] = useState("Endline");
+  const [selectedYear, setSelectedYear] = useState("2025-2026");
 
-  const formatYoYData = (dataArray: any[], type: 'lit' | 'num', asPct: boolean, targetTerm: string = 'Endline') => {
+  const availableYears = Array.from(new Set((stats.allAssessments || []).map((a: any) => a.academicYear))).filter(Boolean).sort().reverse();
+  if (availableYears.length === 0) availableYears.push("2025-2026");
+
+  useEffect(() => {
+    if (!availableYears.includes(selectedYear)) {
+      setSelectedYear(availableYears[0]);
+    }
+  }, [availableYears, selectedYear]);
+
+  const formatTermData = (dataArray: any[], type: 'lit' | 'num', asPct: boolean, targetYear: string) => {
+    const filteredArray = (dataArray || []).filter((a: any) => a.academicYear === targetYear);
     const labels = type === 'lit' ? LIT_LABELS : NUM_LABELS;
     const key = type === 'lit' ? 'literacyLevel' : 'numeracyLevel';
-    
-    const years = Array.from(new Set((dataArray || []).map(a => a.academicYear))).filter(Boolean).sort();
-    if (years.length === 0) years.push('2025-2026');
-
-    const yearTotals: Record<string, number> = {};
-    years.forEach((y: any) => {
-      yearTotals[y] = (dataArray || [])
-        .filter((item: any) => item.academicYear === y && item.term === targetTerm)
+    const termTotals: Record<string, number> = {};
+    TERMS.forEach(t => {
+      termTotals[t] = filteredArray
+        .filter((item: any) => item.term === t)
         .reduce((sum: number, item: any) => sum + item._count.studentId, 0);
     });
-
     return labels.map((label, level) => {
       const entry: any = { name: label };
-      years.forEach((y: any) => {
+      TERMS.forEach(t => {
         let count = 0;
         if (type === 'num') {
-          const matchingItems = dataArray?.filter((item: any) => {
+          const matchingItems = filteredArray.filter((item: any) => {
             const dbLvl = item[key];
             const mappedLvl = dbLvl === 6 ? 5 : dbLvl === 5 ? 4 : dbLvl;
-            return mappedLvl === level && item.term === targetTerm && item.academicYear === y;
-          }) || [];
+            return mappedLvl === level && item.term === t;
+          });
           count = matchingItems.reduce((acc: number, item: any) => acc + item._count.studentId, 0);
         } else {
-          const found = dataArray?.find((item: any) => item[key] === level && item.term === targetTerm && item.academicYear === y);
+          const found = filteredArray.find((item: any) => item[key] === level && item.term === t);
           count = found ? found._count.studentId : 0;
         }
-        entry[y] = asPct ? (yearTotals[y] > 0 ? Math.round((count / yearTotals[y]) * 100) : 0) : count;
+        entry[t] = asPct ? (termTotals[t] > 0 ? Math.round((count / termTotals[t]) * 100) : 0) : count;
       });
       return entry;
     });
@@ -195,34 +200,19 @@ export default function DashboardClient({ initialStats, hierarchy }: { initialSt
     });
   };
 
-  const formatYoYOpsData = (allAssessments: any[], asPct: boolean, targetTerm: string = 'Endline') => {
-    const years = Array.from(new Set((allAssessments || []).map(a => a.academicYear))).filter(Boolean).sort();
-    if (years.length === 0) years.push('2025-2026');
-
+  const formatOpsData = (allAssessments: any[], asPct: boolean, targetYear: string) => {
+    const filtered = (allAssessments || []).filter((a: any) => a.academicYear === targetYear);
     return ['addition', 'subtraction', 'division'].map(op => {
       const entry: any = { name: op[0].toUpperCase() + op.slice(1) };
-      years.forEach((y: any) => {
-        const filtered = (allAssessments || []).filter((a: any) => a.academicYear === y && a.term === targetTerm);
-        const total = filtered.length;
-        const count = filtered.filter((curr: any) => {
+      TERMS.forEach(t => {
+        const termAssessments = filtered.filter((a: any) => a.term === t);
+        const total = termAssessments.length;
+        const count = termAssessments.filter((curr: any) => {
           if (op === 'addition') return curr.addition || curr.numeracyLevel >= 3;
           if (op === 'subtraction') return curr.subtraction || curr.numeracyLevel >= 4;
           if (op === 'division') return curr.division || curr.numeracyLevel >= 6;
           return false;
         }).length;
-        entry[y] = asPct ? (total > 0 ? Math.round((count / total) * 100) : 0) : count;
-      });
-      return entry;
-    });
-  };
-
-  const formatOpsData = (ops: any, asPct: boolean) => {
-    return ['addition', 'subtraction', 'division'].map(op => {
-      const entry: any = { name: op[0].toUpperCase() + op.slice(1) };
-      TERMS.forEach(t => {
-        const termData = ops?.[t] || { addition: 0, subtraction: 0, division: 0, total: 0 };
-        const count = termData[op] ?? 0;
-        const total = termData.total ?? 0;
         entry[t] = asPct ? (total > 0 ? Math.round((count / total) * 100) : 0) : count;
       });
       return entry;
@@ -531,17 +521,17 @@ export default function DashboardClient({ initialStats, hierarchy }: { initialSt
         </div>
       )}
 
-      {/* TAB: OVERVIEW / YoY GROWTH */}
+      {/* TAB: OVERVIEW / ACADEMIC YEAR GROWTH */}
       {activeTab === 'overview' && (
         <div className={`space-y-6 transition-opacity ${isPending ? 'opacity-50' : ''}`}>
           <div className="flex justify-between items-center bg-white dark:bg-slate-900 p-4 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-800">
             <div className="flex items-center gap-3">
-              <label className="text-sm font-bold text-slate-500">Compare Term YoY:</label>
-              <select value={yoyTerm} onChange={(e) => setYoyTerm(e.target.value)}
+              <label className="text-sm font-bold text-slate-500">Academic Year:</label>
+              <select value={selectedYear} onChange={(e) => setSelectedYear(e.target.value)}
                 className="bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2 text-sm font-bold text-slate-700 dark:text-slate-200 outline-none focus:ring-2 focus:ring-blue-500">
-                <option value="Baseline">Baseline</option>
-                <option value="Midline">Midline</option>
-                <option value="Endline">Endline</option>
+                {availableYears.map((y: string) => (
+                  <option key={y} value={y}>{y}</option>
+                ))}
               </select>
             </div>
             <div className="flex p-1 bg-slate-100 dark:bg-slate-800 rounded-xl gap-1">
@@ -556,10 +546,10 @@ export default function DashboardClient({ initialStats, hierarchy }: { initialSt
             </div>
           </div>
           
-          <BarCard title={`YoY Literacy Growth (${showPct ? '%' : '#'})`} icon="📚" data={formatYoYData(stats.literacies, 'lit', showPct, yoyTerm)} percentage={showPct} />
+          <BarCard title={`Literacy Levels by Term (${showPct ? '%' : '#'})`} icon="📚" data={formatTermData(stats.literacies, 'lit', showPct, selectedYear)} percentage={showPct} />
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <BarCard title={`YoY Numeracy Growth (${showPct ? '%' : '#'})`} icon="🔢" data={formatYoYData(stats.numeracies, 'num', showPct, yoyTerm)} percentage={showPct} />
-            <BarCard title={`YoY Operations Mastery (${showPct ? '%' : '#'})`} icon="➕" data={formatYoYOpsData(stats.allAssessments, showPct, yoyTerm)} percentage={showPct} />
+            <BarCard title={`Numeracy Levels by Term (${showPct ? '%' : '#'})`} icon="🔢" data={formatTermData(stats.numeracies, 'num', showPct, selectedYear)} percentage={showPct} />
+            <BarCard title={`Operations Mastery by Term (${showPct ? '%' : '#'})`} icon="➕" data={formatOpsData(stats.allAssessments, showPct, selectedYear)} percentage={showPct} />
           </div>
         </div>
       )}
