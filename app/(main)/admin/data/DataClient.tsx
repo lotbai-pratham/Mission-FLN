@@ -46,7 +46,7 @@ export default function DataClient({
   const [editForm, setEditForm] = useState<any>(null);
   const [clearConfirm, setClearConfirm] = useState(false);
   const [clearTerm, setClearTerm] = useState("");
-  const [clearMode, setClearMode] = useState<"assessments" | "all">("assessments");
+  const [deleteVerification, setDeleteVerification] = useState("");
   const [filterTerm, setFilterTerm] = useState("");
   const [isPending, startTransition] = useTransition();
 
@@ -92,13 +92,11 @@ export default function DataClient({
   }
 
   function handleClear() {
+    if (deleteVerification !== "DELETE") return;
     startTransition(async () => {
-      if (clearMode === "all") {
-        await clearAllData();
-      } else {
-        await clearAllAssessments(clearTerm || undefined);
-      }
+      await clearAllAssessments(clearTerm || undefined);
       setClearConfirm(false);
+      setDeleteVerification("");
       setItems([]);
     });
   }
@@ -189,51 +187,43 @@ export default function DataClient({
               <AlertTriangle className="w-6 h-6" />
               <h2 className="text-xl font-bold">Clear Data</h2>
             </div>
-            <p className="text-slate-500 mb-4">Choose what to delete. This cannot be undone.</p>
+            <p className="text-slate-500 mb-4">Choose which term to clear. This will permanently delete assessment data. It cannot be undone.</p>
 
-            {/* Mode selector */}
-            <div className="flex gap-2 mb-4">
-              <button
-                onClick={() => setClearMode("assessments")}
-                className={`flex-1 py-2.5 rounded-xl text-sm font-semibold border transition-all ${clearMode === "assessments" ? "bg-red-50 border-red-300 text-red-700" : "border-slate-200 dark:border-slate-700 text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-800"}`}
-              >
-                Assessments only
-              </button>
-              <button
-                onClick={() => setClearMode("all")}
-                className={`flex-1 py-2.5 rounded-xl text-sm font-semibold border transition-all ${clearMode === "all" ? "bg-red-50 border-red-300 text-red-700" : "border-slate-200 dark:border-slate-700 text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-800"}`}
-              >
-                Everything (students + schools too)
-              </button>
+            <select
+              value={clearTerm}
+              onChange={(e) => setClearTerm(e.target.value)}
+              className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3 mb-4 text-sm font-medium outline-none"
+            >
+              <option value="">All terms</option>
+              {TERMS.map((t) => <option key={t} value={t}>{t} only</option>)}
+            </select>
+
+            <div className="mb-6">
+              <label className="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2">
+                Type DELETE to confirm:
+              </label>
+              <input
+                type="text"
+                value={deleteVerification}
+                onChange={(e) => setDeleteVerification(e.target.value)}
+                placeholder="DELETE"
+                className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white outline-none focus:ring-2 focus:ring-red-500"
+              />
             </div>
-
-            {clearMode === "assessments" && (
-              <select
-                value={clearTerm}
-                onChange={(e) => setClearTerm(e.target.value)}
-                className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3 mb-4 text-sm font-medium outline-none"
-              >
-                <option value="">All terms</option>
-                {TERMS.map((t) => <option key={t} value={t}>{t} only</option>)}
-              </select>
-            )}
-
-            {clearMode === "all" && (
-              <p className="text-xs text-red-500 bg-red-50 dark:bg-red-900/20 rounded-xl px-4 py-3 mb-4">
-                This will delete all assessments, all students, all schools, all project offices, and all divisions. The entire database will be empty.
-              </p>
-            )}
 
             <div className="flex gap-3">
               <button
-                onClick={() => setClearConfirm(false)}
+                onClick={() => {
+                  setClearConfirm(false);
+                  setDeleteVerification("");
+                }}
                 className="flex-1 px-4 py-2.5 border border-slate-200 dark:border-slate-700 rounded-xl font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all"
               >
                 Cancel
               </button>
               <button
                 onClick={handleClear}
-                disabled={isPending}
+                disabled={isPending || deleteVerification !== "DELETE"}
                 className="flex-1 px-4 py-2.5 bg-red-600 hover:bg-red-700 text-white font-bold rounded-xl transition-all disabled:opacity-50"
               >
                 {isPending ? "Clearing..." : "Yes, Delete"}

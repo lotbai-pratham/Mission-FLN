@@ -2,6 +2,9 @@ export const dynamic = 'force-dynamic';
 import { getAssessmentsAdmin } from "@/app/actions";
 import { getImplementationLogsAdmin } from "@/app/actions/implementation";
 import DataClient from "./DataClient";
+import { auth } from "@/auth";
+import { hasRole } from "@/lib/checkAccess";
+import { redirect } from "next/navigation";
 
 export default async function AdminDataPage({
   searchParams,
@@ -9,6 +12,12 @@ export default async function AdminDataPage({
   searchParams: Promise<{ page?: string; term?: string; schoolId?: string; tab?: string }>;
 }) {
   const params = await searchParams;
+  const session = await auth();
+  
+  if (!hasRole(session, "admin")) {
+    redirect("/dashboard");
+  }
+
   const page = Number(params.page ?? 1);
   const tab = params.tab ?? "assessments";
 
