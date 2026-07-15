@@ -20,7 +20,8 @@ export default async function ProfilePage() {
             take: 10
           }
         }
-      }
+      },
+      projectOffice: true,
     }
   });
 
@@ -30,11 +31,13 @@ export default async function ProfilePage() {
 
   // Determine role-based access
   const isSchoolUser = user.role === "user";
+  const isProjectOfficeUser = user.role === "project_office";
 
   return (
     <ProfileClient 
       user={user as any} 
       isSchoolUser={isSchoolUser} 
+      isProjectOfficeUser={isProjectOfficeUser}
     />
   );
 }

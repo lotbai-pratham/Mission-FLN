@@ -16,12 +16,16 @@ model Division {
 }
 
 model ProjectOffice {
-  id         String   @id @default(cuid())
-  name       String
-  divisionId String
-  division   Division @relation(fields: [divisionId], references: [id])
-  schools    School[]
-  users      User[]
+  id                  String   @id @default(cuid())
+  name                String
+  projectOfficerName  String?
+  apoEducationName    String?
+  mobileNumber        String?
+  extensionOfficers   String?
+  divisionId          String
+  division            Division @relation(fields: [divisionId], references: [id])
+  schools             School[]
+  users               User[]
 
   @@index([divisionId])
 }

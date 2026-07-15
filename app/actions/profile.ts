@@ -135,3 +135,32 @@ export async function addStudentToSchool(data: { name: string; class: number }) 
 
   revalidatePath("/profile");
 }
+
+export async function updateProjectOfficeDetails(data: {
+  projectOfficerName?: string;
+  apoEducationName?: string;
+  mobileNumber?: string;
+  extensionOfficers?: string;
+}) {
+  const session = await auth();
+  if (!session?.user?.email) throw new Error("Unauthorized");
+
+  const user = await prisma.user.findUnique({
+    where: { email: session.user.email },
+    select: { projectOfficeId: true }
+  });
+
+  if (!user?.projectOfficeId) throw new Error("User does not belong to a project office");
+
+  await prisma.projectOffice.update({
+    where: { id: user.projectOfficeId },
+    data: {
+      projectOfficerName: data.projectOfficerName,
+      apoEducationName: data.apoEducationName,
+      mobileNumber: data.mobileNumber,
+      extensionOfficers: data.extensionOfficers
+    }
+  });
+
+  revalidatePath("/profile");
+}

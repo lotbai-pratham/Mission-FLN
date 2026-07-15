@@ -2,11 +2,11 @@
 
 import { useState, useTransition, useRef } from "react";
 import { User, Lock, Upload, School as SchoolIcon, Users, UserPlus, Check, X, Shield, BookOpen, Trash2 } from "lucide-react";
-import { updateProfilePicture, changePassword, updateSchoolDetails, addTeacher, deleteTeacher, addStudentToSchool } from "@/app/actions/profile";
+import { updateProfilePicture, changePassword, updateSchoolDetails, addTeacher, deleteTeacher, addStudentToSchool, updateProjectOfficeDetails } from "@/app/actions/profile";
 import { cn } from "@/lib/utils";
 
-export default function ProfileClient({ user, isSchoolUser }: { user: any; isSchoolUser: boolean }) {
-  const [activeTab, setActiveTab] = useState<'account' | 'school' | 'teachers' | 'students'>('account');
+export default function ProfileClient({ user, isSchoolUser, isProjectOfficeUser }: { user: any; isSchoolUser: boolean; isProjectOfficeUser: boolean }) {
+  const [activeTab, setActiveTab] = useState<'account' | 'school' | 'teachers' | 'students' | 'po'>('account');
   const [isPending, startTransition] = useTransition();
 
   // Account State
@@ -21,6 +21,13 @@ export default function ProfileClient({ user, isSchoolUser }: { user: any; isSch
   const [principalName, setPrincipalName] = useState(user.school?.principalName || "");
   const [principalMobile, setPrincipalMobile] = useState(user.school?.principalMobile || "");
   const [schoolMsg, setSchoolMsg] = useState("");
+
+  // PO Details State
+  const [poName, setPoName] = useState(user.projectOffice?.projectOfficerName || "");
+  const [apoName, setApoName] = useState(user.projectOffice?.apoEducationName || "");
+  const [poMobile, setPoMobile] = useState(user.projectOffice?.mobileNumber || "");
+  const [extOfficers, setExtOfficers] = useState(user.projectOffice?.extensionOfficers || "");
+  const [poMsg, setPoMsg] = useState("");
 
   // Teacher State
   const [teacherName, setTeacherName] = useState("");
@@ -82,6 +89,22 @@ export default function ProfileClient({ user, isSchoolUser }: { user: any; isSch
         setSchoolMsg("School details saved successfully!");
       } catch (err) {
         setSchoolMsg("Failed to save school details.");
+      }
+    });
+  };
+
+  const handlePoSave = () => {
+    startTransition(async () => {
+      try {
+        await updateProjectOfficeDetails({ 
+          projectOfficerName: poName, 
+          apoEducationName: apoName, 
+          mobileNumber: poMobile, 
+          extensionOfficers: extOfficers 
+        });
+        setPoMsg("Project Office details saved successfully!");
+      } catch (err) {
+        setPoMsg("Failed to save PO details.");
       }
     });
   };
@@ -176,6 +199,11 @@ export default function ProfileClient({ user, isSchoolUser }: { user: any; isSch
               </button>
             </>
           )}
+          {isProjectOfficeUser && (
+            <button onClick={() => setActiveTab('po')} className={cn("flex items-center gap-3 px-4 py-3 rounded-xl font-bold transition-all text-left", activeTab === 'po' ? "bg-white dark:bg-slate-900 text-blue-600 shadow-sm border border-slate-100 dark:border-slate-800" : "text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800/50")}>
+              <SchoolIcon className="w-5 h-5" /> PO Details
+            </button>
+          )}
         </div>
 
         {/* Content Area */}
@@ -260,6 +288,43 @@ export default function ProfileClient({ user, isSchoolUser }: { user: any; isSch
 
               <button onClick={handleSchoolSave} disabled={isPending} className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold transition-colors disabled:opacity-50">
                 {isPending ? "Saving..." : "Save Details"}
+              </button>
+            </div>
+          )}
+
+          {/* PO Details */}
+          {activeTab === 'po' && isProjectOfficeUser && (
+            <div className="space-y-6 animate-in fade-in">
+              <div>
+                <h2 className="text-xl font-bold text-slate-800 dark:text-slate-100">Project Office Details</h2>
+                <p className="text-sm text-slate-500">Update officer names and contact information.</p>
+              </div>
+              
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-2xl">
+                <div className="sm:col-span-2">
+                  <label className="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-1">Name of Project Officer</label>
+                  <input type="text" value={poName} onChange={e => setPoName(e.target.value)} className="w-full bg-white dark:bg-slate-800 rounded-xl px-4 py-3 border border-slate-200 dark:border-slate-700 outline-none" />
+                </div>
+                <div className="sm:col-span-2">
+                  <label className="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-1">Name of APO Education</label>
+                  <input type="text" value={apoName} onChange={e => setApoName(e.target.value)} className="w-full bg-white dark:bg-slate-800 rounded-xl px-4 py-3 border border-slate-200 dark:border-slate-700 outline-none" />
+                </div>
+                <div className="sm:col-span-2">
+                  <label className="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-1">Mobile Number</label>
+                  <input type="text" value={poMobile} onChange={e => setPoMobile(e.target.value)} className="w-full bg-white dark:bg-slate-800 rounded-xl px-4 py-3 border border-slate-200 dark:border-slate-700 outline-none" />
+                </div>
+                <div className="sm:col-span-2">
+                  <label className="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-1">Name of Education Extension Officers</label>
+                  <textarea value={extOfficers} onChange={e => setExtOfficers(e.target.value)} rows={3} className="w-full bg-white dark:bg-slate-800 rounded-xl px-4 py-3 border border-slate-200 dark:border-slate-700 outline-none resize-none placeholder-slate-400" placeholder="E.g., John Doe, Jane Smith"></textarea>
+                </div>
+              </div>
+
+              {poMsg && (
+                <p className={cn("text-sm font-bold", poMsg.includes("success") ? "text-green-600" : "text-red-600")}>{poMsg}</p>
+              )}
+
+              <button onClick={handlePoSave} disabled={isPending} className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold transition-colors disabled:opacity-50">
+                {isPending ? "Saving..." : "Save PO Details"}
               </button>
             </div>
           )}
