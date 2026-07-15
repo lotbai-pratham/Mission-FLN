@@ -1487,15 +1487,31 @@ export async function getSchoolStudentsDetails(schoolId: string, classNum?: numb
     where,
     include: {
       assessments: {
-        where: { term: 'Endline' },
         orderBy: { date: 'desc' },
-        take: 1
       }
     },
     orderBy: { name: 'asc' }
   });
 
-  return students.map(s => {
+  // Deduplicate students by name and class (in case previous upload logic created duplicate records)
+  // We keep the record with the highest combined recent level
+  const uniqueStudents = new Map<string, any>();
+  
+  students.forEach(s => {
+    const latest = s.assessments[0];
+    const score = (latest?.literacyLevel || 0) + (latest?.numeracyLevel || 0);
+    const key = `${s.name.toLowerCase().trim()}-${s.class}`;
+    
+    if (!uniqueStudents.has(key)) {
+      uniqueStudents.set(key, { s, score });
+    } else {
+      if (score > uniqueStudents.get(key).score) {
+        uniqueStudents.set(key, { s, score });
+      }
+    }
+  });
+
+  return Array.from(uniqueStudents.values()).map(({ s }) => {
     const latest = s.assessments[0];
     return {
       id: s.id,
