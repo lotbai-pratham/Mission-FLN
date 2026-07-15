@@ -5,11 +5,11 @@ import { revalidatePath } from "next/cache";
 import { auth } from "@/auth";
 import bcrypt from "bcryptjs";
 
-// -- READS --
+const API_BASE = process.env.NEXT_PUBLIC_BACKEND_URL || ${API_BASE}';
 
 export async function getSchools() {
   try {
-    const res = await fetch('http://localhost:4000/api/schools', { next: { revalidate: 0 } });
+    const res = await fetch(`${API_BASE}/api/schools`, { next: { revalidate: 0 } });
     if (!res.ok) throw new Error("Failed to load schools from backend");
     return await res.json();
   } catch (err) {
@@ -514,7 +514,7 @@ async function requireAdmin() {
 export async function getUsers(): Promise<any[]> {
   await requireAdmin();
   try {
-    const res = await fetch('http://localhost:4000/api/users', { next: { revalidate: 0 } });
+    const res = await fetch(`${API_BASE}/api/users`, { next: { revalidate: 0 } });
     if (!res.ok) throw new Error("Failed to load users from backend");
     return await res.json();
   } catch (err) {
@@ -532,7 +532,7 @@ export async function getUsers(): Promise<any[]> {
 export async function setUserRole(userId: string, role: "user" | "admin") {
   await requireAdmin();
   try {
-    const res = await fetch('http://localhost:4000/api/users/role', {
+    const res = await fetch(`${API_BASE}/api/users/role`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ userId, role })
@@ -548,7 +548,7 @@ export async function setUserRole(userId: string, role: "user" | "admin") {
 export async function assignUserSchool(userId: string, schoolId: string | null) {
   await requireAdmin();
   try {
-    const res = await fetch('http://localhost:4000/api/users/school', {
+    const res = await fetch(`${API_BASE}/api/users/school`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ userId, schoolId })
@@ -634,7 +634,7 @@ export async function clearAllAssessments(term?: string) {
 export async function clearAllData() {
   await requireAdmin();
   try {
-    const res = await fetch('http://localhost:4000/api/data', { method: 'DELETE' });
+    const res = await fetch(`${API_BASE}/api/data`, { method: 'DELETE' });
     if (!res.ok) throw new Error("Backend clear data failed");
   } catch (err) {
     console.error("Falling back to direct DB clear", err);
@@ -651,7 +651,7 @@ export async function clearAllData() {
 export async function seedHierarchy() {
   await requireAdmin();
   try {
-    const res = await fetch('http://localhost:4000/api/upload-data', { method: 'POST' });
+    const res = await fetch(`${API_BASE}/api/upload-data`, { method: 'POST' });
     if (!res.ok) throw new Error("Backend upload data failed");
     const data = await res.json();
     revalidatePath('/', 'layout');
@@ -705,7 +705,7 @@ export async function seedHierarchy() {
 export async function cleanupSchools() {
   await requireAdmin();
   try {
-    const res = await fetch('http://localhost:4000/api/schools/cleanup', { method: 'POST' });
+    const res = await fetch(`${API_BASE}/api/schools/cleanup`, { method: 'POST' });
     if (!res.ok) throw new Error("Backend cleanup failed");
     const data = await res.json();
     revalidatePath('/', 'layout');
@@ -804,7 +804,7 @@ function toSlug(str: string): string {
 export async function generateSchoolLogins(): Promise<{ created: number; skipped: number }> {
   await requireAdmin();
   try {
-    const res = await fetch('http://localhost:4000/api/users/generate-logins', { method: 'POST' });
+    const res = await fetch(`${API_BASE}/api/users/generate-logins`, { method: 'POST' });
     if (!res.ok) throw new Error("Backend generate-logins failed");
     const data = await res.json();
     revalidatePath("/admin/users");
@@ -832,7 +832,7 @@ export async function generateSchoolLogins(): Promise<{ created: number; skipped
 export async function deleteSchoolLogins(ids: string[]): Promise<{ deleted: number }> {
   await requireAdmin();
   try {
-    const res = await fetch('http://localhost:4000/api/users/logins', {
+    const res = await fetch(`${API_BASE}/api/users/logins`, {
       method: 'DELETE',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ ids })
@@ -854,7 +854,7 @@ export async function deleteSchoolLogins(ids: string[]): Promise<{ deleted: numb
 export async function getSchoolCredentials(): Promise<{ id: string; school: string; po: string; email: string; password: string; role: string; locationLevel: string }[]> {
   await requireAdmin();
   try {
-    const res = await fetch('http://localhost:4000/api/users/credentials', { next: { revalidate: 0 } });
+    const res = await fetch(`${API_BASE}/api/users/credentials`, { next: { revalidate: 0 } });
     if (!res.ok) throw new Error("Backend get credentials failed");
     return await res.json();
   } catch (err) {
@@ -897,7 +897,7 @@ export async function createCustomLogin(data: {
 }): Promise<{ error?: string }> {
   await requireAdmin();
   try {
-    const res = await fetch('http://localhost:4000/api/users/custom-login', {
+    const res = await fetch(`${API_BASE}/api/users/custom-login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data)
@@ -933,7 +933,7 @@ export async function createCustomLogin(data: {
 export async function updateLoginEmail(userId: string, newEmail: string): Promise<{ error?: string }> {
   await requireAdmin();
   try {
-    const res = await fetch('http://localhost:4000/api/users/email', {
+    const res = await fetch(`${API_BASE}/api/users/email`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ userId, newEmail })
