@@ -1044,8 +1044,10 @@ export async function getStrugglingStudents(schoolId: string, classNum?: number 
       if (assessments.length < 2) return false;
       const baseline = assessments[0];
       const latest = assessments[assessments.length - 1];
-      // Struggling if latest level is not higher than baseline
-      return latest.literacyLevel <= baseline.literacyLevel && latest.numeracyLevel <= baseline.numeracyLevel;
+      // Struggling if latest level is not higher than baseline AND the level is low
+      const noProgress = latest.literacyLevel <= baseline.literacyLevel && latest.numeracyLevel <= baseline.numeracyLevel;
+      const isLowLevel = latest.literacyLevel < 3 || latest.numeracyLevel < 3;
+      return noProgress && isLowLevel;
     })
     .map(s => {
       const latest = s.assessments[s.assessments.length - 1];
