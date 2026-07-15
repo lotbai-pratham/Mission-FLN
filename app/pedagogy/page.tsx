@@ -451,28 +451,30 @@ export default function PedagogyPage() {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   {[
-                    { physical: "Matchsticks & Bundles", use: "Multiplication (equal groups) & Division (fair sharing)", twin: "BundleBuilder", level: "Numeracy L3-L4", desc: "Students bundle 10 sticks together to concretize 'tens' and 'units' grouping." },
-                    { physical: "Currency Notes (₹1, ₹10, ₹100, ₹1000)", use: "Place value columns, subtraction borrowing, addition", twin: "PlaceValue", level: "Numeracy L2-L4", desc: "Uses cash transactions to visually represent carrying and regrouping operations." },
-                    { physical: "Number Flash Cards", use: "Number recognition, digit ordering, comparison", twin: "NumberHunter", level: "Numeracy L1-L2", desc: "Supports tactile digit recognition and comparative magnitude (greater than/less than)." },
-                    { physical: "Word Cards / Linking Cards", use: "Word decoding, sentence assembly", twin: "ShabdaVachan", level: "Literacy L2-L3", desc: "Enables students to link single letter cards into words, and words into complete sentences." },
-                    { physical: "Picture Cards (Chitra Card)", use: "Vocabulary building, categorization, story prompts", twin: "AksharOlakh", level: "Literacy L0-L2", desc: "Aligns images of common village items to vowel and consonant sounds." },
-                    { physical: "Story Booklets", use: "Reading fluency and story comprehension", twin: "VakyaPurna", level: "Literacy L3-L4", desc: "Short paragraphs and story collections used for expressional reading and role-play activities." }
+                    { physical: "Matchsticks & Bundles", use: "Multiplication (equal groups) & Division (fair sharing)", twin: "BundleBuilder", level: "Numeracy L3-L4", desc: "Students bundle 10 sticks together to concretize 'tens' and 'units' grouping.", link: "/arcade/play/bundle-builder" },
+                    { physical: "Currency Notes (₹1, ₹10, ₹100, ₹1000)", use: "Place value columns, subtraction borrowing, addition", twin: "PlaceValue", level: "Numeracy L2-L4", desc: "Uses cash transactions to visually represent carrying and regrouping operations.", link: "/arcade/play/g-place" },
+                    { physical: "Number Flash Cards", use: "Number recognition, digit ordering, comparison", twin: "NumberHunter", level: "Numeracy L1-L2", desc: "Supports tactile digit recognition and comparative magnitude (greater than/less than).", link: "/arcade/play/number-hunter" },
+                    { physical: "Word Cards / Linking Cards", use: "Word decoding, sentence assembly", twin: "ShabdaVachan", level: "Literacy L2-L3", desc: "Enables students to link single letter cards into words, and words into complete sentences.", link: "/arcade/play/word-builder" },
+                    { physical: "Picture Cards (Chitra Card)", use: "Vocabulary building, categorization, story prompts", twin: "AksharOlakh", level: "Literacy L0-L2", desc: "Aligns images of common village items to vowel and consonant sounds.", link: "/arcade/play/marathi-letters" },
+                    { physical: "Story Booklets", use: "Reading fluency and story comprehension", twin: "VakyaPurna", level: "Literacy L3-L4", desc: "Short paragraphs and story collections used for expressional reading and role-play activities.", link: "/arcade/play/story-reader" }
                   ].map((mat, idx) => (
-                    <div key={idx} className="p-5 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-800 space-y-3 flex flex-col justify-between">
-                      <div>
-                        <div className="flex items-center justify-between mb-1.5">
-                          <h5 className="font-extrabold text-slate-900 dark:text-white text-sm">{mat.physical}</h5>
-                          <span className="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded bg-orange-100 text-orange-650 dark:bg-orange-950/20">{mat.level}</span>
+                    <Link href={mat.link} key={idx} className="block group h-full">
+                      <div className="p-5 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-800 space-y-3 flex flex-col justify-between h-full group-hover:border-amber-400 dark:group-hover:border-amber-600 group-hover:shadow-md transition-all">
+                        <div>
+                          <div className="flex items-center justify-between mb-1.5">
+                            <h5 className="font-extrabold text-slate-900 dark:text-white text-sm group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors">{mat.physical}</h5>
+                            <span className="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded bg-orange-100 text-orange-650 dark:bg-orange-950/20">{mat.level}</span>
+                          </div>
+                          <p className="text-[11px] text-slate-500 dark:text-slate-400 font-medium leading-relaxed mb-3">{mat.desc}</p>
                         </div>
-                        <p className="text-[11px] text-slate-500 dark:text-slate-400 font-medium leading-relaxed mb-3">{mat.desc}</p>
+                        <div className="pt-3 border-t border-slate-100 dark:border-slate-850 flex items-center justify-between text-[11px]">
+                          <span className="text-slate-400 dark:text-slate-500 font-bold">DigitalTwin:</span>
+                          <span className="inline-flex items-center gap-1 font-black text-amber-600 group-hover:translate-x-1 transition-transform">
+                            {mat.twin} <ChevronRight className="w-3 h-3" />
+                          </span>
+                        </div>
                       </div>
-                      <div className="pt-3 border-t border-slate-100 dark:border-slate-850 flex items-center justify-between text-[11px]">
-                        <span className="text-slate-400 dark:text-slate-500 font-bold">DigitalTwin:</span>
-                        <span className="inline-flex items-center gap-1 font-black text-amber-600">
-                          {mat.twin} <ChevronRight className="w-3 h-3" />
-                        </span>
-                      </div>
-                    </div>
+                    </Link>
                   ))}
                 </div>
               </div>
