@@ -1,0 +1,175 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model Division {
+  id             String          @id @default(cuid())
+  name           String
+  projectOffices ProjectOffice[]
+  users          User[]
+}
+
+model ProjectOffice {
+  id         String   @id @default(cuid())
+  name       String
+  divisionId String
+  division   Division @relation(fields: [divisionId], references: [id])
+  schools    School[]
+  users      User[]
+}
+
+model School {
+  id              String        @id @default(cuid())
+  name            String
+  udiseCode       String        @unique
+  location        String?
+  medium          String?
+  projectOfficeId String
+  projectOffice   ProjectOffice @relation(fields: [projectOfficeId], references: [id])
+  students        Student[]
+  users           User[]
+  battles         BattleRecord[]
+  implementationSessions ImplementationSession[]
+  singleGames     SingleGameRecord[]
+}
+
+model ImplementationSession {
+  id             String   @id @default(cuid())
+  schoolId       String
+  school         School   @relation(fields: [schoolId], references: [id])
+  teacherName    String
+  classNum       Int
+  subject        String?  // language / maths
+  totalDuration  Int      // total seconds spent
+  activityLogs   Json     // stores { activityIndex: seconds }
+  conductedAt    DateTime @default(now())
+}
+
+model Student {
+  id          String         @id @default(cuid())
+  uid         String         @unique @default("")
+  name        String
+  class       Int            // 1 to 8
+  gender      String         // Male / Female / Other
+  age         Int?
+  schoolId    String
+  school      School         @relation(fields: [schoolId], references: [id])
+  assessments Assessment[]
+  battlesAsP1 BattleRecord[] @relation("BattlePlayer1")
+  battlesAsP2 BattleRecord[] @relation("BattlePlayer2")
+  battlesWon  BattleRecord[] @relation("BattleWinner")
+  gamesPlayed Int            @default(0)
+  singleGames SingleGameRecord[]
+}
+
+model Assessment {
+  id              String   @id @default(cuid())
+  date            DateTime @default(now())
+  term            String   @default("Baseline") // Baseline, Midline, Endline
+  assessorName    String
+  literacyLevel   Int      // 0 to 4
+  numeracyLevel   Int      // 0 to 3 (Beginner, 1-9, 10-99, 100-999)
+  
+  addition        Boolean  @default(false)
+  subtraction     Boolean  @default(false)
+  division        Boolean  @default(false)
+
+  studentId       String
+  student         Student  @relation(fields: [studentId], references: [id])
+}
+
+model BattleRecord {
+  id          String   @id @default(cuid())
+  schoolId    String
+  school      School   @relation(fields: [schoolId], references: [id])
+  classNum    Int
+  subject     String   // "literacy" | "numeracy"
+  level       Int      // 0–4
+  gameSlug    String
+  player1Id   String
+  player1     Student  @relation("BattlePlayer1", fields: [player1Id], references: [id])
+  player2Id   String
+  player2     Student  @relation("BattlePlayer2", fields: [player2Id], references: [id])
+  winnerId    String?
+  winner      Student? @relation("BattleWinner", fields: [winnerId], references: [id])
+  conductedAt DateTime @default(now())
+}
+
+model SingleGameRecord {
+  id          String   @id @default(cuid())
+  schoolId    String
+  school      School   @relation(fields: [schoolId], references: [id])
+  studentId   String
+  student     Student  @relation(fields: [studentId], references: [id])
+  gameSlug    String
+  score       Int
+  duration    Int      // duration in seconds
+  conductedAt DateTime @default(now())
+}
+
+model SystemSetting {
+  key   String @id
+  value String
+}
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String    @unique
+  emailVerified DateTime?
+  image         String?
+  role          String    @default("user")  // "admin" | "user" | "division" | "project_office"
+  schoolId      String?
+  school        School?   @relation(fields: [schoolId], references: [id])
+  projectOfficeId String?
+  projectOffice ProjectOffice? @relation(fields: [projectOfficeId], references: [id])
+  divisionId    String?
+  division      Division? @relation(fields: [divisionId], references: [id])
+  passwordHash  String?
+  createdAt     DateTime  @default(now())
+  lastLoginAt   DateTime?
+  accounts      Account[]
+  sessions      Session[]
+}
+
+model Account {
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([provider, providerAccountId])
+}
+
+model Session {
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String
+  expires    DateTime
+
+  @@id([identifier, token])
+}

@@ -8,10 +8,18 @@ import bcrypt from "bcryptjs";
 // -- READS --
 
 export async function getSchools() {
-  return await prisma.school.findMany({
-    orderBy: { name: 'asc' },
-    include: { projectOffice: { include: { division: true } } }
-  });
+  try {
+    const res = await fetch('http://localhost:4000/api/schools', { next: { revalidate: 0 } });
+    if (!res.ok) throw new Error("Failed to load schools from backend");
+    return await res.json();
+  } catch (err) {
+    console.error(err);
+    // Fallback to direct DB call if backend is not running yet
+    return await prisma.school.findMany({
+      orderBy: { name: 'asc' },
+      include: { projectOffice: { include: { division: true } } }
+    });
+  }
 }
 
 export async function getStudentsBySchool(schoolId: string) {
@@ -505,28 +513,54 @@ async function requireAdmin() {
 
 export async function getUsers(): Promise<any[]> {
   await requireAdmin();
-  const users = await (prisma as any).user.findMany({
-    orderBy: { createdAt: "desc" },
-    include: {
-      _count: { select: { sessions: true } },
-      school: { select: { id: true, name: true } },
-    },
-  });
-  return users;
+  try {
+    const res = await fetch('http://localhost:4000/api/users', { next: { revalidate: 0 } });
+    if (!res.ok) throw new Error("Failed to load users from backend");
+    return await res.json();
+  } catch (err) {
+    console.error("Falling back to direct DB call for getUsers", err);
+    return await (prisma as any).user.findMany({
+      orderBy: { createdAt: "desc" },
+      include: {
+        _count: { select: { sessions: true } },
+        school: { select: { id: true, name: true } },
+      },
+    });
+  }
 }
 
 export async function setUserRole(userId: string, role: "user" | "admin") {
   await requireAdmin();
-  await (prisma as any).user.update({ where: { id: userId }, data: { role } });
+  try {
+    const res = await fetch('http://localhost:4000/api/users/role', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ userId, role })
+    });
+    if (!res.ok) throw new Error("Failed to set role via backend");
+  } catch (err) {
+    console.error("Falling back to direct DB", err);
+    await (prisma as any).user.update({ where: { id: userId }, data: { role } });
+  }
   revalidatePath("/admin/users");
 }
 
 export async function assignUserSchool(userId: string, schoolId: string | null) {
   await requireAdmin();
-  await (prisma as any).user.update({
-    where: { id: userId },
-    data: { schoolId: schoolId || null },
-  });
+  try {
+    const res = await fetch('http://localhost:4000/api/users/school', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ userId, schoolId })
+    });
+    if (!res.ok) throw new Error("Failed to assign school via backend");
+  } catch (err) {
+    console.error("Falling back to direct DB", err);
+    await (prisma as any).user.update({
+      where: { id: userId },
+      data: { schoolId: schoolId || null },
+    });
+  }
   revalidatePath("/admin/users");
 }
 
@@ -599,92 +633,107 @@ export async function clearAllAssessments(term?: string) {
 
 export async function clearAllData() {
   await requireAdmin();
-  // Must delete in order due to foreign key constraints
-  await prisma.assessment.deleteMany();
-  await prisma.student.deleteMany();
-  await prisma.school.deleteMany();
-  await prisma.projectOffice.deleteMany();
-  await prisma.division.deleteMany();
+  try {
+    const res = await fetch('http://localhost:4000/api/data', { method: 'DELETE' });
+    if (!res.ok) throw new Error("Backend clear data failed");
+  } catch (err) {
+    console.error("Falling back to direct DB clear", err);
+    // Fallback to direct DB call
+    await prisma.assessment.deleteMany();
+    await prisma.student.deleteMany();
+    await prisma.school.deleteMany();
+    await prisma.projectOffice.deleteMany();
+    await prisma.division.deleteMany();
+  }
   revalidatePath('/', 'layout');
 }
 
 export async function seedHierarchy() {
   await requireAdmin();
+  try {
+    const res = await fetch('http://localhost:4000/api/upload-data', { method: 'POST' });
+    if (!res.ok) throw new Error("Backend upload data failed");
+    const data = await res.json();
+    revalidatePath('/', 'layout');
+    return { divCount: data.divCount, poCount: data.poCount, schoolCount: data.schoolCount };
+  } catch (err) {
+    console.error("Falling back to direct DB seed", err);
+    
+    // Direct DB Fallback
+    const { HIERARCHY_DATA } = await import("@/prisma/hierarchy-data");
+    let divCount = 0, poCount = 0, schoolCount = 0;
+    const existingDivisions = await prisma.division.findMany();
+    const existingPOs = await prisma.projectOffice.findMany();
+    const existingSchools = await prisma.school.findMany({ select: { udiseCode: true } });
+    const divMap = new Map(existingDivisions.map(d => [d.name, d.id]));
+    const poMap = new Map(existingPOs.map(p => [`${p.name}__${p.divisionId}`, p.id]));
+    const schoolSet = new Set(existingSchools.map(s => s.udiseCode));
 
-  const { HIERARCHY_DATA } = await import("@/prisma/hierarchy-data");
-
-  let divCount = 0, poCount = 0, schoolCount = 0;
-
-  // Fetch all existing records in one shot
-  const existingDivisions = await prisma.division.findMany();
-  const existingPOs = await prisma.projectOffice.findMany();
-  const existingSchools = await prisma.school.findMany({ select: { udiseCode: true } });
-
-  const divMap = new Map(existingDivisions.map(d => [d.name, d.id]));
-  const poMap = new Map(existingPOs.map(p => [`${p.name}__${p.divisionId}`, p.id]));
-  const schoolSet = new Set(existingSchools.map(s => s.udiseCode));
-
-  for (const [divName, pos] of Object.entries(HIERARCHY_DATA)) {
-    if (!divMap.has(divName)) {
-      const div = await prisma.division.create({ data: { name: divName } });
-      divMap.set(divName, div.id);
-      divCount++;
-    }
-    const divId = divMap.get(divName)!;
-
-    for (const [poName, schools] of Object.entries(pos as any)) {
-      const poKey = `${poName}__${divId}`;
-      if (!poMap.has(poKey)) {
-        const po = await prisma.projectOffice.create({ data: { name: poName, divisionId: divId } });
-        poMap.set(poKey, po.id);
-        poCount++;
+    for (const [divName, pos] of Object.entries(HIERARCHY_DATA)) {
+      if (!divMap.has(divName)) {
+        const div = await prisma.division.create({ data: { name: divName } });
+        divMap.set(divName, div.id);
+        divCount++;
       }
-      const poId = poMap.get(poKey)!;
+      const divId = divMap.get(divName)!;
 
-      const newSchools = (schools as any[]).filter(s => !schoolSet.has(s.udise));
-      if (newSchools.length > 0) {
-        await prisma.school.createMany({
-          data: newSchools.map(s => ({ name: s.name, udiseCode: s.udise, projectOfficeId: poId })),
-          skipDuplicates: true,
-        });
-        newSchools.forEach(s => schoolSet.add(s.udise));
-        schoolCount += newSchools.length;
+      for (const [poName, schools] of Object.entries(pos as any)) {
+        const poKey = `${poName}__${divId}`;
+        if (!poMap.has(poKey)) {
+          const po = await prisma.projectOffice.create({ data: { name: poName, divisionId: divId } });
+          poMap.set(poKey, po.id);
+          poCount++;
+        }
+        const poId = poMap.get(poKey)!;
+
+        const newSchools = (schools as any[]).filter(s => !schoolSet.has(s.udise));
+        if (newSchools.length > 0) {
+          await prisma.school.createMany({
+            data: newSchools.map(s => ({ name: s.name, udiseCode: s.udise, projectOfficeId: poId })),
+            skipDuplicates: true,
+          });
+          newSchools.forEach(s => schoolSet.add(s.udise));
+          schoolCount += newSchools.length;
+        }
       }
     }
+    revalidatePath('/', 'layout');
+    return { divCount, poCount, schoolCount };
   }
-
-  revalidatePath('/', 'layout');
-  return { divCount, poCount, schoolCount };
 }
 
 export async function cleanupSchools() {
   await requireAdmin();
-
-  const { HIERARCHY_DATA } = await import("@/prisma/hierarchy-data");
-
-  // 1. Extract valid UDISE codes from Master List
-  const validUdiseCodes = new Set<string>();
-  Object.values(HIERARCHY_DATA).forEach((pos: any) => {
-    Object.values(pos).forEach((schools: any) => {
-      schools.forEach((s: any) => validUdiseCodes.add(s.udise));
+  try {
+    const res = await fetch('http://localhost:4000/api/schools/cleanup', { method: 'POST' });
+    if (!res.ok) throw new Error("Backend cleanup failed");
+    const data = await res.json();
+    revalidatePath('/', 'layout');
+    return { count: data.count };
+  } catch (err) {
+    console.error("Falling back to direct DB cleanup", err);
+    const { HIERARCHY_DATA } = await import("@/prisma/hierarchy-data");
+    const validUdiseCodes = new Set<string>();
+    Object.values(HIERARCHY_DATA).forEach((pos: any) => {
+      Object.values(pos).forEach((schools: any) => {
+        schools.forEach((s: any) => validUdiseCodes.add(s.udise));
+      });
     });
-  });
 
-  // 2. Find schools to delete
-  const allSchools = await prisma.school.findMany({ select: { id: true, udiseCode: true } });
-  const invalidSchoolIds = allSchools
-    .filter(s => !validUdiseCodes.has(s.udiseCode))
-    .map(s => s.id);
+    const allSchools = await prisma.school.findMany({ select: { id: true, udiseCode: true } });
+    const invalidSchoolIds = allSchools
+      .filter(s => !validUdiseCodes.has(s.udiseCode))
+      .map(s => s.id);
 
-  if (invalidSchoolIds.length === 0) return { count: 0 };
+    if (invalidSchoolIds.length === 0) return { count: 0 };
 
-  // 3. Batch delete
-  await prisma.assessment.deleteMany({ where: { student: { schoolId: { in: invalidSchoolIds } } } });
-  await prisma.student.deleteMany({ where: { schoolId: { in: invalidSchoolIds } } });
-  const result = await prisma.school.deleteMany({ where: { id: { in: invalidSchoolIds } } });
+    await prisma.assessment.deleteMany({ where: { student: { schoolId: { in: invalidSchoolIds } } } });
+    await prisma.student.deleteMany({ where: { schoolId: { in: invalidSchoolIds } } });
+    const result = await prisma.school.deleteMany({ where: { id: { in: invalidSchoolIds } } });
 
-  revalidatePath('/', 'layout');
-  return { count: result.count };
+    revalidatePath('/', 'layout');
+    return { count: result.count };
+  }
 }
 
 // -- SCHOOL LOGINS --
@@ -754,64 +803,89 @@ function toSlug(str: string): string {
 
 export async function generateSchoolLogins(): Promise<{ created: number; skipped: number }> {
   await requireAdmin();
-
-  const DEFAULT_PASSWORD = "Pratham@2025";
-  const passwordHash = await bcrypt.hash(DEFAULT_PASSWORD, 10);
-
-  const schools = await prisma.school.findMany({ include: { projectOffice: true } });
-
-  const data = schools.map(school => ({
-    email: `${toSlug(school.projectOffice.name)}.${toSlug(school.name)}@flnhub.in`,
-    name: school.name,
-    role: "user",
-    schoolId: school.id,
-    passwordHash,
-  }));
-
-  const result = await (prisma as any).user.createMany({ data, skipDuplicates: true });
-
-  revalidatePath("/admin/users");
-  return { created: result.count, skipped: schools.length - result.count };
+  try {
+    const res = await fetch('http://localhost:4000/api/users/generate-logins', { method: 'POST' });
+    if (!res.ok) throw new Error("Backend generate-logins failed");
+    const data = await res.json();
+    revalidatePath("/admin/users");
+    return { created: data.created, skipped: data.skipped };
+  } catch (err) {
+    console.error("Falling back to direct DB generation", err);
+    
+    // Direct DB Fallback
+    const DEFAULT_PASSWORD = "Pratham@2025";
+    const passwordHash = await bcrypt.hash(DEFAULT_PASSWORD, 10);
+    const schools = await prisma.school.findMany({ include: { projectOffice: true } });
+    const data = schools.map(school => ({
+      email: `${toSlug(school.projectOffice.name)}.${toSlug(school.name)}@flnhub.in`,
+      name: school.name,
+      role: "user",
+      schoolId: school.id,
+      passwordHash,
+    }));
+    const result = await (prisma as any).user.createMany({ data, skipDuplicates: true });
+    revalidatePath("/admin/users");
+    return { created: result.count, skipped: schools.length - result.count };
+  }
 }
 
 export async function deleteSchoolLogins(ids: string[]): Promise<{ deleted: number }> {
   await requireAdmin();
-  const result = await (prisma as any).user.deleteMany({
-    where: { id: { in: ids }, email: { endsWith: '@flnhub.in' } },
-  });
-  revalidatePath('/admin/logins');
-  return { deleted: result.count };
+  try {
+    const res = await fetch('http://localhost:4000/api/users/logins', {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ ids })
+    });
+    if (!res.ok) throw new Error("Backend delete logins failed");
+    const data = await res.json();
+    revalidatePath('/admin/logins');
+    return { deleted: data.deleted };
+  } catch (err) {
+    console.error("Falling back to direct DB", err);
+    const result = await (prisma as any).user.deleteMany({
+      where: { id: { in: ids }, email: { endsWith: '@flnhub.in' } },
+    });
+    revalidatePath('/admin/logins');
+    return { deleted: result.count };
+  }
 }
 
 export async function getSchoolCredentials(): Promise<{ id: string; school: string; po: string; email: string; password: string; role: string; locationLevel: string }[]> {
   await requireAdmin();
+  try {
+    const res = await fetch('http://localhost:4000/api/users/credentials', { next: { revalidate: 0 } });
+    if (!res.ok) throw new Error("Backend get credentials failed");
+    return await res.json();
+  } catch (err) {
+    console.error("Falling back to direct DB", err);
+    const users = await (prisma as any).user.findMany({
+      where: { passwordHash: { not: null } },
+      include: { 
+        school: { include: { projectOffice: true } },
+        projectOffice: true,
+        division: true
+      },
+      orderBy: { email: 'asc' },
+    });
 
-  const users = await (prisma as any).user.findMany({
-    where: { passwordHash: { not: null } },
-    include: { 
-      school: { include: { projectOffice: true } },
-      projectOffice: true,
-      division: true
-    },
-    orderBy: { email: 'asc' },
-  });
+    return users.map((u: any) => {
+      let locationLevel = "State";
+      if (u.school) locationLevel = `School: ${u.school.name}`;
+      else if (u.projectOffice) locationLevel = `PO: ${u.projectOffice.name}`;
+      else if (u.division) locationLevel = `Div: ${u.division.name}`;
 
-  return users.map((u: any) => {
-    let locationLevel = "State";
-    if (u.school) locationLevel = `School: ${u.school.name}`;
-    else if (u.projectOffice) locationLevel = `PO: ${u.projectOffice.name}`;
-    else if (u.division) locationLevel = `Div: ${u.division.name}`;
-
-    return {
-      id: u.id,
-      po: u.school?.projectOffice?.name ?? u.projectOffice?.name ?? u.division?.name ?? 'State',
-      school: u.school?.name ?? 'N/A',
-      email: u.email,
-      password: 'Pratham@2025',
-      role: u.role,
-      locationLevel
-    };
-  });
+      return {
+        id: u.id,
+        po: u.school?.projectOffice?.name ?? u.projectOffice?.name ?? u.division?.name ?? 'State',
+        school: u.school?.name ?? 'N/A',
+        email: u.email,
+        password: 'Pratham@2025',
+        role: u.role,
+        locationLevel
+      };
+    });
+  }
 }
 
 export async function createCustomLogin(data: {
@@ -822,39 +896,64 @@ export async function createCustomLogin(data: {
   targetId?: string;
 }): Promise<{ error?: string }> {
   await requireAdmin();
-  const trimmedEmail = data.email.trim().toLowerCase();
-  
-  if (!trimmedEmail) return { error: "Email cannot be empty" };
-  const existing = await (prisma as any).user.findUnique({ where: { email: trimmedEmail } });
-  if (existing) return { error: "Email already in use" };
-
-  const passwordHash = await bcrypt.hash(data.password, 10);
-
-  const userData: any = {
-    email: trimmedEmail,
-    name: "Custom Login",
-    role: data.role,
-    passwordHash,
-  };
-
-  if (data.level === "school" && data.targetId) userData.schoolId = data.targetId;
-  else if (data.level === "project_office" && data.targetId) userData.projectOfficeId = data.targetId;
-  else if (data.level === "division" && data.targetId) userData.divisionId = data.targetId;
-
-  await (prisma as any).user.create({ data: userData });
-  revalidatePath('/admin/logins');
-  return {};
+  try {
+    const res = await fetch('http://localhost:4000/api/users/custom-login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    });
+    if (!res.ok) {
+      const errRes = await res.json();
+      return { error: errRes.error || "Backend failed" };
+    }
+    revalidatePath('/admin/logins');
+    return {};
+  } catch (err) {
+    console.error("Falling back to direct DB create login", err);
+    const trimmedEmail = data.email.trim().toLowerCase();
+    if (!trimmedEmail) return { error: "Email cannot be empty" };
+    const existing = await (prisma as any).user.findUnique({ where: { email: trimmedEmail } });
+    if (existing) return { error: "Email already in use" };
+    const passwordHash = await bcrypt.hash(data.password, 10);
+    const userData: any = {
+      email: trimmedEmail,
+      name: "Custom Login",
+      role: data.role,
+      passwordHash,
+    };
+    if (data.level === "school" && data.targetId) userData.schoolId = data.targetId;
+    else if (data.level === "project_office" && data.targetId) userData.projectOfficeId = data.targetId;
+    else if (data.level === "division" && data.targetId) userData.divisionId = data.targetId;
+    await (prisma as any).user.create({ data: userData });
+    revalidatePath('/admin/logins');
+    return {};
+  }
 }
 
 export async function updateLoginEmail(userId: string, newEmail: string): Promise<{ error?: string }> {
   await requireAdmin();
-  const trimmed = newEmail.trim().toLowerCase();
-  if (!trimmed) return { error: 'Email cannot be empty' };
-  const existing = await (prisma as any).user.findUnique({ where: { email: trimmed } });
-  if (existing && existing.id !== userId) return { error: 'Email already in use' };
-  await (prisma as any).user.update({ where: { id: userId }, data: { email: trimmed } });
-  revalidatePath('/admin/logins');
-  return {};
+  try {
+    const res = await fetch('http://localhost:4000/api/users/email', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ userId, newEmail })
+    });
+    if (!res.ok) {
+      const errRes = await res.json();
+      return { error: errRes.error || "Backend failed" };
+    }
+    revalidatePath('/admin/logins');
+    return {};
+  } catch (err) {
+    console.error("Falling back to direct DB update email", err);
+    const trimmed = newEmail.trim().toLowerCase();
+    if (!trimmed) return { error: 'Email cannot be empty' };
+    const existing = await (prisma as any).user.findUnique({ where: { email: trimmed } });
+    if (existing && existing.id !== userId) return { error: 'Email already in use' };
+    await (prisma as any).user.update({ where: { id: userId }, data: { email: trimmed } });
+    revalidatePath('/admin/logins');
+    return {};
+  }
 }
 
 // -- BATTLE MATCHMAKER --
