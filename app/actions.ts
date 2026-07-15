@@ -1416,6 +1416,54 @@ export async function getStudentLeaderboard(filters: {
     .slice(0, 100); // return top 100
 }
 
+const getEditDistance = (a: string, b: string): number => {
+  if (a.length === 0) return b.length;
+  if (b.length === 0) return a.length;
+  const matrix = Array(b.length + 1).fill(null).map(() => Array(a.length + 1).fill(null));
+  for (let i = 0; i <= a.length; i++) matrix[0][i] = i;
+  for (let j = 0; j <= b.length; j++) matrix[j][0] = j;
+  for (let j = 1; j <= b.length; j++) {
+    for (let i = 1; i <= a.length; i++) {
+      const indicator = a[i - 1] === b[j - 1] ? 0 : 1;
+      matrix[j][i] = Math.min(
+        matrix[j][i - 1] + 1,
+        matrix[j - 1][i] + 1,
+        matrix[j - 1][i - 1] + indicator
+      );
+    }
+  }
+  return matrix[b.length][a.length];
+};
+
+const deduplicateStudents = (students: any[]) => {
+  const uniqueStudents: any[] = [];
+  students.forEach(s => {
+    const latest = s.assessments[0];
+    if (!latest) return;
+    const score = (latest.literacyLevel || 0) + (latest.numeracyLevel || 0);
+    const normName = s.name.replace(/\s+/g, '').toLowerCase();
+    
+    const existing = uniqueStudents.find(us => {
+      if (us.s.class !== s.class) return false;
+      const usNorm = us.s.name.replace(/\s+/g, '').toLowerCase();
+      if (usNorm === normName) return true;
+      const dist = getEditDistance(usNorm, normName);
+      const maxLen = Math.max(usNorm.length, normName.length);
+      return dist <= Math.floor(maxLen / 4) && maxLen > 5;
+    });
+
+    if (!existing) {
+      uniqueStudents.push({ s, score });
+    } else {
+      if (score > existing.score) {
+        existing.s = s;
+        existing.score = score;
+      }
+    }
+  });
+  return uniqueStudents.map(us => us.s);
+};
+
 export async function getSchoolRankings(divisionId?: string, projectOfficeId?: string, classNum?: number | 'all') {
   const where: any = {};
   if (divisionId) where.projectOffice = { divisionId };
@@ -1438,9 +1486,7 @@ export async function getSchoolRankings(divisionId?: string, projectOfficeId?: s
         where: studentWhere,
         include: {
           assessments: {
-            where: { term: 'Endline' },
             orderBy: { date: 'desc' },
-            take: 1
           }
         }
       }
@@ -1452,7 +1498,9 @@ export async function getSchoolRankings(divisionId?: string, projectOfficeId?: s
     let storyReaders = 0;
     let subtractionMasters = 0;
 
-    school.students.forEach(student => {
+    const uniqueStudents = deduplicateStudents(school.students);
+
+    uniqueStudents.forEach(student => {
       const latest = student.assessments[0];
       if (latest) {
         totalAssessed++;
@@ -1495,53 +1543,9 @@ export async function getSchoolStudentsDetails(schoolId: string, classNum?: numb
 
   // Deduplicate students by name and class (in case previous upload logic created duplicate records)
   // We use Levenshtein distance to catch minor spelling typos (e.g. Marathi names with/without anusvara)
-  const getEditDistance = (a: string, b: string): number => {
-    if (a.length === 0) return b.length;
-    if (b.length === 0) return a.length;
-    const matrix = Array(b.length + 1).fill(null).map(() => Array(a.length + 1).fill(null));
-    for (let i = 0; i <= a.length; i++) matrix[0][i] = i;
-    for (let j = 0; j <= b.length; j++) matrix[j][0] = j;
-    for (let j = 1; j <= b.length; j++) {
-      for (let i = 1; i <= a.length; i++) {
-        const indicator = a[i - 1] === b[j - 1] ? 0 : 1;
-        matrix[j][i] = Math.min(
-          matrix[j][i - 1] + 1,
-          matrix[j - 1][i] + 1,
-          matrix[j - 1][i - 1] + indicator
-        );
-      }
-    }
-    return matrix[b.length][a.length];
-  };
+  const uniqueStudentsList = deduplicateStudents(students);
 
-  const uniqueStudents: any[] = [];
-  
-  students.forEach(s => {
-    const latest = s.assessments[0];
-    const score = (latest?.literacyLevel || 0) + (latest?.numeracyLevel || 0);
-    const normName = s.name.replace(/\s+/g, '').toLowerCase();
-    
-    const existing = uniqueStudents.find(us => {
-      if (us.s.class !== s.class) return false;
-      const usNorm = us.s.name.replace(/\s+/g, '').toLowerCase();
-      if (usNorm === normName) return true;
-      const dist = getEditDistance(usNorm, normName);
-      const maxLen = Math.max(usNorm.length, normName.length);
-      // Allow 1 typo per 4 characters (e.g., dist <= 4 for 16-char string)
-      return dist <= Math.floor(maxLen / 4) && maxLen > 5;
-    });
-
-    if (!existing) {
-      uniqueStudents.push({ s, score });
-    } else {
-      if (score > existing.score) {
-        existing.s = s;
-        existing.score = score;
-      }
-    }
-  });
-
-  return uniqueStudents.map(({ s }) => {
+  return uniqueStudentsList.map((s: any) => {
     const latest = s.assessments[0];
     return {
       id: s.id,
