@@ -198,12 +198,12 @@ export async function getDashboardStats(filters: { divisionId?: string, projectO
       }
     }),
     prisma.assessment.groupBy({
-      by: ['term', 'literacyLevel'] as any,
+      by: ['academicYear', 'term', 'literacyLevel'] as any,
       where: assessmentWhere,
       _count: { studentId: true }
     }),
     prisma.assessment.groupBy({
-      by: ['term', 'numeracyLevel'] as any,
+      by: ['academicYear', 'term', 'numeracyLevel'] as any,
       where: assessmentWhere,
       _count: { studentId: true }
     }),
@@ -212,6 +212,7 @@ export async function getDashboardStats(filters: { divisionId?: string, projectO
       where: assessmentWhere,
       select: {
         term: true,
+        academicYear: true,
         literacyLevel: true,
         numeracyLevel: true,
         addition: true,

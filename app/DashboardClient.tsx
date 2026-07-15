@@ -128,6 +128,43 @@ export default function DashboardClient({ initialStats, hierarchy }: { initialSt
   }
 
   // For the overview term charts — returns % normalised within each term
+  const [yoyTerm, setYoyTerm] = useState("Endline");
+
+  const formatYoYData = (dataArray: any[], type: 'lit' | 'num', asPct: boolean, targetTerm: string = 'Endline') => {
+    const labels = type === 'lit' ? LIT_LABELS : NUM_LABELS;
+    const key = type === 'lit' ? 'literacyLevel' : 'numeracyLevel';
+    
+    const years = Array.from(new Set((dataArray || []).map(a => a.academicYear))).filter(Boolean).sort();
+    if (years.length === 0) years.push('2025-2026');
+
+    const yearTotals: Record<string, number> = {};
+    years.forEach((y: any) => {
+      yearTotals[y] = (dataArray || [])
+        .filter((item: any) => item.academicYear === y && item.term === targetTerm)
+        .reduce((sum: number, item: any) => sum + item._count.studentId, 0);
+    });
+
+    return labels.map((label, level) => {
+      const entry: any = { name: label };
+      years.forEach((y: any) => {
+        let count = 0;
+        if (type === 'num') {
+          const matchingItems = dataArray?.filter((item: any) => {
+            const dbLvl = item[key];
+            const mappedLvl = dbLvl === 6 ? 5 : dbLvl === 5 ? 4 : dbLvl;
+            return mappedLvl === level && item.term === targetTerm && item.academicYear === y;
+          }) || [];
+          count = matchingItems.reduce((acc: number, item: any) => acc + item._count.studentId, 0);
+        } else {
+          const found = dataArray?.find((item: any) => item[key] === level && item.term === targetTerm && item.academicYear === y);
+          count = found ? found._count.studentId : 0;
+        }
+        entry[y] = asPct ? (yearTotals[y] > 0 ? Math.round((count / yearTotals[y]) * 100) : 0) : count;
+      });
+      return entry;
+    });
+  };
+
   const formatTermData = (dataArray: any[], type: 'lit' | 'num', asPct: boolean) => {
     const labels = type === 'lit' ? LIT_LABELS : NUM_LABELS;
     const key = type === 'lit' ? 'literacyLevel' : 'numeracyLevel';
@@ -153,6 +190,27 @@ export default function DashboardClient({ initialStats, hierarchy }: { initialSt
           count = found ? found._count.studentId : 0;
         }
         entry[t] = asPct ? (termTotals[t] > 0 ? Math.round((count / termTotals[t]) * 100) : 0) : count;
+      });
+      return entry;
+    });
+  };
+
+  const formatYoYOpsData = (allAssessments: any[], asPct: boolean, targetTerm: string = 'Endline') => {
+    const years = Array.from(new Set((allAssessments || []).map(a => a.academicYear))).filter(Boolean).sort();
+    if (years.length === 0) years.push('2025-2026');
+
+    return ['addition', 'subtraction', 'division'].map(op => {
+      const entry: any = { name: op[0].toUpperCase() + op.slice(1) };
+      years.forEach((y: any) => {
+        const filtered = (allAssessments || []).filter((a: any) => a.academicYear === y && a.term === targetTerm);
+        const total = filtered.length;
+        const count = filtered.filter((curr: any) => {
+          if (op === 'addition') return curr.addition || curr.numeracyLevel >= 3;
+          if (op === 'subtraction') return curr.subtraction || curr.numeracyLevel >= 4;
+          if (op === 'division') return curr.division || curr.numeracyLevel >= 6;
+          return false;
+        }).length;
+        entry[y] = asPct ? (total > 0 ? Math.round((count / total) * 100) : 0) : count;
       });
       return entry;
     });
@@ -473,10 +531,19 @@ export default function DashboardClient({ initialStats, hierarchy }: { initialSt
         </div>
       )}
 
-      {/* TAB: OVERVIEW */}
+      {/* TAB: OVERVIEW / YoY GROWTH */}
       {activeTab === 'overview' && (
         <div className={`space-y-6 transition-opacity ${isPending ? 'opacity-50' : ''}`}>
-          <div className="flex justify-end">
+          <div className="flex justify-between items-center bg-white dark:bg-slate-900 p-4 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-800">
+            <div className="flex items-center gap-3">
+              <label className="text-sm font-bold text-slate-500">Compare Term YoY:</label>
+              <select value={yoyTerm} onChange={(e) => setYoyTerm(e.target.value)}
+                className="bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2 text-sm font-bold text-slate-700 dark:text-slate-200 outline-none focus:ring-2 focus:ring-blue-500">
+                <option value="Baseline">Baseline</option>
+                <option value="Midline">Midline</option>
+                <option value="Endline">Endline</option>
+              </select>
+            </div>
             <div className="flex p-1 bg-slate-100 dark:bg-slate-800 rounded-xl gap-1">
               <button onClick={() => setShowPct(true)}
                 className={`px-4 py-1.5 rounded-lg text-sm font-bold transition-all ${showPct ? 'bg-white dark:bg-slate-700 text-blue-600 shadow-sm' : 'text-slate-500'}`}>
@@ -488,10 +555,11 @@ export default function DashboardClient({ initialStats, hierarchy }: { initialSt
               </button>
             </div>
           </div>
-          <BarCard title={`Literacy Levels by Year (${showPct ? '%' : '#'})`} icon="📚" data={formatTermData(stats.literacies, 'lit', showPct)} percentage={showPct} />
+          
+          <BarCard title={`YoY Literacy Growth (${showPct ? '%' : '#'})`} icon="📚" data={formatYoYData(stats.literacies, 'lit', showPct, yoyTerm)} percentage={showPct} />
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <BarCard title={`Numeracy Levels by Year (${showPct ? '%' : '#'})`} icon="🔢" data={formatTermData(stats.numeracies, 'num', showPct)} percentage={showPct} />
-            <BarCard title={`Operations Mastery by Year (${showPct ? '%' : '#'})`} icon="➕" data={formatOpsData(stats.operations, showPct)} percentage={showPct} />
+            <BarCard title={`YoY Numeracy Growth (${showPct ? '%' : '#'})`} icon="🔢" data={formatYoYData(stats.numeracies, 'num', showPct, yoyTerm)} percentage={showPct} />
+            <BarCard title={`YoY Operations Mastery (${showPct ? '%' : '#'})`} icon="➕" data={formatYoYOpsData(stats.allAssessments, showPct, yoyTerm)} percentage={showPct} />
           </div>
         </div>
       )}

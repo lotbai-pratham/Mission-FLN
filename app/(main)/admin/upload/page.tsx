@@ -9,6 +9,7 @@ export default function AdminUploadPage() {
   const router = useRouter();
   const [file, setFile] = useState<File | null>(null);
   const [term, setTerm] = useState("Baseline");
+  const [academicYear, setAcademicYear] = useState("2025-2026");
   const [seedResult, setSeedResult] = useState<{ divCount: number; poCount: number; schoolCount: number } | null>(null);
   const [isSeedPending, startSeedTransition] = useTransition();
 
@@ -41,6 +42,7 @@ export default function AdminUploadPage() {
     const formData = new FormData();
     formData.append("file", file);
     formData.append("term", term);
+    formData.append("academicYear", academicYear);
 
     try {
       const res = await fetch('/api/upload', {
@@ -157,16 +159,28 @@ export default function AdminUploadPage() {
                     </div>
                   )}
 
-                  {/* Term Selector */}
+                  {/* Selectors */}
                   {file && (
-                    <div className="mt-6 flex flex-col gap-2">
-                       <label className="text-sm font-bold text-slate-700">Select Assessment Term</label>
-                       <select value={term} onChange={(e) => setTerm(e.target.value)}
-                               className="w-full bg-slate-50 border-none ring-1 ring-slate-200 focus:ring-2 focus:ring-blue-500 rounded-xl px-4 py-3 outline-none font-medium text-slate-700">
-                          <option value="Baseline">Baseline</option>
-                          <option value="Midline">Midline</option>
-                          <option value="Endline">Endline</option>
-                       </select>
+                    <div className="mt-6 flex flex-col gap-4 sm:flex-row">
+                       <div className="flex-1 flex flex-col gap-2">
+                         <label className="text-sm font-bold text-slate-700">Select Assessment Term</label>
+                         <select value={term} onChange={(e) => setTerm(e.target.value)}
+                                 className="w-full bg-slate-50 border-none ring-1 ring-slate-200 focus:ring-2 focus:ring-blue-500 rounded-xl px-4 py-3 outline-none font-medium text-slate-700">
+                            <option value="Baseline">Baseline</option>
+                            <option value="Midline">Midline</option>
+                            <option value="Endline">Endline</option>
+                         </select>
+                       </div>
+                       <div className="flex-1 flex flex-col gap-2">
+                         <label className="text-sm font-bold text-slate-700">Academic Year</label>
+                         <select value={academicYear} onChange={(e) => setAcademicYear(e.target.value)}
+                                 className="w-full bg-slate-50 border-none ring-1 ring-slate-200 focus:ring-2 focus:ring-blue-500 rounded-xl px-4 py-3 outline-none font-medium text-slate-700">
+                            <option value="2023-2024">2023-2024</option>
+                            <option value="2024-2025">2024-2025</option>
+                            <option value="2025-2026">2025-2026</option>
+                            <option value="2026-2027">2026-2027</option>
+                         </select>
+                       </div>
                     </div>
                   )}
 

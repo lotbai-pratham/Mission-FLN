@@ -130,6 +130,7 @@ export async function POST(req: Request) {
     const formData = await req.formData();
     const file = formData.get('file') as File;
     const term = formData.get('term') as string || "Baseline";
+    const academicYear = formData.get('academicYear') as string || "2025-2026";
     if (!file) return NextResponse.json({ error: "No file provided" }, { status: 400 });
 
     const buffer = await file.arrayBuffer();
@@ -263,10 +264,12 @@ export async function POST(req: Request) {
         return s.includes('can do') || s.includes('kar shakte') || s.includes('yes') || s === '1' || s === 'true';
       };
 
-      const key = `${sid}-${term}`;
+      const key = `${sid}-${term}-${academicYear}`;
       const assessmentData = {
         date, 
         term, 
+        academicYear,
+        classNum,
         assessorName: getRowValue(row, COLS.assessor) || 'Unknown Assessor',
         literacyLevel: parseLiteracyLevel(getRowValue(row, COLS.literacy)),
         numeracyLevel: parseNumeracyLevel(getRowValue(row, COLS.numeracy)),
@@ -286,13 +289,14 @@ export async function POST(req: Request) {
     const dbAssessments = await prisma.assessment.findMany({
       where: {
         studentId: { in: studentIds },
-        term
+        term,
+        academicYear
       }
     });
 
     const dbMap = new Map<string, any[]>();
     for (const a of dbAssessments) {
-      const k = `${a.studentId}-${a.term}`;
+      const k = `${a.studentId}-${a.term}-${a.academicYear}`;
       if (!dbMap.has(k)) dbMap.set(k, []);
       dbMap.get(k)!.push(a);
     }

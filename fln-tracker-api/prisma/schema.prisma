@@ -80,6 +80,9 @@ model Assessment {
   subtraction     Boolean  @default(false)
   division        Boolean  @default(false)
 
+  academicYear    String   @default("2025-2026")
+  classNum        Int      @default(1)
+
   studentId       String
   student         Student  @relation(fields: [studentId], references: [id])
 }
