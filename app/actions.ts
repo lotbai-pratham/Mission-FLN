@@ -1526,7 +1526,9 @@ export async function getSchoolStudentsDetails(schoolId: string, classNum?: numb
       const usNorm = us.s.name.replace(/\s+/g, '').toLowerCase();
       if (usNorm === normName) return true;
       const dist = getEditDistance(usNorm, normName);
-      return dist <= 2 && Math.max(usNorm.length, normName.length) > 5;
+      const maxLen = Math.max(usNorm.length, normName.length);
+      // Allow 1 typo per 4 characters (e.g., dist <= 4 for 16-char string)
+      return dist <= Math.floor(maxLen / 4) && maxLen > 5;
     });
 
     if (!existing) {
