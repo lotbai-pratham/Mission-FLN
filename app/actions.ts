@@ -5,7 +5,7 @@ import { revalidatePath } from "next/cache";
 import { auth } from "@/auth";
 import bcrypt from "bcryptjs";
 
-const API_BASE = process.env.NEXT_PUBLIC_BACKEND_URL || ${API_BASE}';
+const API_BASE = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:4000';
 
 export async function getSchools() {
   try {
