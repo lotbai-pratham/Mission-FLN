@@ -130,7 +130,7 @@ export default function DashboardClient({ initialStats, hierarchy }: { initialSt
   // For the overview term charts — returns % normalised within each term
   const [selectedYear, setSelectedYear] = useState("2025-2026");
 
-  const availableYears = Array.from(new Set((stats.allAssessments || []).map((a: any) => String(a.academicYear)))).filter(Boolean).sort().reverse();
+  const availableYears = Array.from(new Set((stats.allAssessments || []).map((a: any) => String(a.academicYear)))).filter(Boolean).sort().reverse() as string[];
   if (availableYears.length === 0) availableYears.push("2025-2026");
 
   useEffect(() => {
