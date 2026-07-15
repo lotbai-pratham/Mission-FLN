@@ -5,10 +5,12 @@ import Link from "next/link";
 import { User, Search, MapPin, ChevronLeft, ChevronRight, Filter } from "lucide-react";
 import { getStudentsList } from "@/app/actions";
 import { useLanguage } from "@/context/LanguageContext";
+import { useDpdpConsent } from '@/components/DpdpConsent';
 import WarliMotif from "@/components/warli/WarliMotif";
 
 export default function RosterClient({ hierarchy, initialData }: { hierarchy: any[], initialData: any }) {
   const { t } = useLanguage();
+  const { hasConsent } = useDpdpConsent();
   const [data, setData] = useState(initialData);
   const [isPending, startTransition] = useTransition();
 
@@ -90,7 +92,9 @@ export default function RosterClient({ hierarchy, initialData }: { hierarchy: an
                  </div>
                  <div>
                    <div className="flex flex-wrap items-center gap-2">
-                     <h3 className="font-bold text-slate-800 dark:text-slate-200 group-hover:text-blue-600 transition-colors">{student.name}</h3>
+                     <h3 className="font-bold text-slate-800 dark:text-slate-200 group-hover:text-blue-600 transition-colors">
+                       {hasConsent ? student.name : 'Student •••'}
+                     </h3>
                      <span className="text-[10px] font-black tracking-wider bg-slate-100 dark:bg-slate-800 text-slate-500 px-2 py-0.5 rounded-md uppercase">
                        {student.uid}
                      </span>

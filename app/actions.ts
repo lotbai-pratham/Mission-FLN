@@ -544,7 +544,7 @@ export async function getUsers(): Promise<any[]> {
   }
 }
 
-export async function setUserRole(userId: string, role: "user" | "admin" | "division" | "project_office") {
+export async function setUserRole(userId: string, role: "user" | "admin" | "state" | "division" | "project_office") {
   await requireAdmin();
   try {
     const res = await fetch(`${API_BASE}/api/users/role`, {

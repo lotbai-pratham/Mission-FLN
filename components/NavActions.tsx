@@ -7,10 +7,11 @@ import { useState, useRef, useEffect } from 'react';
 
 interface NavActionsProps {
   session: any;
+  userRole: string;
   handleSignOut: () => Promise<void>;
 }
 
-export default function NavActions({ session, handleSignOut }: NavActionsProps) {
+export default function NavActions({ session, userRole, handleSignOut }: NavActionsProps) {
   const { t, language, setLanguage } = useLanguage();
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -67,13 +68,15 @@ export default function NavActions({ session, handleSignOut }: NavActionsProps) 
         )}
       </div>
 
-      <Link
-        href="/assessments/live"
-        className="bg-gradient-to-r from-amber-500 to-orange-600 text-white hover:from-amber-600 hover:to-orange-700 px-4 sm:px-5 py-2 rounded-full text-sm font-semibold shadow-lg shadow-amber-500/30 flex items-center gap-2 transition-all hover:scale-105 active:scale-95"
-      >
-        <ClipboardPlus className="w-4 h-4" />
-        <span className="hidden sm:inline">{t('Record Score')}</span>
-      </Link>
+      {(userRole === 'admin' || userRole === 'user') && (
+        <Link
+          href="/assessments/live"
+          className="bg-gradient-to-r from-amber-500 to-orange-600 text-white hover:from-amber-600 hover:to-orange-700 px-4 sm:px-5 py-2 rounded-full text-sm font-semibold shadow-lg shadow-amber-500/30 flex items-center gap-2 transition-all hover:scale-105 active:scale-95"
+        >
+          <ClipboardPlus className="w-4 h-4" />
+          <span className="hidden sm:inline">{t('Record Score')}</span>
+        </Link>
+      )}
 
       {/* Desktop: avatar + sign out */}
       {session?.user ? (

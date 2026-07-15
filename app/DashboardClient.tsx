@@ -1,14 +1,15 @@
 "use client";
 
 import { useState, useEffect, useTransition, Fragment } from "react";
+import { useLanguage } from '@/context/LanguageContext';
+import { useDpdpConsent } from '@/components/DpdpConsent';
+import { BarChart3, TrendingUp, TrendingDown, Minus, BookOpen, Calculator, Users, School, Filter, LayoutDashboard, Search, Sparkles, AlertCircle, Trophy, Medal, Lightbulb, Gamepad2, Target, ClipboardList, Clock, CheckCircle2, Activity, X } from 'lucide-react';
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip,
   ResponsiveContainer, Legend, Cell, AreaChart, Area, LineChart, Line
 } from 'recharts';
-import { BookOpen, Calculator, Users, School, Filter, TrendingUp, LayoutDashboard, Search, Sparkles, AlertCircle, TrendingDown, Trophy, Medal, Lightbulb, Gamepad2, Target, ClipboardList, Clock, CheckCircle2, Activity, X } from 'lucide-react';
 import { getDashboardStats, getStrugglingStudents, getGrowthVelocity, getInterventionPlan, getPORankings, getStudentLeaderboard, getSchoolRankings, getSchoolStudentsDetails } from "@/app/actions";
 import { getImplementationAnalytics } from "@/app/actions/implementation";
-import { useLanguage } from "@/context/LanguageContext";
 
 const LIT_LABELS = ['Beginner', 'Letter', 'Word', 'Paragraph', 'Story'];
 const NUM_LABELS = ['Beginner', '1-9', '10-99', 'Addition', 'Subtraction', 'Division'];
@@ -19,6 +20,7 @@ const TERMS = ['Baseline', 'Midline', 'Endline'];
 
 export default function DashboardClient({ initialStats, hierarchy }: { initialStats: any; hierarchy: any[] }) {
   const { t } = useLanguage();
+  const { hasConsent } = useDpdpConsent();
   const [stats, setStats] = useState(initialStats);
   const [isPending, startTransition] = useTransition();
   const [divId, setDivId] = useState("");
@@ -842,7 +844,9 @@ export default function DashboardClient({ initialStats, hierarchy }: { initialSt
                                     {stu.name.slice(0, 2).toUpperCase()}
                                   </div>
                                   <div>
-                                    <h4 className="font-extrabold text-slate-800 dark:text-white text-base truncate max-w-[150px]">{stu.name}</h4>
+                                    <h4 className="font-extrabold text-slate-800 dark:text-white text-base truncate max-w-[150px]">
+                                      {hasConsent ? stu.name : 'Student •••'}
+                                    </h4>
                                     <p className="text-[10px] text-slate-400 font-medium">{stu.uid}</p>
                                   </div>
                                 </div>
@@ -912,7 +916,9 @@ export default function DashboardClient({ initialStats, hierarchy }: { initialSt
                                     #{stu._rank}
                                   </td>
                                   <td className="px-6 py-4">
-                                    <div className="font-extrabold text-slate-700 dark:text-slate-200">{stu.name}</div>
+                                    <div className="font-extrabold text-slate-700 dark:text-slate-200">
+                                      {hasConsent ? stu.name : 'Student •••'}
+                                    </div>
                                     <div className="text-[10px] text-slate-400 font-medium">{stu.uid}</div>
                                   </td>
                                   <td className="px-6 py-4 text-xs text-slate-500 font-medium">

@@ -1,7 +1,7 @@
 // Utility to check if the current session user has required role(s)
 import { Session } from "next-auth";
 
-export type Role = "admin" | "division" | "project_office" | "user";
+export type Role = "admin" | "state" | "division" | "project_office" | "user";
 
 /**
  * Returns true if the session user has any of the required roles.
@@ -30,7 +30,7 @@ export function getScopeFilters(session: Session | null) {
     case "user": // school‑level user
       return { schoolId: id };
     case "admin":
-    default:
+    case "state":
       return {};
   }
 }

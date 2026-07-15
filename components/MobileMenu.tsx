@@ -12,7 +12,7 @@ import { cn } from "@/lib/utils";
 import { useLanguage } from "@/context/LanguageContext";
 
 interface Props {
-  isAdmin: boolean;
+  userRole: string;
   userName?: string | null;
   userImage?: string | null;
   isLoggedIn: boolean;
@@ -32,7 +32,9 @@ const ADMIN_LINKS = [
   { href: "/admin/logins", label: "Logins", icon: KeyRound },
 ];
 
-export default function MobileMenu({ isAdmin, userName, userImage, isLoggedIn }: Props) {
+export default function MobileMenu({ userRole, userName, userImage, isLoggedIn }: Props) {
+  const isAdmin = userRole === 'admin';
+  const canRecordScore = userRole === 'admin' || userRole === 'user';
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
   const { t } = useLanguage();
@@ -88,7 +90,7 @@ export default function MobileMenu({ isAdmin, userName, userImage, isLoggedIn }:
           )}
 
           {/* Main nav */}
-          {NAV_LINKS.map(({ href, label, icon: Icon, highlight }) => (
+          {NAV_LINKS.filter(link => link.label !== 'Record Score' || canRecordScore).map(({ href, label, icon: Icon, highlight }) => (
             <Link
               key={href}
               href={href}

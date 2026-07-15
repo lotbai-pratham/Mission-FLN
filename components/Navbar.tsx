@@ -9,7 +9,8 @@ import WarliBorder from '@/components/warli/WarliBorder';
 
 export default async function Navbar() {
   const session = await auth();
-  const isAdmin = hasRole(session, "admin");
+  const userRole = session?.user?.role || 'user';
+  const isAdmin = userRole === 'admin';
 
   const handleSignOut = async () => {
     'use server';
@@ -34,16 +35,16 @@ export default async function Navbar() {
                 Adhigam
               </span>
             </Link>
-            <NavLinks isAdmin={isAdmin} />
+            <NavLinks userRole={userRole} />
           </div>
 
           {/* Right: CTA + user avatar (desktop) + hamburger (mobile) */}
           <div className="flex items-center gap-2 sm:gap-3">
-            <NavActions session={session} handleSignOut={handleSignOut} />
+            <NavActions session={session} userRole={userRole} handleSignOut={handleSignOut} />
 
             {/* Mobile hamburger — client component */}
             <MobileMenu
-              isAdmin={isAdmin}
+              userRole={userRole}
               userName={session?.user?.name}
               userImage={session?.user?.image}
               isLoggedIn={!!session?.user}

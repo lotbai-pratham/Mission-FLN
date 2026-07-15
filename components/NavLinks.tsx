@@ -18,8 +18,9 @@ function NavTooltip({ title, description }: TooltipProps) {
   );
 }
 
-export default function NavLinks({ isAdmin }: { isAdmin: boolean }) {
+export default function NavLinks({ userRole }: { userRole: string }) {
   const { t } = useLanguage();
+  const isAdmin = userRole === 'admin';
   return (
     <div className="hidden sm:flex sm:items-center sm:gap-6">
       

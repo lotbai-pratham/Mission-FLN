@@ -54,6 +54,20 @@ export default async function AdminUsersPage() {
               </tr>
               <tr className="bg-slate-50/50 dark:bg-slate-800/20">
                 <td className="px-6 py-4">
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-indigo-100 text-indigo-700 dark:bg-indigo-900/40 dark:text-indigo-300">
+                    <Map className="w-3 h-3" /> State Coordinator
+                  </span>
+                </td>
+                <td className="px-6 py-4 text-slate-600 dark:text-slate-400 font-medium">Platform Wide</td>
+                <td className="px-6 py-4 text-slate-500 dark:text-slate-400">
+                  <ul className="space-y-1">
+                    <li className="flex items-center gap-2"><Eye className="w-3.5 h-3.5 text-emerald-500" /> View analytics across all divisions and project offices.</li>
+                    <li className="flex items-center gap-2"><Eye className="w-3.5 h-3.5 text-emerald-500" /> View student details (names masked without DPDP consent).</li>
+                  </ul>
+                </td>
+              </tr>
+              <tr className="bg-white dark:bg-slate-900">
+                <td className="px-6 py-4">
                   <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300">
                     <Map className="w-3 h-3" /> Division Manager
                   </span>
@@ -66,7 +80,7 @@ export default async function AdminUsersPage() {
                   </ul>
                 </td>
               </tr>
-              <tr className="bg-white dark:bg-slate-900">
+              <tr className="bg-slate-50/50 dark:bg-slate-800/20">
                 <td className="px-6 py-4">
                   <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-orange-100 text-orange-700 dark:bg-orange-900/40 dark:text-orange-300">
                     <Building2 className="w-3 h-3" /> Project Office

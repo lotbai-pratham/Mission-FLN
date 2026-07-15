@@ -111,6 +111,7 @@ export default function UsersClient({
                 <option value="user">School User</option>
                 <option value="project_office">Project Office</option>
                 <option value="division">Division Manager</option>
+                <option value="state">State Coordinator</option>
                 <option value="admin">System Admin</option>
               </select>
             </div>
@@ -120,6 +121,10 @@ export default function UsersClient({
               {user.role === 'admin' ? (
                 <div className="flex items-center gap-1.5 text-xs font-bold text-violet-600 dark:text-violet-400">
                   <ShieldCheck className="w-4 h-4" /> Full System Access
+                </div>
+              ) : user.role === 'state' ? (
+                <div className="flex items-center gap-1.5 text-xs font-bold text-indigo-600 dark:text-indigo-400">
+                  <Map className="w-4 h-4" /> State Level Access
                 </div>
               ) : user.role === 'division' ? (
                 <>

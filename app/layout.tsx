@@ -46,6 +46,7 @@ import SessionWrapper from "@/components/SessionWrapper";
 import PrathamChat from "@/components/PrathamChat";
 import MobileNav from "@/components/MobileNav";
 import { LanguageProvider } from "@/context/LanguageContext";
+import { DpdpProvider } from "@/components/DpdpConsent";
 
 export default function RootLayout({
   children,
@@ -70,15 +71,17 @@ export default function RootLayout({
         <div className="relative z-10 flex flex-col min-h-screen">
           <SessionWrapper>
           <LanguageProvider>
-            <Navbar />
-            <div className="fixed bottom-4 right-4 z-50">
-              <OfflineSync />
-            </div>
-            <main className="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pb-24 md:pb-8">
-              {children}
-            </main>
-            <MobileNav />
-            <PrathamChat />
+            <DpdpProvider>
+              <Navbar />
+              <div className="fixed bottom-4 right-4 z-50">
+                <OfflineSync />
+              </div>
+              <main className="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pb-24 md:pb-8">
+                {children}
+              </main>
+              <MobileNav />
+              <PrathamChat />
+            </DpdpProvider>
           </LanguageProvider>
         </SessionWrapper>
         </div>
