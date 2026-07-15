@@ -199,6 +199,7 @@ function transliterateDevanagari(str: string): string {
   let result = '';
   for (let i = 0; i < chars.length; i++) {
     const ch = chars[i];
+    if (ch === undefined) continue;
     const next = chars[i + 1];
     if (ch in consonants) {
       result += consonants[ch];
