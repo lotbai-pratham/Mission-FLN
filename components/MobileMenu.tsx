@@ -69,7 +69,7 @@ export default function MobileMenu({ userRole, userName, userImage, isLoggedIn }
 
           {/* User info */}
           {isLoggedIn && (
-            <div className="flex items-center gap-3 px-3 py-3 mb-2 bg-slate-50 dark:bg-slate-800 rounded-2xl">
+            <Link href="/profile" onClick={close} className="flex items-center gap-3 px-3 py-3 mb-2 bg-slate-50 dark:bg-slate-800 rounded-2xl hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors">
               {userImage ? (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img src={userImage} alt={userName ?? "User"} className="w-8 h-8 rounded-full object-cover ring-2 ring-blue-100" />
@@ -86,7 +86,7 @@ export default function MobileMenu({ userRole, userName, userImage, isLoggedIn }
                   Admin
                 </span>
               )}
-            </div>
+            </Link>
           )}
 
           {/* Main nav */}

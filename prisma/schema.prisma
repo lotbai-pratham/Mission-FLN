@@ -22,6 +22,8 @@ model ProjectOffice {
   division   Division @relation(fields: [divisionId], references: [id])
   schools    School[]
   users      User[]
+
+  @@index([divisionId])
 }
 
 model School {
@@ -30,6 +32,9 @@ model School {
   udiseCode       String        @unique
   location        String?
   medium          String?
+  schoolType      String?
+  principalName   String?
+  principalMobile String?
   projectOfficeId String
   projectOffice   ProjectOffice @relation(fields: [projectOfficeId], references: [id])
   students        Student[]
@@ -37,6 +42,20 @@ model School {
   battles         BattleRecord[]
   implementationSessions ImplementationSession[]
   singleGames     SingleGameRecord[]
+  teachers        Teacher[]
+
+  @@index([projectOfficeId])
+}
+
+model Teacher {
+  id        String  @id @default(cuid())
+  name      String
+  mobile    String?
+  class     String?
+  schoolId  String
+  school    School  @relation(fields: [schoolId], references: [id])
+
+  @@index([schoolId])
 }
 
 model ImplementationSession {
@@ -49,6 +68,8 @@ model ImplementationSession {
   totalDuration  Int      // total seconds spent
   activityLogs   Json     // stores { activityIndex: seconds }
   conductedAt    DateTime @default(now())
+
+  @@index([schoolId])
 }
 
 model Student {
@@ -66,6 +87,9 @@ model Student {
   battlesWon  BattleRecord[] @relation("BattleWinner")
   gamesPlayed Int            @default(0)
   singleGames SingleGameRecord[]
+
+  @@index([schoolId])
+  @@index([class])
 }
 
 model Assessment {
@@ -85,6 +109,10 @@ model Assessment {
 
   studentId       String
   student         Student  @relation(fields: [studentId], references: [id])
+
+  @@index([studentId])
+  @@index([term])
+  @@index([academicYear])
 }
 
 model BattleRecord {
@@ -102,6 +130,10 @@ model BattleRecord {
   winnerId    String?
   winner      Student? @relation("BattleWinner", fields: [winnerId], references: [id])
   conductedAt DateTime @default(now())
+
+  @@index([schoolId])
+  @@index([player1Id])
+  @@index([player2Id])
 }
 
 model SingleGameRecord {
@@ -114,6 +146,9 @@ model SingleGameRecord {
   score       Int
   duration    Int      // duration in seconds
   conductedAt DateTime @default(now())
+
+  @@index([schoolId])
+  @@index([studentId])
 }
 
 model SystemSetting {
@@ -139,6 +174,11 @@ model User {
   lastLoginAt   DateTime?
   accounts      Account[]
   sessions      Session[]
+
+  @@index([role])
+  @@index([schoolId])
+  @@index([projectOfficeId])
+  @@index([divisionId])
 }
 
 model Account {

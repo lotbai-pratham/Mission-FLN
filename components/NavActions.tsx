@@ -81,19 +81,21 @@ export default function NavActions({ session, userRole, handleSignOut }: NavActi
       {/* Desktop: avatar + sign out */}
       {session?.user ? (
         <div className="hidden sm:flex items-center gap-2 pl-2 border-l border-slate-200 dark:border-slate-700">
-          {session.user.image ? (
-            <Image
-              src={session.user.image}
-              alt={session.user.name ?? 'User'}
-              width={32}
-              height={32}
-              className="rounded-full ring-2 ring-amber-100 object-cover w-8 h-8"
-            />
-          ) : (
-            <div className="w-8 h-8 rounded-full bg-amber-100 flex items-center justify-center text-amber-600 font-bold text-sm">
-              {session.user.name?.[0] ?? 'U'}
-            </div>
-          )}
+          <Link href="/profile" className="cursor-pointer hover:opacity-80 transition-opacity" title="My Profile">
+            {session.user.image ? (
+              <Image
+                src={session.user.image}
+                alt={session.user.name ?? 'User'}
+                width={32}
+                height={32}
+                className="rounded-full ring-2 ring-amber-100 object-cover w-8 h-8"
+              />
+            ) : (
+              <div className="w-8 h-8 rounded-full bg-amber-100 flex items-center justify-center text-amber-600 font-bold text-sm">
+                {session.user.name?.[0] ?? 'U'}
+              </div>
+            )}
+          </Link>
           <button 
             onClick={() => handleSignOut()} 
             className="text-gray-400 hover:text-red-500 p-1.5 rounded-lg transition-colors cursor-pointer" 
