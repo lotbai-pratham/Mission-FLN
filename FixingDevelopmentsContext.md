@@ -27,7 +27,7 @@
 | BattleRecord schema + matchmaker actions | ✅ | `prisma/schema.prisma`, `app/actions.ts` |
 | BattleMatchmaker session wiring (FIXED) | ✅ | `app/resources/simulations/page.tsx` |
 | `battleSubject` field on all battle items (FIXED) | ✅ | `app/resources/simulations/page.tsx` |
-| pedagogy.md — full TaRL/ASER reference | ✅ | `pedagogy.md` |
+| pedagogy.md — full Pedagogy/Learning reference | ✅ | `pedagogy.md` |
 
 ---
 
@@ -49,7 +49,7 @@
 3. **Traffic light color scheme on game cards**
    - CLAUDE.md mandates: Red=Beginner, Orange=Progress, Green=Mastered
    - Currently not applied anywhere in simulations page
-   - Fix: Color-code sidebar items and active game header by ASER level
+   - Fix: Color-code sidebar items and active game header by learning level
 
 4. **Level labels are not pedagogically clear**
    - Currently: "Level: Word" or "Lvl: 10-99"
@@ -134,5 +134,5 @@ Always use `(session?.user as any)?.schoolId` since NextAuth's default User type
 - `app/api/admin/credentials/route.ts` — added id field
 - `prisma/schema.prisma` — added BattleRecord, updated Student/School relations
 - `app/resources/simulations/page.tsx` — battleSubject field, useSession wiring
-- `pedagogy.md` — created (TaRL methodology reference)
+- `pedagogy.md` — created (Pedagogy methodology reference)
 - `FixingDevelopmentsContext.md` — this file

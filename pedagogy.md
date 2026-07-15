@@ -1,18 +1,18 @@
 # FLN Hub — Pedagogy Reference Guide
-**Source:** TaRL (Teaching at the Right Level) Manuals — Pratham India  
+**Source:** Pedagogy (Teaching at the Right Level) Manuals — Pratham India  
 **Compiled from:** Level 1 & 2 Language and Math Manuals (Marathi + Hindi), Activity Charts, Worksheet Cards, Story Collections
 
 ---
 
-## 1. Core Philosophy: TaRL (Teaching at the Right Level)
+## 1. Core Philosophy: Pedagogy (Teaching at the Right Level)
 
-The foundational insight of TaRL is simple but radical:
+The foundational insight of Pedagogy is simple but radical:
 
 > **A child's grade in school does not reflect their learning level.**
 
-A Class 5 student may read at a Class 1 level. A Class 3 student may be unable to count to 10. The TaRL approach stops pretending otherwise. Instead of moving every child through the same curriculum at the same pace, it:
+A Class 5 student may read at a Class 1 level. A Class 3 student may be unable to count to 10. The Pedagogy approach stops pretending otherwise. Instead of moving every child through the same curriculum at the same pace, it:
 
-- **Assesses** where each child actually is (using ASER tools)
+- **Assesses** where each child actually is (using Learning tools)
 - **Groups** children by actual learning level (not grade)
 - **Teaches** at that level using activities, games, and guided group work
 - **Moves** children forward until they reach grade-level competency
@@ -21,11 +21,11 @@ A Class 5 student may read at a Class 1 level. A Class 3 student may be unable t
 
 ---
 
-## 2. ASER Level Definitions — What Each Level Actually Means
+## 2. learning level Definitions — What Each Level Actually Means
 
 ### Literacy (Marathi / Hindi Reading)
 
-| Level | ASER Label | What the Child Can Actually Do |
+| Level | Learning Label | What the Child Can Actually Do |
 |---|---|---|
 | 0 | Beginner | Cannot recognize letters; confuses similar-looking characters |
 | 1 | Letter | Identifies individual letters; cannot read words fluently; may know letter names but not sounds |
@@ -37,7 +37,7 @@ A Class 5 student may read at a Class 1 level. A Class 3 student may be unable t
 
 ### Numeracy (Arithmetic)
 
-| Level | ASER Label | What the Child Can Actually Do |
+| Level | Learning Label | What the Child Can Actually Do |
 |---|---|---|
 | 0 | Beginner | Cannot recognize single-digit numbers; cannot count objects reliably |
 | 1 | Number 1–9 | Recognizes and writes numbers 1–9; can count objects up to 9 |
@@ -67,10 +67,10 @@ This is the core operational structure that teachers follow every day. The FLN H
 ```
 
 ### Phase 1: Individual Manipulatives (Level-Based Practice)
-Each child works at their own level. Activities are selected based on ASER assessment results. A Level 1 child works on letter-sound activities. A Level 3 child works on paragraph comprehension.
+Each child works at their own level. Activities are selected based on Learning assessment results. A Level 1 child works on letter-sound activities. A Level 3 child works on paragraph comprehension.
 
 ### Phase 2: Group Games
-Groups of 5–6 children work together on a shared activity. Groups are **level-homogeneous** — all children in the group are at the same ASER level. The teacher rotates between groups, facilitating, asking questions, never lecturing.
+Groups of 5–6 children work together on a shared activity. Groups are **level-homogeneous** — all children in the group are at the same learning level. The teacher rotates between groups, facilitating, asking questions, never lecturing.
 
 ### Phase 3: 2v2 Battle
 Two students at the **same level** compete in a structured game. This phase is motivational and social — it creates energy and peer accountability. The teacher records who wins and tracks it over time.
@@ -80,12 +80,12 @@ Two students at the **same level** compete in a structured game. This phase is m
 ## 4. Grouping Strategy
 
 - **Group size:** 5–6 children (never more, never less; this is specific and intentional)
-- **Grouping basis:** Same ASER level (not grade, not age)
+- **Grouping basis:** Same learning level (not grade, not age)
 - **Duration per group:** One story/unit for 2 days, then rotation
 - **Role rotation:** Within a group, leadership roles change — no one child dominates
 - **Teacher circulation:** Teacher rotates through all groups every session; no group is left unattended for too long
 
-**Key principle:** Heterogeneous grades within homogeneous levels. A Class 3 and Class 5 child at the same ASER level will work in the same group. This is intentional — it removes grade-based shame and focuses on competency.
+**Key principle:** Heterogeneous grades within homogeneous levels. A Class 3 and Class 5 child at the same learning level will work in the same group. This is intentional — it removes grade-based shame and focuses on competency.
 
 ---
 
@@ -178,7 +178,7 @@ Examples of authentic tasks:
 
 ## 6. Manipulatives and Materials
 
-These are the physical tools used in TaRL sessions. The FLN Hub's digital simulations should mirror these.
+These are the physical tools used in Pedagogy sessions. The FLN Hub's digital simulations should mirror these.
 
 | Material | Used For | Level |
 |---|---|---|
@@ -241,8 +241,8 @@ The manuals use the metaphor of a Sherpa guide (not a lecturer). The teacher:
 - **Problem Solving:** Does the child estimate first? Use manipulatives independently? Try multiple methods?
 - **Operations:** Does the child understand the *concept* of the operation (not just the procedure)?
 
-### ASER as Snapshot:
-ASER assessment (done at Baseline, Midline, Endline) is a snapshot of where a child is at a point in time. It is not a test — it is a tool to inform grouping and activity selection. The goal is to see children move up levels over the three terms.
+### Learning as Snapshot:
+Learning assessment (done at Baseline, Midline, Endline) is a snapshot of where a child is at a point in time. It is not a test — it is a tool to inform grouping and activity selection. The goal is to see children move up levels over the three terms.
 
 ---
 
@@ -299,7 +299,7 @@ A child who arrives at the right answer a different way has demonstrated deeper 
 
 The following principles should guide every feature built or improved:
 
-### 11.1 Every game/simulation should be tagged to a specific ASER level AND explain what that level means
+### 11.1 Every game/simulation should be tagged to a specific learning level AND explain what that level means
 Don't just say "Level: Word". Say: "For students who can read letters but not full words yet."
 
 ### 11.2 The 90-minute flow should be visible to teachers
@@ -322,16 +322,16 @@ Field teachers in Maharashtra read Marathi. Instructions, level labels, and game
 
 ---
 
-## 12. Glossary of Key TaRL Terms
+## 12. Glossary of Key Pedagogy Terms
 
 | Term | Meaning |
 |---|---|
-| TaRL | Teaching at the Right Level — the core methodology |
-| ASER | Annual Status of Education Report — the assessment tool and level framework |
+| Pedagogy | Teaching at the Right Level — the core methodology |
+| Learning | Annual Status of Education Report — the assessment tool and level framework |
 | FLN | Foundational Literacy and Numeracy — the skill domain |
 | NIPUN Bharat | National Mission to achieve universal FLN by 2026–27 |
 | Baseline / Midline / Endline | Three assessment snapshots across the school year |
-| Level-homogeneous group | Group where all children are at the same ASER level |
+| Level-homogeneous group | Group where all children are at the same learning level |
 | Manipulative | Physical object used to make abstract concepts concrete (sticks, currency, cards) |
 | Vistar Sarnee | Expanded number chart used for place value and skip-counting |
 | Tark-Vichar | Reasoning and debate — the core discussion mode in group activities |

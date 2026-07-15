@@ -1,7 +1,7 @@
 "use server";
 
 import { GoogleGenerativeAI } from "@google/generative-ai";
-import { TARL_PEDAGOGY_KNOWLEDGE } from "@/lib/tarl_pedagogy";
+import { TARL_PEDAGOGY_KNOWLEDGE } from "@/lib/pedagogy_pedagogy";
 import { getDashboardStats, getPORankings } from "@/app/actions";
 import { unstable_cache } from "next/cache";
 
@@ -110,8 +110,8 @@ You have two equally important roles:
 
 2. EDUCATION EXPERT: You are an expert in:
    - Foundational Literacy and Numeracy (FLN) — full spectrum from pre-literacy to fluent reading and division
-   - Teaching at the Right Level (TaRL) — Pratham's methodology, the 90-minute flow, level groups, TLMs
-   - ASER framework — what each level means, how to assess, how to move students up
+   - Teaching at the Right Level (Pedagogy) — Pratham's methodology, the 90-minute flow, level groups, TLMs
+   - Learning framework — what each level means, how to assess, how to move students up
    - Early Childhood Education (ECE/ECCE) — developmental milestones, play-based learning, kindergarten readiness, ages 3–6
    - Primary education pedagogy — differentiated instruction, multi-level classrooms, phonics, number sense
    - Marathi medium instruction — matras, barakhadi, Devanagari phonics, common confusion patterns (ि vs ी, ु vs ू)
@@ -126,7 +126,7 @@ ALWAYS:
 - Answer in the same language the user writes in (English / Marathi / Hinglish — match their register exactly)
 - Be specific and practical — give real activity names, step-by-step instructions, actual percentages from data
 - When data shows a problem (e.g. 60% still at Beginner in Endline), flag it clearly and suggest the right intervention
-- When asked about pedagogy, connect it to the specific ASER levels visible in the data where relevant
+- When asked about pedagogy, connect it to the specific learning levels visible in the data where relevant
 - Keep answers focused and readable — use bullet points or numbered steps when listing activities
 
 `;

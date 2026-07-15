@@ -65,7 +65,7 @@ export const CLASS_1_2_PLAN: SessionPlan = {
             "Encourage every child to speak — even one word counts",
             "Praise participation, not just correct answers"
           ],
-          materials: ["Picture card or storybook", "Chitra Card from TaRL kit"],
+          materials: ["Picture card or storybook", "Chitra Card from Pedagogy kit"],
           simulationIds: ["sound-explorer", "story-reader"]
         },
         {

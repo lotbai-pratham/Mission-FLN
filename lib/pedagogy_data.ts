@@ -1,10 +1,10 @@
-export interface TaRLActivity {
+export interface PedagogyActivity {
   title: string;
   description: string;
   materials: string[];
 }
 
-export const LITERACY_ACTIVITIES: Record<number, TaRLActivity[]> = {
+export const LITERACY_ACTIVITIES: Record<number, PedagogyActivity[]> = {
   0: [ // Beginner
     {
       title: "Sound Bingo",
@@ -67,7 +67,7 @@ export const LITERACY_ACTIVITIES: Record<number, TaRLActivity[]> = {
   ]
 };
 
-export const NUMERACY_ACTIVITIES: Record<number, TaRLActivity[]> = {
+export const NUMERACY_ACTIVITIES: Record<number, PedagogyActivity[]> = {
   0: [ // Beginner
     {
       title: "Number Songs",

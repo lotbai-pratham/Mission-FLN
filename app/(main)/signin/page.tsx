@@ -54,7 +54,7 @@ function SignInForm() {
         {/* Logo */}
         <div className="text-center space-y-2 flex flex-col items-center">
           <img src="/pratham-logo.png" alt="Pratham Logo" className="h-16 w-auto mb-2 object-contain" />
-          <span className="text-3xl font-extrabold bg-gradient-to-r from-orange-500 to-amber-500 bg-clip-text text-transparent">Mission FLN</span>
+          <span className="text-3xl font-extrabold bg-gradient-to-r from-orange-500 to-amber-500 bg-clip-text text-transparent">Adhigam</span>
           <p className="text-slate-500 text-sm">Sign in to access your school dashboard</p>
         </div>
 

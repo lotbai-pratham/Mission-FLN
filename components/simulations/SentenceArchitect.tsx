@@ -64,7 +64,7 @@ export default function SentenceArchitect({ onScore, isBattle, player }: { onSco
       </div>
 
       <div className="flex items-center gap-2 text-slate-400 font-bold text-[10px] uppercase tracking-widest">
-         <Sparkles className="w-3 h-3 text-yellow-500" /> Mission FLN
+         <Sparkles className="w-3 h-3 text-yellow-500" /> Adhigam
       </div>
     </div>
   );

@@ -42,7 +42,7 @@ export default function RosterClient({ hierarchy, initialData }: { hierarchy: an
           <WarliMotif variant="dancer" size={34} className="warli-ink opacity-80 shrink-0" />
           <div>
             <h1 className="text-3xl font-extrabold text-slate-900 dark:text-white">{t('Active Students') || 'Student Roster'}</h1>
-            <p className="text-slate-500 mt-1">{t('List of all registered students and their status.') || 'Select a student to view their TaRL learning recommendations.'}</p>
+            <p className="text-slate-500 mt-1">{t('List of all registered students and their status.') || 'Select a student to view their Pedagogy learning recommendations.'}</p>
           </div>
         </div>
         

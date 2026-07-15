@@ -31,7 +31,7 @@ export default async function Navbar() {
             <Link href="/" className="flex-shrink-0 flex items-center gap-2.5 tracking-tight">
               <img src="/pratham-logo.png" alt="Pratham Logo" className="h-8 w-auto object-contain" />
               <span className="font-black text-xl bg-gradient-to-r from-orange-500 to-amber-500 bg-clip-text text-transparent">
-                Mission FLN
+                Adhigam
               </span>
             </Link>
             <NavLinks isAdmin={isAdmin} />

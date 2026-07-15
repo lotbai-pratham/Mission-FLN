@@ -27,13 +27,13 @@ export const viewport = {
 };
 
 export const metadata: Metadata = {
-  title: "Mission FLN – Pratham ASER",
+  title: "Adhigam – Pratham Learning",
   description: "Field assessment tool for Foundational Literacy & Numeracy",
   manifest: "/manifest.webmanifest",
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
-    title: "Mission FLN",
+    title: "Adhigam",
   },
   other: {
     "mobile-web-app-capable": "yes",

@@ -3,7 +3,7 @@
 This guide ensures that all future development on **FLN Hub** remains aligned with its core pedagogical USPs and technical standards.
 
 ## 1. Project Vision & USPs
-- **USP 1: Level-Based Customized Support**: Every interaction must be scoped to the student's current ASER/FLN level.
+- **USP 1: Level-Based Customized Support**: Every interaction must be scoped to the student's current Learning/FLN level.
 - **USP 2: Live AI Dashboards**: Transforming raw data (Uploads/Battles) into natural-language business insights.
 - **USP 3: 90-Minute Daily Flow**: Supporting a daily sequence of (Individual Activity → Group Game → 2v2 Battle).
 

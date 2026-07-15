@@ -80,16 +80,16 @@ export type Item = {
   audience?: string;
 };
 
-// One curated "who it's for" line per pathway, tied to ASER levels — used by
+// One curated "who it's for" line per pathway, tied to learning levels — used by
 // GameDetailPanel so every item gets a meaningful audience blurb without
 // hand-authoring one for all 50+ catalog entries individually.
 export const PATHWAY_AUDIENCE: Record<Pathway, string> = {
-  akshargandh: "Children just starting out — can't yet recognize letters (ASER Beginner–Letter level).",
-  pushpgandh: "Children who know their letters and are moving into reading whole words (ASER Letter–Word level).",
-  shabdgandh: "Children reading words already, building toward paragraphs and stories (ASER Word–Paragraph level).",
-  pankti: "Children starting numeracy — recognizing single-digit numbers (ASER Beginner–Number level).",
-  samay: "Children working with two-digit numbers and place value (ASER 10–99 level).",
-  mashaal: "Children ready for addition, subtraction, multiplication and division (ASER Operations level).",
+  akshargandh: "Children just starting out — can't yet recognize letters (Learning Beginner–Letter level).",
+  pushpgandh: "Children who know their letters and are moving into reading whole words (Learning Letter–Word level).",
+  shabdgandh: "Children reading words already, building toward paragraphs and stories (Learning Word–Paragraph level).",
+  pankti: "Children starting numeracy — recognizing single-digit numbers (Learning Beginner–Number level).",
+  samay: "Children working with two-digit numbers and place value (Learning 10–99 level).",
+  mashaal: "Children ready for addition, subtraction, multiplication and division (Learning Operations level).",
   early_graders: "Younger students in early grades — quick warm-ups and fun practice, any level.",
   sel_health: "All students — social-emotional skills, hygiene and health habits, not level-gated.",
   arena: "Any two students at a matching level, playing head-to-head.",

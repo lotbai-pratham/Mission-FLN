@@ -29,7 +29,7 @@ interface World {
   emoji: string;
   color: WC;
   unlockAt: number;   // pearls needed
-  aserLevel: string;
+  learningLevel: string;
   challenges: Challenge[];
 }
 
@@ -43,7 +43,7 @@ const WORLDS: World[] = [
     emoji: '🏡',
     color: 'violet',
     unlockAt: 0,
-    aserLevel: 'ASER Level 0–1 · Beginner & Letter',
+    learningLevel: 'learning level 0–1 · Beginner & Letter',
     challenges: [
       { q: '"आंबा" चे पहिले अक्षर कोणते?',    emoji: '🥭', options: ['आ', 'म', 'ब', 'न'],   answer: 'आ',  reward: 2 },
       { q: '"गाय" चे पहिले अक्षर कोणते?',      emoji: '🐄', options: ['य', 'ग', 'आ', 'क'],   answer: 'ग',  reward: 2 },
@@ -61,7 +61,7 @@ const WORLDS: World[] = [
     emoji: '🌸',
     color: 'blue',
     unlockAt: 8,
-    aserLevel: 'ASER Level 2 · Word',
+    learningLevel: 'learning level 2 · Word',
     challenges: [
       { q: 'या प्राण्याला मराठीत काय म्हणतात?',                  emoji: '🐘', options: ['हत्ती', 'सिंह', 'वाघ', 'गाढव'],     answer: 'हत्ती', reward: 2 },
       { q: 'या फुलाला मराठीत काय म्हणतात?',                      emoji: '🌹', options: ['कमळ', 'गुलाब', 'झेंडू', 'जास्वंद'],  answer: 'गुलाब', reward: 2 },
@@ -79,7 +79,7 @@ const WORLDS: World[] = [
     emoji: '🏰',
     color: 'emerald',
     unlockAt: 20,
-    aserLevel: 'ASER Level 3 · Paragraph',
+    learningLevel: 'learning level 3 · Paragraph',
     challenges: [
       {
         passage: 'राम आणि सीता शाळेत जातात. ते अभ्यास करतात. त्यांची शिक्षिका सुलभा बाई आहेत. सुलभा बाई त्यांना गोष्टी सांगतात.',
@@ -112,7 +112,7 @@ const WORLDS: World[] = [
     emoji: '🏯',
     color: 'amber',
     unlockAt: 36,
-    aserLevel: 'ASER Level 4 · Story',
+    learningLevel: 'learning level 4 · Story',
     challenges: [
       {
         passage: 'एक छोटी मुलगी होती. तिचे नाव मीना होते. मीना रोज शाळेत जायची. ती खूप अभ्यास करायची. एके दिवशी तिला परीक्षेत पहिला नंबर आला. तिची आई खूश झाली आणि तिने मीनाला आंबा दिला.',
@@ -268,7 +268,7 @@ function WorldMap({ pearls, worldStars, onEnter, correct, total }: {
                   </p>
                   <p className="text-xs text-slate-500 font-medium">{world.subtitle}</p>
                   <p className={cn('text-[10px] font-bold', locked ? 'text-slate-400' : 'text-slate-500')}>
-                    {world.aserLevel}
+                    {world.learningLevel}
                   </p>
                 </div>
               </div>

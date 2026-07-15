@@ -39,13 +39,13 @@ describe('PrathamChat Component', () => {
     
     // Type in the input
     const input = screen.getByPlaceholderText(/Ask anything about FLN/i);
-    fireEvent.change(input, { target: { value: 'What is TaRL?' } });
+    fireEvent.change(input, { target: { value: 'What is Pedagogy?' } });
     
     // Submit the form
     const form = input.closest('form');
     fireEvent.submit(form!);
     
     // User message should appear immediately
-    expect(await screen.findByText('What is TaRL?')).toBeInTheDocument();
+    expect(await screen.findByText('What is Pedagogy?')).toBeInTheDocument();
   });
 });

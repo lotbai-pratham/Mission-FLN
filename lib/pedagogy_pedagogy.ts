@@ -1,6 +1,6 @@
 /**
- * Compact TaRL (Teaching at the Right Level) pedagogical knowledge base.
- * Sourced from: Pratham TaRL manuals, ASER framework, Gurushala time-distribution slides,
+ * Compact Pedagogy (Teaching at the Right Level) pedagogical knowledge base.
+ * Sourced from: Pratham Pedagogy manuals, Learning framework, Gurushala time-distribution slides,
  * and the Level 1 & Level 2 Language/Math activity manuals for Maharashtra.
  *
  * This string is injected into the AI prompt so The Brain can make
@@ -9,10 +9,10 @@
 
 export const TARL_PEDAGOGY_KNOWLEDGE = `
 ═══════════════════════════════════════════════════════
-PRATHAM TaRL PEDAGOGY KNOWLEDGE BASE (Maharashtra FLN)
+PRATHAM pedagogy KNOWLEDGE BASE (Maharashtra FLN)
 ═══════════════════════════════════════════════════════
 
-─── ASER LEVEL FRAMEWORK ────────────────────────────
+─── learning level FRAMEWORK ────────────────────────────
 
 LITERACY LEVELS (0–4):
   0 = Beginner     Cannot recognize letters. Approach: alphabet songs, letter tracing, Chaudakhadi chart, Linking Cards. Key activity: point-and-say letter drills.
@@ -61,15 +61,15 @@ CLASS 3–4 MATHS  (Two simultaneous level-groups):
   • Anuched Pustika        — paragraph booklet for Levels 3–4 deep reading.
   • Bal Library Worksheets — take-home reading reinforcement for Levels 2–4.
 
-─── CORE TaRL PEDAGOGICAL PRINCIPLES ───────────────
+─── CORE Pedagogy PEDAGOGICAL PRINCIPLES ───────────────
 
-  1. TEACH AT THE RIGHT LEVEL — Group students by current ASER level, NOT by class/grade. A Class 5 student at Level 1 joins the Level 1 group.
+  1. TEACH AT THE RIGHT LEVEL — Group students by current learning level, NOT by class/grade. A Class 5 student at Level 1 joins the Level 1 group.
   2. DAILY STRUCTURED FLOW — Every session: Play → Listen → Do → TLM. Never skip the play phase; it sets engagement for the whole session.
   3. SIMULTANEOUS GROUPS — Class 3–4 always runs two groups at the same time. Teacher circulates every 15–20 minutes. Students must be self-sufficient within their group.
   4. GAMES BEFORE DRILLS — Introduce every concept through a game first. Competitive and cooperative games both work; avoid pure drilling.
   5. MANIPULATIVES BEFORE ABSTRACT — Always use physical objects (stones, cards, bundles) before moving to written symbols or printed worksheets.
   6. PEER LEARNING LADDER — Students at higher sub-levels within a group teach lower ones. This consolidates the teacher's learning AND builds confidence.
-  7. DAILY MICRO-OBSERVATION — During TLM time, teacher targets 3–4 students per day for 2-minute individual observation. Track movement between ASER levels.
+  7. DAILY MICRO-OBSERVATION — During TLM time, teacher targets 3–4 students per day for 2-minute individual observation. Track movement between learning levels.
   8. FREQUENCY OVER DURATION — Short daily practice beats long weekly sessions. 90 minutes every day is the core commitment.
 
 ─── INTERVENTION RECIPES BY BOTTLENECK ─────────────
@@ -123,7 +123,7 @@ CLASS 3–4 MATHS  (Two simultaneous level-groups):
 `;
 
 /**
- * Short activity lookup by ASER level for quick suggestions.
+ * Short activity lookup by learning level for quick suggestions.
  * Key: "literacy-0", "numeracy-2", etc.
  */
 export const LEVEL_ACTIVITY_MAP: Record<string, string> = {

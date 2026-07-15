@@ -100,7 +100,7 @@ export default function MatraChakra() {
         {/* The Wheels Area */}
         <div className="flex justify-center items-center gap-4 py-12 relative">
           
-          {/* Decorative Laser Line */}
+          {/* Decorative Llearning Line */}
           <div className="absolute inset-x-0 h-1 bg-blue-500/20 top-1/2 -translate-y-1/2 blur-sm z-0" />
           <div className="absolute inset-x-0 h-0.5 bg-blue-400/50 top-1/2 -translate-y-1/2 z-0 shadow-[0_0_15px_rgba(96,165,250,0.5)]" />
 

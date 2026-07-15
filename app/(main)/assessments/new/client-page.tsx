@@ -57,7 +57,7 @@ export default function RecordAssessmentPage({ schools }: { schools: any[] }) {
               <ClipboardPlus className="w-7 h-7 text-blue-100" />
               Record Assessment
             </h1>
-            <p className="text-blue-100 mt-2 text-sm">Log a new ASER score for a student</p>
+            <p className="text-blue-100 mt-2 text-sm">Log a new Learning score for a student</p>
           </div>
           <div className="hidden sm:block p-3 bg-white/20 rounded-2xl backdrop-blur-sm">
             <TrendingUp className="w-8 h-8 text-white"/>

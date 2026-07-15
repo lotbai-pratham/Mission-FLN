@@ -205,7 +205,7 @@ export default function Chaudakhadi() {
       <div className="flex items-center justify-between mb-6">
         <div className="space-y-1">
           <div className="inline-flex items-center gap-2 px-3 py-1 bg-red-50 dark:bg-red-900/40 text-[#E8232A] rounded-full text-[10px] font-black uppercase tracking-widest">
-            चौदाखडी — TaRL TLM
+            चौदाखडी — Pedagogy TLM
           </div>
           <h2 className="text-2xl font-black text-slate-900 dark:text-white">
             {selectedRow ? `${selectedRow} — मात्रा सराव` : 'Marathi Syllable Chart'}

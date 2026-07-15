@@ -55,8 +55,8 @@ const SUGGESTED_QUESTIONS = [
   { q: "How do I teach matras to a child who mixes up ि and ी?", icon: "✍️" },
   { q: "What does the research say about early reading in mother tongue?", icon: "🔬" },
   { q: "How do I keep 40 students engaged at different levels?", icon: "🏫" },
-  { q: "What is the difference between TaRL and traditional teaching?", icon: "💡" },
-  { q: "Suggest a number sense activity for a child at ASER Numeracy Level 1", icon: "🔢" },
+  { q: "What is the difference between Pedagogy and traditional teaching?", icon: "💡" },
+  { q: "Suggest a number sense activity for a child at Learning Numeracy Level 1", icon: "🔢" },
   { q: "How do I involve parents in their child's reading practice at home?", icon: "👨‍👩‍👧" },
   { q: "What does NEP 2020 say about foundational literacy?", icon: "📜" },
 ];
@@ -140,7 +140,7 @@ export default function PrathamChat() {
                 <div className="text-center space-y-2">
                   <PrathamAvatar size={64} className="mx-auto drop-shadow-md" />
                   <p className="text-slate-500 dark:text-slate-400 text-sm font-medium px-3">
-                    Ask me anything about FLN, early childhood education, TaRL, ASER, teaching strategies, or your mission data.
+                    Ask me anything about FLN, early childhood education, Pedagogy, Learning, teaching strategies, or your mission data.
                   </p>
                 </div>
                 <div className="grid grid-cols-1 gap-1.5">

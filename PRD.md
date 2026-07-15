@@ -1,10 +1,10 @@
 # Product Requirements Document (PRD): Pratham FLN Hub
 
 ## 1. Executive Summary & Vision
-**FLN Hub** is a comprehensive pedagogical support system designed to accelerate Foundational Literacy and Numeracy (FLN) through daily interactive engagement. Moving beyond a simple "assessment tracker," the platform serves as a **Daily Interaction Engine** for teachers and students, implementing the Pratham/TaRL methodology at scale.
+**FLN Hub** is a comprehensive pedagogical support system designed to accelerate Foundational Literacy and Numeracy (FLN) through daily interactive engagement. Moving beyond a simple "assessment tracker," the platform serves as a **Daily Interaction Engine** for teachers and students, implementing the Pratham/Pedagogy methodology at scale.
 
 ## 2. Core Value Propositions (USPs)
-1. **Level-Based Customized Support**: Automatically providing pedagogical tools and games tailored to a student's exact current ASER/FLN level.
+1. **Level-Based Customized Support**: Automatically providing pedagogical tools and games tailored to a student's exact current Learning/FLN level.
 2. **Live Data Integration**: High-performance dashboarding that turns uploaded spreadsheet data into actionable real-time student insights.
 3. **90-Minute Daily Flow**: A structured, independent sequence of activities (Activity → Game → Battle) for classroom implementation.
 4. **Interactive AI Intelligence**: A natural-language data interface allowing users to "ask" their dashboard for deep insights (e.g., "Where is growth stalling?").

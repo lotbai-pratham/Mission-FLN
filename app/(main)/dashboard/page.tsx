@@ -20,7 +20,7 @@ export default async function DashboardPage() {
               Overview Dashboard
             </h1>
             <p className="text-slate-500 dark:text-slate-400 mt-2">
-              Real-time analytics for your ASER Foundational Literacy and Numeracy program.
+              Real-time analytics for your Learning Foundational Literacy and Numeracy program.
             </p>
           </div>
         </div>

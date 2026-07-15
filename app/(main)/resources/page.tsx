@@ -937,7 +937,7 @@ function MissionControl() {
   );
 }
 
-// --- TaRL Help Manuals & PDFs Dataset ---
+// --- Pedagogy Help Manuals & PDFs Dataset ---
 const MANUALS = [
   {
     title: "Aao Gayen Sune Banayen (Std. 1-2)",
@@ -1025,7 +1025,7 @@ const MANUALS = [
   },
   {
     title: "Gatividhi Chart (Activity Chart)",
-    description: "Large-format activity roadmap mapping daily tasks and teaching steps across ASER levels.",
+    description: "Large-format activity roadmap mapping daily tasks and teaching steps across learning levels.",
     size: "57.6 MB · PDF",
     link: "/manuals/Gatividhi Chart.pdf",
     tags: ["Literacy", "Numeracy", "Manual"]
@@ -1129,7 +1129,7 @@ export default function ResourcesPage() {
           Classroom <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-500 to-orange-600 underline decoration-amber-500/30">Implementation</span>
         </h1>
         <p className="text-sm sm:text-base text-slate-500 dark:text-slate-400 leading-relaxed font-medium relative z-10">
-          The primary hub for teachers and coaches conducting TaRL learning camps. This implementation portal provides access to guided session planning, training videos, printable diagnostic resources, and student games.
+          The primary hub for teachers and coaches conducting Pedagogy learning camps. This implementation portal provides access to guided session planning, training videos, printable diagnostic resources, and student games.
         </p>
 
         {/* Doodles for Header */}
@@ -1198,9 +1198,9 @@ export default function ResourcesPage() {
           )}
           {activeTab === "articles" && (
             <div>
-              <strong className="text-slate-900 dark:text-white font-extrabold text-sm block mb-1">📚 TaRL Help Manuals</strong>
+              <strong className="text-slate-900 dark:text-white font-extrabold text-sm block mb-1">📚 Pedagogy Help Manuals</strong>
               <p className="text-slate-600 dark:text-slate-400 leading-relaxed font-medium">
-                The TaRL Help Manuals section provides printable instruction booklets, activity worksheets, and ASER assessment key packs. Download these PDF files directly to your mobile device or tablet to run offline classrooms in remote locations.
+                The Pedagogy Help Manuals section provides printable instruction booklets, activity worksheets, and Learning assessment key packs. Download these PDF files directly to your mobile device or tablet to run offline classrooms in remote locations.
               </p>
             </div>
           )}
@@ -1247,7 +1247,7 @@ export default function ResourcesPage() {
         </ScrollReveal>
       )}
 
-      {/* Tab Content: ARTICLES (TaRL Help Manuals) */}
+      {/* Tab Content: ARTICLES (Pedagogy Help Manuals) */}
       {activeTab === "articles" && (
         <ScrollReveal animation="fade-up">
         <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500 relative">

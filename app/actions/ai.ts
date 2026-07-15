@@ -1,7 +1,7 @@
 "use server";
 
 import { GoogleGenerativeAI } from "@google/generative-ai";
-import { TARL_PEDAGOGY_KNOWLEDGE } from "@/lib/tarl_pedagogy";
+import { TARL_PEDAGOGY_KNOWLEDGE } from "@/lib/pedagogy_pedagogy";
 
 const genAI = new GoogleGenerativeAI(process.env.GOOGLE_GENERATIVE_AI_API_KEY || "");
 
@@ -61,11 +61,11 @@ function localPedagogyFallback(query: string, context: any) {
   if (isPedagogy) {
     return {
       filters: { classNum: null, subject: null },
-      insight: "The TaRL daily flow applies to all classes: Class 1–2 runs as one group (Play → Listen → Do → TLM), while Class 3–4 splits into two simultaneous level-groups for Language and Maths.",
-      recommendation: "Always identify the student's current ASER level first — then pick the activity for that level, regardless of their grade.",
+      insight: "The Pedagogy daily flow applies to all classes: Class 1–2 runs as one group (Play → Listen → Do → TLM), while Class 3–4 splits into two simultaneous level-groups for Language and Maths.",
+      recommendation: "Always identify the student's current learning level first — then pick the activity for that level, regardless of their grade.",
       activitySuggestion: "Class 1–2: Start with चला खेळूया (alphabet clapping game, 15 min), then चला ऐकुया (picture story read-aloud, 15 min), then TLM groups with Chitra Cards and Number Stones (45 min). Class 3–4: Run Akshargandh+Shabdgandh alongside Pushpagandh (Language) or Pankti+Samay alongside Mashal (Maths).",
       tab: "trends",
-      summary: "TaRL Activity Guide"
+      summary: "Pedagogy Activity Guide"
     };
   }
 
@@ -137,7 +137,7 @@ export async function analyzeDashboardQuery(
 You are "The Brain" — FLN Mission Strategist AI for Pratham Maharashtra.
 You have two capabilities:
 1. DATA ANALYSIS: Surface insights from student assessment data.
-2. PEDAGOGY ADVISOR: Recommend specific TaRL activities from the manual.
+2. PEDAGOGY ADVISOR: Recommend specific Pedagogy activities from the manual.
 
 If the question is about pedagogy/activities/what to teach, focus primarily on PEDAGOGY and use data only as supporting context.
 If the question is about data/rankings/outcomes, focus on DATA and add a relevant activity tip.
@@ -155,7 +155,7 @@ Fields:
   filters          { classNum: number|null, subject: "literacy"|"numeracy"|"all"|null }
   insight          string — direct answer to the query (1–3 sentences, specific and actionable)
   recommendation   string — one strategic action (1–2 sentences)
-  activitySuggestion string|null — ONE specific named TaRL activity with group name and 1–2 sentence how-to. Null only if query is purely administrative.
+  activitySuggestion string|null — ONE specific named Pedagogy activity with group name and 1–2 sentence how-to. Null only if query is purely administrative.
   tab              "trends"|"overview"|"ranking"
   summary          string — 3–5 word label
 `;

@@ -94,7 +94,7 @@ export default function BundleBuilder() {
                  <div className="absolute inset-0 bg-blue-600/95 backdrop-blur-sm z-10 flex flex-col items-center justify-center p-8 text-center animate-in fade-in duration-300 rounded-[30px]">
                     <CheckCircle2 className="w-16 h-16 text-white mb-4 animate-bounce" />
                     <h3 className="text-2xl font-black text-white mb-2">You have 10 sticks!</h3>
-                    <p className="text-blue-100 mb-8 font-medium">In TaRL, 10 loose sticks must be tied into 1 bundle.</p>
+                    <p className="text-blue-100 mb-8 font-medium">In Pedagogy, 10 loose sticks must be tied into 1 bundle.</p>
                     <button 
                        onClick={tieBundle}
                        className="px-8 py-4 bg-white text-blue-600 font-black rounded-2xl shadow-xl shadow-blue-900/40 active:scale-95 transition-all flex items-center gap-2"

@@ -29,7 +29,7 @@ export default function PedagogyPage() {
 
   const tabs = [
     { id: "philosophy", label: "Core Philosophy", icon: BookOpen },
-    { id: "levels", label: "ASER Levels", icon: Award },
+    { id: "levels", label: "learning levels", icon: Award },
     { id: "flow", label: "Daily 90m Flow", icon: Clock },
     { id: "activities", label: "Classroom Activities", icon: Users },
     { id: "materials", label: "Manipulatives Map", icon: Wrench },
@@ -53,10 +53,10 @@ export default function PedagogyPage() {
             <WarliMotif variant="tree" size={36} className="warli-ink opacity-80 shrink-0" />
             <div>
               <h1 className="text-3xl font-black tracking-tight text-slate-900 dark:text-white sm:text-4xl">
-                TaRL Pedagogy Hub
+                pedagogy Hub
               </h1>
               <p className="text-sm text-slate-500 dark:text-slate-400 font-medium mt-1">
-                Teaching at the Right Level (TaRL) methodology, manuals, and instructional framework.
+                Teaching at the Right Level (Pedagogy) methodology, manuals, and instructional framework.
               </p>
             </div>
           </div>
@@ -74,7 +74,7 @@ export default function PedagogyPage() {
           <div className="space-y-3 px-3 mb-2">
             <p className="text-[10px] font-extrabold uppercase tracking-widest text-slate-400 dark:text-slate-500">Pedagogy Outline</p>
             <div className="p-3 rounded-xl bg-amber-50 dark:bg-amber-950/20 text-amber-600 dark:text-amber-400 border border-amber-100/30 dark:border-amber-900/30 text-[10px] font-bold uppercase tracking-wider">
-              TaRL is Practiced Globally across India, Zambia, Nigeria, and beyond.
+              Pedagogy is Practiced Globally across India, Zambia, Nigeria, and beyond.
             </div>
           </div>
           <nav className="flex flex-row lg:flex-col overflow-x-auto lg:overflow-x-visible gap-1 pb-2 lg:pb-0 scrollbar-none">
@@ -117,10 +117,10 @@ export default function PedagogyPage() {
 
                 <div className="text-slate-600 dark:text-slate-300 space-y-4 leading-relaxed text-sm font-medium">
                   <p>
-                    A Class 5 student may read at a Class 1 level. A Class 3 student may be unable to count to 10. The TaRL approach stops pretending otherwise. Instead of moving every child through the same curriculum at the same pace, it focuses on real skills.
+                    A Class 5 student may read at a Class 1 level. A Class 3 student may be unable to count to 10. The Pedagogy approach stops pretending otherwise. Instead of moving every child through the same curriculum at the same pace, it focuses on real skills.
                   </p>
                   <p>
-                    Developed by Pratham, TaRL is a pedagogy built on four systematic pillars:
+                    Developed by Pratham, Pedagogy is a pedagogy built on four systematic pillars:
                   </p>
                 </div>
 
@@ -129,7 +129,7 @@ export default function PedagogyPage() {
                     <div className="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-600 flex items-center justify-center shrink-0 font-bold">1</div>
                     <div>
                       <h4 className="font-extrabold text-slate-900 dark:text-white text-sm">Assess Learning Levels</h4>
-                      <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">Determine where each child actually stands using rapid, one-on-one ASER assessment tools.</p>
+                      <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">Determine where each child actually stands using rapid, one-on-one Learning assessment tools.</p>
                     </div>
                   </div>
 
@@ -166,7 +166,7 @@ export default function PedagogyPage() {
                   <Info className="w-5 h-5 text-amber-400" /> Post-COVID Intervention Context
                 </h3>
                 <p className="text-xs text-slate-300 leading-relaxed font-medium">
-                  The disruption from the COVID-19 pandemic significantly widened learning gaps, especially in tribal ashramshalas. Children moved up grades without consolidating foundational reading and math skills. TaRL addresses this head-on by bypasssing traditional grade level boundaries to repair foundations first.
+                  The disruption from the COVID-19 pandemic significantly widened learning gaps, especially in tribal ashramshalas. Children moved up grades without consolidating foundational reading and math skills. Pedagogy addresses this head-on by bypasssing traditional grade level boundaries to repair foundations first.
                 </p>
               </div>
             </div>
@@ -183,7 +183,7 @@ export default function PedagogyPage() {
                   </div>
                   <div>
                     <h3 className="text-xl font-black text-slate-900 dark:text-white">Literacy (Language Progression)</h3>
-                    <p className="text-xs text-slate-500 dark:text-slate-400">ASER labels and matching learning capabilities for Marathi / Hindi</p>
+                    <p className="text-xs text-slate-500 dark:text-slate-400">Learning labels and matching learning capabilities for Marathi / Hindi</p>
                   </div>
                 </div>
 
@@ -192,7 +192,7 @@ export default function PedagogyPage() {
                     <thead>
                       <tr className="text-[10px] font-extrabold uppercase tracking-wider text-slate-400">
                         <th className="pb-3 pr-4">Level</th>
-                        <th className="pb-3 px-4">ASER Label</th>
+                        <th className="pb-3 px-4">Learning Label</th>
                         <th className="pb-3 px-4">Core Capabilities</th>
                       </tr>
                     </thead>
@@ -217,7 +217,7 @@ export default function PedagogyPage() {
                 <div className="mt-6 p-4 rounded-2xl bg-slate-50 dark:bg-slate-900/50 border border-slate-100 dark:border-slate-800 flex items-start gap-3">
                   <Info className="w-4 h-4 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
                   <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
-                    <strong>Reading = Decoding + Comprehension.</strong> The TaRL framework explicitly states that fluent reading is only the first step. True reading capability requires understanding the content, relating it to personal context, and discussing it.
+                    <strong>Reading = Decoding + Comprehension.</strong> The Pedagogy framework explicitly states that fluent reading is only the first step. True reading capability requires understanding the content, relating it to personal context, and discussing it.
                   </p>
                 </div>
               </div>
@@ -230,7 +230,7 @@ export default function PedagogyPage() {
                   </div>
                   <div>
                     <h3 className="text-xl font-black text-slate-900 dark:text-white">Numeracy (Mathematics Progression)</h3>
-                    <p className="text-xs text-slate-500 dark:text-slate-400">ASER labels and matching learning capabilities for arithmetic</p>
+                    <p className="text-xs text-slate-500 dark:text-slate-400">Learning labels and matching learning capabilities for arithmetic</p>
                   </div>
                 </div>
 
@@ -239,7 +239,7 @@ export default function PedagogyPage() {
                     <thead>
                       <tr className="text-[10px] font-extrabold uppercase tracking-wider text-slate-400">
                         <th className="pb-3 pr-4">Level</th>
-                        <th className="pb-3 px-4">ASER Label</th>
+                        <th className="pb-3 px-4">Learning Label</th>
                         <th className="pb-3 px-4">Core Capabilities</th>
                       </tr>
                     </thead>
@@ -333,7 +333,7 @@ export default function PedagogyPage() {
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 text-xs font-semibold text-slate-600 dark:text-slate-300">
                   <div className="p-5 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-800 space-y-2">
                     <h5 className="font-extrabold text-slate-900 dark:text-white text-sm">homogeneous Levels</h5>
-                    <p className="text-slate-500 dark:text-slate-400 leading-relaxed">Children are grouped strictly by ASER levels, not grades. A Class 3 and Class 5 child at the same ASER level sit in the same group, removing grade-based shame.</p>
+                    <p className="text-slate-500 dark:text-slate-400 leading-relaxed">Children are grouped strictly by learning levels, not grades. A Class 3 and Class 5 child at the same learning level sit in the same group, removing grade-based shame.</p>
                   </div>
                   <div className="p-5 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-800 space-y-2">
                     <h5 className="font-extrabold text-slate-900 dark:text-white text-sm">Group Size: 5-6 Children</h5>
@@ -539,7 +539,7 @@ export default function PedagogyPage() {
                     </div>
                   </div>
                   <p className="leading-relaxed text-slate-400 dark:text-slate-500 italic mt-2">
-                    ASER snapshots are recorded at Baseline, Midline, and Endline terms to track cohort growth velocity.
+                    Learning snapshots are recorded at Baseline, Midline, and Endline terms to track cohort growth velocity.
                   </p>
                 </div>
               </div>
@@ -556,7 +556,7 @@ export default function PedagogyPage() {
                   </div>
                   <div>
                     <h3 className="text-xl font-black text-slate-900 dark:text-white">Geographical Presence</h3>
-                    <p className="text-xs text-slate-500 dark:text-slate-400">Where Teaching at the Right Level (TaRL) is practiced and scaled globally</p>
+                    <p className="text-xs text-slate-500 dark:text-slate-400">Where Teaching at the Right Level (Pedagogy) is practiced and scaled globally</p>
                   </div>
                 </div>
 
@@ -568,7 +568,7 @@ export default function PedagogyPage() {
                       <h4 className="font-extrabold text-slate-900 dark:text-white text-sm">India (Pratham programs)</h4>
                     </div>
                     <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed font-medium">
-                      Pioneered by Pratham, TaRL is active in states including Maharashtra (specifically within tribal ashramshalas), Bihar, Uttar Pradesh, Rajasthan, and Madhya Pradesh, reaching millions of children through direct and partnership programs.
+                      Pioneered by Pratham, Pedagogy is active in states including Maharashtra (specifically within tribal ashramshalas), Bihar, Uttar Pradesh, Rajasthan, and Madhya Pradesh, reaching millions of children through direct and partnership programs.
                     </p>
                     <div className="text-[11px] font-bold text-amber-600 dark:text-amber-400">
                       Scale: 20+ States & UTs
@@ -610,7 +610,7 @@ export default function PedagogyPage() {
                       <h4 className="font-extrabold text-slate-900 dark:text-white text-sm">Global Adaptations</h4>
                     </div>
                     <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed font-medium">
-                      TaRL is studied and adapted by partners internationally in Latin America and Southeast Asia, supported by Abdul Latif Jameel Poverty Action Lab (J-PAL) research demonstrating its robust evidence base.
+                      Pedagogy is studied and adapted by partners internationally in Latin America and Southeast Asia, supported by Abdul Latif Jameel Poverty Action Lab (J-PAL) research demonstrating its robust evidence base.
                     </p>
                     <div className="text-[11px] font-bold text-amber-600 dark:text-amber-400">
                       Research Backed: J-PAL / Pratham
@@ -625,7 +625,7 @@ export default function PedagogyPage() {
           <div className="p-8 rounded-[32px] bg-gradient-to-r from-amber-500 to-orange-600 text-white border border-orange-500/20 shadow-xl shadow-orange-500/10 flex flex-col sm:flex-row items-center justify-between gap-6 hover:scale-[1.01] transition-all mt-8">
             <div className="space-y-2 text-center sm:text-left">
               <h3 className="text-xl font-black flex items-center justify-center sm:justify-start gap-2">
-                <BookOpenCheck className="w-6 h-6 animate-bounce" /> Start Practicing TaRL Today
+                <BookOpenCheck className="w-6 h-6 animate-bounce" /> Start Practicing Pedagogy Today
               </h3>
               <p className="text-xs text-orange-50 font-medium max-w-xl">
                 Access our digital interactive arcade, launch multiplayer student simulations, and record real-time progress using offline-first sync.
@@ -635,7 +635,7 @@ export default function PedagogyPage() {
               href="/resources" 
               className="px-6 py-4 bg-white text-orange-600 font-bold rounded-2xl hover:bg-orange-50 transition-all text-xs shrink-0 shadow-lg"
             >
-              Start Practicing TaRL
+              Start Practicing Pedagogy
             </Link>
           </div>
 

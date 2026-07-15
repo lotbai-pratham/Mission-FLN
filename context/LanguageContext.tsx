@@ -92,7 +92,7 @@ export const translations: Record<Language, Record<string, string>> = {
     'Hands-on simulations, games and learning pathways to master FLN concepts.': 'Hands-on simulations, games and learning pathways to master FLN concepts.',
     'Session Planner': 'Session Planner',
     'Pedagogy Videos': 'Pedagogy Videos',
-    'Articles': 'TaRL Help Manuals',
+    'Articles': 'Pedagogy Help Manuals',
     'Holistic development manuals': 'Holistic development manuals',
     'TLM Guide': 'TLM Guide',
     'Maximize Learning with TLM': 'Maximize Learning with TLM',
@@ -120,7 +120,7 @@ export const translations: Record<Language, Record<string, string>> = {
     'Practice Games': 'Practice Games',
     'Arena Battles': 'Arena Battles',
     'Total Learning Playtime': 'Total Learning Playtime',
-    'Recommended TaRL Activities': 'Recommended TaRL Activities',
+    'Recommended Pedagogy Activities': 'Recommended Pedagogy Activities',
     'Literacy Focus': 'Literacy Focus',
     'Numeracy Focus': 'Numeracy Focus',
     'Assessment Audit Trail': 'Assessment Audit Trail',
@@ -139,7 +139,7 @@ export const translations: Record<Language, Record<string, string>> = {
     'Back to Directory': 'Back to Directory',
     'Student not found.': 'Student not found.',
     'No Assessments Yet': 'No Assessments Yet',
-    'Test this student to generate personalized TaRL curriculum recommendations.': 'Test this student to generate personalized TaRL curriculum recommendations.',
+    'Test this student to generate personalized Pedagogy curriculum recommendations.': 'Test this student to generate personalized Pedagogy curriculum recommendations.',
     'Literacy': 'Literacy',
     'Numeracy': 'Numeracy',
     'No specific activities mapped for this level yet.': 'No specific activities mapped for this level yet.',
@@ -170,7 +170,7 @@ export const translations: Record<Language, Record<string, string>> = {
     'Best Performing Students': 'Best Performing Students',
     'Based on FLN levels, game participation, and battle victories': 'Based on FLN levels, game participation, and battle victories',
     'No students found matching current filters.': 'No students found matching current filters.',
-    // TaRL Activities - Literacy
+    // Pedagogy Activities - Literacy
     'Sound Bingo': 'Sound Bingo',
     'Teacher says a letter sound, and students find objects in the room starting with that sound. The first to find 3 wins.': 'Teacher says a letter sound, and students find objects in the room starting with that sound. The first to find 3 wins.',
     'Objects in classroom': 'Objects in classroom',
@@ -207,7 +207,7 @@ export const translations: Record<Language, Record<string, string>> = {
     'Roleplay Theater': 'Roleplay Theater',
     'Choose a story character and have the student act out their favorite scene. This deepens emotional connection to the text.': 'Choose a story character and have the student act out their favorite scene. This deepens emotional connection to the text.',
     'Basic props': 'Basic props',
-    // TaRL Activities - Numeracy
+    // Pedagogy Activities - Numeracy
     'Number Songs': 'Number Songs',
     'Sing \'Five Little Ducks\' or similar counting songs while using fingers to physically subtract numbers.': 'Sing \'Five Little Ducks\' or similar counting songs while using fingers to physically subtract numbers.',
     'Rock Counting': 'Rock Counting',
@@ -356,7 +356,7 @@ export const translations: Record<Language, Record<string, string>> = {
     'Hands-on simulations, games and learning pathways to master FLN concepts.': 'FLN अवधारणाओं में महारत हासिल करने के लिए व्यावहारिक सिमुलेशन, खेल और सीखने के रास्ते।',
     'Session Planner': 'सत्र योजनाकार',
     'Pedagogy Videos': 'शिक्षाशास्त्र वीडियो',
-    'Articles': 'TaRL सहायता नियमावली',
+    'Articles': 'Pedagogy सहायता नियमावली',
     'Holistic development manuals': 'समग्र विकास नियमावली',
     'TLM Guide': 'TLM मार्गदर्शिका',
     'Maximize Learning with TLM': 'TLM के साथ सीखने को अधिकतम करें',
@@ -384,7 +384,7 @@ export const translations: Record<Language, Record<string, string>> = {
     'Practice Games': 'अभ्यास खेल',
     'Arena Battles': 'अखाड़ा लड़ाई',
     'Total Learning Playtime': 'कुल सीखने का समय',
-    'Recommended TaRL Activities': 'अनुशंसित TaRL गतिविधियाँ',
+    'Recommended Pedagogy Activities': 'अनुशंसित Pedagogy गतिविधियाँ',
     'Literacy Focus': 'साक्षरता फोकस',
     'Numeracy Focus': 'संख्यात्मकता फोकस',
     'Assessment Audit Trail': 'मूल्यांकन ऑडिट ट्रेल',
@@ -403,7 +403,7 @@ export const translations: Record<Language, Record<string, string>> = {
     'Back to Directory': 'निर्देशिका पर वापस जाएँ',
     'Student not found.': 'छात्र नहीं मिला।',
     'No Assessments Yet': 'अभी तक कोई मूल्यांकन नहीं',
-    'Test this student to generate personalized TaRL curriculum recommendations.': 'व्यक्तिगत TaRL पाठ्यक्रम अनुशंसाएँ उत्पन्न करने के लिए इस छात्र का परीक्षण करें।',
+    'Test this student to generate personalized Pedagogy curriculum recommendations.': 'व्यक्तिगत Pedagogy पाठ्यक्रम अनुशंसाएँ उत्पन्न करने के लिए इस छात्र का परीक्षण करें।',
     'Literacy': 'साक्षरता',
     'Numeracy': 'संख्यात्मकता',
     'No specific activities mapped for this level yet.': 'इस स्तर के लिए अभी तक कोई विशिष्ट गतिविधियाँ मैप नहीं की गई हैं।',
@@ -434,7 +434,7 @@ export const translations: Record<Language, Record<string, string>> = {
     'Best Performing Students': 'सर्वश्रेष्ठ प्रदर्शन करने वाले छात्र',
     'Based on FLN levels, game participation, and battle victories': 'FLN स्तर, खेल भागीदारी और लड़ाई में जीत के आधार पर',
     'No students found matching current filters.': 'वर्तमान फ़िल्टर से मेल खाने वाले कोई छात्र नहीं मिले।',
-    // TaRL Activities - Literacy
+    // Pedagogy Activities - Literacy
     'Sound Bingo': 'ध्वनि बिंगो',
     'Teacher says a letter sound, and students find objects in the room starting with that sound. The first to find 3 wins.': 'शिक्षक एक अक्षर की ध्वनि कहते हैं, और छात्र उस ध्वनि से शुरू होने वाली वस्तुओं को कमरे में ढूंढते हैं। सबसे पहले 3 ढूंढने वाला जीतता है।',
     'Objects in classroom': 'कक्षा की वस्तुएं',
@@ -471,7 +471,7 @@ export const translations: Record<Language, Record<string, string>> = {
     'Roleplay Theater': 'रोलप्ले थिएटर',
     'Choose a story character and have the student act out their favorite scene. This deepens emotional connection to the text.': 'एक कहानी चरित्र चुनें और छात्र से उनके पसंदीदा दृश्य का अभिनय करने को कहें। यह पाठ के साथ भावनात्मक संबंध को गहरा करता है।',
     'Basic props': 'बुनियादी प्रॉप्स',
-    // TaRL Activities - Numeracy
+    // Pedagogy Activities - Numeracy
     'Number Songs': 'संख्या गीत',
     'Sing \'Five Little Ducks\' or similar counting songs while using fingers to physically subtract numbers.': 'उंगलियों का उपयोग करके संख्या घटाते हुए \'पांच बत्तखें\' या इसी तरह के गिनती के गाने गाएं।',
     'Rock Counting': 'चट्टान गिनती',
@@ -620,7 +620,7 @@ export const translations: Record<Language, Record<string, string>> = {
     'Hands-on simulations, games and learning pathways to master FLN concepts.': 'FLN संकल्पनांवर प्रभुत्व मिळविण्यासाठी हँड्स-ऑन सिम्युलेशन, खेळ आणि शिकण्याचे मार्ग.',
     'Session Planner': 'सत्र नियोजक',
     'Pedagogy Videos': 'अध्यापनशास्त्र व्हिडिओ',
-    'Articles': 'TaRL मदत पुस्तिका',
+    'Articles': 'Pedagogy मदत पुस्तिका',
     'Holistic development manuals': 'सर्वसमावेशक विकास पुस्तिका',
     'TLM Guide': 'TLM मार्गदर्शिका',
     'Maximize Learning with TLM': 'TLM सह शिक्षण जास्तीत जास्त वाढवा',
@@ -648,7 +648,7 @@ export const translations: Record<Language, Record<string, string>> = {
     'Practice Games': 'सराव खेळ',
     'Arena Battles': 'आखाडा लढती',
     'Total Learning Playtime': 'एकूण शिकण्याची वेळ',
-    'Recommended TaRL Activities': 'शिफारस केलेल्या TaRL कृती',
+    'Recommended Pedagogy Activities': 'शिफारस केलेल्या Pedagogy कृती',
     'Literacy Focus': 'साक्षरता लक्ष',
     'Numeracy Focus': 'संख्याज्ञान लक्ष',
     'Assessment Audit Trail': 'मूल्यमापन इतिहास',
@@ -667,7 +667,7 @@ export const translations: Record<Language, Record<string, string>> = {
     'Back to Directory': 'यादीवर परत जा',
     'Student not found.': 'विद्यार्थी आढळला नाही.',
     'No Assessments Yet': 'अद्याप कोणतेही मूल्यमापन नाही',
-    'Test this student to generate personalized TaRL curriculum recommendations.': 'वैयक्तिकृत TaRL अभ्यासक्रम शिफारसी मिळवण्यासाठी या विद्यार्थ्याचे मूल्यमापन करा.',
+    'Test this student to generate personalized Pedagogy curriculum recommendations.': 'वैयक्तिकृत Pedagogy अभ्यासक्रम शिफारसी मिळवण्यासाठी या विद्यार्थ्याचे मूल्यमापन करा.',
     'Literacy': 'साक्षरता',
     'Numeracy': 'संख्याज्ञान',
     'No specific activities mapped for this level yet.': 'या पातळीसाठी अद्याप कोणतीही विशिष्ट कृती निश्चित केलेली नाही.',
@@ -698,7 +698,7 @@ export const translations: Record<Language, Record<string, string>> = {
     'Best Performing Students': 'सर्वोत्कृष्ट कामगिरी करणारे विद्यार्थी',
     'Based on FLN levels, game participation, and battle victories': 'FLN पातळी, खेळ सहभाग आणि आखाडा विजयांवर आधारित',
     'No students found matching current filters.': 'निवडलेल्या फिल्टरनुसार कोणतेही विद्यार्थी आढळले नाहीत.',
-    // TaRL Activities - Literacy
+    // Pedagogy Activities - Literacy
     'Sound Bingo': 'ध्वनी बिंगो',
     'Teacher says a letter sound, and students find objects in the room starting with that sound. The first to find 3 wins.': 'शिक्षकाने अक्षराचा आवाज सांगावा आणि विद्यार्थ्यांनी त्या आवाजापासून सुरू होणाऱ्या वस्तू खोलीत शोधाव्यात. पहिले ३ शोधणारा जिंकेल.',
     'Objects in classroom': 'वर्गातील वस्तू',
@@ -735,7 +735,7 @@ export const translations: Record<Language, Record<string, string>> = {
     'Roleplay Theater': 'भूमिका अभिनय',
     'Choose a story character and have the student act out their favorite scene. This deepens emotional connection to the text.': 'गोष्टीतील एखादे पात्र निवडा आणि विद्यार्थ्याला त्याचा आवडता प्रसंग अभिनय करून दाखवायला सांगा. यामुळे गोष्टीशी भावनिक नाते जोडले जाते.',
     'Basic props': 'साधे साहित्य/प्रॉप्स',
-    // TaRL Activities - Numeracy
+    // Pedagogy Activities - Numeracy
     'Number Songs': 'संख्यांचे गाणे',
     'Sing \'Five Little Ducks\' or similar counting songs while using fingers to physically subtract numbers.': 'बोटांचा वापर करून संख्या वजा करत \'पाच बदके\' किंवा तत्सम मोजणीची गाणी म्हणा.',
     'Rock Counting': 'दगड मोजणे',

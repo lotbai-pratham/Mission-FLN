@@ -73,7 +73,7 @@ export default function AdminUploadPage() {
               <Building className="w-64 h-64 -ml-10 -mt-10"/>
             </div>
             <h2 className="text-2xl font-black relative z-10">Admin Bulk Upload Portal</h2>
-            <p className="mt-4 text-slate-300 relative z-10">Instantly populate your Pratham tracker dashboards by securely uploading any standard ASER '.xlsx' dataset exported from your collection devices.</p>
+            <p className="mt-4 text-slate-300 relative z-10">Instantly populate your Pratham tracker dashboards by securely uploading any standard Learning '.xlsx' dataset exported from your collection devices.</p>
          </div>
 
          <div className="md:w-2/3 p-10">

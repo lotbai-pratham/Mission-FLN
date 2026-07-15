@@ -48,8 +48,8 @@ export const ARTICLES: Resource[] = [
     title: "The Power of Level-Wise Grouping",
     category: "Article",
     description: "Why teaching at the student's current level is 3x more effective than using age-based curriculum.",
-    content: "Teaching at the Right Level (TaRL) is an evidence-based pedagogical approach developed by Pratham. The key is to evaluate children on their basic reading and arithmetic skills and then group them by their actual learning level rather than by their grade or age...",
-    tags: ["Pedagogy", "Grouping", "TaRL Basics"]
+    content: "Teaching at the Right Level (Pedagogy) is an evidence-based pedagogical approach developed by Pratham. The key is to evaluate children on their basic reading and arithmetic skills and then group them by their actual learning level rather than by their grade or age...",
+    tags: ["Pedagogy", "Grouping", "Pedagogy Basics"]
   },
   {
     title: "Using Digital Manipulatives in the Field",

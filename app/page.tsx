@@ -49,9 +49,9 @@ export default function LandingPage() {
             
             {/* Left side text */}
             <div className="lg:col-span-7 text-left flex flex-col items-start">
-              {/* Mission FLN Badge */}
+              {/* Adhigam Badge */}
               <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold bg-amber-50 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400 border border-amber-100 dark:border-amber-850/30 mb-6">
-                <Sparkles className="w-3.5 h-3.5 animate-pulse" /> Mission FLN
+                <Sparkles className="w-3.5 h-3.5 animate-pulse" /> Adhigam
               </div>
 
               <h1 className="text-4xl font-black tracking-tight text-slate-900 dark:text-white sm:text-5xl lg:text-6xl mb-6 leading-tight">
@@ -105,7 +105,7 @@ export default function LandingPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="text-center max-w-3xl mx-auto mb-16">
             <h2 className="text-xs font-black uppercase tracking-widest text-amber-600 dark:text-amber-400 mb-2">Designed for the Ecosystem</h2>
-            <h3 className="text-3xl font-black text-slate-900 dark:text-white sm:text-4xl">Who Uses Mission FLN?</h3>
+            <h3 className="text-3xl font-black text-slate-900 dark:text-white sm:text-4xl">Who Uses Adhigam?</h3>
             <p className="mt-4 text-slate-500 dark:text-slate-400 font-medium">Connecting teachers, learners, and administrators to ensure no child is left behind.</p>
           </div>
 
@@ -120,7 +120,7 @@ export default function LandingPage() {
                 <div>
                   <h4 className="text-xl font-bold text-slate-900 dark:text-white mb-2">Teachers & Educators</h4>
                   <p className="text-slate-500 dark:text-slate-400 text-sm leading-relaxed">
-                    Conduct quick assessments, divide classrooms into targeted 'Teaching at the Right Level' (TaRL) groups, and manage interactive multiplayer classroom learning games.
+                    Conduct quick assessments, divide classrooms into targeted 'Teaching at the Right Level' (Pedagogy) groups, and manage interactive multiplayer classroom learning games.
                   </p>
                 </div>
               </div>
@@ -194,7 +194,7 @@ export default function LandingPage() {
                 Designed to Drive Real Classroom Impact
               </h3>
               <p className="text-slate-600 dark:text-slate-400 mb-8 leading-relaxed font-medium">
-                Mission FLN combines interactive gamified assessments with granular diagnostic dashboards. It provides educators with the tools they need to track student progress from mother-tongue word recognition to long division.
+                Adhigam combines interactive gamified assessments with granular diagnostic dashboards. It provides educators with the tools they need to track student progress from mother-tongue word recognition to long division.
               </p>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
@@ -357,7 +357,7 @@ export default function LandingPage() {
         <ScrollReveal animation="fade-up" delay={100}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="text-center max-w-2xl mx-auto mb-16">
-            <h3 className="text-3xl font-black text-slate-900 dark:text-white">Access Your Mission FLN Portal</h3>
+            <h3 className="text-3xl font-black text-slate-900 dark:text-white">Access Your Adhigam Portal</h3>
             <p className="mt-3 text-slate-500 dark:text-slate-400 text-sm">Select your section to log in or start classroom assessments.</p>
           </div>
 
@@ -414,7 +414,7 @@ export default function LandingPage() {
       <footer className="pt-0 pb-12 bg-white dark:bg-slate-950">
         <WarliBorder height={32} className="warli-ink mb-8" />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-slate-400 text-xs italic">
-          Mission FLN © 2026 — Developed in partnership with the Pratham Education Foundation.
+          Adhigam © 2026 — Developed in partnership with the Pratham Education Foundation.
         </div>
       </footer>
 

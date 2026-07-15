@@ -2,7 +2,7 @@ export const dynamic = 'force-dynamic';
 import { getStudentProfile } from "@/app/actions";
 import { User, BookOpen, Calculator, MapPin, Calendar, Lightbulb, GraduationCap, Flame, ArrowRight, Clock, ShieldCheck, TrendingUp, Minus, TrendingDown, Sparkles, Gamepad2, Trophy, Star, Target } from "lucide-react";
 import Link from "next/link";
-import { LITERACY_ACTIVITIES, NUMERACY_ACTIVITIES, TaRLActivity } from "@/lib/tarl_data";
+import { LITERACY_ACTIVITIES, NUMERACY_ACTIVITIES, PedagogyActivity } from "@/lib/pedagogy_data";
 import ProgressChart from "@/components/ProgressChart";
 import { cookies } from 'next/headers';
 import { translations, Language } from "@/context/LanguageContext";
@@ -239,14 +239,14 @@ export default async function StudentProfilePage({ params }: { params: Promise<{
          </div>
        )}
 
-       {/* TaRL Interventions */}
+       {/* Pedagogy Interventions */}
        {latestAssessment ? (
          <div className="space-y-6">
             <div className="flex items-center gap-3 px-2">
               <div className="p-2 bg-yellow-100 dark:bg-yellow-900/30 rounded-xl">
                 <Lightbulb className="w-5 h-5 text-yellow-600 dark:text-yellow-500"/>
               </div>
-              <h2 className="text-xl font-extrabold text-slate-800 dark:text-slate-100">{t('Recommended TaRL Activities')}</h2>
+              <h2 className="text-xl font-extrabold text-slate-800 dark:text-slate-100">{t('Recommended Pedagogy Activities')}</h2>
             </div>
 
             <div className="grid md:grid-cols-2 gap-6">
@@ -421,7 +421,7 @@ export default async function StudentProfilePage({ params }: { params: Promise<{
        ) : (
          <div className="bg-white dark:bg-slate-900 rounded-[2rem] border border-dashed border-slate-300 dark:border-slate-700 p-12 text-center">
             <h3 className="text-xl font-bold text-slate-400">{t('No Assessments Yet')}</h3>
-            <p className="text-slate-500 mt-2">{t('Test this student to generate personalized TaRL curriculum recommendations.')}</p>
+            <p className="text-slate-500 mt-2">{t('Test this student to generate personalized Pedagogy curriculum recommendations.')}</p>
          </div>
        )}
 
