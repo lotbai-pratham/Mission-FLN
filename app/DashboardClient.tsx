@@ -234,6 +234,10 @@ export default function DashboardClient({ initialStats, hierarchy }: { initialSt
           <option value="">{t('All Schools')}</option>
           {schools.map((s: any) => <option key={s.id} value={s.id}>{s.name}</option>)}
         </select>
+        <select value={selectedClass} onChange={e => setSelectedClass(e.target.value === 'all' ? 'all' : Number(e.target.value))} className="flex-1 bg-slate-50 dark:bg-slate-800 rounded-xl px-4 py-2.5 ring-1 ring-slate-200 focus:ring-2 focus:ring-blue-500 text-sm border-none">
+          <option value="all">{t('All Classes')}</option>
+          {availableClasses.map(cls => <option key={cls} value={cls}>Class {cls}</option>)}
+        </select>
         {isPending && <span className="text-sm font-bold text-blue-500 animate-pulse shrink-0">Updating…</span>}
       </div>
 
@@ -304,9 +308,8 @@ export default function DashboardClient({ initialStats, hierarchy }: { initialSt
       </div>
 
       {/* KPIs */}
-      <div className={`grid grid-cols-2 lg:grid-cols-4 gap-4 transition-opacity ${isPending ? 'opacity-50' : ''}`}>
+      <div className={`grid grid-cols-2 lg:grid-cols-3 gap-4 transition-opacity ${isPending ? 'opacity-50' : ''}`}>
         <KPI label={t("Total Students")} value={stats.totalStudents} icon={<Users className="w-5 h-5" />} color="blue" />
-        <KPI label={t("Total Assessments")} value={stats.totalAssessments} icon={<BookOpen className="w-5 h-5" />} color="indigo" />
         <KPI label={t("Arena Engagement")} value={stats.totalArenaBattles ?? 0} icon={<Sparkles className="w-5 h-5" />} color="blue" suffix={` ${t('Arena Engagement') !== 'Arena Engagement' ? '' : 'Battles'}`} />
         <KPI label={t("Single Games")} value={stats.totalSingleGames ?? 0} icon={<Gamepad2 className="w-5 h-5" />} color="orange" suffix={` ${t('Single Games') !== 'Single Games' ? '' : 'Games'}`} />
       </div>
@@ -396,7 +399,7 @@ export default function DashboardClient({ initialStats, hierarchy }: { initialSt
       <div className="flex p-1.5 bg-slate-100 dark:bg-slate-800/50 rounded-2xl w-fit border border-slate-200 dark:border-slate-800 flex-wrap gap-1">
         {([
           ['trends', t('Target Tracking') || 'Level Trends', TrendingUp],
-          ['overview', t('Growth Over Time') || 'Term Overview', LayoutDashboard],
+          ['overview', t('Growth from years') || 'Growth from years', LayoutDashboard],
           ['ranking', t('P.O. Rank') || 'P.O. Rank', Trophy],
           ['school-ranking', t('School Rank') || 'School Rank', School],
           ['students', t('Student Leaderboard') || 'Student Leaderboard', Medal],
@@ -427,19 +430,7 @@ export default function DashboardClient({ initialStats, hierarchy }: { initialSt
               </button>
             </div>
 
-            {/* Class selector */}
-            <div className="flex flex-wrap gap-1.5">
-              <button onClick={() => setSelectedClass('all')}
-                className={`px-3 py-1.5 rounded-xl text-xs font-extrabold transition-all ${selectedClass === 'all' ? 'bg-slate-800 text-white' : 'bg-slate-100 text-slate-500 hover:bg-slate-200'}`}>
-                All Classes
-              </button>
-              {availableClasses.map(cls => (
-                <button key={cls} onClick={() => setSelectedClass(cls)}
-                  className={`px-3 py-1.5 rounded-xl text-xs font-extrabold transition-all ${selectedClass === cls ? 'bg-slate-800 text-white' : 'bg-slate-100 text-slate-500 hover:bg-slate-200'}`}>
-                  Class {cls}
-                </button>
-              ))}
-            </div>
+
 
             <span className="text-xs text-slate-400 ml-auto">
               % normalised within each term — totals differ across terms
@@ -496,10 +487,10 @@ export default function DashboardClient({ initialStats, hierarchy }: { initialSt
               </button>
             </div>
           </div>
-          <BarCard title={`Literacy Levels by Term (${showPct ? '%' : '#'})`} icon="📚" data={formatTermData(stats.literacies, 'lit', showPct)} percentage={showPct} />
+          <BarCard title={`Literacy Levels by Year (${showPct ? '%' : '#'})`} icon="📚" data={formatTermData(stats.literacies, 'lit', showPct)} percentage={showPct} />
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <BarCard title={`Numeracy Levels by Term (${showPct ? '%' : '#'})`} icon="🔢" data={formatTermData(stats.numeracies, 'num', showPct)} percentage={showPct} />
-            <BarCard title={`Operations Mastery by Term (${showPct ? '%' : '#'})`} icon="➕" data={formatOpsData(stats.operations, showPct)} percentage={showPct} />
+            <BarCard title={`Numeracy Levels by Year (${showPct ? '%' : '#'})`} icon="🔢" data={formatTermData(stats.numeracies, 'num', showPct)} percentage={showPct} />
+            <BarCard title={`Operations Mastery by Year (${showPct ? '%' : '#'})`} icon="➕" data={formatOpsData(stats.operations, showPct)} percentage={showPct} />
           </div>
         </div>
       )}
