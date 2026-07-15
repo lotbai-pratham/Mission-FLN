@@ -170,35 +170,6 @@ export default function DashboardClient({ initialStats, hierarchy }: { initialSt
     });
   };
 
-  const formatTermData = (dataArray: any[], type: 'lit' | 'num', asPct: boolean) => {
-    const labels = type === 'lit' ? LIT_LABELS : NUM_LABELS;
-    const key = type === 'lit' ? 'literacyLevel' : 'numeracyLevel';
-    const termTotals: Record<string, number> = {};
-    TERMS.forEach(t => {
-      termTotals[t] = (dataArray ?? [])
-        .filter((item: any) => item.term === t)
-        .reduce((sum: number, item: any) => sum + item._count.studentId, 0);
-    });
-    return labels.map((label, level) => {
-      const entry: any = { name: label };
-      TERMS.forEach(t => {
-        let count = 0;
-        if (type === 'num') {
-          const matchingItems = dataArray?.filter((item: any) => {
-            const dbLvl = item[key];
-            const mappedLvl = dbLvl === 6 ? 5 : dbLvl === 5 ? 4 : dbLvl;
-            return mappedLvl === level && item.term === t;
-          }) ?? [];
-          count = matchingItems.reduce((acc: number, item: any) => acc + item._count.studentId, 0);
-        } else {
-          const found = dataArray?.find((item: any) => item[key] === level && item.term === t);
-          count = found ? found._count.studentId : 0;
-        }
-        entry[t] = asPct ? (termTotals[t] > 0 ? Math.round((count / termTotals[t]) * 100) : 0) : count;
-      });
-      return entry;
-    });
-  };
 
   const formatOpsData = (allAssessments: any[], asPct: boolean, targetYear: string) => {
     const filtered = (allAssessments || []).filter((a: any) => a.academicYear === targetYear);
