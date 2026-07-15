@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { updateAssessment, deleteAssessment, clearAllAssessments, clearAllData, cleanupSchools } from "@/app/actions";
+import { updateAssessment, deleteAssessment, clearAllAssessments, clearAllData, cleanupSchools, generateAndSendDeleteOtp } from "@/app/actions";
 import { Trash2, Pencil, X, Check, AlertTriangle, Filter, ShieldCheck } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -46,6 +46,7 @@ export default function DataClient({
   const [editForm, setEditForm] = useState<any>(null);
   const [clearConfirm, setClearConfirm] = useState(false);
   const [clearTerm, setClearTerm] = useState("");
+  const [otpSent, setOtpSent] = useState(false);
   const [deleteVerification, setDeleteVerification] = useState("");
   const [filterTerm, setFilterTerm] = useState("");
   const [isPending, startTransition] = useTransition();
@@ -91,13 +92,30 @@ export default function DataClient({
     });
   }
 
-  function handleClear() {
-    if (deleteVerification !== "DELETE") return;
+  function handleSendOtp() {
     startTransition(async () => {
-      await clearAllAssessments(clearTerm || undefined);
-      setClearConfirm(false);
-      setDeleteVerification("");
-      setItems([]);
+      try {
+        await generateAndSendDeleteOtp();
+        setOtpSent(true);
+      } catch (err: any) {
+        alert(err.message || "Failed to send OTP");
+      }
+    });
+  }
+
+  function handleClear() {
+    if (deleteVerification.length !== 6) return;
+    startTransition(async () => {
+      try {
+        await clearAllAssessments(clearTerm || undefined, deleteVerification);
+        setClearConfirm(false);
+        setDeleteVerification("");
+        setOtpSent(false);
+        setItems([]);
+        alert("Data cleared successfully.");
+      } catch (err: any) {
+        alert(err.message || "Failed to clear data.");
+      }
     });
   }
 
@@ -185,50 +203,78 @@ export default function DataClient({
           <div className="bg-white dark:bg-slate-900 rounded-3xl p-8 max-w-md w-full shadow-2xl border border-slate-100 dark:border-slate-800">
             <div className="flex items-center gap-3 text-red-600 mb-4">
               <AlertTriangle className="w-6 h-6" />
-              <h2 className="text-xl font-bold">Clear Data</h2>
+              <h2 className="text-xl font-bold">Clear Data Verification</h2>
             </div>
-            <p className="text-slate-500 mb-4">Choose which term to clear. This will permanently delete assessment data. It cannot be undone.</p>
+            
+            {!otpSent ? (
+              <>
+                <p className="text-slate-500 mb-4">Choose which term to clear. This will permanently delete assessment data. It cannot be undone.</p>
+                <select
+                  value={clearTerm}
+                  onChange={(e) => setClearTerm(e.target.value)}
+                  className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3 mb-6 text-sm font-medium outline-none"
+                >
+                  <option value="">All terms</option>
+                  {TERMS.map((t) => <option key={t} value={t}>{t} only</option>)}
+                </select>
 
-            <select
-              value={clearTerm}
-              onChange={(e) => setClearTerm(e.target.value)}
-              className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3 mb-4 text-sm font-medium outline-none"
-            >
-              <option value="">All terms</option>
-              {TERMS.map((t) => <option key={t} value={t}>{t} only</option>)}
-            </select>
+                <div className="flex gap-3">
+                  <button
+                    onClick={() => setClearConfirm(false)}
+                    className="flex-1 px-4 py-2.5 border border-slate-200 dark:border-slate-700 rounded-xl font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={handleSendOtp}
+                    disabled={isPending}
+                    className="flex-1 px-4 py-2.5 bg-red-600 hover:bg-red-700 text-white font-bold rounded-xl transition-all disabled:opacity-50"
+                  >
+                    {isPending ? "Sending OTP..." : "Send OTP to Delete"}
+                  </button>
+                </div>
+              </>
+            ) : (
+              <>
+                <p className="text-slate-500 mb-4 text-sm">
+                  We've generated a 6-digit verification code. Please check the server console (this is a simulated email) and enter the code below. The code expires in 5 minutes.
+                </p>
 
-            <div className="mb-6">
-              <label className="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2">
-                Type DELETE to confirm:
-              </label>
-              <input
-                type="text"
-                value={deleteVerification}
-                onChange={(e) => setDeleteVerification(e.target.value)}
-                placeholder="DELETE"
-                className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white outline-none focus:ring-2 focus:ring-red-500"
-              />
-            </div>
+                <div className="mb-6">
+                  <label className="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2">
+                    Enter 6-digit OTP:
+                  </label>
+                  <input
+                    type="text"
+                    maxLength={6}
+                    value={deleteVerification}
+                    onChange={(e) => setDeleteVerification(e.target.value.replace(/[^0-9]/g, ''))}
+                    placeholder="000000"
+                    className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white outline-none focus:ring-2 focus:ring-red-500 font-mono tracking-widest text-center text-xl"
+                  />
+                </div>
 
-            <div className="flex gap-3">
-              <button
-                onClick={() => {
-                  setClearConfirm(false);
-                  setDeleteVerification("");
-                }}
-                className="flex-1 px-4 py-2.5 border border-slate-200 dark:border-slate-700 rounded-xl font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={handleClear}
-                disabled={isPending || deleteVerification !== "DELETE"}
-                className="flex-1 px-4 py-2.5 bg-red-600 hover:bg-red-700 text-white font-bold rounded-xl transition-all disabled:opacity-50"
-              >
-                {isPending ? "Clearing..." : "Yes, Delete"}
-              </button>
-            </div>
+                <div className="flex gap-3">
+                  <button
+                    onClick={() => {
+                      setClearConfirm(false);
+                      setDeleteVerification("");
+                      setOtpSent(false);
+                    }}
+                    className="flex-1 px-4 py-2.5 border border-slate-200 dark:border-slate-700 rounded-xl font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={handleClear}
+                    disabled={isPending || deleteVerification.length !== 6}
+                    className="flex-1 px-4 py-2.5 bg-red-600 hover:bg-red-700 text-white font-bold rounded-xl transition-all disabled:opacity-50"
+                  >
+                    {isPending ? "Clearing Data..." : "Verify & Delete Data"}
+                  </button>
+                </div>
+              </>
+            )}
           </div>
         </div>
       )}

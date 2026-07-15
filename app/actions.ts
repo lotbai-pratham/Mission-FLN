@@ -653,9 +653,92 @@ export async function deleteAssessment(id: string) {
   revalidatePath('/', 'layout');
 }
 
-export async function clearAllAssessments(term?: string) {
+export async function generateAndSendDeleteOtp() {
   await requireAdmin();
+  const session = await auth();
+  const email = session?.user?.email;
+  
+  if (!email) {
+    throw new Error("Admin email not found.");
+  }
+
+  // Generate 6-digit OTP
+  const otp = Math.floor(100000 + Math.random() * 900000).toString();
+  const expires = new Date(Date.now() + 5 * 60 * 1000); // 5 minutes
+
+  // Delete any existing tokens for this action (we use a specific identifier prefix)
+  const identifier = `delete_data_${email}`;
+  
+  try {
+    // Upsert token to DB
+    await prisma.verificationToken.deleteMany({
+      where: { identifier }
+    });
+
+    await prisma.verificationToken.create({
+      data: {
+        identifier,
+        token: otp,
+        expires
+      }
+    });
+
+    // SIMULATE SENDING EMAIL
+    console.log(`\n\n======================================================`);
+    console.log(`🔒 ADMIN OTP VERIFICATION`);
+    console.log(`Email: ${email}`);
+    console.log(`OTP Code: ${otp}`);
+    console.log(`Expires in: 5 minutes`);
+    console.log(`======================================================\n\n`);
+
+    return { success: true };
+  } catch (error) {
+    console.error("Failed to generate OTP:", error);
+    throw new Error("Failed to generate OTP");
+  }
+}
+
+export async function clearAllAssessments(term?: string, otpCode?: string) {
+  await requireAdmin();
+  const session = await auth();
+  const email = session?.user?.email;
+
+  if (!email) {
+    throw new Error("Admin email not found.");
+  }
+  if (!otpCode) {
+    throw new Error("OTP verification code is required.");
+  }
+
+  const identifier = `delete_data_${email}`;
+  
+  // Verify OTP
+  const tokenRecord = await prisma.verificationToken.findFirst({
+    where: {
+      identifier,
+      token: otpCode
+    }
+  });
+
+  if (!tokenRecord) {
+    throw new Error("Invalid verification code.");
+  }
+
+  if (new Date() > tokenRecord.expires) {
+    await prisma.verificationToken.delete({
+      where: { identifier_token: { identifier, token: otpCode } }
+    });
+    throw new Error("Verification code has expired. Please request a new one.");
+  }
+
+  // Delete data
   await prisma.assessment.deleteMany(term ? { where: { term } } : undefined);
+  
+  // Delete the used token so it can't be reused
+  await prisma.verificationToken.delete({
+    where: { identifier_token: { identifier, token: otpCode } }
+  });
+
   revalidatePath('/', 'layout');
 }
 
