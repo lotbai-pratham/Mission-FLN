@@ -8,18 +8,10 @@ import bcrypt from "bcryptjs";
 const API_BASE = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:4000';
 
 export async function getSchools() {
-  try {
-    const res = await fetch(`${API_BASE}/api/schools`, { next: { revalidate: 0 } });
-    if (!res.ok) throw new Error("Failed to load schools from backend");
-    return await res.json();
-  } catch (err) {
-    console.error(err);
-    // Fallback to direct DB call if backend is not running yet
-    return await prisma.school.findMany({
-      orderBy: { name: 'asc' },
-      include: { projectOffice: { include: { division: true } } }
-    });
-  }
+  return await prisma.school.findMany({
+    orderBy: { name: 'asc' },
+    include: { projectOffice: { include: { division: true } } }
+  });
 }
 
 export async function getDivisions() {
@@ -528,35 +520,18 @@ async function requireAdmin() {
 
 export async function getUsers(): Promise<any[]> {
   await requireAdmin();
-  try {
-    const res = await fetch(`${API_BASE}/api/users`, { next: { revalidate: 0 } });
-    if (!res.ok) throw new Error("Failed to load users from backend");
-    return await res.json();
-  } catch (err) {
-    console.error("Falling back to direct DB call for getUsers", err);
-    return await (prisma as any).user.findMany({
-      orderBy: { createdAt: "desc" },
-      include: {
-        _count: { select: { sessions: true } },
-        school: { select: { id: true, name: true } },
-      },
-    });
-  }
+  return await (prisma as any).user.findMany({
+    orderBy: { createdAt: "desc" },
+    include: {
+      _count: { select: { sessions: true } },
+      school: { select: { id: true, name: true } },
+    },
+  });
 }
 
 export async function setUserRole(userId: string, role: "user" | "admin" | "state" | "division" | "project_office") {
   await requireAdmin();
-  try {
-    const res = await fetch(`${API_BASE}/api/users/role`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ userId, role })
-    });
-    if (!res.ok) throw new Error("Failed to set role via backend");
-  } catch (err) {
-    console.error("Falling back to direct DB", err);
-    await (prisma as any).user.update({ where: { id: userId }, data: { role } });
-  }
+  await (prisma as any).user.update({ where: { id: userId }, data: { role } });
   revalidatePath("/admin/users");
 }
 
@@ -1597,6 +1572,7 @@ export async function getSchoolRankings(divisionId?: string, projectOfficeId?: s
         include: {
           assessments: {
             orderBy: { date: 'desc' },
+            take: 1
           }
         }
       }
@@ -1646,6 +1622,7 @@ export async function getSchoolStudentsDetails(schoolId: string, classNum?: numb
     include: {
       assessments: {
         orderBy: { date: 'desc' },
+        take: 1
       }
     },
     orderBy: { name: 'asc' }
