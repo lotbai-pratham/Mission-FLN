@@ -3,7 +3,7 @@
 import { prisma } from "@/lib/db";
 import { auth } from "@/auth";
 
-export async function logDataAccess(data: { name: string; designation: string }) {
+export async function logDataAccess(data: { name: string; designation: string; organization: string }) {
   const session = await auth();
   
   await prisma.dataAccessLog.create({
@@ -11,6 +11,7 @@ export async function logDataAccess(data: { name: string; designation: string })
       userId: session?.user?.id || null,
       name: data.name,
       designation: data.designation,
+      organization: data.organization,
     }
   });
 

@@ -485,6 +485,7 @@ export default function DataClient({
                   <th className="px-4 py-3">Timestamp</th>
                   <th className="px-4 py-3">Name</th>
                   <th className="px-4 py-3">Designation</th>
+                  <th className="px-4 py-3">Organization</th>
                   <th className="px-4 py-3">Account Email</th>
                   <th className="px-4 py-3">Role</th>
                 </tr>
@@ -502,6 +503,7 @@ export default function DataClient({
                     </td>
                     <td className="px-4 py-3 font-medium text-slate-800 dark:text-slate-100">{log.name}</td>
                     <td className="px-4 py-3 text-slate-600 dark:text-slate-300">{log.designation}</td>
+                    <td className="px-4 py-3 text-slate-600 dark:text-slate-300">{log.organization}</td>
                     <td className="px-4 py-3 text-slate-500 text-xs">{log.user?.email || "Unknown"}</td>
                     <td className="px-4 py-3">
                       <span className="px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-slate-100 text-slate-600">

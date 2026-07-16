@@ -228,6 +228,7 @@ model DataAccessLog {
   user        User?    @relation(fields: [userId], references: [id])
   name        String
   designation String
+  organization String @default("Unknown")
   accessedAt  DateTime @default(now())
 
   @@index([userId])

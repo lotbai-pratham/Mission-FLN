@@ -22,6 +22,7 @@ export function DpdpProvider({ children }: { children: ReactNode }) {
 
   const [name, setName] = useState("");
   const [designation, setDesignation] = useState("");
+  const [organization, setOrganization] = useState("");
   const [check1, setCheck1] = useState(false);
   const [check2, setCheck2] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -55,13 +56,13 @@ export function DpdpProvider({ children }: { children: ReactNode }) {
   };
 
   const handleAgree = async () => {
-    if (!name || !designation || !check1 || !check2) return;
+    if (!name || !designation || !organization || !check1 || !check2) return;
     
     setIsSubmitting(true);
     try {
       // We need to import logDataAccess
       const { logDataAccess } = await import('@/app/actions/consent');
-      await logDataAccess({ name, designation });
+      await logDataAccess({ name, designation, organization });
       
       localStorage.setItem("dpdp_consent_time", Date.now().toString());
       setHasConsent(true);
@@ -105,6 +106,10 @@ export function DpdpProvider({ children }: { children: ReactNode }) {
                       <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Your Designation</label>
                       <input type="text" value={designation} onChange={e => setDesignation(e.target.value)} className="w-full bg-slate-50 dark:bg-slate-800 rounded-lg px-3 py-2 text-sm border border-slate-200 dark:border-slate-700 outline-none" placeholder="Teacher, PO, etc." />
                     </div>
+                    <div>
+                      <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Your Organization</label>
+                      <input type="text" value={organization} onChange={e => setOrganization(e.target.value)} className="w-full bg-slate-50 dark:bg-slate-800 rounded-lg px-3 py-2 text-sm border border-slate-200 dark:border-slate-700 outline-none" placeholder="Pratham, Government, etc." />
+                    </div>
                   </div>
 
                   <label className="flex items-start gap-3 cursor-pointer group">
@@ -130,7 +135,7 @@ export function DpdpProvider({ children }: { children: ReactNode }) {
                   </button>
                   <button 
                     onClick={handleAgree}
-                    disabled={isSubmitting || !name || !designation || !check1 || !check2}
+                    disabled={isSubmitting || !name || !designation || !organization || !check1 || !check2}
                     className="bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-2.5 rounded-xl text-sm font-semibold transition-all shadow-md shadow-emerald-500/20 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
                   >
                     {isSubmitting ? "Verifying..." : "I Agree & Continue"}
