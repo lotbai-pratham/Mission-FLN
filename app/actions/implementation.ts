@@ -14,8 +14,10 @@ interface LogSessionInput {
 
 /**
  * Logs a completed Mission Mode session to the database.
- */
 export async function logImplementationSession(data: LogSessionInput) {
+  if (data.schoolId === 'guest-school') {
+    return { success: true };
+  }
   try {
     const session = await (prisma as any).implementationSession.create({
       data: {

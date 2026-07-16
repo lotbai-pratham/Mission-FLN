@@ -409,11 +409,11 @@ function MissionControl() {
                         const val = e.target.value;
                         setSchoolName(val);
                         const match = allSchools.find(s => s.name.toLowerCase() === val.toLowerCase());
-                        setSchoolId(match ? match.id : null);
+                        setSchoolId(match ? match.id : 'guest-school');
                       }}
                         placeholder="Type to search schools..."
                         className="w-full h-14 bg-slate-50 dark:bg-slate-800 border-none rounded-2xl px-6 font-bold text-slate-700 dark:text-white focus:ring-2 focus:ring-blue-500 transition-all" />
-                      {schoolName && !schoolId && allSchools.filter(s => s.name.toLowerCase().includes(schoolName.toLowerCase())).length > 0 && (
+                      {schoolName && (!schoolId || schoolId === 'guest-school') && allSchools.filter(s => s.name.toLowerCase().includes(schoolName.toLowerCase())).length > 0 && (
                         <div className="absolute top-full left-0 right-0 z-50 mt-2 bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-2xl shadow-xl overflow-hidden max-h-48 overflow-y-auto">
                           {allSchools.filter(s => s.name.toLowerCase().includes(schoolName.toLowerCase())).map(s => (
                             <button key={s.id} onClick={() => { setSchoolName(s.name); setSchoolId(s.id); }}
