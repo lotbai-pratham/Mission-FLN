@@ -138,7 +138,11 @@ export default function MobileMenu({ userRole, userName, userImage, isLoggedIn }
           <div className="pt-2">
             {isLoggedIn ? (
               <button
-                onClick={() => { close(); signOut({ callbackUrl: "/" }); }}
+                onClick={() => { 
+                  close(); 
+                  localStorage.removeItem("dpdp_consent_time");
+                  signOut({ callbackUrl: "/" }); 
+                }}
                 className="w-full flex items-center gap-3 px-4 py-3 rounded-2xl text-sm font-semibold text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-all"
               >
                 <LogOut className="w-4 h-4 shrink-0" />

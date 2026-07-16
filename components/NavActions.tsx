@@ -97,7 +97,10 @@ export default function NavActions({ session, userRole, handleSignOut }: NavActi
             )}
           </Link>
           <button 
-            onClick={() => handleSignOut()} 
+            onClick={() => {
+              localStorage.removeItem("dpdp_consent_time");
+              handleSignOut();
+            }} 
             className="text-gray-400 hover:text-red-500 p-1.5 rounded-lg transition-colors cursor-pointer" 
             title={t('Sign Out')}
           >
