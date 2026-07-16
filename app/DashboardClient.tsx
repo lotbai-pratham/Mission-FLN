@@ -53,44 +53,44 @@ export default function DashboardClient({ initialStats, hierarchy }: { initialSt
 
   // Function to load all dashboard data based on current filters
   const fetchData = async () => {
+    const [
+      newStats,
+      v,
+      r,
+      sr,
+      l,
+      impl,
+      s
+    ] = await Promise.all([
+      getDashboardStats({ divisionId: divId, projectOfficeId: poId, schoolId, term, classNum: selectedClass }),
+      getGrowthVelocity({ divisionId: divId, projectOfficeId: poId, schoolId, classNum: selectedClass }),
+      getPORankings(divId || undefined, selectedClass),
+      getSchoolRankings(divId || undefined, poId || undefined, selectedClass),
+      getStudentLeaderboard({
+        divisionId: divId || undefined,
+        projectOfficeId: poId || undefined,
+        schoolId: schoolId || undefined,
+        classNum: selectedClass,
+        sortBy: leaderboardMode
+      }),
+      getImplementationAnalytics({
+        divisionId: divId || undefined,
+        projectOfficeId: poId || undefined,
+        schoolId: schoolId || undefined,
+        period: implPeriod,
+      }),
+      schoolId ? getStrugglingStudents(schoolId, selectedClass) : Promise.resolve([])
+    ]);
 
-        startTransition(async () => {
-          const newStats = await getDashboardStats({ divisionId: divId, projectOfficeId: poId, schoolId, term, classNum: selectedClass });
-          setStats(newStats);
-
-          const v = await getGrowthVelocity({ divisionId: divId, projectOfficeId: poId, schoolId, classNum: selectedClass });
-          setVelocity(v);
-
-          if (schoolId) {
-            const s = await getStrugglingStudents(schoolId, selectedClass);
-            setStruggling(s);
-          } else {
-            setStruggling([]);
-          }
-
-          const r = await getPORankings(divId || undefined, selectedClass);
-          setRankings(r);
-
-          const sr = await getSchoolRankings(divId || undefined, poId || undefined, selectedClass);
-          setSchoolRankings(sr);
-
-          const l = await getStudentLeaderboard({
-            divisionId: divId || undefined,
-            projectOfficeId: poId || undefined,
-            schoolId: schoolId || undefined,
-            classNum: selectedClass,
-            sortBy: leaderboardMode
-          });
-          setLeaderboard(l);
-
-          const impl = await getImplementationAnalytics({
-            divisionId: divId || undefined,
-            projectOfficeId: poId || undefined,
-            schoolId: schoolId || undefined,
-            period: implPeriod,
-          });
-          setImplData(impl);
-        });
+    startTransition(() => {
+      setStats(newStats);
+      setVelocity(v);
+      setRankings(r);
+      setSchoolRankings(sr);
+      setLeaderboard(l);
+      setImplData(impl);
+      setStruggling(s);
+    });
   };
   const pos = activeDivision ? activeDivision.projectOffices : [];
   const activePO = pos.find((p: any) => p.id === poId);
