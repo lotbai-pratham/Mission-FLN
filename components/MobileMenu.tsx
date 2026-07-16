@@ -34,7 +34,7 @@ const ADMIN_LINKS = [
 
 export default function MobileMenu({ userRole, userName, userImage, isLoggedIn }: Props) {
   const isAdmin = userRole === 'admin';
-  const canRecordScore = userRole === 'admin' || userRole === 'user';
+  const canRecordScore = userRole === 'admin';
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
   const { t } = useLanguage();
@@ -144,16 +144,7 @@ export default function MobileMenu({ userRole, userName, userImage, isLoggedIn }
                 <LogOut className="w-4 h-4 shrink-0" />
                 Sign Out
               </button>
-            ) : (
-              <Link
-                href="/signin"
-                onClick={close}
-                className="flex items-center gap-3 px-4 py-3 rounded-2xl text-sm font-semibold text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-all"
-              >
-                <LogIn className="w-4 h-4 shrink-0" />
-                Sign In
-              </Link>
-            )}
+            ) : null}
           </div>
         </div>
       </div>

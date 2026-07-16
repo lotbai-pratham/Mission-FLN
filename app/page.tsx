@@ -23,6 +23,7 @@ import {
 import WarliBorder from "@/components/warli/WarliBorder";
 import ScrollReveal from "@/components/ScrollReveal";
 import { DoodleStar, DoodleSquiggle, DoodleSun, DoodleLoop, DoodleTribalFigure } from "@/components/Doodles";
+import SignInBox from "@/components/SignInBox";
 
 export default function LandingPage() {
   return (
@@ -48,16 +49,13 @@ export default function LandingPage() {
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
             
             {/* Left side text */}
-            <div className="lg:col-span-7 text-left flex flex-col items-start">
-              {/* Adhigam Badge */}
-              <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold bg-amber-50 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400 border border-amber-100 dark:border-amber-850/30 mb-6">
-                <Sparkles className="w-3.5 h-3.5 animate-pulse" /> Adhigam
-              </div>
-
-              <h1 className="text-4xl font-black tracking-tight text-slate-900 dark:text-white sm:text-5xl lg:text-6xl mb-6 leading-tight">
-                Tracking <br />
-                <span className="bg-gradient-to-r from-orange-500 via-amber-500 to-amber-600 bg-clip-text text-transparent">Engagement, Implementation, and Impact</span>
+            <div className="lg:col-span-7 text-left flex flex-col items-start pt-8">
+              <h1 className="text-6xl font-black tracking-tighter text-slate-900 dark:text-white sm:text-7xl lg:text-[5.5rem] mb-4 leading-none">
+                <span className="bg-gradient-to-r from-orange-500 via-amber-500 to-amber-600 bg-clip-text text-transparent">Adhigam</span>
               </h1>
+              <h2 className="text-2xl font-bold text-slate-700 dark:text-slate-300 mb-6">
+                Tracking Engagement, Implementation, and Impact
+              </h2>
 
               <div className="text-sm font-bold uppercase tracking-wider text-amber-600 dark:text-amber-400 mb-8 flex items-center gap-2">
                 <span className="w-1.5 h-1.5 rounded-full bg-amber-500" />
@@ -74,20 +72,9 @@ export default function LandingPage() {
               </div>
             </div>
 
-            {/* Right side image */}
-            <div className="lg:col-span-5 relative">
-              <div className="absolute -inset-2 rounded-[40px] bg-gradient-to-tr from-orange-500 to-amber-500 opacity-20 blur-xl animate-pulse pointer-events-none" />
-              <div className="relative rounded-[36px] overflow-hidden border-4 border-white dark:border-slate-900 shadow-2xl shadow-slate-200/50 dark:shadow-none bg-slate-100">
-                <img 
-                  src="/ashramshala-students.png" 
-                  alt="Students learning activity" 
-                  className="w-full h-auto aspect-[4/3] object-cover hover:scale-105 transition-all duration-500"
-                />
-                <div className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent p-6 text-white text-xs font-semibold">
-                  <span className="bg-amber-500 text-[10px] px-2.5 py-0.5 rounded-full uppercase mr-2 tracking-wider">Active Learning</span>
-                  Students smiling, learning, and performing activities in the classroom.
-                </div>
-              </div>
+            {/* Right side login box */}
+            <div className="lg:col-span-5 relative mt-8 lg:mt-0">
+              <SignInBox />
             </div>
 
           </div>

@@ -68,7 +68,7 @@ export default function NavActions({ session, userRole, handleSignOut }: NavActi
         )}
       </div>
 
-      {(userRole === 'admin' || userRole === 'user') && (
+      {(userRole === 'admin') && (
         <Link
           href="/assessments/live"
           className="bg-gradient-to-r from-amber-500 to-orange-600 text-white hover:from-amber-600 hover:to-orange-700 px-4 sm:px-5 py-2 rounded-full text-sm font-semibold shadow-lg shadow-amber-500/30 flex items-center gap-2 transition-all hover:scale-105 active:scale-95"
@@ -104,11 +104,7 @@ export default function NavActions({ session, userRole, handleSignOut }: NavActi
             <LogOut className="w-4 h-4" />
           </button>
         </div>
-      ) : (
-        <Link href="/signin" className="hidden sm:flex items-center gap-2 text-sm font-semibold text-amber-600 hover:text-amber-700 px-3 py-2 rounded-xl hover:bg-amber-50 transition-all">
-          <LogIn className="w-4 h-4" /> {t('Sign In')}
-        </Link>
-      )}
+      ) : null}
     </div>
   );
 }
