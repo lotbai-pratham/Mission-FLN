@@ -35,7 +35,7 @@ export async function getStudentsBySchool(schoolId: string) {
   });
 }
 
-export async function getStudentsList(query: string = "", page: number = 1, divId?: string, poId?: string, schoolId?: string) {
+export async function getStudentsList(query: string = "", page: number = 1, divId?: string, poId?: string, schoolId?: string, classNum?: string) {
   const take = 20;
   const skip = (page - 1) * take;
 
@@ -58,6 +58,10 @@ export async function getStudentsList(query: string = "", page: number = 1, divI
     else if (divId) whereFilter.school = { projectOffice: { divisionId: divId } };
   } else {
     Object.assign(whereFilter, scope);
+  }
+
+  if (classNum && classNum !== 'all') {
+    whereFilter.class = Number(classNum);
   }
 
   const students = await prisma.student.findMany({

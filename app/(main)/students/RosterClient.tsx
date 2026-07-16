@@ -19,6 +19,7 @@ export default function RosterClient({ hierarchy, initialData }: { hierarchy: an
   const [divId, setDivId] = useState("");
   const [poId, setPoId] = useState("");
   const [schoolId, setSchoolId] = useState("");
+  const [classNum, setClassNum] = useState("");
 
   const activeDivision = hierarchy.find(d => d.id === divId);
   const pos = activeDivision ? activeDivision.projectOffices : [];
@@ -29,12 +30,12 @@ export default function RosterClient({ hierarchy, initialData }: { hierarchy: an
     // Debounce search slightly
     const timer = setTimeout(() => {
       startTransition(async () => {
-        const newData = await getStudentsList(query, page, divId, poId, schoolId);
+        const newData = await getStudentsList(query, page, divId, poId, schoolId, classNum);
         setData(newData);
       });
     }, 300);
     return () => clearTimeout(timer);
-  }, [query, page, divId, poId, schoolId]);
+  }, [query, page, divId, poId, schoolId, classNum]);
 
   return (
     <div className="max-w-5xl mx-auto mt-8 animate-in fade-in flex flex-col gap-6 pb-16">
@@ -86,6 +87,12 @@ export default function RosterClient({ hierarchy, initialData }: { hierarchy: an
           {schools.map((s: any) => (
             <option key={s.id} value={s.id}>{s.name} ({s.udiseCode})</option>
           ))}
+        </select>
+        
+        <select value={classNum} onChange={(e) => { setClassNum(e.target.value); setPage(1); }}
+                className="w-full sm:w-32 bg-slate-50 dark:bg-slate-800 rounded-xl px-4 py-3 border-none ring-1 ring-slate-200 focus:ring-2 focus:ring-blue-500 font-medium">
+          <option value="">All Classes</option>
+          {[1,2,3,4].map(n => <option key={n} value={n}>Class {n}</option>)}
         </select>
       </div>
 
