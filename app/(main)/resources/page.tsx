@@ -405,10 +405,15 @@ function MissionControl() {
                   <p className="text-[11px] font-black text-slate-400 uppercase tracking-[4px]">School Name</p>
                   {isAdmin ? (
                     <div className="relative">
-                      <input type="text" value={schoolName} onChange={e => setSchoolName(e.target.value)}
+                      <input type="text" value={schoolName} onChange={e => {
+                        const val = e.target.value;
+                        setSchoolName(val);
+                        const match = allSchools.find(s => s.name.toLowerCase() === val.toLowerCase());
+                        setSchoolId(match ? match.id : null);
+                      }}
                         placeholder="Type to search schools..."
                         className="w-full h-14 bg-slate-50 dark:bg-slate-800 border-none rounded-2xl px-6 font-bold text-slate-700 dark:text-white focus:ring-2 focus:ring-blue-500 transition-all" />
-                      {schoolName && !allSchools.find(s => s.name === schoolName) && allSchools.filter(s => s.name.toLowerCase().includes(schoolName.toLowerCase())).length > 0 && (
+                      {schoolName && !schoolId && allSchools.filter(s => s.name.toLowerCase().includes(schoolName.toLowerCase())).length > 0 && (
                         <div className="absolute top-full left-0 right-0 z-50 mt-2 bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-2xl shadow-xl overflow-hidden max-h-48 overflow-y-auto">
                           {allSchools.filter(s => s.name.toLowerCase().includes(schoolName.toLowerCase())).map(s => (
                             <button key={s.id} onClick={() => { setSchoolName(s.name); setSchoolId(s.id); }}
