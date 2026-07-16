@@ -55,13 +55,13 @@ export default function LandingPage() {
               </div>
 
               <h1 className="text-4xl font-black tracking-tight text-slate-900 dark:text-white sm:text-5xl lg:text-6xl mb-6 leading-tight">
-                Building <br />
-                <span className="bg-gradient-to-r from-orange-500 via-amber-500 to-amber-600 bg-clip-text text-transparent">Foundational Literacy and Numeracy</span>
+                Tracking <br />
+                <span className="bg-gradient-to-r from-orange-500 via-amber-500 to-amber-600 bg-clip-text text-transparent">Engagement, Implementation, and Impact</span>
               </h1>
 
               <div className="text-sm font-bold uppercase tracking-wider text-amber-600 dark:text-amber-400 mb-8 flex items-center gap-2">
                 <span className="w-1.5 h-1.5 rounded-full bg-amber-500" />
-                Understanding the journey of the students of government tribal ashramshalas.
+                A comprehensive platform for monitoring learning outcomes and educational interventions.
               </div>
 
               <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
@@ -120,7 +120,7 @@ export default function LandingPage() {
                 <div>
                   <h4 className="text-xl font-bold text-slate-900 dark:text-white mb-2">Teachers & Educators</h4>
                   <p className="text-slate-500 dark:text-slate-400 text-sm leading-relaxed">
-                    Conduct quick assessments, divide classrooms into targeted 'Teaching at the Right Level' (Pedagogy) groups, and manage interactive multiplayer classroom learning games.
+                    Log daily implementation sessions, track student engagement, conduct targeted assessments, and utilize data-driven insights to tailor interventions for every learner.
                   </p>
                 </div>
               </div>
@@ -140,7 +140,7 @@ export default function LandingPage() {
                 <div>
                   <h4 className="text-xl font-bold text-slate-900 dark:text-white mb-2">Students & Learners</h4>
                   <p className="text-slate-500 dark:text-slate-400 text-sm leading-relaxed">
-                    Play fun 2v2 competitive math and language mini-games. Complete tasks, earn points, climb student leaderboards, and master foundational concepts with peer support.
+                    Participate in interactive learning modules, complete multi-subject tasks, track personal progress, and engage in collaborative activities to master core competencies.
                   </p>
                 </div>
               </div>
@@ -160,7 +160,7 @@ export default function LandingPage() {
                 <div>
                   <h4 className="text-xl font-bold text-slate-900 dark:text-white mb-2">Administration & POs</h4>
                   <p className="text-slate-500 dark:text-slate-400 text-sm leading-relaxed">
-                    Monitor growth velocity across divisions, view live benchmark charts, compile reports, and track overall institutional performance in real-time.
+                    Monitor implementation fidelity, analyze cross-sectional engagement metrics, and evaluate the overall impact of various interventions on student learning trajectories.
                   </p>
                 </div>
               </div>
@@ -188,13 +188,13 @@ export default function LandingPage() {
             
             <div>
               <div className="inline-block p-2 px-4 rounded-full bg-orange-50 dark:bg-orange-950/20 text-orange-600 dark:text-orange-400 font-bold text-xs mb-6 uppercase tracking-wider">
-                Core Features
+                Comprehensive Interventions
               </div>
               <h3 className="text-3xl font-black text-slate-900 dark:text-white sm:text-4xl mb-6">
                 Designed to Drive Real Classroom Impact
               </h3>
               <p className="text-slate-600 dark:text-slate-400 mb-8 leading-relaxed font-medium">
-                Adhigam combines interactive gamified assessments with granular diagnostic dashboards. It provides educators with the tools they need to track student progress from mother-tongue word recognition to long division.
+                Adhigam combines implementation tracking with granular diagnostic dashboards. It provides educators and administrators with the tools they need to track student progress across multiple interventions, from foundational literacy to advanced competencies.
               </p>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
@@ -216,8 +216,8 @@ export default function LandingPage() {
                     <Award className="w-4 h-4" />
                   </div>
                   <div>
-                    <h5 className="font-bold text-slate-900 dark:text-white text-sm">NIPUN Bharat Aligned</h5>
-                    <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">Track reading levels and numeracy categories defined by national goals.</p>
+                    <h5 className="font-bold text-slate-900 dark:text-white text-sm">Multi-Intervention Tracking</h5>
+                    <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">Easily configure and monitor various educational programs and initiatives concurrently.</p>
                   </div>
                 </div>
 
@@ -283,8 +283,8 @@ export default function LandingPage() {
             
             <div>
               <h3 className="text-4xl font-black mb-8 leading-tight">
-                NIPUN Bharat & <br />
-                <span className="bg-gradient-to-r from-orange-400 to-amber-300 bg-clip-text text-transparent">National Education Policy</span>
+                Holistic Student <br />
+                <span className="bg-gradient-to-r from-orange-400 to-amber-300 bg-clip-text text-transparent">Development & Growth</span>
               </h3>
               <div className="space-y-8">
                 <div className="flex gap-5">
@@ -292,8 +292,8 @@ export default function LandingPage() {
                     <Lightbulb className="w-6 h-6 text-orange-400" />
                   </div>
                   <div>
-                    <h4 className="text-lg font-bold mb-1">NEP 2020: The Universal Vision</h4>
-                    <p className="text-sm text-slate-300 leading-relaxed">Achieving universal Foundational Literacy & Numeracy is declared the highest priority of the entire educational system.</p>
+                    <h4 className="text-lg font-bold mb-1">Impact-Driven Pedagogy</h4>
+                    <p className="text-sm text-slate-300 leading-relaxed">Evaluating educational programs based on true learning impact, not just attendance, to ensure every child thrives.</p>
                   </div>
                 </div>
                 
@@ -302,8 +302,8 @@ export default function LandingPage() {
                     <MapPin className="w-6 h-6 text-amber-400" />
                   </div>
                   <div>
-                    <h4 className="text-lg font-bold mb-1">NIPUN Bharat: Clear Timelines</h4>
-                    <p className="text-sm text-slate-300 leading-relaxed">A national goal seeking to ensure that every student reaches universal FLN levels by 2026-27.</p>
+                    <h4 className="text-lg font-bold mb-1">Data-Backed Insights</h4>
+                    <p className="text-sm text-slate-300 leading-relaxed">Providing continuous, real-time insights across various interventions to help administrators make informed policy decisions.</p>
                   </div>
                 </div>
               </div>
@@ -371,7 +371,7 @@ export default function LandingPage() {
                   <Trophy className="w-6 h-6" />
                 </div>
                 <h4 className="text-xl font-bold text-slate-900 dark:text-white">Student Arcade</h4>
-                <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">Launch interactive games (Tili Bundle Duel, Math Duel) for direct in-class multiplayer learning sessions.</p>
+                <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">Launch interactive modules, track personal engagement metrics, and participate in learning simulations tailored for various educational interventions.</p>
               </div>
               <Link href="/resources" className="inline-flex items-center gap-2 px-5 py-3 bg-orange-500 hover:bg-orange-600 text-white font-bold rounded-xl text-xs transition-all w-full justify-center">
                 Launch Simulations <ArrowRight className="w-4 h-4" />
@@ -385,7 +385,7 @@ export default function LandingPage() {
                   <LogIn className="w-6 h-6" />
                 </div>
                 <h4 className="text-xl font-bold text-slate-900 dark:text-white">Teacher Portal</h4>
-                <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">Sign in to perform assessments, record pupil scores, configure classroom settings, and check leaderboard lists.</p>
+                <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">Sign in to log daily implementation sessions, record holistic assessment scores, and track cohort engagement across multiple learning programs.</p>
               </div>
               <Link href="/signin" className="inline-flex items-center gap-2 px-5 py-3 bg-amber-500 hover:bg-amber-600 text-white font-bold rounded-xl text-xs transition-all w-full justify-center">
                 Teacher Sign In <ArrowRight className="w-4 h-4" />
@@ -399,7 +399,7 @@ export default function LandingPage() {
                   <LayoutDashboard className="w-6 h-6" />
                 </div>
                 <h4 className="text-xl font-bold text-slate-900 dark:text-white">Admin Dashboard</h4>
-                <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">Analyze state and division level cohort benchmarking, verify system integrity, and download reports.</p>
+                <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">Analyze state and division level implementation fidelity, verify intervention impact, and monitor data access and ecosystem engagement metrics.</p>
               </div>
               <Link href="/dashboard" className="inline-flex items-center gap-2 px-5 py-3 bg-slate-900 dark:bg-slate-800 hover:bg-slate-800 dark:hover:bg-slate-700 text-white dark:text-slate-200 font-bold rounded-xl text-xs border border-slate-700 transition-all w-full justify-center">
                 Go to Dashboard <ArrowRight className="w-4 h-4" />
