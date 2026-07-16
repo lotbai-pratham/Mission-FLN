@@ -8,9 +8,10 @@ const CONSENT_LIFESPAN = 30 * 60 * 1000;
 
 interface DpdpContextType {
   hasConsent: boolean;
+  requestConsent: () => void;
 }
 
-const DpdpContext = createContext<DpdpContextType>({ hasConsent: false });
+const DpdpContext = createContext<DpdpContextType>({ hasConsent: false, requestConsent: () => {} });
 
 export const useDpdpConsent = () => useContext(DpdpContext);
 
@@ -19,44 +20,62 @@ export function DpdpProvider({ children }: { children: ReactNode }) {
   const [showPopup, setShowPopup] = useState(false);
   const [mounted, setMounted] = useState(false);
 
+  const [name, setName] = useState("");
+  const [designation, setDesignation] = useState("");
+  const [check1, setCheck1] = useState(false);
+  const [check2, setCheck2] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   useEffect(() => {
     setMounted(true);
     const checkConsent = () => {
       const consentTimestamp = localStorage.getItem("dpdp_consent_time");
       if (!consentTimestamp) {
         setHasConsent(false);
-        setShowPopup(true);
         return;
       }
 
       const timePassed = Date.now() - parseInt(consentTimestamp, 10);
       if (timePassed > CONSENT_LIFESPAN) {
-        // Expired
         localStorage.removeItem("dpdp_consent_time");
         setHasConsent(false);
-        setShowPopup(true);
       } else {
-        // Valid
         setHasConsent(true);
-        setShowPopup(false);
       }
     };
 
     checkConsent();
 
-    // Re-check every minute just in case they leave the tab open
     const interval = setInterval(checkConsent, 60000);
     return () => clearInterval(interval);
   }, []);
 
-  const handleAgree = () => {
-    localStorage.setItem("dpdp_consent_time", Date.now().toString());
-    setHasConsent(true);
-    setShowPopup(false);
+  const requestConsent = () => {
+    setShowPopup(true);
+  };
+
+  const handleAgree = async () => {
+    if (!name || !designation || !check1 || !check2) return;
+    
+    setIsSubmitting(true);
+    try {
+      // We need to import logDataAccess
+      const { logDataAccess } = await import('@/app/actions/consent');
+      await logDataAccess({ name, designation });
+      
+      localStorage.setItem("dpdp_consent_time", Date.now().toString());
+      setHasConsent(true);
+      setShowPopup(false);
+    } catch (error) {
+      console.error("Failed to log consent", error);
+      alert("Something went wrong while recording your consent. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
-    <DpdpContext.Provider value={{ hasConsent }}>
+    <DpdpContext.Provider value={{ hasConsent, requestConsent }}>
       {children}
       {mounted && showPopup && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/80 backdrop-blur-sm animate-in fade-in duration-300">
@@ -68,34 +87,53 @@ export function DpdpProvider({ children }: { children: ReactNode }) {
               <div className="w-12 h-12 rounded-full bg-emerald-100 dark:bg-emerald-900/40 flex items-center justify-center shrink-0">
                 <ShieldAlert className="w-6 h-6 text-emerald-600 dark:text-emerald-400" />
               </div>
-              <div>
+              <div className="flex-1">
                 <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-2">
                   Student Data Protection (DPDP Act)
                 </h2>
                 <p className="text-slate-600 dark:text-slate-300 text-sm leading-relaxed mb-4">
                   You are about to access identifiable student data. Under the Digital Personal Data Protection (DPDP) Act, you must explicitly consent to the following:
                 </p>
-                <ul className="space-y-3 mb-6">
-                  <li className="flex items-start gap-2 text-sm text-slate-600 dark:text-slate-300">
-                    <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" />
-                    <span>I will use this data <strong>strictly for educational intervention purposes</strong>.</span>
-                  </li>
-                  <li className="flex items-start gap-2 text-sm text-slate-600 dark:text-slate-300">
-                    <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" />
-                    <span>I will not share, download, or distribute this identifiable information to unauthorized parties.</span>
-                  </li>
-                </ul>
+                
+                <div className="space-y-4 mb-6">
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Your Name</label>
+                      <input type="text" value={name} onChange={e => setName(e.target.value)} className="w-full bg-slate-50 dark:bg-slate-800 rounded-lg px-3 py-2 text-sm border border-slate-200 dark:border-slate-700 outline-none" placeholder="John Doe" />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Your Designation</label>
+                      <input type="text" value={designation} onChange={e => setDesignation(e.target.value)} className="w-full bg-slate-50 dark:bg-slate-800 rounded-lg px-3 py-2 text-sm border border-slate-200 dark:border-slate-700 outline-none" placeholder="Teacher, PO, etc." />
+                    </div>
+                  </div>
 
-                <p className="text-xs text-slate-400 dark:text-slate-500 mb-6 italic">
-                  Note: This consent is required every 30 minutes to ensure continuous data security.
-                </p>
+                  <label className="flex items-start gap-3 cursor-pointer group">
+                    <input type="checkbox" checked={check1} onChange={e => setCheck1(e.target.checked)} className="mt-1 w-4 h-4 rounded text-emerald-600 focus:ring-emerald-500 border-gray-300" />
+                    <span className="text-sm text-slate-600 dark:text-slate-300 group-hover:text-slate-900 dark:group-hover:text-white transition-colors">
+                      I will use this data <strong>strictly for educational intervention purposes</strong>.
+                    </span>
+                  </label>
+                  <label className="flex items-start gap-3 cursor-pointer group">
+                    <input type="checkbox" checked={check2} onChange={e => setCheck2(e.target.checked)} className="mt-1 w-4 h-4 rounded text-emerald-600 focus:ring-emerald-500 border-gray-300" />
+                    <span className="text-sm text-slate-600 dark:text-slate-300 group-hover:text-slate-900 dark:group-hover:text-white transition-colors">
+                      I will not share, download, or distribute this identifiable information to unauthorized parties.
+                    </span>
+                  </label>
+                </div>
 
-                <div className="flex justify-end gap-3">
+                <div className="flex justify-end gap-3 pt-4 border-t border-slate-100 dark:border-slate-800 mt-4">
+                  <button 
+                    onClick={() => setShowPopup(false)}
+                    className="px-4 py-2 rounded-xl text-sm font-semibold text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                  >
+                    Cancel
+                  </button>
                   <button 
                     onClick={handleAgree}
-                    className="bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-2.5 rounded-xl text-sm font-semibold transition-all shadow-md shadow-emerald-500/20 active:scale-95 flex items-center gap-2"
+                    disabled={isSubmitting || !name || !designation || !check1 || !check2}
+                    className="bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-2.5 rounded-xl text-sm font-semibold transition-all shadow-md shadow-emerald-500/20 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
                   >
-                    I Agree & Continue
+                    {isSubmitting ? "Verifying..." : "I Agree & Continue"}
                   </button>
                 </div>
               </div>

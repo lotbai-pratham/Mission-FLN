@@ -38,7 +38,7 @@ export default function DataClient({
   total: number;
   pages: number;
   currentPage: number;
-  activeTab: "assessments" | "implementation";
+  activeTab: "assessments" | "implementation" | "access_logs";
 }) {
   const router = useRouter();
   const [items, setItems] = useState(initialItems);
@@ -119,7 +119,7 @@ export default function DataClient({
     });
   }
 
-  function switchTab(newTab: "assessments" | "implementation") {
+  function switchTab(newTab: "assessments" | "implementation" | "access_logs") {
     router.push(`?tab=${newTab}&page=1`);
   }
 
@@ -129,7 +129,7 @@ export default function DataClient({
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white dark:bg-slate-900 rounded-3xl p-6 border border-slate-100 dark:border-slate-800 shadow-sm">
         <div>
           <h1 className="text-2xl font-extrabold text-slate-900 dark:text-white">
-            {activeTab === "assessments" ? "Assessment Data" : "Implementation Logs"}
+            {activeTab === "assessments" ? "Assessment Data" : activeTab === "implementation" ? "Implementation Logs" : "Data Access Logs"}
           </h1>
           <p className="text-slate-500 text-sm mt-1">{total} records total</p>
         </div>
@@ -194,6 +194,17 @@ export default function DataClient({
           )}
         >
           Implementation Logs
+        </button>
+        <button
+          onClick={() => switchTab("access_logs")}
+          className={cn(
+            "px-6 py-2.5 rounded-xl text-sm font-bold transition-all",
+            activeTab === "access_logs" 
+              ? "bg-white dark:bg-slate-700 text-blue-600 dark:text-blue-400 shadow-sm" 
+              : "text-slate-500 hover:text-slate-700 dark:hover:text-slate-300"
+          )}
+        >
+          Data Access Logs
         </button>
       </div>
 
@@ -422,7 +433,7 @@ export default function DataClient({
               })}
             </tbody>
           </table>
-          ) : (
+          ) : activeTab === "implementation" ? (
             <table className="w-full text-left text-sm">
               <thead>
                 <tr className="bg-slate-50 dark:bg-slate-800/50 text-slate-500 text-xs font-semibold uppercase tracking-wider border-b border-slate-100 dark:border-slate-800">
@@ -467,7 +478,41 @@ export default function DataClient({
                 ))}
               </tbody>
             </table>
-          )}
+          ) : activeTab === "access_logs" ? (
+            <table className="w-full text-left text-sm">
+              <thead>
+                <tr className="bg-slate-50 dark:bg-slate-800/50 text-slate-500 text-xs font-semibold uppercase tracking-wider border-b border-slate-100 dark:border-slate-800">
+                  <th className="px-4 py-3">Timestamp</th>
+                  <th className="px-4 py-3">Name</th>
+                  <th className="px-4 py-3">Designation</th>
+                  <th className="px-4 py-3">Account Email</th>
+                  <th className="px-4 py-3">Role</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+                {items.length === 0 && (
+                  <tr>
+                    <td colSpan={5} className="px-6 py-12 text-center text-slate-400">No data access logs found.</td>
+                  </tr>
+                )}
+                {items.map((log: any) => (
+                  <tr key={log.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/20 transition-colors">
+                    <td className="px-4 py-3 text-slate-500 whitespace-nowrap">
+                      {new Date(log.accessedAt).toLocaleString("en-IN")}
+                    </td>
+                    <td className="px-4 py-3 font-medium text-slate-800 dark:text-slate-100">{log.name}</td>
+                    <td className="px-4 py-3 text-slate-600 dark:text-slate-300">{log.designation}</td>
+                    <td className="px-4 py-3 text-slate-500 text-xs">{log.user?.email || "Unknown"}</td>
+                    <td className="px-4 py-3">
+                      <span className="px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-slate-100 text-slate-600">
+                        {log.user?.role || "Unknown"}
+                      </span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          ) : null}
         </div>
 
         {/* Pagination */}

@@ -1,6 +1,7 @@
 export const dynamic = 'force-dynamic';
 import { getAssessmentsAdmin } from "@/app/actions";
 import { getImplementationLogsAdmin } from "@/app/actions/implementation";
+import { getDataAccessLogs } from "@/app/actions/consent";
 import DataClient from "./DataClient";
 import { auth } from "@/auth";
 import { hasRole } from "@/lib/checkAccess";
@@ -26,6 +27,9 @@ export default async function AdminDataPage({
   if (tab === "implementation") {
     const result = await getImplementationLogsAdmin(page, params.schoolId);
     data = { items: result.logs, total: result.total, pages: result.pages };
+  } else if (tab === "access_logs") {
+    const logs = await getDataAccessLogs();
+    data = { items: logs, total: logs.length, pages: 1 };
   } else {
     const { assessments, total, pages } = await getAssessmentsAdmin(
       page,
@@ -41,7 +45,7 @@ export default async function AdminDataPage({
       total={data.total}
       pages={data.pages}
       currentPage={page}
-      activeTab={tab as "assessments" | "implementation"}
+      activeTab={tab as "assessments" | "implementation" | "access_logs"}
     />
   );
 }

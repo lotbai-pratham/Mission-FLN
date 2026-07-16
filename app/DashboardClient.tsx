@@ -20,7 +20,7 @@ const TERMS = ['Baseline', 'Midline', 'Endline'];
 
 export default function DashboardClient({ initialStats, hierarchy }: { initialStats: any; hierarchy: any[] }) {
   const { t } = useLanguage();
-  const { hasConsent } = useDpdpConsent();
+  const { hasConsent, requestConsent } = useDpdpConsent();
   const [stats, setStats] = useState(initialStats);
   const [isPending, startTransition] = useTransition();
   const [divId, setDivId] = useState("");
@@ -742,8 +742,14 @@ export default function DashboardClient({ initialStats, hierarchy }: { initialSt
               </div>
 
               {/* Floating-style pill toggle for Best vs Needs Help */}
-              <div className="flex bg-slate-100 dark:bg-slate-800/80 p-1.5 rounded-2xl border border-slate-200/50 dark:border-slate-700/30 shadow-sm shrink-0">
-                <button
+              <div className="flex flex-col sm:flex-row gap-3 items-end sm:items-center">
+                {!hasConsent && (
+                  <button onClick={requestConsent} className="px-4 py-2 bg-emerald-100 hover:bg-emerald-200 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400 rounded-xl text-xs font-black transition-all flex items-center gap-2">
+                    Show Student Data
+                  </button>
+                )}
+                <div className="flex bg-slate-100 dark:bg-slate-800/80 p-1.5 rounded-2xl border border-slate-200/50 dark:border-slate-700/30 shadow-sm shrink-0">
+                  <button
                   onClick={() => setLeaderboardMode('best')}
                   className={`px-4 py-2 rounded-xl text-xs font-black transition-all flex items-center gap-2 ${
                     leaderboardMode === 'best'
@@ -766,6 +772,7 @@ export default function DashboardClient({ initialStats, hierarchy }: { initialSt
                   {t('Needs Help') || 'Needs Help'}
                 </button>
               </div>
+            </div>
             </div>
 
             {/* Grouped Class Leaderboards */}
@@ -1200,7 +1207,14 @@ export default function DashboardClient({ initialStats, hierarchy }: { initialSt
             </div>
             
             {/* Body */}
-            <div className="p-6 overflow-y-auto flex-1 bg-slate-50/50 dark:bg-slate-900/50">
+            <div className="p-6 overflow-y-auto flex-1 bg-slate-50/50 dark:bg-slate-900/50 relative">
+              {!hasConsent && schoolStudentsDetails.length > 0 && !isLoadingStudents && (
+                <div className="mb-4">
+                  <button onClick={requestConsent} className="px-4 py-2 bg-emerald-100 hover:bg-emerald-200 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400 rounded-xl text-xs font-black transition-all flex items-center gap-2">
+                    Show Student Data
+                  </button>
+                </div>
+              )}
               {isLoadingStudents ? (
                 <div className="flex flex-col items-center justify-center py-20 space-y-4">
                   <div className="w-12 h-12 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin"></div>
@@ -1218,7 +1232,7 @@ export default function DashboardClient({ initialStats, hierarchy }: { initialSt
                   {schoolStudentsDetails.map((s: any) => (
                     <div key={s.id} className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl p-4 shadow-sm hover:shadow-md transition-shadow">
                       <div className="flex justify-between items-start mb-3">
-                        <div className="font-bold text-slate-800 dark:text-slate-200">{s.name}</div>
+                        <div className="font-bold text-slate-800 dark:text-slate-200">{hasConsent ? s.name : 'Student •••'}</div>
                         <div className="text-xs font-bold px-2 py-1 bg-slate-100 dark:bg-slate-700 text-slate-500 rounded-md">Grade {s.classNum}</div>
                       </div>
                       <div className="flex justify-between items-center text-sm mt-2">

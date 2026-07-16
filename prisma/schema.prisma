@@ -178,6 +178,7 @@ model User {
   lastLoginAt   DateTime?
   accounts      Account[]
   sessions      Session[]
+  dataAccessLogs DataAccessLog[]
 
   @@index([role])
   @@index([schoolId])
@@ -219,4 +220,15 @@ model VerificationToken {
   expires    DateTime
 
   @@id([identifier, token])
+}
+
+model DataAccessLog {
+  id          String   @id @default(cuid())
+  userId      String?
+  user        User?    @relation(fields: [userId], references: [id])
+  name        String
+  designation String
+  accessedAt  DateTime @default(now())
+
+  @@index([userId])
 }

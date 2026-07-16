@@ -10,7 +10,7 @@ import WarliMotif from "@/components/warli/WarliMotif";
 
 export default function RosterClient({ hierarchy, initialData }: { hierarchy: any[], initialData: any }) {
   const { t } = useLanguage();
-  const { hasConsent } = useDpdpConsent();
+  const { hasConsent, requestConsent } = useDpdpConsent();
   const [data, setData] = useState(initialData);
   const [isPending, startTransition] = useTransition();
 
@@ -48,10 +48,17 @@ export default function RosterClient({ hierarchy, initialData }: { hierarchy: an
           </div>
         </div>
         
-        <div className="relative w-full sm:w-auto">
-           <Search className="w-5 h-5 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"/>
-            <input type="text" value={query} onChange={(e) => { setQuery(e.target.value); setPage(1); }} placeholder={t('Search student...') || "Search by name or UID..."} 
-                   className="w-full sm:w-72 pl-10 pr-4 py-3 rounded-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"/>
+        <div className="relative w-full sm:w-auto flex items-center gap-3">
+           {!hasConsent && (
+             <button onClick={requestConsent} className="shrink-0 px-4 py-3 bg-emerald-100 hover:bg-emerald-200 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400 rounded-full text-xs font-black transition-all flex items-center gap-2">
+               Show Student Data
+             </button>
+           )}
+           <div className="relative flex-1 sm:w-72">
+             <Search className="w-5 h-5 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"/>
+             <input type="text" value={query} onChange={(e) => { setQuery(e.target.value); setPage(1); }} placeholder={t('Search student...') || "Search by name or UID..."} 
+                    className="w-full pl-10 pr-4 py-3 rounded-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"/>
+           </div>
         </div>
       </div>
 
