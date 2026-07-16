@@ -7,7 +7,7 @@ import RobotAvatar from "./RobotAvatar";
 
 type Message = { role: "user" | "assistant"; content: string };
 
-function PrathamAvatar({ size = 40, className = "" }: { size?: number; className?: string }) {
+function AdhigamAvatar({ size = 40, className = "" }: { size?: number; className?: string }) {
   return (
     <RobotAvatar size={size} className={className} />
   );
@@ -51,14 +51,14 @@ function renderInline(text: string): React.ReactNode {
 }
 
 const SUGGESTED_QUESTIONS = [
-  { q: "What activity works best for a student who can't recognise letters yet?", icon: "📖" },
-  { q: "How do I teach matras to a child who mixes up ि and ी?", icon: "✍️" },
-  { q: "What does the research say about early reading in mother tongue?", icon: "🔬" },
-  { q: "How do I keep 40 students engaged at different levels?", icon: "🏫" },
-  { q: "What is the difference between Pedagogy and traditional teaching?", icon: "💡" },
-  { q: "Suggest a number sense activity for a child at Learning Numeracy Level 1", icon: "🔢" },
-  { q: "How do I involve parents in their child's reading practice at home?", icon: "👨‍👩‍👧" },
-  { q: "What does NEP 2020 say about foundational literacy?", icon: "📜" },
+  { q: "How do I navigate the dashboard to find student learning velocity?", icon: "🧭" },
+  { q: "How do I filter data to identify the lowest performing schools?", icon: "📊" },
+  { q: "What is the 90-minute pedagogy cycle for Foundational Literacy?", icon: "💡" },
+  { q: "Suggest an activity to transition a student from Word to Paragraph level.", icon: "📖" },
+  { q: "How do I keep 40 students engaged at different learning levels?", icon: "🏫" },
+  { q: "How can I handle a classroom where students frequently forget matras?", icon: "✍️" },
+  { q: "Help me create a 30-day action plan for a school stuck at Beginner level.", icon: "📅" },
+  { q: "What interventions can officials implement for schools falling behind in Numeracy?", icon: "📈" },
 ];
 
 export default function PrathamChat() {
@@ -122,11 +122,11 @@ export default function PrathamChat() {
           <div className="bg-gradient-to-r from-[#E8232A] to-[#c41e24] px-5 py-4 flex items-center gap-3 relative overflow-hidden shrink-0">
             <div className="absolute top-0 right-0 w-40 h-40 bg-orange-400/20 blur-3xl -mr-16 -mt-16" />
             <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center shadow-lg ring-2 ring-orange-200/40 shrink-0 relative z-10">
-              <PrathamAvatar size={44} />
+              <AdhigamAvatar size={44} />
             </div>
             <div className="relative z-10 flex-1 min-w-0">
-              <h4 className="text-white font-black text-base leading-tight">Hi, I'm Pratham!</h4>
-              <p className="text-red-100 text-[11px]">Your FLN &amp; education expert 🌟</p>
+              <h4 className="text-white font-black text-base leading-tight">Hi, I'm Adhigam AI!</h4>
+              <p className="text-red-100 text-[11px]">Your Platform &amp; Pedagogy expert 🌟</p>
             </div>
             <button onClick={() => setIsOpen(false)} className="text-red-200 hover:text-white transition-colors relative z-10 shrink-0">
               <X className="w-5 h-5" />
@@ -138,9 +138,9 @@ export default function PrathamChat() {
             {messages.length === 0 ? (
               <div className="space-y-4 py-2">
                 <div className="text-center space-y-2">
-                  <PrathamAvatar size={64} className="mx-auto drop-shadow-md" />
+                  <AdhigamAvatar size={64} className="mx-auto drop-shadow-md" />
                   <p className="text-slate-500 dark:text-slate-400 text-sm font-medium px-3">
-                    Ask me anything about FLN, early childhood education, Pedagogy, Learning, teaching strategies, or your mission data.
+                    Ask me about platform queries, pedagogy strategies, classroom problems, or help creating action plans for underperforming schools.
                   </p>
                 </div>
                 <div className="grid grid-cols-1 gap-1.5">
@@ -160,7 +160,7 @@ export default function PrathamChat() {
                   <div key={i} className={`flex gap-2 ${msg.role === "user" ? "justify-end" : "justify-start"}`}>
                     {msg.role === "assistant" && (
                       <div className="w-7 h-7 bg-white dark:bg-slate-800 rounded-lg flex items-center justify-center shadow-sm border border-slate-100 dark:border-slate-700 shrink-0 mt-0.5">
-                        <PrathamAvatar size={24} />
+                        <AdhigamAvatar size={24} />
                       </div>
                     )}
                     <div className={`max-w-[85%] ${msg.role === "user" ? "" : "flex-1 min-w-0"}`}>
@@ -179,7 +179,7 @@ export default function PrathamChat() {
                 {loading && (
                   <div className="flex gap-2 justify-start">
                     <div className="w-7 h-7 bg-white dark:bg-slate-800 rounded-lg flex items-center justify-center shadow-sm border border-slate-100 dark:border-slate-700 shrink-0">
-                      <PrathamAvatar size={24} />
+                      <AdhigamAvatar size={24} />
                     </div>
                     <div className="px-4 py-3 bg-slate-50 dark:bg-slate-800 rounded-2xl rounded-bl-sm border border-slate-100 dark:border-slate-700 flex items-center gap-1.5">
                       {[0, 1, 2].map(n => (
@@ -208,7 +208,7 @@ export default function PrathamChat() {
                 ref={inputRef}
                 type="text"
                 className="flex-1 bg-slate-50 dark:bg-slate-800 rounded-xl px-4 py-3 text-sm font-medium border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-[#E8232A]/30 focus:border-[#E8232A] outline-none transition-all"
-                placeholder="Ask anything about FLN or education..."
+                placeholder="Ask about platform, pedagogy, or action plans..."
                 value={input}
                 onChange={e => setInput(e.target.value)}
                 disabled={loading}
@@ -233,13 +233,13 @@ export default function PrathamChat() {
       >
         {!isOpen && (
           <span className="text-white text-sm font-black tracking-wide pl-1 hidden sm:inline">
-            Ask Pratham!
+            Ask Adhigam AI!
           </span>
         )}
         <div className={`w-11 h-11 rounded-xl flex items-center justify-center transition-all duration-300 ${
           isOpen ? "bg-white/10" : "bg-white shadow-lg"
         }`}>
-          {isOpen ? <X className="w-5 h-5 text-white" /> : <PrathamAvatar size={40} />}
+          {isOpen ? <X className="w-5 h-5 text-white" /> : <AdhigamAvatar size={40} />}
         </div>
       </button>
     </div>
