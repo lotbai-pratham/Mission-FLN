@@ -61,9 +61,11 @@ export default async function LandingPage() {
                 Tracking Engagement, Implementation, and Impact
               </h2>
 
-              <div className="text-sm font-bold uppercase tracking-wider text-amber-600 dark:text-amber-400 mb-8 flex items-center gap-2">
-                <span className="w-1.5 h-1.5 rounded-full bg-amber-500" />
-                A comprehensive platform for monitoring learning outcomes and educational interventions.
+              <div className="flex items-start gap-3 mb-8 max-w-xl">
+                <div className="w-1.5 h-1.5 rounded-full bg-amber-500 mt-2 shrink-0" />
+                <p className="text-base text-slate-600 dark:text-slate-400 font-medium leading-relaxed">
+                  Adhigam is an integrated ecosystem designed to drive and measure holistic development across tribal schools. Beyond simple tracking, it bridges the gap between field-level interventions and long-term impact by blending Foundational Literacy and Numeracy (FLN) data with dynamic gamified assessments to provide real-time, actionable insights.
+                </p>
               </div>
 
               <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
