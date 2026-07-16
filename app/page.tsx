@@ -58,13 +58,13 @@ export default async function LandingPage() {
                 <span className="bg-gradient-to-r from-orange-500 via-amber-500 to-amber-600 bg-clip-text text-transparent">Adhigam</span>
               </h1>
               <h2 className="text-2xl font-bold text-slate-700 dark:text-slate-300 mb-6">
-                Tracking Engagement, Implementation, and Impact
+                Tracking Engagement and Implementation
               </h2>
 
               <div className="flex items-start gap-3 mb-8 max-w-xl">
                 <div className="w-1.5 h-1.5 rounded-full bg-amber-500 mt-2 shrink-0" />
                 <p className="text-base text-slate-600 dark:text-slate-400 font-medium leading-relaxed">
-                  Adhigam is an integrated ecosystem designed to drive and measure holistic development across tribal schools. Beyond simple tracking, it bridges the gap between field-level interventions and long-term impact by blending Foundational Literacy and Numeracy (FLN) data with dynamic gamified assessments to provide real-time, actionable insights.
+                  Adhigam is an integrated ecosystem designed to drive engagement across tribal schools. It bridges the gap between field-level interventions and classroom activities by providing dynamic gamified assessments and tracking implementation in real-time.
                 </p>
               </div>
 
@@ -170,7 +170,7 @@ export default async function LandingPage() {
                 <div>
                   <h4 className="text-xl font-bold text-slate-900 dark:text-white mb-2">Administration & POs</h4>
                   <p className="text-slate-500 dark:text-slate-400 text-sm leading-relaxed">
-                    Monitor implementation fidelity, analyze cross-sectional engagement metrics, and evaluate the overall impact of various interventions on student learning trajectories.
+                    Monitor implementation fidelity, analyze cross-sectional engagement metrics, and track ecosystem engagement across various interventions.
                   </p>
                 </div>
               </div>
@@ -198,13 +198,13 @@ export default async function LandingPage() {
             
             <div>
               <div className="inline-block p-2 px-4 rounded-full bg-orange-50 dark:bg-orange-950/20 text-orange-600 dark:text-orange-400 font-bold text-xs mb-6 uppercase tracking-wider">
-                Comprehensive Interventions
+                Comprehensive Tracking
               </div>
               <h3 className="text-3xl font-black text-slate-900 dark:text-white sm:text-4xl mb-6">
-                Designed to Drive Real Classroom Impact
+                Designed to Track Real Classroom Engagement
               </h3>
               <p className="text-slate-600 dark:text-slate-400 mb-8 leading-relaxed font-medium">
-                Adhigam combines implementation tracking with granular diagnostic dashboards. It provides educators and administrators with the tools they need to track student progress across multiple interventions, from foundational literacy to advanced competencies.
+                Adhigam combines implementation tracking with granular diagnostic dashboards. It provides educators and administrators with the tools they need to track student engagement across multiple classroom activities.
               </p>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
@@ -294,7 +294,7 @@ export default async function LandingPage() {
             <div>
               <h3 className="text-4xl font-black mb-8 leading-tight">
                 Holistic Student <br />
-                <span className="bg-gradient-to-r from-orange-400 to-amber-300 bg-clip-text text-transparent">Development & Growth</span>
+                <span className="bg-gradient-to-r from-orange-400 to-amber-300 bg-clip-text text-transparent">Engagement & Implementation</span>
               </h3>
               <div className="space-y-8">
                 <div className="flex gap-5">
@@ -302,8 +302,8 @@ export default async function LandingPage() {
                     <Lightbulb className="w-6 h-6 text-orange-400" />
                   </div>
                   <div>
-                    <h4 className="text-lg font-bold mb-1">Impact-Driven Pedagogy</h4>
-                    <p className="text-sm text-slate-300 leading-relaxed">Evaluating educational programs based on true learning impact, not just attendance, to ensure every child thrives.</p>
+                    <h4 className="text-lg font-bold mb-1">Engagement-Driven Pedagogy</h4>
+                    <p className="text-sm text-slate-300 leading-relaxed">Evaluating educational programs based on true learning engagement, ensuring every child participates and thrives.</p>
                   </div>
                 </div>
                 
@@ -409,7 +409,7 @@ export default async function LandingPage() {
                   <LayoutDashboard className="w-6 h-6" />
                 </div>
                 <h4 className="text-xl font-bold text-slate-900 dark:text-white">Admin Dashboard</h4>
-                <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">Analyze state and division level implementation fidelity, verify intervention impact, and monitor data access and ecosystem engagement metrics.</p>
+                <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">Analyze state and division level implementation fidelity and monitor data access and ecosystem engagement metrics.</p>
               </div>
               <Link href="/dashboard" className="inline-flex items-center gap-2 px-5 py-3 bg-slate-900 dark:bg-slate-800 hover:bg-slate-800 dark:hover:bg-slate-700 text-white dark:text-slate-200 font-bold rounded-xl text-xs border border-slate-700 transition-all w-full justify-center">
                 Go to Dashboard <ArrowRight className="w-4 h-4" />

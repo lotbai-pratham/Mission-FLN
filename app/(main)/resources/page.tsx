@@ -23,6 +23,7 @@ import {
   GROUP_COLORS
 } from '@/lib/session_content';
 import { logImplementationSession } from '@/app/actions/implementation';
+import { getSchools } from '@/app/actions';
 import { hasRole } from '@/lib/checkAccess';
 import ScrollReveal from "@/components/ScrollReveal";
 import { DoodleStar, DoodleSquiggle, DoodleSun, DoodleLoop, DoodleTribalFigure, DoodleCloud, DoodleWarliTree, DoodleWarliAnimal, DoodleWarliHut, DoodleWarliSun } from "@/components/Doodles";
@@ -188,7 +189,7 @@ function MissionControl() {
 
   useEffect(() => {
     if (isAdmin) {
-      import("@/app/actions").then(a => a.getSchools().then(setAllSchools));
+      getSchools().then(setAllSchools).catch(console.error);
     }
   }, [isAdmin]);
 
@@ -551,7 +552,7 @@ function MissionControl() {
                   setIsTimerRunning(true);
                   if (sessionPlan) setSelectedDetail({ groupIdx: activeGroupIdx, actIdx: 0 });
                 }}
-                disabled={!classNum || (classNum >= 3 && !subject) || !teacherName || !schoolName || !sessionPlan || (needsGroupPick && selectedGroupIdx === null)}
+                disabled={!classNum || (classNum >= 3 && !subject) || !teacherName || !schoolId || !sessionPlan || (needsGroupPick && selectedGroupIdx === null)}
                 className="w-full py-4 sm:py-6 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-black rounded-2xl sm:rounded-3xl text-lg sm:text-2xl shadow-2xl flex items-center justify-center gap-3 sm:gap-4 group transition-all transform hover:scale-105 disabled:opacity-40 disabled:scale-100">
                 {needsGroupPick && selectedGroupIdx === null ? 'SELECT A GROUP ABOVE' : 'INITIATE SESSION'} <Play className="w-6 h-6 sm:w-8 sm:h-8 fill-current group-hover:scale-110 transition-transform" />
               </button>
