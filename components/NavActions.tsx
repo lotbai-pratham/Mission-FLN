@@ -27,9 +27,9 @@ export default function NavActions({ session, userRole, handleSignOut }: NavActi
   }, []);
 
   const languages = [
-    { code: 'en', label: 'English', flag: '🇬🇧' },
-    { code: 'hi', label: 'हिन्दी', flag: '🇮🇳' },
-    { code: 'mr', label: 'मराठी', flag: '🇮🇳' }
+    { code: 'en', label: 'English', symbol: 'A' },
+    { code: 'hi', label: 'हिन्दी', symbol: 'अ' },
+    { code: 'mr', label: 'मराठी', symbol: 'अ' }
   ] as const;
 
   const currentLang = languages.find(l => l.code === language) || languages[0];
@@ -43,8 +43,8 @@ export default function NavActions({ session, userRole, handleSignOut }: NavActi
           className="flex items-center gap-1.5 px-3 py-2 bg-slate-50 hover:bg-slate-100 text-slate-700 dark:bg-slate-800 dark:hover:bg-slate-700 dark:text-slate-200 rounded-xl text-sm font-semibold border border-slate-100 dark:border-slate-800 transition-all cursor-pointer"
         >
           <Globe className="w-4 h-4 text-amber-500" />
-          <span className="hidden xs:inline">{currentLang.flag} {currentLang.label}</span>
-          <span className="xs:hidden">{currentLang.flag}</span>
+          <span className="hidden xs:inline">{currentLang.label}</span>
+          <span className="xs:hidden font-bold">{currentLang.symbol}</span>
         </button>
 
         {dropdownOpen && (
@@ -56,11 +56,11 @@ export default function NavActions({ session, userRole, handleSignOut }: NavActi
                   setLanguage(lang.code);
                   setDropdownOpen(false);
                 }}
-                className={`w-full px-4 py-2.5 text-left text-sm hover:bg-slate-50 dark:hover:bg-slate-800/50 flex items-center gap-2 transition-colors cursor-pointer ${
+                className={`w-full px-4 py-2.5 text-left text-sm hover:bg-slate-50 dark:hover:bg-slate-800/50 flex items-center gap-3 transition-colors cursor-pointer ${
                   language === lang.code ? 'text-amber-600 font-bold bg-amber-50/50 dark:bg-amber-950/20' : 'text-slate-700 dark:text-slate-300'
                 }`}
               >
-                <span>{lang.flag}</span>
+                <span className="font-black text-slate-400 dark:text-slate-500">{lang.symbol}</span>
                 <span>{lang.label}</span>
               </button>
             ))}
