@@ -24,8 +24,12 @@ import WarliBorder from "@/components/warli/WarliBorder";
 import ScrollReveal from "@/components/ScrollReveal";
 import { DoodleStar, DoodleSquiggle, DoodleSun, DoodleLoop, DoodleTribalFigure } from "@/components/Doodles";
 import SignInBox from "@/components/SignInBox";
+import { auth } from "@/auth";
 
-export default function LandingPage() {
+export default async function LandingPage() {
+  const session = await auth();
+  const isLoggedIn = !!session?.user;
+
   return (
     <div className="flex flex-col min-h-screen -mt-4 bg-slate-50 dark:bg-slate-900/10">
       
@@ -72,9 +76,26 @@ export default function LandingPage() {
               </div>
             </div>
 
-            {/* Right side login box */}
+            {/* Right side login box or image */}
             <div className="lg:col-span-5 relative mt-8 lg:mt-0">
-              <SignInBox />
+              {isLoggedIn ? (
+                <>
+                  <div className="absolute -inset-2 rounded-[40px] bg-gradient-to-tr from-orange-500 to-amber-500 opacity-20 blur-xl animate-pulse pointer-events-none" />
+                  <div className="relative rounded-[36px] overflow-hidden border-4 border-white dark:border-slate-900 shadow-2xl shadow-slate-200/50 dark:shadow-none bg-slate-100">
+                    <img 
+                      src="/ashramshala-students.png" 
+                      alt="Students learning activity" 
+                      className="w-full h-auto aspect-[4/3] object-cover hover:scale-105 transition-all duration-500"
+                    />
+                    <div className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent p-6 text-white text-xs font-semibold">
+                      <span className="bg-amber-500 text-[10px] px-2.5 py-0.5 rounded-full uppercase mr-2 tracking-wider">Active Learning</span>
+                      Students smiling, learning, and performing activities in the classroom.
+                    </div>
+                  </div>
+                </>
+              ) : (
+                <SignInBox />
+              )}
             </div>
 
           </div>
