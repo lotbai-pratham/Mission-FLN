@@ -189,7 +189,7 @@ export async function getDashboardStats(filters: { divisionId?: string, projectO
     };
   }
 
-  const [totalStudents, totalAssessments, totalSchools, totalArenaBattles, totalSingleGames, literacies, numeracies, allAssessments] = await Promise.all([
+  const [totalStudents, totalAssessments, totalSchools, totalArenaBattles, totalSingleGames, literacies, numeracies] = await Promise.all([
     prisma.student.count({ where: studentCountWhere }),
     prisma.assessment.count({ where: assessmentWhere }),
     prisma.school.count({ where: schoolWhere }),
@@ -217,55 +217,81 @@ export async function getDashboardStats(filters: { divisionId?: string, projectO
       where: assessmentWhere,
       _count: { studentId: true }
     }),
-    // Fetch all assessments with student class for class-wise breakdown
-    prisma.assessment.findMany({
-      where: assessmentWhere,
-      select: {
-        term: true,
-        academicYear: true,
-        literacyLevel: true,
-        numeracyLevel: true,
-        addition: true,
-        subtraction: true,
-        division: true,
-        student: { select: { class: true } }
-      }
-    }),
+    // The operations and class-wise breakdowns are now handled by parallel aggregate queries below
   ]);
 
-  // Operations by term
-  const operations = allAssessments.reduce((acc: any, curr: any) => {
-    if (!acc[curr.term]) acc[curr.term] = { addition: 0, subtraction: 0, division: 0, total: 0 };
-    acc[curr.term].total += 1;
-    const hasAdd = curr.addition || curr.numeracyLevel >= 3;
-    const hasSub = curr.subtraction || curr.numeracyLevel >= 4;
-    const hasDiv = curr.division || curr.numeracyLevel >= 6;
-    if (hasAdd) acc[curr.term].addition += 1;
-    if (hasSub) acc[curr.term].subtraction += 1;
-    if (hasDiv) acc[curr.term].division += 1;
-    return acc;
-  }, {});
-
-  // --- CLASS-WISE LEVEL BREAKDOWN ---
-  // Structure: classLit[classNum][term][level] = count
+  // --- OPERATIONS BY TERM ---
+  const operations: any = {};
   const TERMS = ['Baseline', 'Midline', 'Endline'];
-  const classLit: Record<number, Record<string, Record<number, number>>> = {};
-  const classNum: Record<number, Record<string, Record<number, number>>> = {};
+  const classes = [1, 2, 3, 4];
+  
+  const opPromises = TERMS.flatMap(term => {
+    const termWhere = { ...assessmentWhere, term };
+    return [
+      prisma.assessment.count({ where: termWhere }),
+      prisma.assessment.count({ where: { ...termWhere, OR: [{ addition: true }, { numeracyLevel: { gte: 3 } }] } }),
+      prisma.assessment.count({ where: { ...termWhere, OR: [{ subtraction: true }, { numeracyLevel: { gte: 4 } }] } }),
+      prisma.assessment.count({ where: { ...termWhere, OR: [{ division: true }, { numeracyLevel: { gte: 6 } }] } })
+    ];
+  });
 
-  for (const a of allAssessments) {
-    const cls = (a as any).student.class as number;
-    if (!classLit[cls]) classLit[cls] = {};
-    if (!classLit[cls][a.term]) classLit[cls][a.term] = {};
-    classLit[cls][a.term][a.literacyLevel] = (classLit[cls][a.term][a.literacyLevel] || 0) + 1;
+  const classGroupPromises = classes.flatMap(cls => [
+    prisma.assessment.groupBy({
+      by: ['term', 'literacyLevel'],
+      where: { ...assessmentWhere, student: { ...whereFilter, class: cls } },
+      _count: { studentId: true }
+    }),
+    prisma.assessment.groupBy({
+      by: ['term', 'numeracyLevel'],
+      where: { ...assessmentWhere, student: { ...whereFilter, class: cls } },
+      _count: { studentId: true }
+    })
+  ]);
 
-    if (!classNum[cls]) classNum[cls] = {};
-    if (!classNum[cls][a.term]) classNum[cls][a.term] = {};
-    const mappedNumLvl = a.numeracyLevel === 6 ? 5 : a.numeracyLevel === 5 ? 4 : a.numeracyLevel;
-    classNum[cls][a.term][mappedNumLvl] = (classNum[cls][a.term][mappedNumLvl] || 0) + 1;
+  const restResults = await Promise.all([...opPromises, ...classGroupPromises]);
+  const opResults = restResults.slice(0, 12);
+  const classGroupResults = restResults.slice(12);
+
+  for (let i = 0; i < TERMS.length; i++) {
+    operations[TERMS[i]] = {
+      total: opResults[i * 4] as number,
+      addition: opResults[i * 4 + 1] as number,
+      subtraction: opResults[i * 4 + 2] as number,
+      division: opResults[i * 4 + 3] as number,
+    };
   }
 
-  // Convert to percentage + count per (class, term, level)
-  // Output: { [cls]: { [term]: { total, levels: { [level]: { count, pct } } } } }
+  const classLit: Record<number, Record<string, Record<number, number>>> = {};
+  const classNum: Record<number, Record<string, Record<number, number>>> = {};
+  const overallLit: Record<string, Record<number, number>> = {};
+  const overallNum: Record<string, Record<number, number>> = {};
+
+  for (let i = 0; i < classes.length; i++) {
+    const cls = classes[i];
+    classLit[cls] = {};
+    classNum[cls] = {};
+    
+    const litGroups = classGroupResults[i * 2] as any[];
+    const numGroups = classGroupResults[i * 2 + 1] as any[];
+
+    for (const g of litGroups) {
+      if (!classLit[cls][g.term]) classLit[cls][g.term] = {};
+      classLit[cls][g.term][g.literacyLevel] = g._count.studentId;
+      
+      if (!overallLit[g.term]) overallLit[g.term] = {};
+      overallLit[g.term][g.literacyLevel] = (overallLit[g.term][g.literacyLevel] || 0) + g._count.studentId;
+    }
+
+    for (const g of numGroups) {
+      if (!classNum[cls][g.term]) classNum[cls][g.term] = {};
+      const mappedNumLvl = g.numeracyLevel === 6 ? 5 : g.numeracyLevel === 5 ? 4 : g.numeracyLevel;
+      classNum[cls][g.term][mappedNumLvl] = (classNum[cls][g.term][mappedNumLvl] || 0) + g._count.studentId;
+      
+      if (!overallNum[g.term]) overallNum[g.term] = {};
+      overallNum[g.term][mappedNumLvl] = (overallNum[g.term][mappedNumLvl] || 0) + g._count.studentId;
+    }
+  }
+
   function computePcts(raw: Record<number, Record<string, Record<number, number>>>) {
     const result: Record<number, Record<string, { total: number; levels: Record<number, { count: number; pct: number }> }>> = {};
     for (const cls of Object.keys(raw).map(Number)) {
@@ -285,17 +311,6 @@ export async function getDashboardStats(filters: { divisionId?: string, projectO
       }
     }
     return result;
-  }
-
-  // Also compute overall (all classes) breakdown
-  const overallLit: Record<string, Record<number, number>> = {};
-  const overallNum: Record<string, Record<number, number>> = {};
-  for (const a of allAssessments) {
-    if (!overallLit[a.term]) overallLit[a.term] = {};
-    overallLit[a.term][a.literacyLevel] = (overallLit[a.term][a.literacyLevel] || 0) + 1;
-    if (!overallNum[a.term]) overallNum[a.term] = {};
-    const mappedNumLvl = a.numeracyLevel === 6 ? 5 : a.numeracyLevel === 5 ? 4 : a.numeracyLevel;
-    overallNum[a.term][mappedNumLvl] = (overallNum[a.term][mappedNumLvl] || 0) + 1;
   }
 
   function computeOverallPcts(raw: Record<string, Record<number, number>>) {
