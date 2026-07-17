@@ -51,13 +51,14 @@ export async function getStudentsList(query: string = "", page: number = 1, divI
     ];
   }
 
-  // Merge explicit filters if provided and user is admin
   if (Object.keys(scope).length === 0) {
     if (schoolId) whereFilter.schoolId = schoolId;
     else if (poId) whereFilter.school = { projectOfficeId: poId };
     else if (divId) whereFilter.school = { projectOffice: { divisionId: divId } };
   } else {
-    Object.assign(whereFilter, scope);
+    if (scope.schoolId) whereFilter.schoolId = scope.schoolId;
+    else if (scope.projectOfficeId) whereFilter.school = { projectOfficeId: scope.projectOfficeId };
+    else if (scope.divisionId) whereFilter.school = { projectOffice: { divisionId: scope.divisionId } };
   }
 
   if (classNum && classNum !== 'all') {
@@ -197,7 +198,9 @@ export async function getDashboardStats(filters: { divisionId?: string, projectO
     else if (filters.projectOfficeId) schoolWhere.projectOfficeId = filters.projectOfficeId;
     else if (filters.divisionId) schoolWhere.projectOffice = { divisionId: filters.divisionId };
   } else {
-    Object.assign(schoolWhere, scope);
+    if (scope.schoolId) schoolWhere.id = scope.schoolId;
+    else if (scope.projectOfficeId) schoolWhere.projectOfficeId = scope.projectOfficeId;
+    else if (scope.divisionId) schoolWhere.projectOffice = { divisionId: scope.divisionId };
   }
 
   const studentCountWhere: any = { ...whereFilter };

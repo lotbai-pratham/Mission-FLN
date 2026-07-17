@@ -20,15 +20,15 @@ export function hasRole(session: Session | null, ...required: Role[]): boolean {
  */
 export function getScopeFilters(session: Session | null) {
   const role = session?.user?.role as Role | undefined;
-  const id = (session?.user as any)?.id;
-  if (!role) return {};
+  const user = session?.user as any;
+  if (!role || !user) return {};
   switch (role) {
     case "division":
-      return { divisionId: id };
+      return { divisionId: user.divisionId };
     case "project_office":
-      return { projectOfficeId: id };
+      return { projectOfficeId: user.projectOfficeId };
     case "user": // school‑level user
-      return { schoolId: id };
+      return { schoolId: user.schoolId };
     case "admin":
     case "state":
       return {};
