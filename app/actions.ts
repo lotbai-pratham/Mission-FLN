@@ -1280,57 +1280,60 @@ export async function getInterventionPlan(students: any[]) {
 }
 
 export async function getPORankings(divisionId?: string, classNum?: number | 'all') {
-  const where: any = {};
-  if (divisionId) where.divisionId = divisionId;
+  const pos = await prisma.projectOffice.findMany({
+    where: divisionId ? { divisionId } : undefined,
+    select: { id: true, name: true }
+  });
 
   const studentWhere: any = {};
   if (classNum && classNum !== 'all') {
     studentWhere.class = Number(classNum);
   }
 
-  const pos = await prisma.projectOffice.findMany({
-    where,
-    include: {
-      schools: {
-        include: {
-          students: {
-            where: studentWhere,
-            include: {
-              assessments: {
-                where: { term: 'Endline' },
-                orderBy: { date: 'desc' },
-                take: 1
-              }
-            }
-          }
-        }
+  const endlineStudents = await prisma.student.findMany({
+    where: {
+      ...studentWhere,
+      school: { projectOfficeId: { in: pos.map(p => p.id) } }
+    },
+    select: {
+      school: { select: { projectOfficeId: true } },
+      assessments: {
+        where: { term: 'Endline' },
+        orderBy: { date: 'desc' },
+        take: 1,
+        select: { literacyLevel: true, numeracyLevel: true, subtraction: true }
       }
     }
   });
 
+  const poStats: Record<string, { total: number; story: number; sub: number }> = {};
+  for (const p of pos) { poStats[p.id] = { total: 0, story: 0, sub: 0 }; }
+
+  for (const s of endlineStudents) {
+    const a = s.assessments[0];
+    if (a) {
+      const pId = s.school.projectOfficeId;
+      if (poStats[pId]) {
+        poStats[pId].total++;
+        if (a.literacyLevel === 4) poStats[pId].story++;
+        if (a.subtraction === true || a.numeracyLevel >= 4) poStats[pId].sub++;
+      }
+    }
+  }
+
   const rankings = pos.map(po => {
-    let totalAssessed = 0;
-    let storyReaders = 0;
-    let subtractionMasters = 0;
-
-    po.schools.forEach(school => {
-      school.students.forEach(student => {
-        const latest = student.assessments[0];
-        if (latest) {
-          totalAssessed++;
-          if (latest.literacyLevel === 4) storyReaders++;
-          if (latest.subtraction === true || latest.numeracyLevel >= 4) subtractionMasters++;
-        }
-      });
-    });
-
+    const stats = poStats[po.id];
+    const totalAssessed = stats.total;
+    const storyPct = totalAssessed > 0 ? Math.round((stats.story / totalAssessed) * 100) : 0;
+    const subtractionPct = totalAssessed > 0 ? Math.round((stats.sub / totalAssessed) * 100) : 0;
+    
     return {
       id: po.id,
       name: po.name,
       totalAssessed,
-      storyPct: totalAssessed > 0 ? Math.round((storyReaders / totalAssessed) * 100) : 0,
-      subtractionPct: totalAssessed > 0 ? Math.round((subtractionMasters / totalAssessed) * 100) : 0,
-      score: totalAssessed > 0 ? Math.round(((storyReaders + subtractionMasters) / (totalAssessed * 2)) * 100) : 0
+      storyPct,
+      subtractionPct,
+      score: totalAssessed > 0 ? Math.round(((stats.story + stats.sub) / (totalAssessed * 2)) * 100) : 0
     };
   });
 
@@ -1404,123 +1407,75 @@ export async function getStudentLeaderboard(filters: {
   const userPOId = (session?.user as any)?.projectOfficeId;
   const userDivId = (session?.user as any)?.divisionId;
 
-  const whereFilter: any = {};
+  const where: any = {};
   if (userSchoolId) {
-    whereFilter.schoolId = userSchoolId;
+    where.schoolId = userSchoolId;
   } else if (userPOId) {
-    whereFilter.school = { projectOfficeId: userPOId };
+    where.school = { projectOfficeId: userPOId };
   } else if (userDivId) {
-    whereFilter.school = { projectOffice: { divisionId: userDivId } };
+    where.school = { projectOffice: { divisionId: userDivId } };
   } else {
-    // Admin/State filters
     if (filters.schoolId) {
-      whereFilter.schoolId = filters.schoolId;
+      where.schoolId = filters.schoolId;
     } else if (filters.projectOfficeId) {
-      whereFilter.school = { projectOfficeId: filters.projectOfficeId };
+      where.school = { projectOfficeId: filters.projectOfficeId };
     } else if (filters.divisionId) {
-      whereFilter.school = { projectOffice: { divisionId: filters.divisionId } };
+      where.school = { projectOffice: { divisionId: filters.divisionId } };
     }
   }
-
+  
   if (filters.classNum && filters.classNum !== 'all') {
-    whereFilter.class = Number(filters.classNum);
+    where.class = Number(filters.classNum);
   }
 
   const students = await prisma.student.findMany({
-    where: whereFilter,
-    include: {
-      school: {
-        include: {
-          projectOffice: {
-            include: { division: true }
-          }
-        }
-      },
+    where,
+    select: {
+      id: true,
+      name: true,
+      class: true,
+      school: { select: { name: true, projectOffice: { select: { name: true, division: { select: { name: true } } } } } },
+      gamesPlayed: true,
+      uid: true,
       assessments: {
         orderBy: { date: 'desc' },
-        take: 1
+        take: 1,
+        select: { literacyLevel: true, numeracyLevel: true, division: true }
       },
       _count: {
-        select: {
-          battlesWon: true,
-          singleGames: true,
-          battlesAsP1: true,
-          battlesAsP2: true
-        }
+        select: { singleGames: true, battlesWon: true, battlesAsP1: true, battlesAsP2: true }
       }
     }
   });
 
-  const leaderboard = students.map(student => {
-    const latestAssessment = student.assessments[0];
-    const litLevel = latestAssessment?.literacyLevel ?? 0;
-    const numLevel = latestAssessment?.numeracyLevel ?? 0;
-    
-    // FLN Level score: dynamically calculated out of 200 (100 for literacy, 100 for numeracy) based on target schemas
+  const calculated = students.map((s: any) => {
+    const a = s.assessments[0];
+    const litLevel = a?.literacyLevel ?? 0;
+    const numLevel = a?.numeracyLevel ?? 0;
+
     let litMarks = 0;
-    if (student.class === 1) {
-      // Class 1 target: Paragraph (Level 3)
-      if (litLevel >= 3) {
-        litMarks = 100;
-      } else {
-        litMarks = Math.round((litLevel / 3) * 100);
-      }
-    } else {
-      // Class 2+ target: Story (Level 4)
-      if (litLevel >= 4) {
-        litMarks = 100;
-      } else {
-        litMarks = Math.round((litLevel / 4) * 100);
-      }
-    }
+    if (s.class === 1) litMarks = litLevel >= 3 ? 100 : Math.round((litLevel / 3) * 100);
+    else litMarks = litLevel >= 4 ? 100 : Math.round((litLevel / 4) * 100);
 
     let numMarks = 0;
-    if (student.class === 1) {
-      // Class 1 target: Addition (Level 3 in DB)
-      if (numLevel >= 3) {
-        numMarks = 100;
-      } else {
-        numMarks = Math.round((numLevel / 3) * 100);
-      }
-    } else if (student.class === 2) {
-      // Class 2 target: Subtraction (Level 4 in DB)
-      if (numLevel >= 4) {
-        numMarks = 100;
-      } else {
-        numMarks = Math.round((numLevel / 4) * 100);
-      }
-    } else {
-      // Class 3+ target: Division (Level 6 in DB)
-      if (numLevel >= 6 || latestAssessment?.division === true) {
-        numMarks = 100;
-      } else {
-        numMarks = Math.round((numLevel / 6) * 100);
-      }
-    }
+    if (s.class === 1) numMarks = numLevel >= 3 ? 100 : Math.round((numLevel / 3) * 100);
+    else if (s.class === 2) numMarks = numLevel >= 4 ? 100 : Math.round((numLevel / 4) * 100);
+    else numMarks = (numLevel >= 6 || a?.division === true) ? 100 : Math.round((numLevel / 6) * 100);
 
     const flnScore = litMarks + numMarks;
-    
-    const battlesCount = student._count.battlesAsP1 + student._count.battlesAsP2;
-    const singleGamesCount = student._count.singleGames;
-    const totalGamesPlayed = student.gamesPlayed || (battlesCount + singleGamesCount);
-    
-    // Engagement score: 5 points per game played
+    const totalGamesPlayed = s.gamesPlayed || (s._count.battlesAsP1 + s._count.battlesAsP2 + s._count.singleGames);
     const engagementScore = totalGamesPlayed * 5;
-    
-    // Victory bonus: 10 points per battle won
-    const victories = student._count.battlesWon;
+    const victories = s._count.battlesWon;
     const victoryBonus = victories * 10;
     
-    const totalScore = flnScore + engagementScore + victoryBonus;
-
     return {
-      id: student.id,
-      uid: student.uid,
-      name: student.name,
-      classNum: student.class,
-      schoolName: student.school.name,
-      poName: student.school.projectOffice.name,
-      divName: student.school.projectOffice.division.name,
+      id: s.id,
+      uid: s.uid,
+      name: s.name,
+      classNum: s.class,
+      schoolName: s.school.name,
+      poName: s.school.projectOffice.name,
+      divName: s.school.projectOffice.division.name,
       litLevel,
       numLevel,
       gamesPlayed: totalGamesPlayed,
@@ -1528,18 +1483,17 @@ export async function getStudentLeaderboard(filters: {
       flnScore,
       engagementScore,
       victoryBonus,
-      totalScore
+      totalScore: flnScore + engagementScore + victoryBonus
     };
   });
 
   const isHelp = filters.sortBy === 'help';
-  // Sort by totalScore desc (or asc if sortBy is 'help'), then by name asc
-  return leaderboard
+  return calculated
     .sort((a, b) => isHelp
       ? a.totalScore - b.totalScore || a.name.localeCompare(b.name)
       : b.totalScore - a.totalScore || a.name.localeCompare(b.name)
     )
-    .slice(0, 100); // return top 100
+    .slice(0, 100);
 }
 
 const getEditDistance = (a: string, b: string): number => {
@@ -1595,46 +1549,56 @@ export async function getSchoolRankings(divisionId?: string, projectOfficeId?: s
   if (divisionId) where.projectOffice = { divisionId };
   if (projectOfficeId) where.projectOfficeId = projectOfficeId;
 
+  const schools = await prisma.school.findMany({
+    where,
+    select: {
+      id: true,
+      name: true,
+      udiseCode: true,
+      projectOffice: { select: { name: true, division: { select: { name: true } } } }
+    }
+  });
+
   const studentWhere: any = {};
   if (classNum && classNum !== 'all') {
     studentWhere.class = Number(classNum);
   }
 
-  const schools = await prisma.school.findMany({
-    where,
-    include: {
-      projectOffice: {
-        include: {
-          division: true
-        }
-      },
-      students: {
-        where: studentWhere,
-        include: {
-          assessments: {
-            orderBy: { date: 'desc' },
-            take: 1
-          }
-        }
+  const endlineStudents = await prisma.student.findMany({
+    where: {
+      ...studentWhere,
+      schoolId: { in: schools.map(s => s.id) }
+    },
+    select: {
+      schoolId: true,
+      assessments: {
+        where: { term: 'Endline' },
+        orderBy: { date: 'desc' },
+        take: 1,
+        select: { literacyLevel: true, numeracyLevel: true, subtraction: true }
       }
     }
   });
 
-  const rankings = schools.map(school => {
-    let totalAssessed = 0;
-    let storyReaders = 0;
-    let subtractionMasters = 0;
+  const schoolStats: Record<string, { total: number; story: number; sub: number }> = {};
+  for (const s of schools) { schoolStats[s.id] = { total: 0, story: 0, sub: 0 }; }
 
-    const uniqueStudents = deduplicateStudents(school.students);
-
-    uniqueStudents.forEach(student => {
-      const latest = student.assessments[0];
-      if (latest) {
-        totalAssessed++;
-        if (latest.literacyLevel === 4) storyReaders++;
-        if (latest.subtraction === true || latest.numeracyLevel >= 4) subtractionMasters++;
+  for (const s of endlineStudents) {
+    const a = s.assessments[0];
+    if (a) {
+      if (schoolStats[s.schoolId]) {
+        schoolStats[s.schoolId].total++;
+        if (a.literacyLevel === 4) schoolStats[s.schoolId].story++;
+        if (a.subtraction === true || a.numeracyLevel >= 4) schoolStats[s.schoolId].sub++;
       }
-    });
+    }
+  }
+
+  const rankings = schools.map(school => {
+    const stats = schoolStats[school.id];
+    const totalAssessed = stats.total;
+    const storyPct = totalAssessed > 0 ? Math.round((stats.story / totalAssessed) * 100) : 0;
+    const subtractionPct = totalAssessed > 0 ? Math.round((stats.sub / totalAssessed) * 100) : 0;
 
     return {
       id: school.id,
@@ -1643,9 +1607,9 @@ export async function getSchoolRankings(divisionId?: string, projectOfficeId?: s
       poName: school.projectOffice.name,
       divName: school.projectOffice.division.name,
       totalAssessed,
-      storyPct: totalAssessed > 0 ? Math.round((storyReaders / totalAssessed) * 100) : 0,
-      subtractionPct: totalAssessed > 0 ? Math.round((subtractionMasters / totalAssessed) * 100) : 0,
-      score: totalAssessed > 0 ? Math.round(((storyReaders + subtractionMasters) / (totalAssessed * 2)) * 100) : 0
+      storyPct,
+      subtractionPct,
+      score: totalAssessed > 0 ? Math.round(((stats.story + stats.sub) / (totalAssessed * 2)) * 100) : 0
     };
   });
 
