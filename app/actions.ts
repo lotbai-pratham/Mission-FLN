@@ -130,13 +130,35 @@ export async function getStudentProfile(studentId: string) {
 // -- ANALYTICS --
 
 export async function getHierarchy() {
+  const session = await auth();
+  const scope = getScopeFilters(session);
+
+  let whereFilter: any = {};
+  if (scope.divisionId) whereFilter.id = scope.divisionId;
+
+  let poWhereFilter: any = {};
+  if (scope.projectOfficeId) poWhereFilter.id = scope.projectOfficeId;
+
+  let schoolWhereFilter: any = {};
+  if (scope.schoolId) schoolWhereFilter.id = scope.schoolId;
+
   return await prisma.division.findMany({
+    where: whereFilter,
     orderBy: { name: 'asc' },
-    include: {
+    select: {
+      id: true,
+      name: true,
       projectOffices: {
+        where: poWhereFilter,
         orderBy: { name: 'asc' },
-        include: {
-          schools: { orderBy: { name: 'asc' } }
+        select: {
+          id: true,
+          name: true,
+          schools: {
+            where: schoolWhereFilter,
+            orderBy: { name: 'asc' },
+            select: { id: true, name: true }
+          }
         }
       }
     }
