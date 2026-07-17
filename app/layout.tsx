@@ -27,6 +27,7 @@ export const viewport = {
 };
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://adhigam.org"),
   title: "Adhigam – Pratham Learning",
   description: "Field assessment tool for Foundational Literacy & Numeracy",
   manifest: "/manifest.webmanifest",
