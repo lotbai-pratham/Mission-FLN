@@ -34,7 +34,7 @@ export default async function PublicDashboardsPage() {
               Ecosystem <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-500 to-orange-500">Dashboards</span>
             </h1>
             <p className="text-lg text-slate-600 dark:text-slate-400 font-medium leading-relaxed">
-              Explore our transparent public dashboards tracking FLN assessments, camp progress, and school profiling across the intervention areas.
+              These dashboards are to track the progress of माझी शाळा, माझा स्वाभिमान program being implemented in 500 Ashramschools of Tribal Development Department, Maharashtra for the holistic development of Ashramschools.
             </p>
           </div>
         </div>
