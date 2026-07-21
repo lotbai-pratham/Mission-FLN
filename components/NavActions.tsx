@@ -86,12 +86,12 @@ export default function NavActions({ session, userRole, handleSignOut }: NavActi
               <Image
                 src={session.user.image}
                 alt={session.user.name ?? 'User'}
-                width={32}
-                height={32}
-                className="rounded-full ring-2 ring-amber-100 object-cover w-8 h-8"
+                width={48}
+                height={48}
+                className="rounded-full ring-2 ring-amber-100 object-cover w-12 h-12"
               />
             ) : (
-              <div className="w-8 h-8 rounded-full bg-amber-100 flex items-center justify-center text-amber-600 font-bold text-sm">
+              <div className="w-12 h-12 rounded-full bg-amber-100 flex items-center justify-center text-amber-600 font-bold text-lg">
                 {session.user.name?.[0] ?? 'U'}
               </div>
             )}
