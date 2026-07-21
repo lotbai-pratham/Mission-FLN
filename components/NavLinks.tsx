@@ -1,7 +1,7 @@
 "use client";
 import Link from 'next/link';
 import { useLanguage } from '@/context/LanguageContext';
-import { GraduationCap, ShieldCheck, Users, Database, KeyRound } from 'lucide-react';
+import { GraduationCap, ShieldCheck, Users, Database, KeyRound, LayoutDashboard } from 'lucide-react';
 
 interface TooltipProps {
   title: string;
@@ -100,6 +100,17 @@ export default function NavLinks({ userRole }: { userRole: string }) {
             <NavTooltip 
               title="Audit Logins" 
               description="Security audit log detailing account activities, timestamps, and login histories." 
+            />
+          </div>
+
+          {/* Public Dashboards */}
+          <div className="group relative py-2">
+            <Link href="/admin/dashboards" className="flex items-center gap-1 text-gray-400 hover:text-amber-600 text-sm font-medium transition-all">
+              <LayoutDashboard className="w-4 h-4" /> Dashboards
+            </Link>
+            <NavTooltip 
+              title="Public Dashboards" 
+              description="Manage the external dashboards and links shown on the public dashboard portal." 
             />
           </div>
         </>

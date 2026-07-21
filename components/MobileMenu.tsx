@@ -5,7 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   Menu, X, BarChart3, GraduationCap, Users, Database,
-  ShieldCheck, KeyRound, ClipboardPlus, LogOut, LogIn,
+  ShieldCheck, KeyRound, ClipboardPlus, LogOut, LogIn, LayoutDashboard
 } from "lucide-react";
 import { signOut } from "next-auth/react";
 import { cn } from "@/lib/utils";
@@ -30,6 +30,7 @@ const ADMIN_LINKS = [
   { href: "/admin/users", label: "Users", icon: Users },
   { href: "/admin/data", label: "Data", icon: Database },
   { href: "/admin/logins", label: "Logins", icon: KeyRound },
+  { href: "/admin/dashboards", label: "Dashboards", icon: LayoutDashboard },
 ];
 
 export default function MobileMenu({ userRole, userName, userImage, isLoggedIn }: Props) {
