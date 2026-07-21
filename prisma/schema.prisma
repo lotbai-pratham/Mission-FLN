@@ -233,3 +233,15 @@ model DataAccessLog {
 
   @@index([userId])
 }
+
+model ExternalDashboard {
+  id          String   @id @default(cuid())
+  title       String
+  description String?
+  imageUrl    String?
+  linkUrl     String
+  order       Int      @default(0)
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
