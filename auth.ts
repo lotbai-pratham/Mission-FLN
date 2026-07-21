@@ -56,6 +56,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         token.projectOfficeId = u.projectOfficeId ?? null;
         token.divisionId = u.divisionId ?? null;
         token.id = u.id;
+        token.picture = u.image ?? null;
         return token;
       }
       // On every subsequent request, refresh role+schoolId from DB
@@ -63,10 +64,11 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       if (token.id) {
         const fresh = await (prisma as any).user.findUnique({
           where: { id: token.id as string },
-          select: { role: true, schoolId: true, projectOfficeId: true, divisionId: true, school: { select: { name: true } } },
+          select: { role: true, image: true, schoolId: true, projectOfficeId: true, divisionId: true, school: { select: { name: true } } },
         });
         if (fresh) {
           token.role = fresh.role;
+          token.picture = fresh.image ?? null;
           token.schoolId = fresh.schoolId ?? null;
           token.projectOfficeId = fresh.projectOfficeId ?? null;
           token.divisionId = fresh.divisionId ?? null;
@@ -77,6 +79,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     },
     async session({ session, token }) {
       session.user.role = token.role as string;
+      session.user.image = (token.picture as string) ?? null;
       session.user.schoolId = (token.schoolId as string) ?? null;
       session.user.projectOfficeId = (token.projectOfficeId as string) ?? null;
       session.user.divisionId = (token.divisionId as string) ?? null;
