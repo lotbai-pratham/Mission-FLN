@@ -25,6 +25,23 @@ export default function DashboardAdminClient({ initialDashboards }: { initialDas
     setEditingId(null);
   };
 
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Check size (e.g. limit to 2MB)
+    if (file.size > 2 * 1024 * 1024) {
+      alert("Image is too large. Please select an image under 2MB.");
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setFormData({ ...formData, imageUrl: reader.result as string });
+    };
+    reader.readAsDataURL(file);
+  };
+
   const openModal = (dashboard?: ExternalDashboard) => {
     if (dashboard) {
       setEditingId(dashboard.id);
@@ -165,8 +182,22 @@ export default function DashboardAdminClient({ initialDashboards }: { initialDas
                 <input required type="url" value={formData.linkUrl} onChange={e => setFormData({...formData, linkUrl: e.target.value})} className="w-full p-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950" placeholder="https://" />
               </div>
               <div>
-                <label className="block text-sm font-medium mb-1">Image URL</label>
-                <input type="url" value={formData.imageUrl} onChange={e => setFormData({...formData, imageUrl: e.target.value})} className="w-full p-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950" placeholder="https://" />
+                <label className="block text-sm font-medium mb-1">Thumbnail Image</label>
+                <div className="flex items-center gap-4">
+                  {formData.imageUrl && (
+                    <img src={formData.imageUrl} alt="Preview" className="w-16 h-16 rounded-xl object-cover border border-slate-200 dark:border-slate-800" />
+                  )}
+                  <div className="flex-1 space-y-2">
+                    <input 
+                      type="file" 
+                      accept="image/*"
+                      onChange={handleImageUpload}
+                      className="w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-semibold file:bg-amber-50 file:text-amber-600 hover:file:bg-amber-100 cursor-pointer"
+                    />
+                    <div className="text-xs text-slate-400 font-medium px-1">OR paste an Image URL:</div>
+                    <input type="url" value={formData.imageUrl} onChange={e => setFormData({...formData, imageUrl: e.target.value})} className="w-full p-2 text-sm rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950" placeholder="https://" />
+                  </div>
+                </div>
               </div>
               <div className="flex gap-4">
                 <div className="flex-1">
