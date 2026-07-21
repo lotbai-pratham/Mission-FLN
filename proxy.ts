@@ -8,7 +8,7 @@ export function proxy(request: NextRequest) {
   const publicPaths = ['/', '/signin']
   
   // Path prefixes that are public (games, resources, apis)
-  const publicPrefixes = ['/play', '/arcade', '/resources', '/api', '/pedagogy']
+  const publicPrefixes = ['/play', '/arcade', '/resources', '/api', '/pedagogy', '/dashboards']
   
   const isPublicPath = publicPaths.includes(pathname)
   const isPublicPrefix = publicPrefixes.some(prefix => pathname.startsWith(prefix))
