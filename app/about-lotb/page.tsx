@@ -48,17 +48,24 @@ export default async function AboutLOTB() {
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-100 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400 text-sm font-bold mb-6">
                 <BookOpen className="w-4 h-4" /> Learn Out of The Box
               </div>
-              <h1 className="text-4xl md:text-5xl font-black text-slate-900 dark:text-white mb-6 leading-tight">
+              <h1 className="text-4xl md:text-5xl font-black text-slate-900 dark:text-white mb-4 leading-tight">
                 Empowering Education Since 2012
               </h1>
-              <p className="text-lg text-slate-600 dark:text-slate-400 leading-relaxed font-medium">
-                Learn out of the Box (LOTB) is a vertical program of Pratham Education Foundation. We implement multiple projects with various donors and geographies, contributing to the field of education for over a decade.
-              </p>
+              <h3 className="text-xl font-bold text-amber-600 dark:text-amber-500 mb-6">
+                Global Impact. Local Execution.
+              </h3>
+              <div className="space-y-4 text-lg text-slate-600 dark:text-slate-400 leading-relaxed font-medium">
+                <p>
+                  Learn out of the Box (LOTB) is the flagship vertical program of the Pratham Education Foundation. Operating at the intersection of technology and grassroots education, LOTB has been instrumental in bridging the digital divide and driving capacity-building initiatives for over a decade.
+                </p>
+                <p>
+                  We act as the parent body for multiple high-impact projects across diverse geographies. By collaborating closely with state governments, donors, and educational institutions, LOTB ensures that our scalable, competency-based interventions are tailored to meet the specific needs of local communities and educators.
+                </p>
+              </div>
             </div>
             <div className="relative rounded-[32px] overflow-hidden border-4 border-white dark:border-slate-800 shadow-xl">
-              <div className="aspect-[4/3] bg-gradient-to-br from-orange-400 to-amber-600 flex items-center justify-center p-8 relative">
-                <img src="/digital-classroom.png" alt="LOTB Impact" className="absolute inset-0 w-full h-full object-cover mix-blend-overlay opacity-50" />
-                <h2 className="relative z-10 text-4xl font-black text-white text-center drop-shadow-md">Global Impact.<br/>Local Execution.</h2>
+              <div className="aspect-[4/3] bg-slate-100 dark:bg-slate-800 flex items-center justify-center relative">
+                <img src="/digital-classroom.png" alt="LOTB Impact" className="absolute inset-0 w-full h-full object-cover" />
               </div>
             </div>
           </div>
