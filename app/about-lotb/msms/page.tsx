@@ -6,7 +6,7 @@ import { getSettings } from "@/app/actions";
 import { LotbConfig, DEFAULT_LOTB_CONFIG } from "@/lib/lotb_config";
 import { cn } from '@/lib/utils';
 
-export const dynamic = "force-dynamic";
+export const revalidate = 60; // Revalidate every 60 seconds (Incremental Static Regeneration)
 
 export default async function MSMSPage() {
   const settings = await getSettings();

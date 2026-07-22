@@ -5,7 +5,7 @@ import WarliBorder from '@/components/warli/WarliBorder';
 import { getSettings } from "@/app/actions";
 import { LotbConfig, DEFAULT_LOTB_CONFIG } from "@/lib/lotb_config";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 60; // Revalidate every 60 seconds (Incremental Static Regeneration)
 
 export default async function AboutLOTB() {
   const settings = await getSettings();
