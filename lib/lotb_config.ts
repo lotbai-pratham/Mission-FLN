@@ -62,7 +62,7 @@ export const DEFAULT_LOTB_CONFIG: LotbConfig = {
       description: "Foundational Literacy and Numeracy (FLN) engagement for Grades 1-4. Teachers are trained to track classroom outcomes, conduct diagnostic assessments, and deliver tailored pedagogy using the Mission Mode approach.",
       imageUrl: "",
       status: "active",
-      interventionUrl: "/intervention"
+      interventionUrl: "/pedagogy"
     },
     {
       id: "t5-7",
