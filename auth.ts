@@ -48,6 +48,10 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   ],
   callbacks: {
     async jwt({ token, user, trigger }) {
+      // Force remove picture to prevent 494 errors from base64 DB images
+      delete token.picture;
+      delete (token as any).image;
+      
       // On first sign-in, populate token from user object
       if (user) {
         const u = user as any;
@@ -56,20 +60,15 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         token.projectOfficeId = u.projectOfficeId ?? null;
         token.divisionId = u.divisionId ?? null;
         token.id = u.id;
-        
-        if (u.image?.startsWith('data:image')) {
-          token.picture = `/api/avatar/${u.id}`;
-        } else {
-          token.picture = u.image ?? null;
-        }
         return token;
       }
+      
       // On every subsequent request, refresh role+schoolId from DB
       // so that admin grants and school assignments take effect immediately
       if (token.id) {
         const fresh = await (prisma as any).user.findUnique({
           where: { id: token.id as string },
-          select: { role: true, image: true, schoolId: true, projectOfficeId: true, divisionId: true, school: { select: { name: true } } },
+          select: { role: true, schoolId: true, projectOfficeId: true, divisionId: true, school: { select: { name: true } } },
         });
         if (fresh) {
           token.role = fresh.role;
@@ -77,19 +76,13 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           token.projectOfficeId = fresh.projectOfficeId ?? null;
           token.divisionId = fresh.divisionId ?? null;
           token.schoolName = (fresh as any).school?.name ?? null;
-          
-          if (fresh.image?.startsWith('data:image')) {
-            token.picture = `/api/avatar/${token.id}`;
-          } else {
-            token.picture = fresh.image ?? null;
-          }
         }
       }
       return token;
     },
     async session({ session, token }) {
       session.user.role = token.role as string;
-      session.user.image = (token.picture as string) ?? null;
+      session.user.image = null;
       session.user.schoolId = (token.schoolId as string) ?? null;
       session.user.projectOfficeId = (token.projectOfficeId as string) ?? null;
       session.user.divisionId = (token.divisionId as string) ?? null;
