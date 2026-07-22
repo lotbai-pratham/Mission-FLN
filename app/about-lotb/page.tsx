@@ -1,27 +1,27 @@
-import React from 'react';
+"use client";
+
+import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { ArrowLeft, BookOpen, Globe, Laptop, Target, ArrowRight, ExternalLink } from 'lucide-react';
 import WarliBorder from '@/components/warli/WarliBorder';
-import { getSettings } from "@/app/actions";
 import { LotbConfig, DEFAULT_LOTB_CONFIG } from "@/lib/lotb_config";
 
-export const revalidate = 60; // Revalidate every 60 seconds (Incremental Static Regeneration)
+export default function AboutLOTB() {
+  const [config, setConfig] = useState<LotbConfig>(DEFAULT_LOTB_CONFIG);
+  const [loading, setLoading] = useState(true);
 
-export default async function AboutLOTB() {
-  const settings = await getSettings();
-  
-  let config: LotbConfig = DEFAULT_LOTB_CONFIG;
-  if (settings.lotb_config) {
-    try {
-      config = JSON.parse(settings.lotb_config);
-      config = {
-        projects: config.projects || DEFAULT_LOTB_CONFIG.projects,
-        msmsCohorts: config.msmsCohorts || DEFAULT_LOTB_CONFIG.msmsCohorts
-      };
-    } catch (e) {
-      console.error("Failed to parse lotb_config", e);
-    }
-  }
+  useEffect(() => {
+    fetch('/api/lotb')
+      .then(res => res.json())
+      .then(data => {
+        setConfig(data);
+        setLoading(false);
+      })
+      .catch(err => {
+        console.error("Failed to fetch LOTB config", err);
+        setLoading(false);
+      });
+  }, []);
 
   // Map IDs to specific icons
   const iconMap: Record<string, React.ElementType> = {
