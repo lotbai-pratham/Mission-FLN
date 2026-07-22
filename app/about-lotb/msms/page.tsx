@@ -59,17 +59,9 @@ export default async function MSMSPage() {
             </div>
           </div>
           
-          <p className="text-lg text-slate-600 dark:text-slate-400 leading-relaxed max-w-3xl mb-8">
+          <p className="text-lg text-slate-600 dark:text-slate-400 leading-relaxed max-w-3xl">
             In collaboration with the Tribal Development Department of Maharashtra, MSMS is a holistic school development program reaching 500 Ashramschools. Our targeted capacity-building cohorts ensure specialized, high-impact engagement at every level of the ecosystem.
           </p>
-
-          <Link
-            href="/dashboards"
-            className="inline-flex items-center justify-center px-8 py-4 text-sm font-bold text-slate-700 dark:text-slate-200 bg-white dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 hover:border-amber-500 dark:hover:border-amber-500 rounded-2xl transition-all hover:-translate-y-1 shadow-sm"
-          >
-            View Public Dashboards 
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-layout-dashboard ml-2 text-amber-500"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg>
-          </Link>
         </div>
       </section>
 
