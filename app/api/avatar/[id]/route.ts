@@ -16,17 +16,21 @@ export async function GET(
     }
 
     // If it's a base64 image, extract the data and serve it directly
-    const match = user.image.match(/^data:([a-zA-Z0-9]+\/[a-zA-Z0-9-.+]+);base64,(.+)$/);
-    if (match) {
-      const mimeType = match[1];
-      const buffer = Buffer.from(match[2], 'base64');
-      
-      return new NextResponse(buffer, {
-        headers: {
-          'Content-Type': mimeType,
-          'Cache-Control': 'public, max-age=86400, stale-while-revalidate=43200',
-        },
-      });
+    if (user.image.startsWith('data:')) {
+      try {
+        const [header, base64Data] = user.image.split(',');
+        const mimeType = header.split(':')[1].split(';')[0];
+        const buffer = Buffer.from(base64Data, 'base64');
+        
+        return new NextResponse(buffer, {
+          headers: {
+            'Content-Type': mimeType,
+            'Cache-Control': 'public, max-age=86400, stale-while-revalidate=43200',
+          },
+        });
+      } catch (e) {
+        return new NextResponse("Invalid image format", { status: 400 });
+      }
     }
 
     // If it's a standard URL, just redirect to it
