@@ -83,11 +83,10 @@ export default function NavActions({ session, userRole, handleSignOut }: NavActi
         <div className="hidden sm:flex items-center gap-2 pl-2 border-l border-slate-200 dark:border-slate-700">
           <Link href="/profile" className="cursor-pointer hover:opacity-80 transition-opacity" title="My Profile">
             {session.user.image ? (
-              <Image
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
                 src={session.user.image}
                 alt={session.user.name ?? 'User'}
-                width={48}
-                height={48}
                 className="rounded-full ring-2 ring-amber-100 object-cover w-12 h-12"
               />
             ) : (
