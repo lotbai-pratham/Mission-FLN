@@ -29,8 +29,8 @@ export const DEFAULT_LOTB_CONFIG: LotbConfig = {
   projects: [
     {
       id: "hp_futures",
-      title: "H.P Futures",
-      description: "In collaboration with UNESCO and Govt. of Himachal Pradesh. Works on CBE, Greening education in schools & Value through Sports. Spread across 8 districts of Himachal covering 3 regions of the Himalayas.",
+      title: "H.P FUTURES",
+      description: "A transformative initiative by the Govt. of Himachal Pradesh and UNESCO, aimed at strengthening the quality and relevance of education across the state. Focuses on Competency-Based Education (CBE), Greening Education, and Values Education through Sports in alignment with NEP 2020.",
       imageUrl: "",
       links: [
         { label: "Read Project Report", url: "#" },
@@ -40,14 +40,14 @@ export const DEFAULT_LOTB_CONFIG: LotbConfig = {
     {
       id: "msms",
       title: "माझी शाळा, माझा स्वाभिमान",
-      description: "In collaboration with Tribal development department Maharashtra - Works with 500 Ashramschools. Is a holistic school development program working directly with Teachers, Superintendents and Students.",
+      description: "A holistic 3-year Ashramschool development program in collaboration with the Tribal Development Department of Maharashtra. Engaging over 498 Ashramschools across Nashik, Thane, Nagpur, and Amravati with targeted capacity-building for teachers and superintendents.",
       imageUrl: "",
       links: []
     },
     {
       id: "gurushala",
       title: "Gurushala",
-      description: "Innovating education and skilling bridging the digital divide through digital content provided through the platform, capacity building courses for teachers and students. Also has a Centre for AI in Education established in partnership with DIET Varanasi.",
+      description: "An initiative of Vodafone Idea Foundation implemented by Pratham, dedicated to strengthening teaching and learning through technology-enabled education. Provides free, high-quality professional development, digital resources, and assessments.",
       imageUrl: "",
       links: [
         { label: "Visit Gurushala Platform", url: "#" },
@@ -58,31 +58,31 @@ export const DEFAULT_LOTB_CONFIG: LotbConfig = {
   msmsCohorts: [
     {
       id: "t1-4",
-      title: "Teachers (1-4)",
-      description: "Foundational Literacy and Numeracy (FLN) engagement. Teachers are trained to track classroom outcomes, conduct diagnostic assessments, and deliver tailored pedagogy using the Mission Mode approach.",
+      title: "इयत्ता 1–4: पायाभूत साक्षरता व संख्याज्ञान",
+      description: "Foundational Literacy and Numeracy (FLN) engagement for Grades 1-4. Teachers are trained to track classroom outcomes, conduct diagnostic assessments, and deliver tailored pedagogy using the Mission Mode approach.",
       imageUrl: "",
       status: "active",
       interventionUrl: "/intervention"
     },
     {
       id: "t5-7",
-      title: "Teachers (5-7)",
-      description: "Subject-specific pedagogical strategies focusing on transitioning students from foundational skills to advanced comprehension and applied problem-solving.",
+      title: "इयत्ता 5-7: कॅच-अप कोर्स",
+      description: "Catch-up course implementation and subject-specific pedagogical strategies focusing on transitioning students from foundational skills to advanced comprehension and applied problem-solving.",
       imageUrl: "",
       status: "inactive",
       interventionUrl: "#"
     },
     {
       id: "t8-12",
-      title: "Teachers (8-12)",
-      description: "Higher secondary capacity building focused on exam readiness, digital literacy, and preparing tribal students for competitive career trajectories.",
+      title: "इयत्ता 8–12: NEP-संलग्न पाठ-योजना",
+      description: "Activity-based, NEP-aligned lesson plans for higher secondary capacity building focused on exam readiness, digital literacy, and preparing tribal students for competitive career trajectories.",
       imageUrl: "",
       status: "inactive",
       interventionUrl: "#"
     },
     {
       id: "english",
-      title: "English Teachers",
+      title: "इंग्रजी शिक्षक",
       description: "Specialized language acquisition programs focusing on spoken English, phonics, and communication skills to bridge the regional language gap.",
       imageUrl: "",
       status: "inactive",
@@ -90,8 +90,8 @@ export const DEFAULT_LOTB_CONFIG: LotbConfig = {
     },
     {
       id: "supt",
-      title: "Superintendents",
-      description: "Administrative leadership training focused on data-driven management, school hygiene, ecosystem tracking, and fostering a positive residential environment.",
+      title: "अधीक्षक क्षमता-बांधणी",
+      description: "Administrative leadership training for superintendents focused on data-driven management, school hygiene, ecosystem tracking, and fostering a positive residential environment.",
       imageUrl: "",
       status: "inactive",
       interventionUrl: "#"
