@@ -27,7 +27,8 @@ export default function DashboardClient({ initialStats, hierarchy }: { initialSt
   const [poId, setPoId] = useState("");
   const [schoolId, setSchoolId] = useState("");
   const [term, setTerm] = useState("");
-  const [activeTab, setActiveTab] = useState<'overview' | 'trends' | 'ranking' | 'school-ranking' | 'students' | 'implementation'>('trends');
+  const [activeTab, setActiveTab] = useState<'overview' | 'trends' | 'rankings' | 'implementation'>('trends');
+  const [activeRankingSubTab, setActiveRankingSubTab] = useState<'students' | 'school' | 'po'>('students');
   useEffect(() => {
   // Clear struggling list whenever the Project Office changes to avoid stale critical alerts
   setStruggling([]);
@@ -132,7 +133,7 @@ export default function DashboardClient({ initialStats, hierarchy }: { initialSt
   // For the overview term charts — returns % normalised within each term
   const [selectedYear, setSelectedYear] = useState("2025-2026");
 
-  const availableYears = Array.from(new Set((stats.allAssessments || []).map((a: any) => String(a.academicYear)))).filter(Boolean).sort().reverse() as string[];
+  const availableYears = Array.from(new Set((stats.literacies || []).map((a: any) => String(a.academicYear)))).filter(Boolean).sort().reverse() as string[];
   if (availableYears.length === 0) availableYears.push("2025-2026");
 
   useEffect(() => {
@@ -173,19 +174,23 @@ export default function DashboardClient({ initialStats, hierarchy }: { initialSt
   };
 
 
-  const formatOpsData = (allAssessments: any[], asPct: boolean, targetYear: string) => {
-    const filtered = (allAssessments || []).filter((a: any) => a.academicYear === targetYear);
+  const formatOpsData = (operationsArray: any[], asPct: boolean, targetYear: string) => {
+    if (!operationsArray || !Array.isArray(operationsArray)) return [];
+    
+    // Filter by academic year
+    const filteredOps = operationsArray.filter((o: any) => o.academicYear === targetYear);
+    
+    // Create map for easy lookup: { 'Baseline': { total: 100, addition: 20 }, 'Midline': ... }
+    const opsByTerm: any = {};
+    filteredOps.forEach((o: any) => {
+      opsByTerm[o.term] = o;
+    });
+
     return ['addition', 'subtraction', 'division'].map(op => {
       const entry: any = { name: op[0].toUpperCase() + op.slice(1) };
       TERMS.forEach(t => {
-        const termAssessments = filtered.filter((a: any) => a.term === t);
-        const total = termAssessments.length;
-        const count = termAssessments.filter((curr: any) => {
-          if (op === 'addition') return curr.addition || curr.numeracyLevel >= 3;
-          if (op === 'subtraction') return curr.subtraction || curr.numeracyLevel >= 4;
-          if (op === 'division') return curr.division || curr.numeracyLevel >= 6;
-          return false;
-        }).length;
+        const total = opsByTerm[t]?.total || 0;
+        const count = opsByTerm[t]?.[op] || 0;
         entry[t] = asPct ? (total > 0 ? Math.round((count / total) * 100) : 0) : count;
       });
       return entry;
@@ -422,9 +427,7 @@ export default function DashboardClient({ initialStats, hierarchy }: { initialSt
         {([
           ['trends', t('Target Tracking') || 'Level Trends', TrendingUp],
           ['overview', t('Growth from years') || 'Growth from years', LayoutDashboard],
-          ['ranking', t('P.O. Rank') || 'P.O. Rank', Trophy],
-          ['school-ranking', t('School Rank') || 'School Rank', School],
-          ['students', t('Student Leaderboard') || 'Student Leaderboard', Medal],
+          ['rankings', t('Rankings') || 'Rankings', Trophy],
           ['implementation', t('Implementation Tracker') || 'Implementation Tracker', ClipboardList],
         ] as const).map(([id, label, Icon]) => (
           <button key={id} onClick={() => setActiveTab(id as any)}
@@ -522,14 +525,31 @@ export default function DashboardClient({ initialStats, hierarchy }: { initialSt
           <BarCard title={`Literacy Levels by Term (${showPct ? '%' : '#'})`} icon="📚" data={formatTermData(stats.literacies, 'lit', showPct, selectedYear)} percentage={showPct} />
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <BarCard title={`Numeracy Levels by Term (${showPct ? '%' : '#'})`} icon="🔢" data={formatTermData(stats.numeracies, 'num', showPct, selectedYear)} percentage={showPct} />
-            <BarCard title={`Operations Mastery by Term (${showPct ? '%' : '#'})`} icon="➕" data={formatOpsData(stats.allAssessments, showPct, selectedYear)} percentage={showPct} />
+            <BarCard title={`Operations Mastery by Term (${showPct ? '%' : '#'})`} icon="➕" data={formatOpsData(stats.operations, showPct, selectedYear)} percentage={showPct} />
           </div>
         </div>
       )}
 
-      {/* TAB: RANKING */}
-      {activeTab === 'ranking' && (
-        <div className={`space-y-6 animate-in slide-in-from-bottom-4 duration-500 ${isPending ? 'opacity-50' : ''}`}>
+      {/* TAB: RANKINGS (Grouped) */}
+      {activeTab === 'rankings' && (
+        <div className={`space-y-6 transition-opacity animate-in slide-in-from-bottom-4 duration-500 ${isPending ? 'opacity-50' : ''}`}>
+          
+          {/* Rankings Sub-navigation */}
+          <div className="flex p-1 bg-slate-100 dark:bg-slate-800/80 rounded-2xl w-fit border border-slate-200 dark:border-slate-700 shadow-sm gap-1 mx-auto lg:mx-0">
+            {([
+              ['students', t('Student Leaderboard') || 'Student Leaderboard', Medal],
+              ['school', t('School Rank') || 'School Rank', School],
+              ['po', t('P.O. Rank') || 'P.O. Rank', Trophy],
+            ] as const).map(([id, label, Icon]) => (
+              <button key={id} onClick={() => setActiveRankingSubTab(id as any)}
+                className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold transition-all ${activeRankingSubTab === id ? 'bg-white dark:bg-slate-700 text-blue-600 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}>
+                <Icon className="w-4 h-4" /> {label}
+              </button>
+            ))}
+          </div>
+
+          {/* Sub-tab: P.O. Rank */}
+          {activeRankingSubTab === 'po' && (
            <div className="bg-white dark:bg-slate-900 rounded-[48px] p-10 border border-slate-100 dark:border-slate-800 shadow-2xl">
               <div className="flex items-center justify-between mb-10">
                  <div>
@@ -611,12 +631,10 @@ export default function DashboardClient({ initialStats, hierarchy }: { initialSt
                  )}
                </div>
             </div>
-         </div>
-      )}
+          )}
 
-      {/* TAB: SCHOOL RANKING */}
-      {activeTab === 'school-ranking' && (
-        <div className={`space-y-6 animate-in slide-in-from-bottom-4 duration-500 ${isPending ? 'opacity-50' : ''}`}>
+          {/* Sub-tab: SCHOOL RANKING */}
+          {activeRankingSubTab === 'school' && (
            <div className="bg-white dark:bg-slate-900 rounded-[48px] p-10 border border-slate-100 dark:border-slate-800 shadow-2xl">
               <div className="flex items-center justify-between mb-10">
                  <div>
@@ -714,12 +732,10 @@ export default function DashboardClient({ initialStats, hierarchy }: { initialSt
                  )}
               </div>
            </div>
-        </div>
-      )}
+         )}
 
-      {/* TAB: STUDENT LEADERBOARD */}
-      {activeTab === 'students' && (
-        <div className={`space-y-6 animate-in slide-in-from-bottom-4 duration-500 ${isPending ? 'opacity-50' : ''}`}>
+          {/* Sub-tab: STUDENT LEADERBOARD */}
+          {activeRankingSubTab === 'students' && (
           <div className="bg-white dark:bg-slate-900 rounded-[48px] p-10 border border-slate-100 dark:border-slate-800 shadow-2xl">
             <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-10">
               <div>
@@ -970,8 +986,7 @@ export default function DashboardClient({ initialStats, hierarchy }: { initialSt
               </div>
             )}
           </div>
-        </div>
-      )}
+        )}
 
       {/* TAB: IMPLEMENTATION TRACKER */}
       {activeTab === 'implementation' && (

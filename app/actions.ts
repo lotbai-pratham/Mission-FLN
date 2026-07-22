@@ -245,21 +245,33 @@ export async function getDashboardStats(filters: { divisionId?: string, projectO
     // The operations and class-wise breakdowns are now handled by parallel aggregate queries below
   ]);
 
-  // --- OPERATIONS BY TERM ---
-  const operations: any = {};
+  // --- OPERATIONS BY TERM & ACADEMIC YEAR ---
+  const opsData = await prisma.assessment.findMany({
+    where: assessmentWhere,
+    select: {
+      academicYear: true,
+      term: true,
+      addition: true,
+      subtraction: true,
+      division: true,
+      numeracyLevel: true
+    }
+  });
+
+  const opsMap: any = {};
+  for (const a of opsData) {
+    const key = `${a.academicYear}_${a.term}`;
+    if (!opsMap[key]) opsMap[key] = { academicYear: a.academicYear, term: a.term, total: 0, addition: 0, subtraction: 0, division: 0 };
+    opsMap[key].total++;
+    if (a.addition || a.numeracyLevel >= 3) opsMap[key].addition++;
+    if (a.subtraction || a.numeracyLevel >= 4) opsMap[key].subtraction++;
+    if (a.division || a.numeracyLevel >= 6) opsMap[key].division++;
+  }
+  const operations = Object.values(opsMap);
+
   const TERMS = ['Baseline', 'Midline', 'Endline'];
   const classes = [1, 2, 3, 4];
   
-  const opPromises = TERMS.flatMap(term => {
-    const termWhere = { ...assessmentWhere, term };
-    return [
-      prisma.assessment.count({ where: termWhere }),
-      prisma.assessment.count({ where: { ...termWhere, OR: [{ addition: true }, { numeracyLevel: { gte: 3 } }] } }),
-      prisma.assessment.count({ where: { ...termWhere, OR: [{ subtraction: true }, { numeracyLevel: { gte: 4 } }] } }),
-      prisma.assessment.count({ where: { ...termWhere, OR: [{ division: true }, { numeracyLevel: { gte: 6 } }] } })
-    ];
-  });
-
   const classGroupPromises = classes.flatMap(cls => [
     prisma.assessment.groupBy({
       by: ['term', 'literacyLevel'],
@@ -273,18 +285,7 @@ export async function getDashboardStats(filters: { divisionId?: string, projectO
     })
   ]);
 
-  const restResults = await Promise.all([...opPromises, ...classGroupPromises]);
-  const opResults = restResults.slice(0, 12);
-  const classGroupResults = restResults.slice(12);
-
-  for (let i = 0; i < TERMS.length; i++) {
-    operations[TERMS[i]] = {
-      total: opResults[i * 4] as number,
-      addition: opResults[i * 4 + 1] as number,
-      subtraction: opResults[i * 4 + 2] as number,
-      division: opResults[i * 4 + 3] as number,
-    };
-  }
+  const classGroupResults = await Promise.all(classGroupPromises);
 
   const classLit: Record<number, Record<string, Record<number, number>>> = {};
   const classNum: Record<number, Record<string, Record<number, number>>> = {};
