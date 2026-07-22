@@ -1,31 +1,7 @@
-export interface LotbLink {
-  label: string;
-  url: string;
-}
+const { PrismaClient } = require('@prisma/client');
+const prisma = new PrismaClient();
 
-export interface LotbProject {
-  id: string;
-  title: string;
-  description: string;
-  imageUrl: string;
-  links: LotbLink[];
-}
-
-export interface LotbCohort {
-  id: string;
-  title: string;
-  description: string;
-  imageUrl: string;
-  status: 'active' | 'inactive';
-  interventionUrl: string;
-}
-
-export interface LotbConfig {
-  projects: LotbProject[];
-  msmsCohorts: LotbCohort[];
-}
-
-export const DEFAULT_LOTB_CONFIG: LotbConfig = {
+const DEFAULT_LOTB_CONFIG = {
   projects: [
     {
       id: "hp_futures",
@@ -98,3 +74,14 @@ export const DEFAULT_LOTB_CONFIG: LotbConfig = {
     }
   ]
 };
+
+async function main() {
+  await prisma.systemSetting.upsert({
+    where: { key: 'lotb_config' },
+    update: { value: JSON.stringify(DEFAULT_LOTB_CONFIG) },
+    create: { key: 'lotb_config', value: JSON.stringify(DEFAULT_LOTB_CONFIG) },
+  });
+  console.log("Updated lotb_config in database.");
+}
+
+main().catch(console.error).finally(() => prisma.$disconnect());
