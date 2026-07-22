@@ -50,13 +50,17 @@ async function buildMissionContext(): Promise<string> {
     }
 
     // Operations mastery
-    if (stats.operations) {
+    if (Array.isArray(stats.operations) && stats.operations.length > 0) {
+      const ops = stats.operations as any[];
       lines.push("\n── ARITHMETIC OPERATIONS MASTERY (% of assessed) ──");
-      for (const term of TERMS) {
-        const op = stats.operations[term];
-        if (!op || op.total === 0) continue;
-        const pct = (n: number) => Math.round((n / op.total) * 100);
-        lines.push(`  ${term}: Addition=${pct(op.addition)}% | Subtraction=${pct(op.subtraction)}% | Division=${pct(op.division)}%`);
+      const latestYear = [...ops].sort((a: any, b: any) => b.academicYear.localeCompare(a.academicYear))[0]?.academicYear;
+      if (latestYear) {
+        for (const term of TERMS) {
+          const op = ops.find((o: any) => o.term === term && o.academicYear === latestYear);
+          if (!op || op.total === 0) continue;
+          const pct = (n: number) => Math.round((n / op.total) * 100);
+          lines.push(`  ${latestYear} ${term}: Addition=${pct(op.addition)}% | Subtraction=${pct(op.subtraction)}% | Division=${pct(op.division)}%`);
+        }
       }
     }
 

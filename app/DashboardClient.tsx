@@ -987,6 +987,8 @@ export default function DashboardClient({ initialStats, hierarchy }: { initialSt
             )}
           </div>
         )}
+      </div>
+      )}
 
       {/* TAB: IMPLEMENTATION TRACKER */}
       {activeTab === 'implementation' && (
