@@ -70,10 +70,10 @@ export default async function LandingPage() {
 
               <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
                 <Link
-                  href="/pedagogy"
+                  href="/about-lotb"
                   className="inline-flex items-center justify-center px-8 py-4 text-base font-bold text-white bg-amber-500 hover:bg-amber-600 rounded-2xl shadow-xl shadow-amber-500/20 transition-all hover:-translate-y-1 active:translate-y-0"
                 >
-                  The Pedagogy <BookOpen className="ml-2 w-5 h-5" />
+                  About LOTB <BookOpen className="ml-2 w-5 h-5" />
                 </Link>
                 <Link
                   href="/dashboards"
@@ -174,7 +174,7 @@ export default async function LandingPage() {
                   <Landmark className="w-6 h-6" />
                 </div>
                 <div>
-                  <h4 className="text-xl font-bold text-slate-900 dark:text-white mb-2">Administration & POs</h4>
+                  <h4 className="text-xl font-bold text-slate-900 dark:text-white mb-2">Administration & Officials</h4>
                   <p className="text-slate-500 dark:text-slate-400 text-sm leading-relaxed">
                     Monitor implementation fidelity, analyze cross-sectional engagement metrics, and track ecosystem engagement across various interventions.
                   </p>
