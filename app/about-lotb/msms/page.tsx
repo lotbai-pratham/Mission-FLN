@@ -79,7 +79,7 @@ export default function MSMSPage() {
                 href="/pedagogy" 
                 className="flex items-center justify-center gap-2 w-full sm:w-auto self-start px-6 py-3 bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-bold rounded-xl shadow-lg shadow-orange-500/25 transition-all hover:-translate-y-0.5"
               >
-                <Play className="w-4 h-4 fill-current" /> Launch Intervention
+                <Play className="w-4 h-4 fill-current" /> About Intervention
               </Link>
             </div>
           </div>

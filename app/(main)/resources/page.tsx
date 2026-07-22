@@ -6,7 +6,7 @@ import {
   SpellCheck, Binary, Search, ClipboardPlus,
   Clock, CheckCircle2, Swords,
   Book, Calculator,
-  Maximize2, Minimize2, Info
+  Maximize2, Minimize2, Info, Users
 } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
@@ -1137,6 +1137,12 @@ export default function ResourcesPage() {
         <p className="text-sm sm:text-base text-slate-500 dark:text-slate-400 leading-relaxed font-medium relative z-10">
           The primary hub for teachers and coaches conducting Pedagogy learning camps. This implementation portal provides access to guided session planning, training videos, printable diagnostic resources, and student games.
         </p>
+
+        <div className="pt-4 pb-2 relative z-10 flex justify-center">
+           <Link href="/students" className="inline-flex items-center gap-2 px-6 py-3 bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 font-bold rounded-2xl hover:bg-blue-100 dark:hover:bg-blue-900/40 transition-colors shadow-sm">
+              <Users className="w-5 h-5" /> View Students Register
+           </Link>
+        </div>
 
         {/* Doodles for Header */}
         <DoodleLoop className="top-10 right-20 text-slate-300 dark:text-slate-700/50" delay="0s" />

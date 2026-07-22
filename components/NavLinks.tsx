@@ -46,74 +46,36 @@ export default function NavLinks({ userRole }: { userRole: string }) {
         />
       </div>
 
-      {/* Students */}
-      <div className="group relative py-2">
-        <Link href="/students" className="text-gray-500 dark:text-gray-300 hover:text-amber-600 dark:hover:text-amber-400 text-sm font-medium transition-colors">
-          {t('Students')}
-        </Link>
-        <NavTooltip 
-          title="Students Profile" 
-          description="Detailed register of all registered students, progress logs, and competitive match history." 
-        />
-      </div>
-
       {isAdmin && (
-        <>
-          {/* Upload */}
-          <div className="group relative py-2">
-            <Link href="/admin/upload" className="flex items-center gap-1 text-gray-400 hover:text-amber-600 text-sm font-medium transition-all">
-              <ShieldCheck className="w-4 h-4" /> {t('Upload')}
+        <div className="group relative py-2">
+          <button className="flex items-center gap-1 text-gray-500 dark:text-gray-300 hover:text-amber-600 dark:hover:text-amber-400 text-sm font-medium transition-colors">
+            <ShieldCheck className="w-4 h-4" /> Admin Settings
+          </button>
+          
+          <div className="pointer-events-none absolute left-1/2 -translate-x-1/2 top-full mt-2 w-56 rounded-2xl border border-slate-100 bg-white p-2 shadow-xl opacity-0 scale-95 group-hover:pointer-events-auto group-hover:opacity-100 group-hover:scale-100 transition-all duration-200 z-50 dark:bg-slate-900 dark:border-slate-800">
+            <div className="absolute -top-1.5 left-1/2 -translate-x-1/2 w-3 h-3 bg-white rotate-45 border-t border-l border-slate-100 dark:bg-slate-900 dark:border-slate-800" />
+            
+            <Link href="/admin/upload" className="flex items-center gap-2 px-3 py-2 text-sm text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-xl transition-colors relative z-10">
+              <ShieldCheck className="w-4 h-4 text-amber-500" /> {t('Upload')}
             </Link>
-            <NavTooltip 
-              title="Bulk Upload" 
-              description="Administrative tool to import student databases, school registers, and credentials via CSV files." 
-            />
-          </div>
-
-          {/* Users */}
-          <div className="group relative py-2">
-            <Link href="/admin/users" className="flex items-center gap-1 text-gray-400 hover:text-amber-600 text-sm font-medium transition-all">
-              <Users className="w-4 h-4" /> {t('Users')}
+            
+            <Link href="/admin/users" className="flex items-center gap-2 px-3 py-2 text-sm text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-xl transition-colors relative z-10">
+              <Users className="w-4 h-4 text-amber-500" /> {t('Users')}
             </Link>
-            <NavTooltip 
-              title="Users Management" 
-              description="Admin panel to create and configure accounts for teachers, coordinators, and state administrators." 
-            />
-          </div>
-
-          {/* Data */}
-          <div className="group relative py-2">
-            <Link href="/admin/data" className="flex items-center gap-1 text-gray-400 hover:text-amber-600 text-sm font-medium transition-all">
-              <Database className="w-4 h-4" /> {t('Data')}
+            
+            <Link href="/admin/data" className="flex items-center gap-2 px-3 py-2 text-sm text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-xl transition-colors relative z-10">
+              <Database className="w-4 h-4 text-amber-500" /> {t('Data')}
             </Link>
-            <NavTooltip 
-              title="Database Explorer" 
-              description="Administrative dashboard to view and maintain student assessment histories and raw database tables." 
-            />
-          </div>
-
-          {/* Logins */}
-          <div className="group relative py-2">
-            <Link href="/admin/logins" className="flex items-center gap-1 text-gray-400 hover:text-amber-600 text-sm font-medium transition-all">
-              <KeyRound className="w-4 h-4" /> {t('Logins')}
+            
+            <Link href="/admin/logins" className="flex items-center gap-2 px-3 py-2 text-sm text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-xl transition-colors relative z-10">
+              <KeyRound className="w-4 h-4 text-amber-500" /> {t('Logins')}
             </Link>
-            <NavTooltip 
-              title="Audit Logins" 
-              description="Security audit log detailing account activities, timestamps, and login histories." 
-            />
-          </div>
-
-          {/* Public Dashboards */}
-          <div className="group relative py-2">
-            <Link href="/admin/dashboards" className="flex items-center gap-1 text-gray-400 hover:text-amber-600 text-sm font-medium transition-all">
-              <LayoutDashboard className="w-4 h-4" /> Dashboards
+            
+            <Link href="/admin/dashboards" className="flex items-center gap-2 px-3 py-2 text-sm text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-xl transition-colors relative z-10">
+              <LayoutDashboard className="w-4 h-4 text-amber-500" /> Dashboards
             </Link>
-            <NavTooltip 
-              title="Public Dashboards" 
-              description="Manage the external dashboards and links shown on the public dashboard portal." 
-            />
           </div>
-        </>
+        </div>
       )}
     </div>
   );
