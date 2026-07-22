@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/db';
 import { DEFAULT_LOTB_CONFIG } from '@/lib/lotb_config';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET() {
   try {
     const s = await (prisma as any).systemSetting.findFirst({ where: { key: 'lotb_config' } });
