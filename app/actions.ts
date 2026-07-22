@@ -1,7 +1,7 @@
 "use server";
 import { prisma } from "@/lib/db";
 import { hasRole, getScopeFilters } from "@/lib/checkAccess";
-import { revalidatePath } from "next/cache";
+import { revalidatePath, unstable_cache } from "next/cache";
 import { auth } from "@/auth";
 import bcrypt from "bcryptjs";
 
@@ -1283,7 +1283,8 @@ export async function getInterventionPlan(students: any[]) {
   };
 }
 
-export async function getPORankings(divisionId?: string, classNum?: number | 'all') {
+const _getPORankingsCached = unstable_cache(
+  async (divisionId?: string, classNum?: number | 'all') => {
   const pos = await prisma.projectOffice.findMany({
     where: divisionId ? { divisionId } : undefined,
     select: { id: true, name: true }
@@ -1341,7 +1342,14 @@ export async function getPORankings(divisionId?: string, classNum?: number | 'al
     };
   });
 
-  return rankings.sort((a, b) => b.score - a.score);
+    return rankings.sort((a, b) => b.score - a.score);
+  },
+  ['po-rankings'],
+  { revalidate: 900 }
+);
+
+export async function getPORankings(divisionId?: string, classNum?: number | 'all') {
+  return await _getPORankingsCached(divisionId, classNum);
 }
 
 export async function getClassStats(schoolId: string, classNum: number) {
@@ -1548,7 +1556,8 @@ const deduplicateStudents = (students: any[]) => {
   return uniqueStudents.map(us => us.s);
 };
 
-export async function getSchoolRankings(divisionId?: string, projectOfficeId?: string, classNum?: number | 'all') {
+const _getSchoolRankingsCached = unstable_cache(
+  async (divisionId?: string, projectOfficeId?: string, classNum?: number | 'all') => {
   const where: any = {};
   if (divisionId) where.projectOffice = { divisionId };
   if (projectOfficeId) where.projectOfficeId = projectOfficeId;
@@ -1617,7 +1626,14 @@ export async function getSchoolRankings(divisionId?: string, projectOfficeId?: s
     };
   });
 
-  return rankings.sort((a, b) => b.score - a.score);
+    return rankings.sort((a, b) => b.score - a.score);
+  },
+  ['school-rankings'],
+  { revalidate: 900 }
+);
+
+export async function getSchoolRankings(divisionId?: string, projectOfficeId?: string, classNum?: number | 'all') {
+  return await _getSchoolRankingsCached(divisionId, projectOfficeId, classNum);
 }
 
 export async function getSchoolStudentsDetails(schoolId: string, classNum?: number | 'all') {
