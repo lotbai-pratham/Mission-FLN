@@ -56,7 +56,12 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         token.projectOfficeId = u.projectOfficeId ?? null;
         token.divisionId = u.divisionId ?? null;
         token.id = u.id;
-        token.picture = u.image ?? null;
+        
+        if (u.image?.startsWith('data:image')) {
+          token.picture = `/api/avatar/${u.id}`;
+        } else {
+          token.picture = u.image ?? null;
+        }
         return token;
       }
       // On every subsequent request, refresh role+schoolId from DB
@@ -68,11 +73,16 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         });
         if (fresh) {
           token.role = fresh.role;
-          token.picture = fresh.image ?? null;
           token.schoolId = fresh.schoolId ?? null;
           token.projectOfficeId = fresh.projectOfficeId ?? null;
           token.divisionId = fresh.divisionId ?? null;
           token.schoolName = (fresh as any).school?.name ?? null;
+          
+          if (fresh.image?.startsWith('data:image')) {
+            token.picture = `/api/avatar/${token.id}`;
+          } else {
+            token.picture = fresh.image ?? null;
+          }
         }
       }
       return token;
