@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { LotbConfig, LotbProject, LotbCohort } from '@/lib/lotb_config';
 import { saveSettings } from '@/app/actions';
-import { X, Save, Edit3, Image as ImageIcon, Link as LinkIcon, Plus, Trash2 } from 'lucide-react';
+import { X, Save, Edit3, Image as ImageIcon, Link as LinkIcon, Plus, Trash2, Upload } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 export default function LotbAdminClient({ initialConfig }: { initialConfig: LotbConfig }) {
@@ -44,6 +44,42 @@ export default function LotbAdminClient({ initialConfig }: { initialConfig: Lotb
     if (activeItem.type === 'project') editedProject = config.projects[activeItem.index];
     if (activeItem.type === 'cohort') editedCohort = config.msmsCohorts[activeItem.index];
   }
+
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>, updateField: (url: string) => void) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        let width = img.width;
+        let height = img.height;
+        const maxDim = 800; // Compress to max 800px
+
+        if (width > height && width > maxDim) {
+          height *= maxDim / width;
+          width = maxDim;
+        } else if (height > maxDim) {
+          width *= maxDim / height;
+          height = maxDim;
+        }
+
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        if (ctx) {
+          ctx.drawImage(img, 0, 0, width, height);
+          const compressedDataUrl = canvas.toDataURL('image/webp', 0.8);
+          updateField(compressedDataUrl);
+        }
+      };
+      img.src = event.target?.result as string;
+    };
+    reader.readAsDataURL(file);
+    e.target.value = ''; // Reset input
+  };
 
   return (
     <div className="space-y-12 pb-24">
@@ -185,8 +221,16 @@ export default function LotbAdminClient({ initialConfig }: { initialConfig: Lotb
                           newConfig.projects[activeItem.index].imageUrl = e.target.value;
                           setConfig(newConfig);
                         }}
-                        className="flex-1 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3 font-medium focus:ring-2 focus:ring-blue-500 outline-none"
+                        className="flex-1 min-w-0 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3 font-medium focus:ring-2 focus:ring-blue-500 outline-none"
                       />
+                      <label className="cursor-pointer shrink-0 px-4 py-3 bg-slate-200 hover:bg-slate-300 dark:bg-slate-800 dark:hover:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-xl font-bold text-slate-700 dark:text-slate-300 flex items-center gap-2 transition-colors">
+                        <Upload className="w-4 h-4" /> <span className="hidden sm:inline">Upload</span>
+                        <input type="file" accept="image/*" className="hidden" onChange={(e) => handleImageUpload(e, (url) => {
+                          const newConfig = { ...config };
+                          newConfig.projects[activeItem.index].imageUrl = url;
+                          setConfig(newConfig);
+                        })} />
+                      </label>
                     </div>
                   </div>
 
@@ -304,8 +348,16 @@ export default function LotbAdminClient({ initialConfig }: { initialConfig: Lotb
                           newConfig.msmsCohorts[activeItem.index].imageUrl = e.target.value;
                           setConfig(newConfig);
                         }}
-                        className="flex-1 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3 font-medium focus:ring-2 focus:ring-blue-500 outline-none"
+                        className="flex-1 min-w-0 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3 font-medium focus:ring-2 focus:ring-blue-500 outline-none"
                       />
+                      <label className="cursor-pointer shrink-0 px-4 py-3 bg-slate-200 hover:bg-slate-300 dark:bg-slate-800 dark:hover:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-xl font-bold text-slate-700 dark:text-slate-300 flex items-center gap-2 transition-colors">
+                        <Upload className="w-4 h-4" /> <span className="hidden sm:inline">Upload</span>
+                        <input type="file" accept="image/*" className="hidden" onChange={(e) => handleImageUpload(e, (url) => {
+                          const newConfig = { ...config };
+                          newConfig.msmsCohorts[activeItem.index].imageUrl = url;
+                          setConfig(newConfig);
+                        })} />
+                      </label>
                     </div>
                   </div>
 
