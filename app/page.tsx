@@ -75,12 +75,6 @@ export default async function LandingPage() {
                 >
                   About LOTB <BookOpen className="ml-2 w-5 h-5" />
                 </Link>
-                <Link
-                  href="/dashboards"
-                  className="inline-flex items-center justify-center px-8 py-4 text-base font-bold text-slate-700 dark:text-slate-200 bg-white dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 hover:border-amber-500 dark:hover:border-amber-500 rounded-2xl transition-all hover:-translate-y-1 active:translate-y-0"
-                >
-                  View Dashboards <LayoutDashboard className="ml-2 w-5 h-5 text-amber-500" />
-                </Link>
               </div>
             </div>
 
